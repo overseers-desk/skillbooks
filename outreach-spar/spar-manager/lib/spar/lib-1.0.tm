@@ -1428,6 +1428,8 @@ proc spar::row_done_detail {result} {
     if {$msg eq "" && [dict exists $result new_replies]} {
         set n [dict get $result new_replies]
         set msg [expr {$n == 0 ? "no new replies" : ($n == 1 ? "1 new reply" : "$n new replies")}]
+        set u [dict getdef $result unattributed_count 0]
+        if {$u > 0} { append msg ", $u to attribute by hand" }
     }
     return $msg
 }

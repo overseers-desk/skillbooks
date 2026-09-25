@@ -404,10 +404,13 @@ proc spar::_indent_body {text indent_spaces} {
 # approach_path   path to approach YAML file
 # today           date string (e.g. "2026-04-10")
 # channel         message channel to stamp (email | linkedin | phone)
+# message_id      the id the transport gave the sent message (SES's bare
+#                 token), written as `message_id:` beside the date so the
+#                 reply check can recognise the thread; "" writes none
 #
 # Returns 1 if file was modified, 0 otherwise.
 #
-proc spar::stamp_actioned_date {approach_path today {channel email}} {
+proc spar::stamp_actioned_date {approach_path today {channel email} {message_id ""}} {
     # DbC-Pre: refuse to write if the file already has structural errors.
     set pre_errs [spar::_dbc_errors $approach_path]
     if {[llength $pre_errs] > 0} {
@@ -483,7 +486,7 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
                 if {!$msg_has_ad && !$changed} {
                     set pad [string repeat " " $msg_field_indent]
                     set result [linsert $result [expr {$msg_last_ridx + 1}] \
-                        "${pad}actioned_date: $today"]
+                        {*}[spar::_stamp_lines $pad $today $message_id]]
                     set changed 1
                 }
                 set in_channel_msg 0
@@ -512,7 +515,7 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
         }
         # Replace actioned_date: null in target-channel message context
         if {!$changed && $in_final && $in_channel_msg && [regexp {^(\s*)actioned_date:\s*(null|~|)\s*$} $line -> indent]} {
-            lappend result "${indent}actioned_date: $today"
+            lappend result {*}[spar::_stamp_lines $indent $today $message_id]
             set changed 1
         } else {
             lappend result $line
@@ -533,7 +536,7 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
     if {$in_channel_msg && !$msg_has_ad && !$changed} {
         set pad [string repeat " " $msg_field_indent]
         set result [linsert $result [expr {$msg_last_ridx + 1}] \
-            "${pad}actioned_date: $today"]
+            {*}[spar::_stamp_lines $pad $today $message_id]]
         set changed 1
     }
 
@@ -552,6 +555,47 @@ proc spar::stamp_actioned_date {approach_path today {channel email}} {
     }
 
     return $changed
+}
+
+# _stamp_lines -- the lines a send writes into its message: the date, and
+# the transport's message id when the caller has one.
+proc spar::_stamp_lines {indent today message_id} {
+    set lines [list "${indent}actioned_date: $today"]
+    if {$message_id ne ""} { lappend lines "${indent}message_id: $message_id" }
+    return $lines
+}
+
+# reply_attribution -- which sent approach a candidate inbound message
+# answers, or "" when none can be told mechanically.
+#
+# approaches   list of dicts from collect_sent_approaches
+# from_email   the candidate's sender address, lowercase
+# thread_ids   the candidate's In-Reply-To and References values, as one
+#              list of strings
+#
+# Two keys, in order: the address the approach wrote to, then the id the
+# transport gave the send, looked for inside the candidate's threading
+# headers (SES wraps its token as <token@email.amazonses.com>, and a
+# client that answers an internal forward keeps our id in References while
+# In-Reply-To names the forward). A message matching neither is a reply
+# only a reader can place.
+proc spar::reply_attribution {approaches from_email thread_ids} {
+    foreach entry $approaches {
+        if {$from_email ne "" && [dict get $entry to_email] eq $from_email} {
+            return [dict get $entry approach_path]
+        }
+    }
+    set refs [string tolower [join $thread_ids " "]]
+    if {$refs eq ""} { return "" }
+    foreach entry $approaches {
+        foreach mid [dict getdef $entry message_ids {}] {
+            set mid [string tolower [string trim $mid]]
+            if {$mid ne "" && [string first $mid $refs] >= 0} {
+                return [dict get $entry approach_path]
+            }
+        }
+    }
+    return ""
 }
 
 # _roster_email_map -- stem → watchable roster email for one segment.
@@ -593,6 +637,9 @@ proc spar::_roster_email_map {seg_dir} {
 #                   went out on another channel
 #   first_sent      earliest final-round actioned_date (reply date floor)
 #   fingerprints    list of "from|date" strings for existing replies
+#   message_ids     the transport ids of the final round's sent messages
+#   replied         1 when a reply is on file (replied_date set, or a
+#                   replies entry)
 #
 # A roster-sourced address is used by at most one approach per call
 # (first stem wins): shared inboxes would otherwise record one inbound
@@ -623,6 +670,8 @@ proc spar::collect_sent_approaches {approach_dir segments} {
             set to_email ""
             set first_sent ""
             set fingerprints {}
+            set message_ids {}
+            set replied 0
 
             foreach r [dict get $data rounds] {
                 if {[dict getdef $r type ""] ne "final"} continue
@@ -644,6 +693,11 @@ proc spar::collect_sent_approaches {approach_dir segments} {
                                 set first_sent $ad_day
                             }
                         }
+                        set mid [string trim [dict getdef $msg message_id ""]]
+                        if {![is_null $mid]} { lappend message_ids $mid }
+                        if {![is_null [dict getdef $msg replied_date ""]]} {
+                            set replied 1
+                        }
                         if {[dict getdef $msg channel ""] eq "email"} {
                             set msg_to [dict getdef $msg to ""]
                             if {$msg_to ne "" && $to_email eq ""} {
@@ -655,6 +709,9 @@ proc spar::collect_sent_approaches {approach_dir segments} {
 
                 if {[dict exists $r replies]} {
                     foreach reply [dict get $r replies] {
+                        if {[dict getdef $reply direction ""] eq "received"} {
+                            set replied 1
+                        }
                         set rd [dict getdef $reply date ""]
                         set rf [dict getdef $reply from ""]
                         if {$rd ne ""} {
@@ -693,7 +750,9 @@ proc spar::collect_sent_approaches {approach_dir segments} {
                 approach_path $yf \
                 to_email $to_email \
                 first_sent $first_sent \
-                fingerprints $fingerprints]
+                fingerprints $fingerprints \
+                message_ids $message_ids \
+                replied $replied]
         }
     }
 

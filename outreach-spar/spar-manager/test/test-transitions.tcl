@@ -617,8 +617,13 @@ foreach pair [dict get $t6f_prep rows] {
 }
 
 # ── T7 ──────────────────────────────────────────────────────────────────
+# T7 is the campaign's task, not a contact's: one search over the
+# campaign's mailbox places replies for every sent contact, and a reply
+# may come from an address no contact carries. So the per-contact walk
+# contributes nothing, and campaign_tasks yields one task while a sent
+# approach awaits a reply.
 
-# T7-a: SENT, any_replied=0 → dispatchable.
+# T7-a: the per-contact walk yields no T7 task, sent or not.
 set t7a_seg [make_temp_segment]
 write_profile $t7a_seg "t7a"
 write_approach_yaml $t7a_seg "t7a" [approach_yaml_final_sent_email]
@@ -627,55 +632,51 @@ write_roster_tsv $t7a_seg $::std_headers [list \
 ]
 set t7a_c [$State classify_segment $t7a_seg [approach_dir_of $t7a_seg]]
 set t7a_c [$State refine_segment $t7a_c]
-set t7a_tasks [$State transition_eligible $t7a_c "T7"]
-assert_eq [llength $t7a_tasks] 1 "T7: SENT+no-reply → 1 task"
-assert_eq [dict get [lindex $t7a_tasks 0] task_state] "dispatchable" \
-    "T7: SENT+no-reply → task_state=dispatchable"
+assert_eq [llength [$State transition_eligible $t7a_c "T7"]] 0 \
+    "T7: a sent contact is no per-contact task"
 
-# T7-b: REPLIED (any_replied=1) → no task.
-set t7b_seg [make_temp_segment]
-write_profile $t7b_seg "t7b"
-write_approach_yaml $t7b_seg "t7b" [approach_yaml_final_replied]
-write_roster_tsv $t7b_seg $::std_headers [list \
-    [make_base_row {contact_name "T7B" stem "t7b" email "test@acme-venues.au" star_rating 4}] \
-]
-set t7b_c [$State classify_segment $t7b_seg [approach_dir_of $t7b_seg]]
-set t7b_c [$State refine_segment $t7b_c]
-set t7b_tasks [$State transition_eligible $t7b_c "T7"]
-assert_eq [llength $t7b_tasks] 0 \
-    "T7: REPLIED → 0 tasks (already replied, no monitoring needed)"
+# T7-b: a campaign with a sent, unanswered approach has one reply-check
+# task; its reason counts the sends awaiting a reply.
+set t7b_campaign [campaign_yaml_of $t7a_seg]
+set fd [open $t7b_campaign w]
+puts -nonewline $fd "version: \"2.0\"\ncampaign: T7 reply check\nsender:\n  email: me@acme-venues.au\nsegments:\n  - [file tail $t7a_seg]\n"
+close $fd
+set t7b_tasks [[::spar::transitions::get T7] campaign_tasks {} $t7b_campaign \
+    [list [list [file tail $t7a_seg] $t7a_seg]]]
+assert_eq [llength $t7b_tasks] 1 "T7: one campaign-level task while a send awaits a reply"
+assert_eq [dict get [lindex $t7b_tasks 0] task_state] "dispatchable" \
+    "T7: the reply-check task is dispatchable"
+assert_eq [dict get [lindex $t7b_tasks 0] stem] [spar::reply_check_stem] \
+    "T7: the task runs under the reply-check stem"
+assert_match [dict get [lindex $t7b_tasks 0] reason] "1 sent*" \
+    "T7: the reason counts sends awaiting a reply"
 
-# T7-c: APPROACHED but never sent → no task (nothing to monitor).
+# T7-c: every sent approach answered → no task.
 set t7c_seg [make_temp_segment]
 write_profile $t7c_seg "t7c"
-write_approach_yaml $t7c_seg "t7c" [approach_yaml_final_unsent]
-write_roster_tsv $t7c_seg $::std_headers [list \
-    [make_base_row {contact_name "T7C" stem "t7c" email "test@acme-venues.au" star_rating 4}] \
-]
-set t7c_c [$State classify_segment $t7c_seg [approach_dir_of $t7c_seg]]
-set t7c_c [$State refine_segment $t7c_c]
-set t7c_tasks [$State transition_eligible $t7c_c "T7"]
-assert_eq [llength $t7c_tasks] 0 \
-    "T7: APPROACHED+unsent → 0 tasks (no send yet)"
+write_approach_yaml $t7c_seg "t7c" [approach_yaml_final_replied]
+set t7c_campaign [campaign_yaml_of $t7c_seg]
+set fd [open $t7c_campaign w]
+puts -nonewline $fd "version: \"2.0\"\ncampaign: T7 all replied\nsender:\n  email: me@acme-venues.au\nsegments:\n  - [file tail $t7c_seg]\n"
+close $fd
+assert_eq [llength [[::spar::transitions::get T7] campaign_tasks {} $t7c_campaign \
+    [list [list [file tail $t7c_seg] $t7c_seg]]]] 0 \
+    "T7: REPLIED → 0 tasks (already replied, no monitoring needed)"
 
-# T7-d: EXCLUDED contact (was sent before exclusion) → no task. T7
-# explicitly skips EXCLUDED to avoid reply-watching a contact the
-# operator has retired.
+# T7-d: nothing sent yet → no task.
 set t7d_seg [make_temp_segment]
 write_profile $t7d_seg "t7d"
-write_approach_yaml $t7d_seg "t7d" [approach_yaml_final_sent_email]
-write_roster_tsv $t7d_seg $::std_headers [list \
-    [make_base_row {contact_name "T7D" stem "t7d" email "test@acme-venues.au" \
-        star_rating 4 date_excluded "2026-04-05"}] \
-]
-set t7d_c [$State classify_segment $t7d_seg [approach_dir_of $t7d_seg]]
-set t7d_c [$State refine_segment $t7d_c]
-set t7d_tasks [$State transition_eligible $t7d_c "T7"]
-assert_eq [llength $t7d_tasks] 0 \
-    "T7: EXCLUDED → 0 tasks (regardless of prior email_sent)"
+write_approach_yaml $t7d_seg "t7d" [approach_yaml_final_unsent]
+set t7d_campaign [campaign_yaml_of $t7d_seg]
+set fd [open $t7d_campaign w]
+puts -nonewline $fd "version: \"2.0\"\ncampaign: T7 unsent\nsender:\n  email: me@acme-venues.au\nsegments:\n  - [file tail $t7d_seg]\n"
+close $fd
+assert_eq [llength [[::spar::transitions::get T7] campaign_tasks {} $t7d_campaign \
+    [list [list [file tail $t7d_seg] $t7d_seg]]]] 0 \
+    "T7: APPROACHED+unsent → 0 tasks (no send yet)"
 
-# T7-f: sent on LinkedIn only, roster email known → dispatchable
-# (the inbox is watched for the roster address).
+# T7-f: sent on LinkedIn only, roster email known → the roster address
+# is watched, so the task exists.
 set t7f_seg [make_temp_segment]
 write_profile $t7f_seg "t7f"
 write_approach_yaml $t7f_seg "t7f" [approach_yaml_final_sent_linkedin]
@@ -683,58 +684,13 @@ write_roster_tsv $t7f_seg $::std_headers [list \
     [make_base_row {contact_name "T7F" stem "t7f" email "t7f@acme-venues.au" \
         linkedin_url "https://www.linkedin.com/in/t7f" star_rating 4}] \
 ]
-set t7f_c [$State classify_segment $t7f_seg [approach_dir_of $t7f_seg]]
-set t7f_c [$State refine_segment $t7f_c]
-set t7f_tasks [$State transition_eligible $t7f_c "T7"]
-assert_eq [llength $t7f_tasks] 1 "T7: linkedin-sent + roster email → 1 task"
-assert_eq [dict get [lindex $t7f_tasks 0] task_state] "dispatchable" \
-    "T7: linkedin-sent + roster email → dispatchable"
-
-# T7-g: sent on LinkedIn only, no email address anywhere → omitted
-# (no address to watch; a reply is recorded on the YAML directly).
-set t7g_seg [make_temp_segment]
-write_profile $t7g_seg "t7g"
-write_approach_yaml $t7g_seg "t7g" [approach_yaml_final_sent_linkedin]
-write_roster_tsv $t7g_seg $::std_headers [list \
-    [make_base_row {contact_name "T7G" stem "t7g" email "" \
-        linkedin_url "https://www.linkedin.com/in/t7g" star_rating 4}] \
-]
-set t7g_c [$State classify_segment $t7g_seg [approach_dir_of $t7g_seg]]
-set t7g_c [$State refine_segment $t7g_c]
-set t7g_tasks [$State transition_eligible $t7g_c "T7"]
-assert_eq [llength $t7g_tasks] 0 \
-    "T7: linkedin-sent + no email address → 0 tasks (unwatchable)"
-
-# T7-e: SENT contact + invalid approach YAML → blocked with
-# reason starting "invalid_approach_yaml:". Validates the
-# eligibility-time approach gate symmetric with T6.
-set t7e_seg [make_temp_segment]
-write_profile $t7e_seg "t7e"
-write_approach_yaml $t7e_seg "t7e" {decisions:
-  channel: email
-rounds:
-- type: final
-  number: 1
-  messages:
-  - channel: email
-    to: test@acme-venues.au
-    subject: Sent
-    body: Hello
-    actioned_date: 2026-04-01
-    replied_date: null
-bogus_root_key: value
-}
-write_roster_tsv $t7e_seg $::std_headers [list \
-    [make_base_row {contact_name "T7E" stem "t7e" email "test@acme-venues.au" star_rating 4}] \
-]
-set t7e_c [$State classify_segment $t7e_seg [approach_dir_of $t7e_seg]]
-set t7e_c [$State refine_segment $t7e_c]
-set t7e_tasks [$State transition_eligible $t7e_c "T7"]
-assert_eq [llength $t7e_tasks] 1 "T7: SENT+invalid YAML → 1 task"
-assert_eq [dict get [lindex $t7e_tasks 0] task_state] "blocked" \
-    "T7: SENT+invalid YAML → task_state=blocked"
-assert_match [dict get [lindex $t7e_tasks 0] reason] "invalid_approach_yaml:*" \
-    "T7: SENT+invalid YAML → reason starts 'invalid_approach_yaml:'"
+set t7f_campaign [campaign_yaml_of $t7f_seg]
+set fd [open $t7f_campaign w]
+puts -nonewline $fd "version: \"2.0\"\ncampaign: T7 linkedin\nsender:\n  email: me@acme-venues.au\nsegments:\n  - [file tail $t7f_seg]\n"
+close $fd
+assert_eq [llength [[::spar::transitions::get T7] campaign_tasks {} $t7f_campaign \
+    [list [list [file tail $t7f_seg] $t7f_seg]]]] 1 \
+    "T7: linkedin-sent + roster email → 1 task"
 
 # ════════════════════════════════════════════════════════════════════════
 # audit_skills_in_transcript (issue #76)

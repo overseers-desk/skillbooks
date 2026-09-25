@@ -326,23 +326,37 @@ section "4. imap_poll happy path"
 set fake_courier [file join $tmp_root fake-courier.tcl]
 set fd [open $fake_courier w]
 puts $fd {#!/usr/bin/env tclsh9.0
-# Args: --imap <account> (search|read) -f <folder> ...
-# Emit canned JSON for the two subcommands. Drop --imap/-f flags.
+# Args: --imap <account> (search|read|list) -f <folder> -u <uid> ...
+# Emit canned JSON for the subcommands. Drop the flags, keep -u's value.
 set positional {}
+set uid ""
 for {set i 0} {$i < [llength $argv]} {incr i} {
     set a [lindex $argv $i]
-    if {$a in {--imap -f -u --limit}} { incr i; continue }
+    if {$a eq "-u"} { incr i; set uid [lindex $argv $i]; continue }
+    if {$a in {--imap -f --limit}} { incr i; continue }
     lappend positional $a
 }
 set op [lindex $positional 0]
-if {$op eq "search" && [lindex $positional end] eq "from:down@acme-venues.au"} {
-    puts stderr {warning: connect failed for [imap.acct]: [ALERT] Too many simultaneous connections. (Failure)}
-    puts {{"search": {"acct": {"error": "connection failed"}}}}
+if {$op eq "search" && [lindex $argv 1] eq "down"} {
+    puts stderr {warning: connect failed for [imap.down]: [ALERT] Too many simultaneous connections. (Failure)}
+    puts {{"search": {"down": {"error": "connection failed"}}}}
     exit 2
 } elseif {$op eq "search"} {
-    puts {{"search": {"acct": {"results": [{"uid": "U1", "from": "Dest <dest@acme-venues.au>", "to": ["Me <me@acme-venues.au>"], "cc": [], "date": "2026-04-25T10:00:00"}], "provenance": {}}}}}
+    # Four inbound since the send: the contact's own reply, a colleague
+    # answering an internal forward, our own outgoing copy, and a member
+    # writing in with no thread.
+    puts {{"search": {"acct": {"results": [
+        {"uid": "U1", "from": "Dest <dest@acme-venues.au>", "to": ["Me <me@acme-venues.au>"], "subject": "Re: Hi", "date": "2026-04-25T10:00:00"},
+        {"uid": "U2", "from": "President <president@acme-venues.au>", "to": ["Me <me@acme-venues.au>"], "subject": "FW: Hi", "date": "2026-04-26T09:00:00"},
+        {"uid": "U3", "from": "Me <me@ours.example>", "to": ["Dest <dest@acme-venues.au>"], "subject": "Hi", "date": "2026-04-20T08:00:00"},
+        {"uid": "U4", "from": "Member <member@hotmail.com>", "to": ["Me <me@ours.example>"], "subject": "from U3A", "date": "2026-04-27T12:00:00"}
+    ], "provenance": {}}}}}
 } elseif {$op eq "read"} {
-    puts {{"read": {"acct": {"body": "Hello back from Dest", "from": "dest@acme-venues.au", "to": ["me@acme-venues.au"], "date": "2026-04-25T10:00:00"}}}}
+    switch -- $uid {
+        U2 { puts {{"read": {"acct": {"body": "Forwarded to me; yes please", "from": "president@acme-venues.au", "date": "2026-04-26T09:00:00", "in_reply_to": "<outlook-id@acme-venues.au>", "references": ["<outlook-id@acme-venues.au>", "<0100019a-dest@email.amazonses.com>"]}}}} }
+        U4 { puts {{"read": {"acct": {"body": "from U3A", "from": "member@hotmail.com", "date": "2026-04-27T12:00:00", "references": []}}}} }
+        default { puts {{"read": {"acct": {"body": "Hello back from Dest", "from": "dest@acme-venues.au", "to": ["me@acme-venues.au"], "date": "2026-04-25T10:00:00"}}}} }
+    }
 } elseif {$op eq "list"} {
     puts {{"default_imap": "acct", "imap": {"acct": {"username": "login@acme-venues.au", "identities": ["me"]}}, "identity": {"me": {"imap": "acct", "address": "Me@Acme-Venues.au"}}}}
 }
@@ -364,42 +378,60 @@ rounds:
     subject: Hi
     body: Hello there
     actioned_date: 2026-04-20
+    message_id: 0100019a-dest
     replied_date: null
 }
 set approach_path3 [file join $seg_dir3 approach "carol.yaml"]
 set fd [open $approach_path3 w]; puts -nonewline $fd $approach_yaml_sent; close $fd
 
-set imap_opts [dict create \
-    approach_path $approach_path3 \
-    to_email      "dest@acme-venues.au" \
-    fingerprints  {} \
-    account       "acct" \
-    folder        "INBOX" \
-    sender        "me@acme-venues.au" \
-    dry_run       0 \
-    courier_bin   $fake_courier]
+proc imap_opts_for {approach_path args} {
+    set entry [dict create approach_path $approach_path \
+        to_email dest@acme-venues.au message_ids {0100019a-dest} fingerprints {}]
+    return [dict merge [dict create \
+        approaches  [list $entry] \
+        since       "2026-04-20" \
+        own_domains {ours.example} \
+        account     "acct" \
+        folder      "INBOX" \
+        dry_run     0 \
+        courier_bin $::fake_courier] $args]
+}
+set imap_opts [imap_opts_for $approach_path3]
 
 set d [spar::Dispatcher new 2 test_log]
-$d enqueue carol imap_poll $imap_opts
-wait_for_terminal $d carol 5000
-assert_eq [$d state carol] done "imap_poll happy path reaches done"
+$d enqueue reply-check imap_poll $imap_opts
+wait_for_terminal $d reply-check 5000
+assert_eq [$d state reply-check] done "imap_poll happy path reaches done"
 
-# The reply should have been appended to the YAML.
+# The contact's own reply and the colleague's answer on our thread are
+# both appended; our outgoing copy and the member's threadless message
+# are not.
 set fd [open $approach_path3 r]; set after3 [read $fd]; close $fd
 assert_match $after3 "*Hello back from Dest*" \
-    "imap_poll appends reply body to approach YAML"
+    "imap_poll appends the reply from the address written to"
+assert_match $after3 "*Forwarded to me; yes please*" \
+    "imap_poll appends a reply placed by our send id in References"
+assert_eq [string match "*from U3A*" $after3] 0 \
+    "a message no key places is not appended"
+assert_eq [string match "*Hello there*from*me@ours.example*" $after3] 0 \
+    "our own outgoing copy is not a reply"
+set direct [spar::imap::check_one [dict replace $imap_opts dry_run 1]]
+assert_eq [lindex $direct 0] ok "check_one reports ok"
+assert_eq [dict get [lindex $direct 1] new_replies] 2 "two replies placed"
+assert_eq [dict get [lindex $direct 1] unattributed_count] 1 "one left to attribute by hand"
+assert_match [lindex [dict get [lindex $direct 1] unattributed] 0] \
+    "*member@hotmail.com*from U3A*read -f INBOX -u U4*" \
+    "the remainder line names the sender, subject and the read command"
 $d destroy
 
-# 4b. imap_poll with a since floor after the message date: inbox
+# 4b. imap_poll with a since floor after every message date: inbox
 # history predating the send is not a reply; no append.
 set seg_dir3f [file join $tmp_root "seg-imap-floor"]
 file mkdir [file join $seg_dir3f approach]
 set approach_path3f [file join $seg_dir3f approach "cass.yaml"]
 set fd [open $approach_path3f w]; puts -nonewline $fd $approach_yaml_sent; close $fd
 
-set floor_opts [dict replace $imap_opts \
-    approach_path $approach_path3f \
-    since         "2026-04-26"]
+set floor_opts [imap_opts_for $approach_path3f since "2026-04-28"]
 
 set d [spar::Dispatcher new 2 test_log]
 $d enqueue cass imap_poll $floor_opts
@@ -416,21 +448,23 @@ file mkdir [file join $seg_dir4 approach]
 set approach_path4 [file join $seg_dir4 approach "dan.yaml"]
 set fd [open $approach_path4 w]; puts -nonewline $fd $approach_yaml_sent; close $fd
 
-set known_opts [dict replace $imap_opts \
+set known_opts [imap_opts_for $approach_path4]
+dict set known_opts approaches [list [dict replace [lindex [dict get $known_opts approaches] 0] \
     approach_path $approach_path4 \
-    fingerprints  [list "dest@acme-venues.au|2026-04-25T10:00:00"]]
+    fingerprints  [list "dest@acme-venues.au|2026-04-25T10:00:00" \
+                        "president@acme-venues.au|2026-04-26T09:00:00"]]]
 
 set d [spar::Dispatcher new 2 test_log]
 $d enqueue dan imap_poll $known_opts
 wait_for_terminal $d dan 5000
 assert_eq [$d state dan] done "imap_poll done when nothing new"
 set fd [open $approach_path4 r]; set after4 [read $fd]; close $fd
-# The reply body should NOT have been appended.
-if {[string first "Hello back from Dest" $after4] >= 0} {
+# The reply bodies should NOT have been appended.
+if {[string first "Hello back from Dest" $after4] >= 0 || [string first "Forwarded to me" $after4] >= 0} {
     puts "FAIL: imap_poll appended reply despite fingerprint match"
     incr ::failures
 } else {
-    puts "  ok: imap_poll skips already-fingerprinted reply"
+    puts "  ok: imap_poll skips already-fingerprinted replies"
     incr ::passes
 }
 $d destroy
@@ -469,10 +503,20 @@ set prep7 [[::spar::transitions::get T7] prepare_for_pool \
     [dict create campaign_file $camp7 courier_bin $fake_courier] \
     {apply {args {lappend ::t7_events $args}}}]
 set rows7 [dict get $prep7 rows]
-assert_eq [llength $rows7] 1 "T7 without reply_check builds one row per sent approach"
+assert_eq [llength $rows7] 1 "T7 builds one row for the campaign"
+assert_eq [lindex [lindex $rows7 0] 0] [spar::reply_check_stem] "the row runs under the reply-check stem"
 set row7 [lindex [lindex $rows7 0] 1]
 assert_eq [dict get $row7 account] acct  "T7 row account is the one reading the sender's mailbox"
 assert_eq [dict get $row7 folder]  INBOX "T7 row folder defaults to INBOX"
+assert_eq [dict get $row7 own_domains] {acme-venues.au} "T7 row names our own domain"
+assert_eq [dict get $row7 since] 2026-04-20 "T7 row's floor is the earliest send"
+assert_eq [llength [dict get $row7 approaches]] 1 "T7 row carries every sent approach"
+set tasks7 [[::spar::transitions::get T7] campaign_tasks {} $camp7 \
+    [list [list seg-t7 [file join $inst7 segments seg-t7]]]]
+assert_eq [llength $tasks7] 1 "T7 is one campaign-level task while a send awaits a reply"
+assert_eq [dict get [lindex $tasks7 0] task_state] dispatchable "the reply-check task is dispatchable"
+assert_eq [[::spar::transitions::get T7] eligible {} {} email {} 2026-04-25] {} \
+    "T7 contributes no per-contact task"
 assert_eq $::t7_events {} "T7 emits no failure when reply_check is absent"
 
 # A campaign sending from an address no courier account reads, whose
@@ -492,7 +536,7 @@ set prep7 [[::spar::transitions::get T7] prepare_for_pool \
     [dict create campaign_file $camp7 courier_bin $fake_courier] \
     {apply {args {lappend ::t7_events $args}}}]
 set rows7 [dict get $prep7 rows]
-assert_eq [llength $rows7] 1 "T7 with reply_check.mailbox builds one row per sent approach"
+assert_eq [llength $rows7] 1 "T7 with reply_check.mailbox builds one row"
 set row7 [lindex [lindex $rows7 0] 1]
 assert_eq [dict get $row7 account] acct        "T7 row account is the one reading the named mailbox"
 assert_eq [dict get $row7 folder]  Partnerships "T7 row folder is reply_check.folder"
@@ -522,12 +566,14 @@ assert_match [lindex $::t7_events 0] "*reply_check.mailbox*" \
 # server's own words, and a done row says how many replies it appended.
 section "4d. courier's error object and the done-row count"
 
-set down [spar::imap::check_one [dict replace $imap_opts to_email "down@acme-venues.au"]]
+set down [spar::imap::check_one [dict replace $imap_opts account down]]
 assert_eq [lindex $down 0] error "a connect failure is an error result"
 assert_match [lindex $down 1] "mailbox search: connection failed*Too many simultaneous connections*" \
     "the failure carries courier's reason and the server's alert"
 assert_eq [spar::row_done_detail {new_replies 0}] "no new replies" "done detail: zero replies"
 assert_eq [spar::row_done_detail {new_replies 1}] "1 new reply"    "done detail: one reply"
+assert_eq [spar::row_done_detail {new_replies 2 unattributed_count 1}] "2 new replies, 1 to attribute by hand" \
+    "done detail: the remainder is counted"
 assert_eq [spar::row_done_detail {new_replies 3}] "3 new replies"  "done detail: several"
 
 section "5. roster_update relays to the domain subscriber"

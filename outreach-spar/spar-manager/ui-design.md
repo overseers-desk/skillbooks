@@ -120,7 +120,7 @@ The fixed transition types:
 
 Each top-level row displays: the transition label and the count of tasks (e.g. "Profile → Approach (23)"). Counts update dynamically when the user changes segment checkboxes in the progress table.
 
-T7 (Send → Reply) dispatches through `spar::r::run`: it queries the campaign's courier account and appends received replies to the corresponding approach YAMLs (same code path as the toolbar "Check Email" button). T8 (LinkedIn → Email follow-up) remains a monitoring transition — displayed but with no play button.
+T7 (Send → Reply) is one row per campaign, under the `reply-check` stem: it searches the campaign's reply folder once, appends each placed reply to its approach YAML, and logs a warning line for each inbound it cannot place. T8 (LinkedIn → Email follow-up) remains a monitoring transition — displayed but with no play button.
 
 ### 2.2 Tasks (child items)
 
