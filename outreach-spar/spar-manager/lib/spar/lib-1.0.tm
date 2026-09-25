@@ -525,6 +525,20 @@ proc spar::extract_kinds {segment_data segment_path} {
     return $kinds
 }
 
+# extract_presence_gate — the segment's `presence_gate` list
+# (segment-schema.yaml): web and platform-module tokens. Empty when absent.
+proc spar::extract_presence_gate {segment_data segment_path} {
+    set allowed [concat web [spar::platform_modules]]
+    set checks {}
+    foreach check [dict getdef $segment_data presence_gate {}] {
+        if {$check ni $allowed} {
+            error "Segment $segment_path: presence_gate entry '$check' (allowed: [join $allowed {, }])"
+        }
+        lappend checks $check
+    }
+    return $checks
+}
+
 # roster_core_columns — the 14 columns spar-roster-format.md defines, in
 # its order. A live roster's header is authoritative (campaigns add their
 # own columns, e.g. application_url) and every reader takes the header it

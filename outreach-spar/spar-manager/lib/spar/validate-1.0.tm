@@ -935,8 +935,8 @@ proc spar::validate_sender_block {cdata} {
 # in-memory shape by the loader (spar::lib), so consumers read one shape.
 # ---------------------------------------------------------------------------
 namespace eval spar {
-    variable CURRENT_SPEC_VERSION "2.1"
-    variable SUPPORTED_SPEC_VERSIONS {2.0 2.1}
+    variable CURRENT_SPEC_VERSION "2.2"
+    variable SUPPORTED_SPEC_VERSIONS {2.0 2.1 2.2}
 }
 
 # campaign_version / segment_version -- read the declared `version` from an
@@ -1546,6 +1546,7 @@ proc spar::_yamlmuster_segment {} {
     $inst predicate sweeper_resolves ::spar::_pred_sweeper_resolves
     $inst predicate platforms_vocab  ::spar::_pred_platforms_vocab
     $inst predicate kinds_list       ::spar::_pred_kinds_list
+    $inst predicate presence_gate_vocab ::spar::_pred_presence_gate_vocab
     $inst predicate scalars_as_written ::spar::_pred_scalars_as_written
     spar::_yamlmuster_load $inst segment.rules segment
     set _yamlmuster_segment_inst $inst
@@ -1649,6 +1650,24 @@ proc spar::_pred_kinds_list {node meta} {
             lappend out [dict create message "kinds entry '$kind' listed twice"]
         }
         lappend seen $kind
+    }
+    return $out
+}
+
+# presence_gate: web or a platform module, each once.
+proc spar::_pred_presence_gate_vocab {node meta} {
+    if {![dict exists $node presence_gate]} { return {} }
+    set out {}
+    set seen {}
+    set allowed [concat web [spar::platform_modules]]
+    foreach check [dict get $node presence_gate] {
+        if {$check ni $allowed} {
+            lappend out [dict create message \
+                "presence_gate entry '$check' — closed vocabulary: [join $allowed { | }]"]
+        } elseif {$check in $seen} {
+            lappend out [dict create message "presence_gate entry '$check' listed twice"]
+        }
+        lappend seen $check
     }
     return $out
 }

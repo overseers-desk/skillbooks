@@ -45,7 +45,7 @@
 # ---------------------------------------------------------------------------
 
 title: ...                                        # human-readable segment name
-version: "2.0"                                     # SPAR spec generation (see spar-methodology.md, "Versioning")
+version: "2.2"                                     # SPAR spec generation (see spar-methodology.md, "Versioning")
 date: 2026-03-30                                   # date this file was last substantively revised
 sweeper: ...                                       # optional: market family this segment sweeps with; resolves to
                                                    # sweeper-<name>.yaml beside the campaign YAMLs (spar-S-sweep.md §7.1).
@@ -128,6 +128,18 @@ discovery_criteria: |
 
 # kinds:
 #   - {kind}
+
+# --- Presence gate (the checks whose joint emptiness ends a profile at the
+#     rubric's floor: run once each, one query each, before any directory or
+#     same-name work (spar-P-profile.md §4.3). Closed vocabulary: web, and
+#     the platform modules (platforms/{key}.md). When every listed check
+#     finds nothing of the person, the profile is written from the roster and
+#     register facts alone and stops; any hit lifts the gate. Omit the field
+#     when every row deserves the full search.) ---
+
+# presence_gate:
+#   - web
+#   - {platform}
 
 # --- Scope note (boundary conditions with other segments, or exclusions from
 #     this segment's scope) ---
