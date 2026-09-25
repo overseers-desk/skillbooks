@@ -1546,7 +1546,7 @@ proc spar::_yamlmuster_segment {} {
     $inst predicate sweeper_resolves ::spar::_pred_sweeper_resolves
     $inst predicate platforms_vocab  ::spar::_pred_platforms_vocab
     $inst predicate kinds_list       ::spar::_pred_kinds_list
-    $inst predicate presence_gate_vocab ::spar::_pred_presence_gate_vocab
+    $inst predicate no_profile_without_shape ::spar::_pred_no_profile_without_shape
     $inst predicate scalars_as_written ::spar::_pred_scalars_as_written
     spar::_yamlmuster_load $inst segment.rules segment
     set _yamlmuster_segment_inst $inst
@@ -1654,18 +1654,25 @@ proc spar::_pred_kinds_list {node meta} {
     return $out
 }
 
-# presence_gate: web or a platform module, each once.
-proc spar::_pred_presence_gate_vocab {node meta} {
-    if {![dict exists $node presence_gate]} { return {} }
+# no_profile_without: one key, any_of or all_of, of web or platform-module
+# tokens, each once.
+proc spar::_pred_no_profile_without_shape {node meta} {
+    if {![dict exists $node no_profile_without]} { return {} }
+    set field [dict get $node no_profile_without]
+    set keys [dict keys $field]
+    if {[llength $keys] != 1 || [lindex $keys 0] ni {any_of all_of}} {
+        return [list [dict create message \
+            "no_profile_without holds one key, any_of or all_of; found: [join $keys { }]"]]
+    }
     set out {}
     set seen {}
     set allowed [concat web [spar::platform_modules]]
-    foreach check [dict get $node presence_gate] {
+    foreach check [dict get $field [lindex $keys 0]] {
         if {$check ni $allowed} {
             lappend out [dict create message \
-                "presence_gate entry '$check' — closed vocabulary: [join $allowed { | }]"]
+                "no_profile_without entry '$check' — closed vocabulary: [join $allowed { | }]"]
         } elseif {$check in $seen} {
-            lappend out [dict create message "presence_gate entry '$check' listed twice"]
+            lappend out [dict create message "no_profile_without entry '$check' listed twice"]
         }
         lappend seen $check
     }

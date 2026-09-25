@@ -565,6 +565,16 @@ oo::class create spar::ProfileHarness {
             set row [my _roster_row $RosterPath $slug]
         }
         lappend errors {*}[spar::validate_profile $Outfile $row $slug]
+        # A gated row (SPAR-P §4.3) has no profile: the worker's file
+        # carries only the front matter that excludes the row, and once
+        # that is applied the roster row is the record.
+        if {[llength $errors] == 0 \
+                && [string trim [dict getdef $row date_excluded ""]] ne "" \
+                && [spar::profile_body $Outfile] eq ""} {
+            file delete $Outfile
+            ${::spar::harness_log}::info "\[$slug\] no profile: the no_profile_without checks found nothing"
+            return {}
+        }
         # Segment-scoped roster checks reach this harness via
         # contact_name match — within-segment duplicates and
         # shared-inbox collisions surface here for resume.
