@@ -1,6 +1,10 @@
 # SPAR version-uplift runbook
 
-**Applies to:** bringing an existing SPAR campaign instance up to the current spec version (`2.1`), so it declares conformance and the tooling will process it. Read `spar-methodology.md` "Versioning" first for what a version number means.
+**Applies to:** bringing an existing SPAR campaign instance up to the current spec version (`2.2`), so it declares conformance and the tooling will process it. Read `spar-methodology.md` "Versioning" first for what a version number means.
+
+## 2.1 → 2.2: segment definitions gain `kinds` and `presence_gate`
+
+Spec 2.2 changes the segment definition only, and additively (`segment-schema.yaml`). No script: a segment that adopts either field is stamped `version: "2.2"` by hand; one that adopts neither stays at `2.0` and keeps validating.
 
 ## 2.0 → 2.1: the USP moves into the campaign
 
