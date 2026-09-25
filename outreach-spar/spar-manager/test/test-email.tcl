@@ -534,6 +534,67 @@ assert_contains $replied5b "replied_date: 2026-04-08" "final email message stamp
 assert_eq [regexp -all {replied_date: null} $replied5b] 2 \
     "linkedin message and draft round keep null markers"
 
+# 6e. The layout the A harness writes: the rounds list sits two spaces
+# under `rounds:`, and root keys follow it. The reply lands inside the
+# final round at that round's depth and the file still parses.
+set seg6 [make_temp_segment]
+set yaml_harness {decisions:
+  channel: email
+rounds:
+  - type: draft
+    number: 1
+    messages:
+      - channel: email
+        body: Draft body
+  - type: final
+    number: 2
+    messages:
+      - channel: email
+        to: contact@acme-venues.au
+        subject: Test subject
+        body: Hello there
+        actioned_date: 2026-09-23
+        replied_date: null
+fact_provenance:
+  - claim: A claim
+    source: a source
+}
+set ap6 [write_approach_yaml $seg6 "harness-layout" $yaml_harness]
+spar::append_reply_to_yaml $ap6 "2026-09-24T15:05:55+10:00" "Club <club@acme-venues.au>" "Passed on to members.
+
+Regards"
+set fd [open $ap6 r]; set replied6 [read $fd]; close $fd
+set d6 [::yaml::yaml2dict $replied6]
+set final6 [lindex [dict get $d6 rounds] end]
+assert_eq [dict exists $final6 replies] 1 "harness layout: replies sit inside the final round"
+assert_eq [dict get [lindex [dict get $final6 replies] 0] direction] received \
+    "harness layout: the reply parses as an entry"
+assert_contains [dict get [lindex [dict get $final6 replies] 0] body] "Passed on to members." \
+    "harness layout: the body survives as a block"
+assert_eq [dict exists $d6 fact_provenance] 1 "harness layout: the root key after rounds stays a root key"
+assert_contains $replied6 "replied_date: 2026-09-24" "harness layout: replied_date stamped"
+
+# 6f. A write the post-check rejects leaves the file as it was. The check
+# is made to pass before the write and fail after it.
+set seg7 [make_temp_segment]
+set ap7 [write_approach_yaml $seg7 "post-check" $yaml_harness]
+set fd [open $ap7 r]; set before7 [read $fd]; close $fd
+rename spar::_dbc_errors spar::_dbc_errors_real
+set ::dbc_calls 0
+proc spar::_dbc_errors {path} {
+    incr ::dbc_calls
+    if {$::dbc_calls == 1} { return {} }
+    return {"forced post-check failure"}
+}
+set rc7 [catch {spar::append_reply_to_yaml $ap7 "2026-09-24T10:00:00" "x@acme-venues.au" "Reply"} msg7]
+assert_eq $rc7 1 "a rejected write raises"
+assert_eq [string match "*produced invalid YAML*left as it was*" $msg7] 1 \
+    "the error says the file is left as it was"
+rename spar::_dbc_errors ""
+rename spar::_dbc_errors_real spar::_dbc_errors
+set fd [open $ap7 r]; set after7 [read $fd]; close $fd
+assert_eq $after7 $before7 "a rejected write leaves the file as it was"
+
 # ════════════════════════════════════════════════════════════════════════
 # 7. collect_sent_approaches
 # ════════════════════════════════════════════════════════════════════════

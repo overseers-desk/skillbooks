@@ -243,17 +243,6 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
     }
     if {!$has_final} return
 
-    # Escape special YAML characters in body text for safe embedding.
-    # Use literal block scalar (|) for multi-line body.
-    set escaped_body [_indent_body $reply_text 6]
-
-    # Build the reply YAML block
-    set reply_block "  - direction: received\n"
-    append reply_block "    channel: email\n"
-    append reply_block "    date: \"$timestamp\"\n"
-    append reply_block "    from: \"$from_display\"\n"
-    append reply_block "    body: |\n$escaped_body"
-
     # Locate the final round's extent so the replies block lands inside it,
     # not at EOF. Files typically have top-level keys (fact_provenance,
     # a_note, …) after `rounds:` — appending at EOF orphans the replies at
@@ -297,6 +286,19 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
         incr idx
     }
 
+    # A round's keys sit two deeper than its `- type:` marker, whatever
+    # depth the file puts the rounds list at. replies is one of those keys;
+    # its items sit at the same depth, their keys two deeper, and the body
+    # of the literal block two deeper again.
+    set key_ind  [string repeat " " [expr {max($final_indent, 0) + 2}]]
+    set item_ind "${key_ind}  "
+    set escaped_body [_indent_body $reply_text [expr {max($final_indent, 0) + 6}]]
+    set reply_block "${key_ind}- direction: received\n"
+    append reply_block "${item_ind}channel: email\n"
+    append reply_block "${item_ind}date: \"$timestamp\"\n"
+    append reply_block "${item_ind}from: \"$from_display\"\n"
+    append reply_block "${item_ind}body: |\n$escaped_body"
+
     if {$final_end < 0} {
         # No final round found — fall back to appending at EOF so we don't
         # silently drop the reply; DbC-Post will surface any corruption.
@@ -304,14 +306,14 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
         if {$has_replies_section} {
             set new_content "${content_trimmed}\n${reply_block}"
         } else {
-            set new_content "${content_trimmed}\n  replies:\n${reply_block}"
+            set new_content "${content_trimmed}\n${key_ind}replies:\n${reply_block}"
         }
     } else {
         # Insert after final_end. reply_block is multi-line text with a
         # trailing newline; split into lines and splice.
         set insertion {}
         if {!$has_replies_section} {
-            lappend insertion "  replies:"
+            lappend insertion "${key_ind}replies:"
         }
         foreach bl [split [string trimright $reply_block "\n"] "\n"] {
             lappend insertion $bl
@@ -369,12 +371,17 @@ proc spar::append_reply_to_yaml {approach_path timestamp from_display reply_text
     close $fd
 
     # DbC-Post: re-validate. New errors indicate a code bug in the reply-append
-    # logic, which would silently corrupt data if ignored.
+    # logic. The file goes back to what it held before the append, so a bug
+    # costs one reply its record rather than every later reader the file.
     set post_errs [spar::_dbc_errors $approach_path]
     if {[llength $post_errs] > 0} {
+        set fd [open $approach_path w]
+        fconfigure $fd -profile replace
+        puts -nonewline $fd $content
+        close $fd
         puts stderr "append_reply_to_yaml: post-validation failed for $approach_path:"
         foreach e $post_errs { puts stderr "  - $e" }
-        error "append_reply_to_yaml produced invalid YAML at $approach_path"
+        error "append_reply_to_yaml produced invalid YAML at $approach_path; the file is left as it was"
     }
 }
 
