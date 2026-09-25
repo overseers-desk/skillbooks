@@ -147,6 +147,7 @@ ttk::separator .headersep -orient horizontal
 pack .headersep -side top -fill x
 
 bind . <Control-o> {::spar::ui::request_open; break}
+wm protocol . WM_DELETE_WINDOW ::spar::ui::request_quit
 
 # ============================================================
 # Open / mount / welcome
@@ -196,7 +197,29 @@ proc ::spar::ui::request_open {} {
 # async loads or dispatches).
 proc ::spar::ui::relaunch {path} {
     global script_path
+    if {![release_live_runs "open another campaign"]} { return }
     exec [info nameofexecutable] $script_path $path &
+    exit 0
+}
+
+# Ask before this process exits with coachman runs in flight, and stop
+# them on yes. Their workers sit in their own sessions, so an exit
+# without the abort leaves them running with nobody to record the
+# result. Returns 1 when the exit may proceed.
+proc ::spar::ui::release_live_runs {action} {
+    set live [spar::live_harness_count]
+    if {$live == 0} { return 1 }
+    set ans [tk_messageBox -icon warning -type yesno -default no \
+        -title "Stop in-flight runs?" \
+        -message "$live run(s) are still in flight." \
+        -detail "Stop them and $action? Each discards the claude work it has spent so far. Choose No to stay and let them finish."]
+    if {$ans ne "yes"} { return 0 }
+    spar::abort_live_harnesses
+    return 1
+}
+
+proc ::spar::ui::request_quit {} {
+    if {![release_live_runs "quit"]} { return }
     exit 0
 }
 
