@@ -1,8 +1,8 @@
 # spar-manager/transitions/check_replies.tcl
 #
-# CheckRepliesTransition (T7, Send → Reply). Queries the inbox courier
-# reads for the campaign's sender address for replies to sent approaches
-# and appends any new ones to the approach YAML. The class carries the transition metadata,
+# CheckRepliesTransition (T7, Send → Reply). Queries the mailbox that
+# receives the campaign's replies for replies to sent approaches and
+# appends any new ones to the approach YAML. The class carries the transition metadata,
 # the build_opts hook the dispatcher reads, and the prepare_for_pool
 # method that builds the per-row Pool batch; the per-row search-and-
 # fetch leg the Pool's imap_poll worker proc invokes, spar::imap::check_one,
@@ -47,15 +47,17 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
 
     # _build_rows — per-row opts dict construction for prepare_for_pool.
     # Returns {rows {{stem opts} ...}} on success, or "" if a
-    # precondition failed (no sender address, no courier identity for
-    # it, no sent approaches) so the pool skips with no rows.
+    # precondition failed (no sender address, no courier account reading
+    # the reply mailbox, no sent approaches) so the pool skips with no rows.
     # Synchronous failed/skipped events are emitted through on_progress.
     #
-    # The mailbox to search is the courier account whose identity sends
-    # as sender.email: a reply to a message lands where its From address
-    # is read, and courier's identity table is where that mapping lives.
-    # The folder is reply_check.folder, INBOX unless the receiving
-    # account's mail rules file this campaign's replies elsewhere.
+    # The mailbox to search is the one reply_check.mailbox names, the
+    # sender's own address when the campaign names none. A reply lands in
+    # whichever mailbox receives mail for the From address, and that need
+    # not be an account courier sends from: a campaign relaying through its
+    # own SMTP from an alias of another mailbox names that mailbox here.
+    # The folder is reply_check.folder, INBOX unless that mailbox's mail
+    # rules file this campaign's replies elsewhere.
     method _build_rows {opts on_progress} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [dict getdef $opts dry_run 0]
@@ -71,8 +73,9 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
             }
             return ""
         }
-        set sender [dict get $cdata sender email]
-        set folder [dict getdef $cdata reply_check folder INBOX]
+        set sender  [dict get $cdata sender email]
+        set mailbox [dict getdef $cdata reply_check mailbox $sender]
+        set folder  [dict getdef $cdata reply_check folder INBOX]
 
         if {$courier_bin eq ""} {
             set courier_bin [spar::find_tool courier]
@@ -84,7 +87,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
             return ""
         }
         if {[catch {
-            set account [spar::imap::account_for_address $courier_bin $sender]
+            set account [spar::imap::account_reading_address $courier_bin $mailbox]
         } aerr]} {
             if {$on_progress ne ""} {
                 {*}$on_progress "" failed "courier list: $aerr"
@@ -94,7 +97,7 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
         if {$account eq ""} {
             if {$on_progress ne ""} {
                 {*}$on_progress "" failed \
-                    "no courier identity sends as $sender; `courier list` names the addresses it knows"
+                    "no courier account reads mail for $mailbox; name the mailbox that receives replies to $sender as reply_check.mailbox"
             }
             return ""
         }
@@ -226,13 +229,14 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
 
 namespace eval ::spar::imap {}
 
-# spar::imap::account_for_address courier_bin address — the courier IMAP
-# account label whose identity sends as `address`, or "" when no identity
-# carries it. Reads `courier list`, the sanctioned view of courier's
+# spar::imap::account_reading_address courier_bin address — the courier
+# IMAP account label that reads mail for `address`, or "" when none does.
+# An account reads the address it logs in as and every address it carries
+# an identity for. Reads `courier list`, the sanctioned view of courier's
 # configuration (labels, hosts and addresses; no credentials), so the
 # mapping is never copied into a campaign file by hand. Raises when
 # courier itself fails or its output does not parse.
-proc ::spar::imap::account_for_address {courier_bin address} {
+proc ::spar::imap::account_reading_address {courier_bin address} {
     set out [spar::pool_exec $courier_bin list]
     set jb [string first "\{" $out]
     set je [string last  "\}" $out]
@@ -241,6 +245,11 @@ proc ::spar::imap::account_for_address {courier_bin address} {
     }
     set cfg [::json::json2dict [string range $out $jb $je]]
     set wanted [string tolower [string trim $address]]
+    dict for {label acct} [dict getdef $cfg imap {}] {
+        if {[string tolower [dict getdef $acct username ""]] eq $wanted} {
+            return $label
+        }
+    }
     dict for {label ident} [dict getdef $cfg identity {}] {
         if {[string tolower [dict getdef $ident address ""]] eq $wanted} {
             return [dict getdef $ident imap ""]
