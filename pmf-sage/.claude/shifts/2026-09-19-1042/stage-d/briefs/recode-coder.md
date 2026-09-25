@@ -1,0 +1,9 @@
+# Amendment coder, re-coding under an amended rule
+
+Read `briefs/coder-brief-block.md` first, then the whole of `{{AMENDMENT}}`, its latest amendment at the end included, then the comparable profiles listed in your shard file under `{{CORPUS}}/shards/`, with the page texts under `{{PAGES}}` where your prompt says the re-code reads pages. The earlier codings of these units are closed to you.
+
+The rule review changed the rules of the variables its change list names, and the codebook has every unit coded again on a changed variable before any figure is computed. Code those variables, and no others, as the rules now read, for every profile in your shard. This brief serves a rule a coder applies; a variable whose test became a phrase list plus a judgement is re-made by a script and two readers instead, and your prompt will not name it.
+
+Write one file, `{{CORPUS}}/recoded/<your shard's name>/<your shard's name>.tsv`, tab-separated, whose header row is the one line of `{{CORPUS}}/shards/header-recode.tsv` copied as it stands. Say in your report the amendment version you coded under.
+
+A call made earlier about a unit's status, its scope or which of its units or listings the coding is about stands, and the review did not reopen it: where you would have decided otherwise, code under the standing call and say so in the note. Where the amendment's worked case quotes a passage your text does not hold, code what your text holds and note the difference, since the amendment was written against text that is not always in front of you. Where you recognise the unit as the same operator as another entry of the frame, code each entry on its own text and name the twin in the note.

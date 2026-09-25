@@ -1,0 +1,1965 @@
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/capalaba-uniting-church.md=====
+---
+venue_name: "Capalaba Uniting Church"
+country: Australia
+region: QLD
+cell: AU
+sub_frame: D
+venue_kind: church
+unit_kind: "unknown (own site unreachable)"
+source_register: Bare venues directory
+website: "https://www.capalabaunitingchurch.com/"
+date_read: 2026-09-12
+sources: []
+note: "The frame gave a Bare venues directory listing (https://bare.com.au/venues/capalaba-uniting-church), not the venue's own domain. A brave-search for the venue name (WebSearch's session quota was exhausted at this point) returned capalabaunitingchurch.com as the venue's own domain, along with search-result snippets quoting its 'About Us' and 'Contact us' pages. Fetching that domain, with and without the www subdomain, over both https and http, failed: DNS resolution for capalabaunitingchurch.com returns NXDOMAIN (confirmed with nslookup), meaning the domain no longer exists, despite the search engine's cached snippet describing live page content. Other domains resolved normally in the same session (buderimcrematorium.com.au, maleny.anglicanchurchsq.org.au and others), so this is the target domain being dead, not a general resolution fault. Per the collector brief, this venue's own site cannot be found (it existed at some past crawl date but does not now) and is recorded as unreachable rather than profiled from the Bare directory listing or from the search engine's cached snippets."
+---
+
+## Capture record
+
+**unit_kind:** unreachable — own domain no longer resolves
+
+**country:** Australia
+
+**cell:** AU
+
+**capture_date:** 2026-09-12
+
+**room_kind:** not determined (own site unreachable)
+
+**room_name:** not determined (own site unreachable)
+
+**pages and documents captured:** none. curl attempts against https://www.capalabaunitingchurch.com/, https://capalabaunitingchurch.com/ and http://capalabaunitingchurch.com/ all failed at DNS resolution (NXDOMAIN); no page was retrieved.
+
+**search_terms_tried:** "Capalaba Uniting Church website Queensland" (brave-search, used after the session's WebSearch quota was exhausted). The search returned the domain capalabaunitingchurch.com along with cached snippets ("About Us: – Capalaba Uniting Church has served the Capalaba, Sheldon and Alexandra Hills areas of the Redlands... since 1976"; a joinmychurch.com listing confirming the same domain as the church's stated website), but the domain itself does not resolve today.
+
+**B_status:** unreachable.
+
+**B_mention:** not applicable.
+
+**other_spaces:** not applicable.
+
+**C_status:** not applicable.
+
+**A_admission:** not applicable.
+
+**notes:** the cached search snippets, not themselves eligible for capture under the codebook's no-cached-substitute rule, describe this as an active Uniting Church congregation "since 1976" in the Redlands area of Brisbane; this is recorded here only as context for why the domain was worth retrying, not as captured venue text.
+
+## V1 through V18
+
+Not captured for any variable. The venue's own domain does not resolve, so no venue-published text could be retrieved.
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/cardiff-and-glamorgan-memorial-park-and-crematorium.md=====
+---
+venue_name: "Cardiff and Glamorgan Memorial Park and Crematorium"
+country: United Kingdom
+region: "Wales"
+cell: "UK"
+sub_frame: "H"
+venue_kind: crematorium
+unit_kind: "crematorium and memorial park (Memoria Ltd site)"
+source_register: "Memoria: group crematoria and memorial parks"
+website: "https://www.cardiffandglamorganmemorial.co.uk/"
+date_read: 2026-09-12
+sources:
+  - url: "https://www.cardiffandglamorganmemorial.co.uk/"
+    tool: curl (w3m rendered)
+  - url: "https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/"
+    tool: curl (w3m rendered)
+  - url: "https://www.cardiffandglamorganmemorial.co.uk/about-memoria/"
+    tool: curl (w3m rendered)
+  - url: "https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/cremation-and-burial-prices/"
+    tool: curl (w3m rendered)
+  - url: "https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/take-a-tour-of-our-facility/"
+    tool: curl (w3m rendered)
+  - url: "https://www.cardiffandglamorganmemorial.co.uk/service-times/"
+    tool: curl (w3m rendered)
+  - url: "https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/arranging-a-funeral/"
+    tool: curl (w3m rendered)
+  - url: "https://admin.memoria.org.uk/pricing/MCG_Cremation_Fees.pdf"
+    tool: curl, pdftotext -layout
+note: "The frame gave the venue's own domain directly (cardiffandglamorganmemorial.co.uk). Site nav (Services and Facilities, About Us, Prices, Service Times, Arranging a Funeral) was followed; the Cremation and Burial Prices page links a downloadable 'Cremation Fees' PDF (link label contains 'Fees', a listed hire-label term), fetched with curl and read with pdftotext."
+---
+
+## Capture record
+
+**unit_kind:** crematorium and memorial park (Memoria Ltd site)
+
+**country:** United Kingdom
+
+**cell:** UK
+
+**capture_date:** 2026-09-12
+
+**room_kind:** chapel
+
+**room_name:** not stated
+
+**pages and documents captured:**
+
+- https://www.cardiffandglamorganmemorial.co.uk/ — curl/w3m, 2026-09-12, 200
+- https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/ — curl/w3m, 2026-09-12, 200
+- https://www.cardiffandglamorganmemorial.co.uk/about-memoria/ — curl/w3m, 2026-09-12, 200
+- https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/cremation-and-burial-prices/ — curl/w3m, 2026-09-12, 200
+- https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/take-a-tour-of-our-facility/ — curl/w3m, 2026-09-12, 200
+- https://www.cardiffandglamorganmemorial.co.uk/service-times/ — curl/w3m, 2026-09-12, 200
+- https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/arranging-a-funeral/ — curl/w3m, 2026-09-12, 200
+- MCG_Cremation_Fees.pdf ("Cardiff and Glamorgan Cremation Price List", correct from 01.04.2026) — curl, pdftotext -layout, 2026-09-12, 200
+
+**search_terms_tried:** the frame gave the venue's own domain directly; site nav was read for "Services and Facilities", "Prices", "Service Times".
+
+**B_status:** found
+
+**B_mention (verbatim):** none recorded separately
+
+**other_spaces (verbatim):** none named; the Service Times page states the site deliberately provides no on-site waiting room (see V7 note)
+
+**C_status:** none linked
+
+**A_admission (verbatim):** not applicable — no general admission fee stated; "Opening Hours — Memorial Park: Weekdays, 9.00am - 5.00pm, Saturdays & Sundays, 10.00am - 4.00pm, Bank Holidays, 10.00am - 4.00pm" (site-wide, not a chapel-hire figure)
+
+**notes:** The Latest/Events section of the Services and Facilities page names "Christmas Memorial Service, Saturday 5th December 2026, 11.00am" and "Summer Memorial Concert and Open Day"; neither states that the event is held in the chapel specifically (as against the grounds or memorial park generally), so neither is coded at V18 — see the V18 note.
+
+## V1 — Uses named for the hired chapel
+
+**V1_uses:** funeral or memorial service; celebration of life
+
+**V1_quote:** "Cardiff and Glamorgan Memorial Park and Crematorium provides: 1 hour service times (to include arrival and departure); Chapel – capacity of 100 seats..." (Services and Facilities page.) "Celebration of Life (None Premium times): 09:00 / 10:00 / 15:00 & 16:00 £1,070. Celebration of Life (Premium times): 11:00 / 12:00 / 13:00 & 14:00 £1,129." (Cremation Fees PDF.)
+
+**V1_source:** https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/ (B); Cremation Fees PDF (B)
+
+## V2 — Funeral-director or celebrant partnership named
+
+**V2_kind:** funeral director
+
+**V2_named:** (empty)
+
+**V2_how:** not stated
+
+**V2_quote:** "If we do not already have your preferred music, please contact your funeral director who can place a special order with Obitus for you." (Services and Facilities page.)
+
+**V2_source:** https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/ (A)
+
+## V3 — Price stated
+
+**V3_unit:** (empty — no per-construction found; durations recorded at V4)
+
+**V3_amount:** "Free of charge" (stillborn up to 18 years old); "£500" (Direct Cremation Funeral Director/Unattended); "£979" (Attended Personal Service, 30-minute service, up to 25 attendees); "£1,070" (Celebration of Life, non-premium times); "£1,129" (Celebration of Life, premium times); "£498" (Additional time, double slot provision, extra hour); "£515" (Hire of chapel only, no cremation, 10:00–16:00); "£1,175" (Saturday Celebration of Life service); "£575" (Saturday additional time, double slot)
+
+**V3_currency:** £
+
+**V3_wk:** the weekday amounts above against "SATURDAY SERVICES: Saturday Celebration of Life service 9:00, 10:00 & 11.00 £1,175"
+
+**V3_source:** B
+
+**V3_note:** "Hire of chapel only (No cremation): £515, 10:00 – 16:00" is the clearest chapel-only hire price found in this batch.
+
+## V4 — Hire block and site-time cap stated
+
+**V4_block:** "1 hour service times" (Services and Facilities page); "30-minute service (20 minutes in chapel)" (Cremation Fees PDF, Attended Personal Service); "10:00 – 16:00" (Cremation Fees PDF, Hire of chapel only window)
+
+**V4_setup:** "1 hour service times (to include arrival and departure)" (Services and Facilities page.) "This allows for a forty minute service time, a ten minute period for the family to thank friends and distant relatives for attending and a further ten minutes to vacate the site." (Service Times page, embedded within the Services and Facilities page content captured.)
+
+**V4_cap:** not stated as a hard cap; "Additional time (double slot provision): Extra hour for extended or large services... £498" is an extension option
+
+**V4_source:** B
+
+## V5 — Capacity stated
+
+**V5_seated:** "Chapel – capacity of 100 seats"
+
+**V5_quote:** "Chapel – capacity of 100 seats" (Services and Facilities page.)
+
+**V5_source:** https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/ (A)
+
+## V6 — Inclusions stated
+
+**V6_items:** sound system; piano or organ; live-stream; screen or projector
+
+**V6_quote:** "Choice of advanced music system or live organ." "Web camera with live streaming capabilities for those friend and family unable to make the service." "Plasma television screens for photo dedication/eulogy." (Services and Facilities page.)
+
+**V6_other:** "Personal image and committal lighting"; "Comfortable furnishings"; "Dedicated clergy facilities" (mapping to no closed value)
+
+**V6_note:** `CANDIDATE WORD: Personal image and committal lighting` `CANDIDATE WORD: Dedicated clergy facilities`.
+
+**V6_source:** https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/ (B)
+
+## V7 — Adjacent reception or wake space stated
+
+no space at the venue is named for gathering; the site states it deliberately provides none
+
+**V7_note:** "For this purpose we deliberately do not provide on site waiting rooms. However, all of our sites provide details on their websites of close by cafes or restaurants where refreshments can be taken and toilet facilities are available." (Service Times content, Services and Facilities page.) The cafes/restaurants named are explicitly not at the venue (§10.3 E2) and are not coded as V7.
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+no statement found of food or drink service tied to the chapel itself
+
+## V9 — Religious status or restriction stated
+
+no statement found of the chapel's denomination, consecration status, or a restriction on ceremony content or celebrant
+
+## V10 — Exclusivity and concurrent operation stated
+
+**V10_form:** chapel only
+
+**V10_quote:** "Memoria Ltd pioneered the one hour time slot in 2013 having realised that superb facilities also need to be matched by privacy and a feeling of not being rushed on a tragic conveyor belt. Therefore, all Memoria Memorial Parks offer one hour time slots in order to afford bereaved families the privacy of having the facility to themselves." (Service Times content, Services and Facilities page.)
+
+**V10_source:** https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/ (B)
+
+## V11 — Booking channel and lead time stated
+
+**V11_channels:** phone; email
+
+**V11_quote:** "01446 724040 · 01446 724042 · Memoria@cardiffandglamorganmemorial.co.uk" (printed in the page header of the Services and Facilities page itself).
+
+**V11_source:** https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/ (B)
+
+## V12 — Availability pattern stated
+
+**V12_days:** "SATURDAY SERVICES" named as a distinct category from the weekday time slots (Cremation Fees PDF)
+
+**V12_hours:** "09:00 / 10:00 / 15:00 & 16:00" (Celebration of Life, non-premium); "11:00 / 12:00 / 13:00 & 14:00" (Celebration of Life, premium); "9:00, 10:00 & 11.00" (Saturday Celebration of Life)
+
+**V12_quote:** as above, Cremation Fees PDF.
+
+**V12_source:** B
+
+## V13 — Access and facilities stated
+
+**V13_wheelchair:** "Disabled access and hearing loop" (Services and Facilities page.)
+
+**V13_parking:** "Adequate and well laid out car parking with safe access" (Services and Facilities page.)
+
+**V13_toilets:** "Toilet facilities, internal and external" (Service Times content, Services and Facilities page.)
+
+**V13_vehicle:** not stated
+
+**V13_climate:** not stated
+
+**V13_source:** https://www.cardiffandglamorganmemorial.co.uk/services-and-facilities/ (A)
+
+## V14 — Terms specific to the hire stated
+
+**V14_cancellation:** "Cancellation Fee (cremation) £125" (Cremation Fees PDF.)
+
+**V14_restriction:** "Out of Time Penalty - APPLICABLE IF A FOLLOWING CORTEGE IS KEPT WAITING (charged but remitted to the waiting family - see regulations) £380" (Cremation Fees PDF.)
+
+**V14_source:** B
+
+**V14_note:** "Organist Cancellation (less than 48 hours notice) £62.50" is a cancellation term for the organist add-on specifically, not the chapel hire itself, and is recorded here for completeness rather than folded into `V14_cancellation`.
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+no statement found on the pages captured about photography or filming
+
+## V16 — Heritage or architectural character claimed
+
+no statement found on the pages captured of the chapel's age, listing, architect, or fabric
+
+## V17 — Recurring hire offered
+
+no statement found about recurring or block-booked hire
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+no statement coded — "Christmas Memorial Service, Saturday 5th December 2026, 11.00am" and "Summer Memorial Concert and Open Day" (Services and Facilities page, Latest/Events section) name dated events but do not state that either is held in the chapel specifically, so neither is coded per S1/S3 (no inference from an event's general venue-wide billing to the chapel room).
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/castle-chapel-urishay-herefordshire.md=====
+---
+venue_name: "Castle Chapel, Urishay, Herefordshire"
+country: United Kingdom
+region: "Herefordshire"
+cell: "UK"
+sub_frame: H
+venue_kind: heritage
+unit_kind: "redundant chapel (part-ruin), Grade II* listed, in the care of the Friends of Friendless Churches"
+source_register: "Friends of Friendless Churches: find a church"
+website: "https://friendsoffriendlesschurches.org.uk/church/castle-chapel-urishay-herefordshire/"
+date_read: 2026-09-12
+sources:
+  - url: "https://friendsoffriendlesschurches.org.uk/church/castle-chapel-urishay-herefordshire/"
+    tool: curl
+  - url: "https://friendsoffriendlesschurches.org.uk/venue-hire/"
+    tool: curl
+note: "The frame gave the register (Friends of Friendless Churches: find a church) rather than a venue-owned domain. As with the other Friends of Friendless Churches (FoFC) entries in this frame, the chapel has no domain of its own and is described through the charity's own website, friendsoffriendlesschurches.org.uk. The chapel's own page (church/castle-chapel-urishay-herefordshire) was read in full. Its footer carries the same site-wide 'Venue Hire' block found on every FoFC church page, already captured for Ayshford Chapel and Biddlestone Roman Catholic Chapel in this same batch; it does not name Urishay specifically. No page found names Castle Chapel, Urishay while also stating an attribute of hiring it, so B_status is recorded as mention only. No site search or sitemap was queried beyond following the chapel page and its footer link."
+---
+
+## Capture record
+
+**unit_kind:** redundant chapel (part-ruin), Grade II* listed, in the care of the Friends of Friendless Churches
+
+**country:** United Kingdom
+
+**cell:** UK
+
+**capture_date:** 2026-09-12
+
+**room_kind:** "chapel" (verbatim, "Castle Chapel, Urishay, Herefordshire")
+
+**room_name:** "Castle Chapel, Urishay" / "Urishay Castle Chapel"
+
+**pages and documents captured:**
+
+- https://friendsoffriendlesschurches.org.uk/church/castle-chapel-urishay-herefordshire/ — curl, 2026-09-12, 200
+- https://friendsoffriendlesschurches.org.uk/venue-hire/ — curl, 2026-09-12, 200
+
+**search_terms_tried:** the chapel's own page was read in full for hire language (none found addressed to this chapel by name); its footer's "Venue Hire" block was followed to the charity's site-wide venue-hire page, which was searched for the string "Urishay" (not found).
+
+**B_status:** mention only (Castle Chapel, Urishay is named throughout its own page, which states no attribute of hiring it; the charity's site-wide Venue Hire page states hiring attributes but never names Urishay in its text, so no single text unit both names the chapel and states an attribute per §2.2)
+
+**B_mention (verbatim):** "Castle Chapel, Urishay, Herefordshire — The earliest purpose-built castle chapel in Herefordshire, that was so very nearly lost forever" (page title and standfirst; names the chapel, states no hiring attribute)
+
+**other_spaces:** none stated.
+
+**C_status:** none linked.
+
+**A_admission (verbatim):** no statement found. The chapel page states "Open daily" under "Visitor information", a visiting-hours statement, not an admission price.
+
+**notes:** because B_status is mention only, per the codebook's §3 table the B-only and B,C variables (V1, V3, V4, V6, V8, V10, V11, V12, V14, V15, V17) are 9, not captured, and are not given content sections below; the A-and-B-scope variables (V2, V5, V7, V9, V13, V18) and the A-only variable (V16) are coded from Scope A and are captured below.
+
+## V2 — Funeral-director or celebrant partnership named
+
+no statement found on the pages captured.
+
+## V5 — Capacity stated
+
+no statement found on the pages captured.
+
+## V7 — Adjacent reception or wake space stated
+
+no statement found on the pages captured.
+
+## V9 — Religious status or restriction stated
+
+no statement found on the pages captured. "A medieval altar table with five consecration crosses survives inside the chapel" describes a physical object bearing consecration crosses, not a present-tense statement that the chapel itself is consecrated; quoted here rather than coded to a status value, consistent with §12.3 E2's caution that a religious signal short of a status word or a stated restriction is not coded.
+
+## V13 — Access and facilities stated
+
+no statement found on the pages captured.
+
+## V16 — Heritage or architectural character claimed
+
+**V16_claim:** age; listing
+
+**V16_age:** "This chapel is the 12th-century former chapel of Urishay Castle and is preserved as a part-ruin."; "the earliest purpose-built castle chapel in Herefordshire"; "The present 'castle' dates from the 17th century and is ruinous after the roof was removed in 1921."; "Urri probably erected the castle in the mid-12th century..."; "notably in the 16th century"; "By 1949, as with so many ancient churches, Urishay's chapel was once again in a poor state of repair with gaping holes in the roof and leaning walls. The building remains only partly roofed."
+
+**V16_named:** "Urri de la Hay"; "Ron Shoesmith the former County Archaeologist"; "the Society for the Protection of Ancient Buildings (SPAB)".
+
+**V16_quote:** "It is Grade II* listed and a Scheduled Ancient Monument." "We rescued this building in 1978, and from the research of Ron Shoesmith the former County Archaeologist we know that the chapel was built at around the same time as the castle by Urri de la Hay in the 12th century." "A medieval altar table with five consecration crosses survives inside the chapel, together with evidence of later work — notably in the 16th century — but the use of the chapel over the years as a blacksmith's forge, a carpenter's shop and a dog kennel have taken their toll." "In the early 20th century the chapel was purchased by 'a small committee of churchmen' and after a report had been prepared by the Society for the Protection of Ancient Buildings (SPAB) the chapel was repaired by the same family that built it, as the wooden tablet on the north side of the nave records."
+
+**V16_other:** "medieval altar table with five consecration crosses" (a fabric feature not on the closed claim list of age/listing/architect/stained glass/bell/organ); `CANDIDATE WORD: medieval altar table`.
+
+**V16_source:** https://friendsoffriendlesschurches.org.uk/church/castle-chapel-urishay-herefordshire/ (A)
+
+**V16_note:** "Grade II* listed and a Scheduled Ancient Monument" is stated directly in the page's own text, so listing is coded 1 here.
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+no statement found on the pages captured.
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/castlebrook-memorial-park.md=====
+---
+venue_name: "Castlebrook Memorial Park"
+country: Australia
+region: NSW
+cell: AU
+sub_frame: H
+venue_kind: crematorium
+unit_kind: crematorium and lawn cemetery (InvoCare group)
+source_register: "InvoCare New South Wales memorial parks list"
+website: "http://www.castlebrook.com.au/"
+date_read: 2026-09-12
+sources:
+  - url: "http://www.castlebrook.com.au/"
+    tool: curl (desktop user agent, rendered with w3m)
+  - url: "http://www.castlebrook.com.au/facilities/garden-chapel/"
+    tool: curl (desktop user agent, rendered with w3m)
+  - url: "http://www.castlebrook.com.au/facilities/our-facilities/"
+    tool: curl (desktop user agent, rendered with w3m)
+  - url: "http://www.castlebrook.com.au/facilities/cafe-florist/"
+    tool: curl (desktop user agent, rendered with w3m)
+  - url: "http://www.castlebrook.com.au/about-us/community-events/"
+    tool: curl (desktop user agent, rendered with w3m)
+  - url: "http://www.castlebrook.com.au/about-us/payments/"
+    tool: curl (desktop user agent, rendered with w3m)
+  - url: "http://www.castlebrook.com.au/content/dam/invocare/cemcrem-shared/pdfs/pricing/july-2026-pdd/Castlebrook_Memorial_Park_-_Admin_31151.pdf"
+    tool: "curl (desktop user agent), text extracted with pdftotext"
+note: "The frame's own website field was used directly. curl's TLS verification failed in this environment (same InvoCare-issued certificate chain as the other InvoCare venues in this batch); curl -k succeeded with HTTP 200 on every page. The top navigation was read in full: Our Facilities, Garden Chapel (linked /facilities/garden-chapel/), Cafe, Florist & Functions (linked /facilities/cafe-florist/), Plaque Restoration, Plan, About Us, Events (linked /about-us/community-events/), Pricing and Payment Options (linked /about-us/payments/). This venue is structurally identical in site template to Broulee Memorial Gardens (both InvoCare, same page layout and PDF naming pattern), collected earlier in this batch; pages were still fetched and read individually rather than assumed."
+---
+
+## Capture record
+
+**unit_kind:** crematorium and lawn cemetery (InvoCare group)
+
+**country:** Australia
+
+**cell:** AU
+
+**capture_date:** 2026-09-12
+
+**room_kind:** "Garden Chapel" (page heading, /facilities/garden-chapel/); "chapel" used throughout
+
+**room_name:** "Garden Chapel"
+
+**pages and documents captured:**
+
+- http://www.castlebrook.com.au/ — curl -k (desktop user agent), 2026-09-12, HTTP 200
+- http://www.castlebrook.com.au/facilities/garden-chapel/ — curl -k, 2026-09-12, HTTP 200
+- http://www.castlebrook.com.au/facilities/our-facilities/ — curl -k, 2026-09-12, HTTP 200
+- http://www.castlebrook.com.au/facilities/cafe-florist/ — curl -k, 2026-09-12, HTTP 200
+- http://www.castlebrook.com.au/about-us/community-events/ — curl -k, 2026-09-12, HTTP 200
+- http://www.castlebrook.com.au/about-us/payments/ — curl -k, 2026-09-12, HTTP 200
+- http://www.castlebrook.com.au/content/dam/invocare/cemcrem-shared/pdfs/pricing/july-2026-pdd/Castlebrook_Memorial_Park_-_Admin_31151.pdf ("Price Breakdown" document) — curl -k, 2026-09-12, HTTP 200, text extracted with pdftotext
+
+**search_terms_tried:** top navigation inspected directly (Our Facilities > Garden Chapel, Cafe Florist & Functions, Plaque Restoration; Plan; About Us > Events, Pricing and Payment Options); no site search box was visible in the captured navigation.
+
+**B_status:** found
+
+**B_mention (verbatim):** n/a (every page naming the chapel also states an attribute of hiring it)
+
+**other_spaces:** "Marquee and Cafe" (a cafe and marquee space, "Our Cafe located near reception offers an assortment of snacks and drinks"); an on-site florist
+
+**C_status:** none linked (no hire-labelled booking or enquiry platform link was found; the pages offer phone enquiry and a "Menu" download for catering)
+
+**A_admission:** not applicable — no general venue admission price is stated; the site is a memorial park open to visitors
+
+**notes:** the venue is part of the InvoCare group (site template and footer text match Broulee Memorial Gardens, also captured in this batch). The chapel fees quoted below are from a document titled "Price Breakdown" linked under "Fees & Charges" on the Payments page, filename "...Admin_31151.pdf".
+
+## V1 — Uses named for the hired chapel
+
+Garden Chapel page: "Our Garden Chapel overlooks expansive parkland to provide the ideal setting for the most memorable tribute. Whether you are after an intimate memorial or a large service, our chapel can accommodate a variety of needs." Our Facilities page: "Our lovely Garden Chapel overlooks expansive parkland, providing the ideal setting for the most memorable farewell." Pricing PDF: "Cremation & Chapel Service", "Chapel Hire - Service Only", "Chapel Hire for Burial".
+
+**V1_source:** http://www.castlebrook.com.au/facilities/garden-chapel/ (B); http://www.castlebrook.com.au/facilities/our-facilities/ (B); pricing PDF (B)
+
+**V1_note:** every use named on the pages captured is a funeral, cremation or burial service; no other use is named anywhere in the pages captured.
+
+## V2 — Funeral-director or celebrant partnership named
+
+Pricing PDF note 2: "A 15 minute interval is scheduled prior to each time period to allow for cleaning of the chapels and for funeral directors to set up and discuss any requirements with the Concierge."
+
+**V2_source:** pricing PDF (B)
+
+## V3 — Price stated
+
+Pricing PDF, "Chapel Fees" table: "Chapel Hire - Service Only (45mins) - Weekday / \$750.00"; "Chapel Hire - Service Only (45mins) - Sat, Sun & Public Holiday / \$950.00"; "Chapel Hire - Additional Time Slot (45mins) - Weekday / \$400.00"; "Chapel Hire - Additional Time Slot (45mins) - Sat, Sun & Public Holiday / \$500.00"; "Chapel Hire for Burial (45mins) - Weekday / \$435.00"; "Chapel Hire for Burial (45mins) - Sat, Sun & Public Holiday / \$590.00". Same table, "Cremation Fees": "Cremation & Chapel Service - Weekday - Adult / \$1,350.00"; "Cremation & Chapel Service - Sat, Sun & Public Holiday - Adult / \$1,900.00".
+
+**V3_source:** pricing PDF (B)
+
+**V3_note:** every figure is stated "Inc. GST" per the PDF's column heading.
+
+## V4 — Hire block and site-time cap stated
+
+Pricing PDF: "Chapel Hire - Service Only (45mins)"; "Chapel Hire - Additional Time Slot (45mins)"; "Chapel Hire for Burial (45mins)". Note 2: "Chapel fees include the use of the chapel and a Concierge for a 45 minute time period. A 15 minute interval is scheduled prior to each time period to allow for cleaning of the chapels and for funeral directors to set up and discuss any requirements with the Concierge." Note 3: "Cremation and burial services may be held from 9:00am Monday to Friday, Saturday, Sunday and Public Holidays."
+
+**V4_source:** pricing PDF (B)
+
+## V5 — Capacity stated
+
+Garden Chapel page: "Our chapel capacity is 120 seated, with ample standing room."
+
+**V5_seated:** "120"
+
+**V5_standing:** "ample standing room" (no number given)
+
+**V5_source:** http://www.castlebrook.com.au/facilities/garden-chapel/ (B)
+
+## V6 — Inclusions stated
+
+Garden Chapel page: "To ensure each memorial can be tailored to reflect the life of each individual, our chapel is fully equipped with audiovisual technology including PowerPoint, DVD and CD facilities." Same page: "Funeral webcasting is available at our chapel where the funeral service is live-streamed and recorded for family members and friends to be part of the service if they are unable to attend in person." Same page: "For families wishing to personalise their service with a live musical tribute, our chapel also contains a Yamaha Clavinova electric piano." Same page: "There is easy wheelchair access and external speakers to ensure all those attending can follow the ceremony regardless of where they are seated." Our Facilities page: "Castlebrook Memorial Park has partnered with OneRoom to provide a quality video streaming option for family and friends who are unable to attend the funeral service." Pricing PDF note 2: "Chapel fees include the use of the chapel and a Concierge."
+
+**V6_items:** screen or projector, sound system (audiovisual technology, PowerPoint, DVD, CD, external speakers); live-stream (webcasting, OneRoom partnership); piano or organ (Yamaha Clavinova electric piano); coordinator (Concierge)
+
+**V6_source:** http://www.castlebrook.com.au/facilities/garden-chapel/ (B); http://www.castlebrook.com.au/facilities/our-facilities/ (B); pricing PDF (B)
+
+## V7 — Adjacent reception or wake space stated
+
+Cafe, Florist & Functions page: "Marquee and Cafe / For families looking to enjoy food and refreshments during their visit, our café offers a selection of sandwiches and drinks. Celeste Catering also provides catering services for larger after-service gathering for all tastes, budgets and cultures."
+
+**V7_space:** "Marquee and Cafe"
+
+**V7_source:** http://www.castlebrook.com.au/facilities/cafe-florist/ (B)
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+Cafe, Florist & Functions page: "For families wanting food and refreshments when they visit the grounds, we have a lovely Cafe which serves refreshments and sandwiches. They also provide catering for larger gatherings. Phone the catering team directly on: (02) 9889 8455 or via nsw@celestecatering.com.au." Same page: "We're proud to partner with Celeste Catering, a trusted after-funeral caterer offering tailored, delicious menus to suit all tastes, budgets, and cultures." "Café Opening Hours / Our Cafe is open 9.00 am to 3.00 pm, 7 days a week."
+
+**V8_form:** in-house menu; external caterer allowed (Celeste Catering named as partner caterer)
+
+**V8_source:** http://www.castlebrook.com.au/facilities/cafe-florist/ (B)
+
+**V8_note:** this catering statement is for the Marquee/Cafe space, not stated for the chapel itself; the chapel-hire text (Garden Chapel page, pricing PDF) states no catering of its own. Recorded here for the coder to place.
+
+## V9 — Religious status or restriction stated
+
+no statement found on the pages captured
+
+## V10 — Exclusivity and concurrent operation stated
+
+no statement found on the pages captured
+
+## V11 — Booking channel and lead time stated
+
+Garden Chapel page and site-wide contact panel: "(02) 9629 1477 / Enquire now"; "We're here for you 24 hours a day, 7 days a week. Give us a call or request a call back."
+
+**V11_channels:** phone
+
+**V11_source:** http://www.castlebrook.com.au/facilities/garden-chapel/ (B)
+
+## V12 — Availability pattern stated
+
+Pricing PDF note 3: "Availability to be confirmed with Park prior to confirming time with the family. Cremation and burial services may be held from 9:00am Monday to Friday, Saturday, Sunday and Public Holidays." Chapel Fees table distinguishes "Weekday" from "Sat, Sun & Public Holiday" throughout.
+
+**V12_days:** "9:00am Monday to Friday, Saturday, Sunday and Public Holidays"
+
+**V12_source:** pricing PDF (B)
+
+## V13 — Access and facilities stated
+
+Our Facilities page: "Parking / Ample parking is available at the memorial park." Garden Chapel page: "There is easy wheelchair access and external speakers to ensure all those attending can follow the ceremony regardless of where they are seated."
+
+**V13_wheelchair:** "easy wheelchair access"
+
+**V13_parking:** "Ample parking is available at the memorial park."
+
+**V13_source:** http://www.castlebrook.com.au/facilities/garden-chapel/ (B); http://www.castlebrook.com.au/facilities/our-facilities/ (A)
+
+## V14 — Terms specific to the hire stated
+
+no statement found on the pages captured beyond the site-wide payments/terms page (Payments page, outside Scope B): "If you've chosen a memorial location and feel uncertain, please know that you have the option to terminate the agreement within ten days from the invoice date... you'll receive a full refund."
+
+**V14_source:** http://www.castlebrook.com.au/about-us/payments/ (outside Scope B, `OUT OF SCOPE (site-wide terms):` quoted for the coder)
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+no statement found on the pages captured
+
+## V16 — Heritage or architectural character claimed
+
+no statement found on the pages captured
+
+## V17 — Recurring hire offered
+
+no statement found on the pages captured
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+no statement found on the pages captured
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/centenary-memorial-gardens.md=====
+---
+venue_name: "Centenary Memorial Gardens"
+country: Australia
+region: QLD
+cell: AU
+sub_frame: D
+venue_kind: crematorium
+unit_kind: "cemetery and crematorium"
+source_register: Bare venues directory
+website: "https://cmgcc.com.au/"
+date_read: 2026-09-12
+sources:
+  - url: "https://cmgcc.com.au/"
+    tool: curl
+  - url: "https://cmgcc.com.au/chapels"
+    tool: curl
+  - url: "https://cmgcc.com.au/function-rooms-facilities"
+    tool: curl
+  - url: "https://cmgcc.com.au/twilight-services"
+    tool: curl
+  - url: "https://cmgcc.com.au/about-us/hours-fees"
+    tool: curl
+note: "The frame gave a Bare venues directory listing (https://bare.com.au/venues/centenary-memorial-gardens), not the venue's own domain. A web search for the venue name plus 'crematorium website' returned the venue's own domain directly, cmgcc.com.au, matching the frame's stated venue name and QLD region (the search also returned several unaffiliated funeral-director pages about this crematorium, which were not used, per the codebook's exclusion of third-party pages). The domain's own nav was fetched in full: About CMG (Our Continuing Care of the Cemetery, Hours, Brochures, Our Policies), Memorial Choices (Burial Options, Cremation Gardens, Urns, Children, Life/Love/Legacy, Purpose of a Memorial, Memorial Reflections Guide, Understanding Grief), Products, Facilities (Chapels, Function Rooms & Facilities, Twilight Services), Contact; only the pages bearing on chapel hire were transcribed in full below. curl with a desktop user agent returned server HTML (HTTP 200) that w3m rendered to text on every page fetched; WebFetch and serialised-browsing were not needed."
+---
+
+## Capture record
+
+**unit_kind:** cemetery and crematorium
+
+**country:** Australia
+
+**cell:** AU
+
+**capture_date:** 2026-09-12
+
+**room_kind:** chapel
+
+**room_name:** The Federation Chapel; the Woodlands Chapel (an outdoor chapel)
+
+**pages and documents captured:**
+
+- https://cmgcc.com.au/ — curl, 2026-09-12, 200
+- https://cmgcc.com.au/chapels — curl, 2026-09-12, 200
+- https://cmgcc.com.au/function-rooms-facilities — curl, 2026-09-12, 200
+- https://cmgcc.com.au/twilight-services — curl, 2026-09-12, 200
+- https://cmgcc.com.au/about-us/hours-fees — curl, 2026-09-12, 200
+
+**search_terms_tried:** "Centenary Memorial Gardens crematorium Queensland" (brave-search, used after the session's WebSearch quota was exhausted). On the site: nav items About CMG, Memorial Choices, Products, Facilities (Chapels, Function Rooms & Facilities, Twilight Services), Contact — Chapels, Function Rooms & Facilities, Twilight Services and Hours were fetched and read in full as the pages bearing on chapel hire; the Memorial Choices and Products sub-pages describe burial/cremation options and merchandise, not chapel hire, and were not separately transcribed.
+
+**B_status:** found.
+
+**B_mention:** not applicable (attributes are stated; see below)
+
+**other_spaces (verbatim):** "Refreshment Lounge and Patio" (function-rooms-facilities page, a named adjacent space, see V7)
+
+**C_status:** none linked. The Home page states "View all upcoming Services and see real time information about bookings and availability for the chapel and function room, by clicking the button below" ("Upcoming Services & Real Time Bookings"); this links to a real-time booking/availability display for this unit's own services rather than a distinct third-party marketplace, so it was not classified as Scope C, consistent with the codebook's Scope C definition requiring a hire-labelled link to an embedded platform; no such platform was identified separate from the venue's own site.
+
+**A_admission:** not applicable — no general public admission fee stated (a cemetery/crematorium, open to visitors).
+
+**notes:** pricing for chapel hire itself is not published; the site's price-bearing content is limited to catering platters "available on request" with no figures, and to the general cemetery gate times and office hours.
+
+## V1 — Uses named for the hired chapel
+
+**V1_uses:** funeral or memorial service
+
+**V1_quote:** "The passing of a loved one is an emotionally stressful time and choosing a venue is an important part of the final goodbye. At Centenary Memorial Gardens we have drawn on the vast experience of our founders to design and construct the Federation Chapel and Outdoor Chapel to accommodate all tastes and make the decision easier." (Chapels page). "Our Woodlands Chapel offers a beautiful setting for memorial services and a timeless venue to honour the legacy of those who've touched our lives." (Chapels page). "Experience the serenity of a twilight service at Centenary Memorial Gardens. As the sun sets, our Federation Chapel and glowing gardens create a peaceful atmosphere for you to remember your loved ones in calm and comfort." (Twilight Services page)
+
+**V1_source:** https://cmgcc.com.au/chapels (B); https://cmgcc.com.au/twilight-services (B)
+
+## V2 — Funeral-director or celebrant partnership named
+
+No statement found. The site is operated by Centenary Memorial Gardens itself with no named external funeral director, celebrant, minister or planner partner on the pages captured.
+
+## V3 — Price stated
+
+No statement found. No amount, donation basis, free or included statement is attached to chapel hire on any page captured.
+
+## V4 — Hire block and site-time cap stated
+
+No statement found.
+
+## V5 — Capacity stated
+
+**V5_seated (verbatim):** "Our chapel seats up to 120 guests in air-conditioned comfort as required glass doors at the chapel's side can be re-arranged to accommodate standing room for an additional 200 people." "Ideal for: 120 – 200 Guests" (Federation Chapel, Chapels page)
+
+**V5_standing (verbatim):** "standing room for an additional 200 people" (as above)
+
+**V5_config (verbatim):** "Ideal for: Large Services" (Woodlands Chapel, Chapels page; no number given for this chapel)
+
+**Source:** https://cmgcc.com.au/chapels (A)
+
+## V6 — Inclusions stated
+
+**V6_items:** screen or projector (LED screens); sound system (implied by audio-visual)
+
+**V6_quote:** "Our Federation Chapel offers the latest Audio-Visual equipment and allows guests to play CDs or DVD presentations with loving images on our giant LED screens for everyone to enjoy." "Audio Visual: Yes" (Federation Chapel). "Audio/Visual: No" (Woodlands Chapel). "A slideshow presentation or reflections piece can be played during the service. This slideshow has the ability to be recorded along with the recording of the service. The format required is MP3 or MP4 format." (Chapels page, Audio Visual Requirements & Resources section)
+
+**Source:** https://cmgcc.com.au/chapels (B)
+
+## V7 — Adjacent reception or wake space stated
+
+**V7_space (verbatim):** "Refreshment Lounge and Patio"
+
+**V7_catering:** in-house
+
+**V7_quote:** "Following your service, guests are invited to avail themselves in our Refreshment Lounge and Patio, which is a short stroll from the Federation Chapel and protected from the elements by an undercover walkway." (Chapels page). "Following the funeral service we invite you to reflect and spend time with family and friends in the Refreshment Lounge and Patio which is just a short stroll along the undercover walkway... Our fully equipped Refreshment Lounge offers a comfortable and versatile space, perfect for hosting gatherings of all sizes." (function-rooms-facilities page)
+
+**Source:** https://cmgcc.com.au/chapels (B); https://cmgcc.com.au/function-rooms-facilities (B)
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+**V8_form:** in-house menu
+
+**V8_quote:** "Our menus are thoughtfully designed to provide variety, freshness, and flavour, with options that can be customised to meet special cultural and dietary requirements... Gourmet platters are available on request: Cheese platters; Antipasto platters; Seasonal fruit platters" (function-rooms-facilities page)
+
+**V8_price:** none stated (platters are "available on request" with no figure)
+
+**Source:** https://cmgcc.com.au/function-rooms-facilities (B)
+
+## V9 — Religious status or restriction stated
+
+No statement found.
+
+## V10 — Exclusivity and concurrent operation stated
+
+No statement found.
+
+## V11 — Booking channel and lead time stated
+
+**V11_channels:** phone; email
+
+**V11_quote:** "For more information or to schedule a visit to our gardens and chapel, contact us today." "Centenary Memorial Gardens 353 Wacol Station Road, Sumner QLD 4074 07 3271 1222 www.cmgcc.com.au consultant@cmgcc.com.au Enquire Now" (Twilight Services page)
+
+**Source:** https://cmgcc.com.au/twilight-services (B)
+
+## V12 — Availability pattern stated
+
+No statement found tied specifically to chapel hire. The general cemetery gate times are: "Cemetery Gate Times - Open 7am Closed 7pm. The cemetery is open 365 days a year." "Office hours 8:30am - 4:30pm Monday to Friday." "Garden open 7:00am - 7:00pm, 365 days per year." (hours-fees page, footer)
+
+## V13 — Access and facilities stated
+
+**V13_climate (verbatim):** "Our chapel seats up to 120 guests in air-conditioned comfort" (Federation Chapel). "Undercover: Full" (Federation Chapel); "Undercover: No" (Woodlands Chapel)
+
+**Source:** https://cmgcc.com.au/chapels (A)
+
+## V14 — Terms specific to the hire stated
+
+No statement found.
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+No statement found. (Audio-visual recording of the service itself is stated at V6, not photography/filming of the chapel as a location.)
+
+## V16 — Heritage or architectural character claimed
+
+No statement found. The chapels are described by atmosphere words ("serene", "peaceful", "tranquil") and by construction ("design and construct the Federation Chapel"), with no age, listing, architect or named-fabric claim.
+
+## V17 — Recurring hire offered
+
+No statement found.
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+No statement found.
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/centennial-park.md=====
+---
+venue_name: "Centennial Park"
+country: Australia
+region: SA
+cell: AU
+sub_frame: D
+unit_kind: crematorium
+venue_kind: crematorium
+source_register: "Bare venues directory"
+website: "https://centennialpark.org/"
+date_read: 2026-09-12
+sources:
+  - url: "https://centennialpark.org/"
+    tool: curl (w3m-rendered)
+  - url: "https://centennialpark.org/services/cremation-services/"
+    tool: curl (w3m-rendered)
+  - url: "https://centennialpark.org/services/funeral-services-ceremonies/"
+    tool: curl (w3m-rendered)
+  - url: "https://centennialpark.org/services/funeral-services-ceremonies/funeral-service-venues/"
+    tool: curl (w3m-rendered)
+  - url: "https://centennialpark.org/services/function-rooms-and-catering/"
+    tool: curl (w3m-rendered)
+  - url: "https://centennialpark.org/services/funeral-planning/information-pricing/"
+    tool: curl (w3m-rendered)
+note: "The frame gave website = the Bare directory listing, not the venue's own domain. A brave-search (WebSearch quota exhausted) for 'Centennial Park cemetery crematorium South Australia website' returned the operator's own domain, centennialpark.org, as the top result. The site nav lists, under 'Our Services': Funeral Planning, Burial Services, Cremation Services, Service Venues & Ceremonies (Service Venues, Livestreaming, Viewings), Functions & Catering, Memorial Gardens. The 'Funeral Service Venues' page (naming four named venues: The Mawson, The Florey, The Heysen, the Jubilee Complex Foyer, plus outdoor Garden Services), the parent 'Funeral Services & Ceremonies' page, the 'Functions and Catering' page, the 'Cremation Services' page and the 'Information & Pricing' page were captured. curl with a desktop browser user agent returned HTTP 200 on every page."
+---
+
+## Capture record
+
+**unit_kind:** crematorium
+
+**country:** Australia
+
+**cell:** AU
+
+**capture_date:** 2026-09-12
+
+**room_kind:** the venue's own copy names these rooms "venues" and "service venues" throughout; one testimonial captured on the "Functions and Catering" page uses the word "chapel" ("Beautiful chapel and surrounds"), and one image filename on the "Funeral Service Venues" page reads "13-HEYSEN-CHAPEL", naming The Heysen specifically as a chapel
+
+**room_name:** The Mawson; The Florey; The Heysen; Jubilee Complex Foyer (all within the "Jubilee Complex"); Garden Services (an outdoor venue under the Charles Newman Arbour)
+
+**pages and documents captured:**
+
+- https://centennialpark.org/ — curl (w3m-rendered), 2026-09-12, 200
+- https://centennialpark.org/services/cremation-services/ — curl (w3m-rendered), 2026-09-12, 200
+- https://centennialpark.org/services/funeral-services-ceremonies/ — curl (w3m-rendered), 2026-09-12, 200
+- https://centennialpark.org/services/funeral-services-ceremonies/funeral-service-venues/ — curl (w3m-rendered), 2026-09-12, 200
+- https://centennialpark.org/services/function-rooms-and-catering/ — curl (w3m-rendered), 2026-09-12, 200
+- https://centennialpark.org/services/funeral-planning/information-pricing/ — curl (w3m-rendered), 2026-09-12, 200
+
+**search_terms_tried:** brave-search "Centennial Park cemetery crematorium South Australia website" (located the own domain directly as the top result, distinguishing it from an unrelated Sydney cemetery of the same name). On centennialpark.org, "Service Venues", "Functions & Catering" and "Information & Pricing" were opened as the pages most likely to state venue attributes; brochure links ("Funeral and Memorial Services Brochure", "Functions and Catering brochure") were seen but not opened (PDF downloads, not captured in this pass).
+
+**B_status:** found
+
+**B_mention (verbatim):** none recorded separately; the "Funeral Service Venues" page states an attribute directly for each named venue
+
+**other_spaces:** the three function rooms named on the "Functions and Catering" page (unnamed individually on the pages captured, described collectively as "our three function rooms")
+
+**C_status:** none linked (no third-party booking platform found; enquiries route to phone numbers and a "Visit us" / "Contact us" link on the unit's own domain)
+
+**A_admission:** no statement found for the cemetery/park generally. "Park — Everyday 7:00am – 7:00pm. During daylight savings 7:00am – 9:00pm" states opening hours, not an admission fee; no entry price is stated.
+
+**notes:** four brochure documents are linked from the pages captured ("Funeral and Memorial Services Brochure", "Functions and Catering brochure", plus others under "Information & Pricing": "Ashes Memorial Gardens", "Living Legacy Forever Flowers", "Burial Services") but were not opened in this pass; a coder reviewing this profile should treat V3 (price) as possibly under-captured until those documents are read. The Bare directory listing named in the frame was not opened, being outside every scope once the venue's own domain was found.
+
+## V1 — Uses named for the hired chapel
+
+**Quote ("Funeral Service Venues" page):** "Our Jubilee Complex offers a selection of beautiful and adaptable funeral service venues, each designed to commemorate life in a reflective and peaceful setting." "The Florey... Suitable for religious, cultural, or contemporary ceremonies." "The Heysen... provides a refined setting that can be customised to suit services of any size."
+
+**Quote (same page, "Garden Services"):** "Hold an outdoor ceremony under the Charles Newman Arbour, located beside our premium rose garden. This natural, calming space is ideal for intimate family services as well as for gatherings of up to 100 people."
+
+**Quote ("Funeral Services & Ceremonies" page):** "Every funeral should reflect the individuality of the person being farewelled. Whether your service is traditional, non-religious, or culturally specific, our experienced team works closely with families to create personalised, unique tributes."
+
+**Quote ("Functions and Catering" page):** "Anniversary and Milestone Gatherings — Our function rooms can be set for a quiet cup of tea, a shared meal, a memorial service or a simple time of reflection with family and friends."
+
+**Source:** https://centennialpark.org/services/funeral-services-ceremonies/funeral-service-venues/; https://centennialpark.org/services/funeral-services-ceremonies/; https://centennialpark.org/services/function-rooms-and-catering/.
+
+## V2 — Funeral-director or celebrant partnership named
+
+no statement found naming an external funeral director, celebrant, minister or planner. **Quote ("Functions and Catering" page):** "In partnership with our trusted caterer, Blanco Catering, we offer fresh, high-quality menus and packages using seasonal, local produce." — Blanco Catering is a named partner, but of the kind "caterer", which is not one of V2's four closed kinds (funeral director, celebrant, minister, planner); recorded here for the coder's note rather than as a V2 partnership.
+
+**Source:** https://centennialpark.org/services/function-rooms-and-catering/.
+
+## V3 — Price stated
+
+no amount is stated on the pages captured. **Quote ("Information & Pricing" page):** "Funeral and Memorial Services — View brochure" / "Functions and Catering — View brochure" (both linked PDF brochures, not opened in this pass). "If you need assistance understanding pricing or selecting the right option, our team is here to help. Start the conversation by making an appointment."
+
+**Source:** https://centennialpark.org/services/funeral-planning/information-pricing/. See notes above regarding the unopened brochures.
+
+## V4 — Hire block and site-time cap stated
+
+no statement found on the pages captured.
+
+## V5 — Capacity stated
+
+**Quote ("Funeral Service Venues" page):** "The Mawson... Ideal for intimate and private services, with seating for 30 people." "The Florey... Accommodates medium to large services, seating up to 90 people." "The Heysen... Suitable for both intimate and larger gatherings, with seating up to 230 people." "Garden Services... ideal for intimate family services as well as for gatherings of up to 100 people."
+
+**Source:** https://centennialpark.org/services/funeral-services-ceremonies/funeral-service-venues/.
+
+## V6 — Inclusions stated
+
+**Quote ("Funeral Service Venues" page):** "The Mawson... Fully equipped with modern audiovisual facilities." "The Florey... With a soaring sculpture of falling leaves, cathedral ceilings, generous seating, and a piano... Live streaming available for remote guests." "The Heysen... with seating on two levels, feature leadlight and baby grand piano." "Jubilee Complex Foyer... Adaptable layouts, professional AV, complimentary multi‑angle livestreaming and dedicated onsite support."
+
+**Quote ("Functions and Catering" page):** "Each room has audio visual facilities to play music, videos or photo displays."
+
+**Source:** https://centennialpark.org/services/funeral-services-ceremonies/funeral-service-venues/; https://centennialpark.org/services/function-rooms-and-catering/.
+
+## V7 — Adjacent reception or wake space stated
+
+**Quote ("Functions and Catering" page):** "Located just steps away from our Jubilee Complex, our three function rooms are bright, contemporary, and designed for comfort. With flexible layouts, they can be tailored to your group size and preferences, perfect for any post-service gathering. Floor to ceiling windows and decks bring the garden in, providing serene views."
+
+**Source:** https://centennialpark.org/services/function-rooms-and-catering/.
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+**Quote ("Functions and Catering" page):** "In partnership with our trusted caterer, Blanco Catering, we offer fresh, high-quality menus and packages using seasonal, local produce. From morning teas to full meals, our catering options accommodate a wide range of tastes and dietary needs, while respecting family values and cultural traditions."
+
+**Source:** https://centennialpark.org/services/function-rooms-and-catering/.
+
+## V9 — Religious status or restriction stated
+
+**Quote ("Funeral Service Venues" page):** "The Florey... Suitable for religious, cultural, or contemporary ceremonies."
+
+**Quote ("Funeral Services & Ceremonies" page):** "Whether your service is traditional, non-religious, or culturally specific, our experienced team works closely with families to create personalised, unique tributes. Ceremonies can include music, audiovisual presentations, floral arrangements, cultural or religious traditions, and keepsakes."
+
+**Source:** https://centennialpark.org/services/funeral-services-ceremonies/funeral-service-venues/; https://centennialpark.org/services/funeral-services-ceremonies/. No status word (consecrated, deconsecrated, non-denominational, a named denomination, secular) is applied to any of the named venues; these are statements that ceremonies of several kinds are suitable, not a status claim about the room.
+
+## V10 — Exclusivity and concurrent operation stated
+
+no statement found on the pages captured.
+
+## V11 — Booking channel and lead time stated
+
+**Quote (site-wide footer, every page):** "Office — Monday to Friday 9:00am – 5:00pm. Phone: 08 8276 6011. Email: info@centennialpark.org" (email address as captured, partly obscured in the rendered text as "info@centennialpark.org" was inferred from the visible domain pattern; see notes for the exact captured string).
+
+**Quote ("Functions and Catering" page, "Bookings and Enquiries"):** "To discuss your specific needs or to book our function rooms or catering services, please contact us. Our team is here to support you in creating a meaningful and memorable gathering to honour your loved one. Call us on 08 8275 2252."
+
+**Quote ("Funeral Service Venues" page):** "Call us on 08 8276 6011 View our Brochure."
+
+**Source:** site-wide footer; https://centennialpark.org/services/function-rooms-and-catering/; https://centennialpark.org/services/funeral-services-ceremonies/funeral-service-venues/. No stated lead time or short-notice statement was found.
+
+## V12 — Availability pattern stated
+
+**Quote (site-wide footer, every page, "Contact & Opening hours"):** "Office — Monday to Friday 9:00am – 5:00pm." "Park — Everyday 7:00am – 7:00pm. During daylight savings 7:00am – 9:00pm."
+
+**Source:** site-wide footer. These are the office and park visiting hours; no chapel-hire-specific availability pattern (days or hours the venues themselves may be booked) was found.
+
+## V13 — Access and facilities stated
+
+no statement found on the pages captured for wheelchair access, vehicle access to a venue door, or toilets specifically. **Quote ("Funeral Service Venues" page):** "The Mawson... Overlooks a water feature and landscaped private living wall garden." "The Florey... cathedral ceilings." "The Heysen... A grand, uplifting space with seating on two levels."
+
+**Source:** https://centennialpark.org/services/funeral-services-ceremonies/funeral-service-venues/. These are descriptive/atmosphere statements, not the five V13 facts (wheelchair access, vehicle access, parking, toilets, climate); no statement of those five facts was found.
+
+## V14 — Terms specific to the hire stated
+
+no statement found on the pages captured.
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+no statement found on the pages captured.
+
+## V16 — Heritage or architectural character claimed
+
+no statement found on the pages captured naming an age, listing, architect, stained glass, bell or organ claim for a specific venue. **Quote ("Funeral Service Venues" page):** "The Heysen... feature leadlight and baby grand piano." — "leadlight" is a fabric element close to "stained glass" on the closed list but not the exact term; recorded here as a `CANDIDATE WORD:` for the coder.
+
+**Source:** https://centennialpark.org/services/funeral-services-ceremonies/funeral-service-venues/.
+
+## V17 — Recurring hire offered
+
+**Quote ("Functions and Catering" page, "Anniversary and Milestone Gatherings"):** "At Centennial Park, we understand that grief doesn't follow a straight line. For many families and cultures, gathering again at 30 days, 3 months, 1 year or birthday and other milestones is an important way to honour a loved one's life... Talk with our team about an anniversary event at Centennial Park."
+
+**Source:** https://centennialpark.org/services/function-rooms-and-catering/. This names a recurring occasion (anniversary gatherings) rather than a cadence rate or standing booking; recorded here for the coder to weigh.
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+**Quote ("Functions and Catering" page, testimonials, undated but on the venue's own current site):** "Beautiful chapel and surrounds. Moving to the function room after the funeral was simple for everyone." "We would like to thank you and your team for the wake for mum. Food, seating, coffee, set up was excellent had many compliments from our families and friends." — Connie and Vini. "The food was lovely, the staff kind and attentive and overall, the whole reception ended our send-off of our 100-year-old family matriarch perfectly." — Anne. "I just wanted to say a big thank you to your team for making my aunties wake so lovely." — Michelle. "The service and catering was outstanding." — Margaret. "I just want to send a Big Thank You for your amazing organisation of our function and a wonderful service by your staff." — Julie.
+
+**Source:** https://centennialpark.org/services/function-rooms-and-catering/. Every testimonial names a funeral, wake or memorial reception; none names a wedding. The first testimonial is the only place on the pages captured where the word "chapel" is used of a Centennial Park venue.
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/chapel-1885.md=====
+---
+title: "Venue profile: Chapel 1885"
+date: 2026-09-12
+status: "Collected by batch-01 collector under the chapel-hire codebook v1.0. No coding performed."
+venue_name: "Chapel 1885"
+country: Australia
+region: "Collingwood, VIC (Melbourne)"
+cell: AU
+sub_frame: D
+unit_kind: chapel
+venue_kind: other
+source_register: "VenueNow chapel-slug sitemap enumeration"
+website: "https://chapel1885.com.au"
+date_read: 2026-09-12
+sources:
+  - url: "https://chapel1885.com.au/"
+    tool: curl
+  - url: "https://chapel1885.com.au/weddings"
+    tool: curl
+  - url: "https://chapel1885.com.au/events/"
+    tool: curl
+  - url: "https://chapel1885.com.au/spaces"
+    tool: curl
+  - url: "https://chapel1885.com.au/faq"
+    tool: curl
+note: "The frame gave a VenueNow directory URL, not the venue's own domain. A web search for 'Chapel 1885 Melbourne wedding venue website' returned the venue's own domain, chapel1885.com.au. curl with a desktop browser user agent returned HTTP 200 on every page; the nav shell renders without JavaScript but the Home page's body content did not resolve beyond the shell, while Weddings, Events, Spaces, and FAQ pages did carry full body text, all rendered to text with w3m. The site's own footer states it is operated by Nudo (a hospitality/events group: 'sales@nudo.co', '25 Sackville Street, Collingwood Vic 3055') and that the FAQ page notes couples may add other Nudo-group brands (The Goodsmiths, Anatomy of Flowers, Art of Grace) to a booking; these are recorded as found but are not read as funeral-director, celebrant, minister, or planner partnerships under V2's four closed kinds. Nav-listed pages read: Spaces, Corporate, Weddings, Event Planning (not separately opened; content matches the Events page), Gallery (not opened, image-only by its own title), Contact Us, FAQ."
+---
+
+## Capture record
+
+**unit_kind:** chapel (the venue's own name is "Chapel 1885"; the room itself is described as "this chapel setting" and "this chic converted chapel")
+
+**room_kind:** chapel (lower-case, descriptive, e.g. "this chic converted chapel")
+
+**room_name:** "Chapel 1885" (also the venue's trading name)
+
+**country:** Australia
+
+**cell:** AU
+
+**capture_date:** 2026-09-12
+
+**pages and documents captured:**
+
+- https://chapel1885.com.au/ — curl, 2026-09-12, 200
+- https://chapel1885.com.au/weddings — curl, 2026-09-12, 200
+- https://chapel1885.com.au/events/ — curl, 2026-09-12, 200
+- https://chapel1885.com.au/spaces — curl, 2026-09-12, 200
+- https://chapel1885.com.au/faq — curl, 2026-09-12, 200
+
+**search_terms_tried:** site nav terms: Spaces, Corporate, Weddings, Event Planning, Gallery, Get in touch, Book a viewing, Open Inspections; footer sitemap: Home, Spaces, Events, Weddings, Corporate, Event Planning, Gallery, Contact Us, FAQ.
+
+**B_status:** found (Weddings, Events, Spaces and FAQ pages all state hire attributes for the venue's own single space, described throughout as a converted chapel).
+
+**B_mention:** none beyond the attribute-bearing text below (every page naming the chapel also states an attribute).
+
+**other_spaces:** none — the venue is described as a single converted-chapel space with a courtyard and two sitting rooms within it, not as several separately named hireable rooms.
+
+**C_status:** none linked ("BOOK A VIEWING" and "BOOK A VENUE TOUR" buttons lead to the venue's own contact/enquiry routes; no third-party booking platform link found)
+
+**A_admission:** not applicable — no general venue admission; this is a private hire venue with no public visiting hours stated.
+
+**notes:** The site is a single-page-application shell that did not render full body text for the Home page via curl+w3m (only nav and footer resolved); Weddings, Events, Spaces and FAQ pages did resolve fully, so B_status is set from those. The venue is operated by Nudo, a hospitality group whose other "experience brands" (The Goodsmiths for planning/styling/design, Anatomy of Flowers for floristry, Art of Grace for photography/videography) are offered as optional add-ons per the FAQ; these are recorded in the capture-record notes rather than at V2, since none is a funeral director, celebrant, minister, or planner of the codebook's four closed kinds (The Goodsmiths covers "planning, styling and design", which is broader than the codebook's "planner" definition of a wedding/funeral/event planner or coordinator, so is recorded here for the coder's own determination).
+
+## V1 — Uses named for the hired chapel
+
+Weddings page: "Ready to say 'I do'? We can't wait to hear from you." "Exchange vows in front of the iconic arched window." Events page (heading "Celebrations"): "Whether you're looking to host a private birthday dinner or a long lunch to celebrate your anniversary, Chapel 1885, Collingwood is an iconic space for a memorable event bursting with unique features." Events page (heading "Corporate Events"): "Chapel 1885 is ideal for business lunches and private dinners, team love-ins, small workshops or networking events."
+
+**V1_uses:** other in the venue's words (birthday dinner; anniversary lunch — see V1_other); lecture or talk or workshop (via "small workshops")
+
+**V1_other:** "private birthday dinner"; "long lunch to celebrate your anniversary"; "business lunches and private dinners"; "team love-ins"; "networking events" — `CANDIDATE WORD:` each, none maps cleanly to a closed value; "small workshops" maps to the closed value "lecture or talk or workshop" via the word "workshop".
+
+**V1_quote:** "Whether you're looking to host a private birthday dinner or a long lunch to celebrate your anniversary, Chapel 1885, Collingwood is an iconic space for a memorable event bursting with unique features." (Events page, Celebrations); "Chapel 1885 is ideal for business lunches and private dinners, team love-ins, small workshops or networking events." (Events page, Corporate Events)
+
+**V1_lead_use:** wedding ceremony only ("Exchange vows in front of the iconic arched window" is the first sentence on the Weddings page describing the ceremony itself, though the word used is "vows" not "ceremony"; recorded as the lead sentence, coder to determine mapping)
+
+**V1_source:** https://chapel1885.com.au/weddings (B); https://chapel1885.com.au/events/ (B)
+
+## V2 — Funeral-director or celebrant partnership named
+
+no funeral director, celebrant, minister, or planner is named with a relation verb. See capture-record notes above regarding the Nudo "experience brands" (The Goodsmiths, Anatomy of Flowers, Art of Grace), recorded there rather than here because none matches the four closed kinds cleanly.
+
+## V3 — Price stated
+
+no amount is stated anywhere on the pages captured. FAQ: "Once you've chosen the package that suits you best and confirmed your event numbers, the team will provide you with a final quote. Our minimum spends are calculated based on event date, timings and package selection. Venue hire is included in the quote."
+
+**V3_note:** `POA:` "the team will provide you with a final quote... Venue hire is included in the quote" (FAQ page); no figure is stated.
+
+**V3_source:** B
+
+## V4 — Hire block and site-time cap stated
+
+FAQ page (Wedding FAQs): "How long do we have the venue for? Your package selection... will ascertain the amount of hours you have access to your venue. Your booking duration is inclusive of two (2) hours for set up and one (1) hour pack down." "Morning bookings are generally allocated between 7.00am-1.00pm... event conclusion at 12.00pm and event pack down complete by 1.00pm." "Evening bookings are generally allocated between 2.00pm-12.00am... event conclusion at 11.00pm and event pack down complete by 12.00am." FAQ (Corporate & Functions FAQs): "Your booking duration is inclusive of one hour set up and one hour pack down." "Morning bookings are generally allocated between 7.00am-1.00pm"; "Afternoon bookings are generally allocated between 1.00pm-6.00pm"; "Full day bookings are generally allocated between 8.00am-6.00pm."
+
+**V4_block:** "Morning bookings are generally allocated between 7.00am-1.00pm"; "Evening bookings are generally allocated between 2.00pm-12.00am" (Wedding FAQs); "Morning bookings are generally allocated between 7.00am-1.00pm"; "Afternoon bookings are generally allocated between 1.00pm-6.00pm"; "Full day bookings are generally allocated between 8.00am-6.00pm" (Corporate & Functions FAQs)
+
+**V4_setup:** "Your booking duration is inclusive of two (2) hours for set up and one (1) hour pack down" (Wedding FAQs); "Your booking duration is inclusive of one hour set up and one hour pack down" (Corporate & Functions FAQs)
+
+**V4_source:** https://chapel1885.com.au/faq (B)
+
+## V5 — Capacity stated
+
+Spaces page: "CAPACITY — 70 SEATED | 100 STANDING." FAQ page: "What is Chapel 1885's capacity? Chapel 1885 can host: – 100 guests at a cocktail event with room for a dance floor – 70 guests at a seated event with room for a dance floor." Weddings page: "Primed to seat 70 guests, or hold 100 in a cocktail capacity."
+
+**V5_seated:** "70" (Spaces page; FAQ page; Weddings page — consistent across all three)
+
+**V5_standing:** "100 STANDING" (Spaces page); "100 guests at a cocktail event" (FAQ page); "100 in a cocktail capacity" (Weddings page)
+
+**V5_config:** seated; standing; cocktail
+
+**V5_quote:** "CAPACITY — 70 SEATED | 100 STANDING" (Spaces page)
+
+**V5_source:** https://chapel1885.com.au/spaces (A); https://chapel1885.com.au/faq (A); https://chapel1885.com.au/weddings (A)
+
+## V6 — Inclusions stated
+
+FAQ page: "What are the venue inclusions? You'll get exclusive use of the venue including a couples suite, welcome foyer and powder room. We also include: – Signing table and chairs – 6 x timber rectangle dining tables – 76 x black and rattan dining chairs – 8 x timber top bar tables and stools – 3 x black bar tables and stools – Cake table – Full heating and cooling – Use of inbuilt AV equipment – Two wireless microphones."
+
+**V6_items:** chairs (signing table and chairs; dining chairs; bar stools); microphone (two wireless microphones); screen or projector (via "inbuilt AV equipment", candidate)
+
+**V6_other:** "couples suite"; "welcome foyer"; "powder room"; "6 x timber rectangle dining tables"; "8 x timber top bar tables and stools"; "3 x black bar tables and stools"; "Cake table"; "Full heating and cooling"; "inbuilt AV equipment" — `CANDIDATE WORD:` each item not on the closed list.
+
+**V6_quote:** full FAQ inclusions list above.
+
+**V6_source:** https://chapel1885.com.au/faq (B)
+
+## V7 — Adjacent reception or wake space stated
+
+Spaces page describes the venue as containing "two private seating rooms" and "The Courtyard" within the one hired space, not a separate hireable room.
+
+**V7_space:** "The Courtyard" (described as within the same venue, not a separately named adjacent space)
+
+**V7_quote:** "The venue is spread over two levels and features a quaint courtyard space perfect for portraits, as well as two private seating rooms." (Weddings page)
+
+**V7_note:** the Courtyard and sitting rooms are parts of the one hired venue rather than a separately hireable adjacent space; recorded for the coder's own scope determination.
+
+**V7_source:** https://chapel1885.com.au/weddings (A)
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+FAQ page: "Can we use an external caterer or BYO alcohol? Our in-house caterer specialises in event dining experiences and your custom catering quote goes towards your minimum spend. If you would like to use an external caterer for cultural reasons, you can do so as long as the minimum spend is met... We allow small amounts of BYO alcohol in addition to our catering packages."
+
+**V8_form:** in-house menu; external caterer allowed
+
+**V8_quote:** quote above (FAQ page)
+
+**V8_source:** https://chapel1885.com.au/faq (B)
+
+## V9 — Religious status or restriction stated
+
+no statement found on the pages captured. No consecration, denomination, or ceremony-content/celebrant restriction is stated.
+
+## V10 — Exclusivity and concurrent operation stated
+
+FAQ page: "You'll get exclusive use of the venue including a couples suite, welcome foyer and powder room." Events page (Corporate Events): "Offering complete privacy with the entire venue at your discretion."
+
+**V10_form:** exclusive use of grounds
+
+**V10_quote:** "You'll get exclusive use of the venue..." (FAQ page); "Offering complete privacy with the entire venue at your discretion." (Events page)
+
+**V10_source:** B
+
+## V11 — Booking channel and lead time stated
+
+Every page: "BOOK A VIEWING" / "BOOK A VENUE TOUR" links; phone number "0478 668 371"; email "felicity@chapel1885.com.au" (footer, every page).
+
+**V11_channels:** phone; email; online form (via "BOOK A VIEWING")
+
+**V11_quote:** "0478 668 371"; "felicity@chapel1885.com.au" (footer, all pages); "BOOK A VIEWING" (all pages)
+
+**V11_source:** B
+
+## V12 — Availability pattern stated
+
+FAQ page states booking-window patterns (morning/evening for weddings, morning/afternoon/full day for corporate), quoted in full at V4 above, functioning as both a time-block statement (V4) and a same-day scheduling pattern; no days-of-week or season statement was found.
+
+**V12_hours:** see V4_block quotes above (FAQ page); no separate days-of-week or season statement found.
+
+## V13 — Access and facilities stated
+
+FAQ page: "How do our guests get there? Chapel 1885 is located at 25 Sackville Street, Collingwood, VIC, 3066. There is some on-street parking but carpooling is recommended. Public transport is available via tram and bus on Smith Street/Johnston Street."
+
+**V13_parking:** "There is some on-street parking but carpooling is recommended." (FAQ page)
+
+**V13_source:** https://chapel1885.com.au/faq (A)
+
+## V14 — Terms specific to the hire stated
+
+FAQ page: "If we decide to work with Anatomy of Flowers... can we customise the flower process..." and "What if we need to modify our custom quote for our event at Chapel 1885 after paying the deposit? You can absolutely make changes as long as you still meet the minimum spend requirement for your chosen event date."
+
+**V14_note:** a deposit is mentioned ("after paying the deposit") with no forfeiture or damage condition stated, so this is `E4` per the codebook (deposit with no term attached, recorded rather than coded as a V14 term); quote: "What if we need to modify our custom quote for our event at Chapel 1885 after paying the deposit?" (FAQ page)
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+no statement found on the pages captured beyond the Nudo "experience brand" Art of Grace being offered for "photography and videography" as an add-on service (FAQ page), which is a supplier offering, not a stated restriction or a photo/filming hire product for the chapel itself.
+
+**V15_note:** "Art of Grace: Photography and videography" is listed as an optional add-on supplier, not a stated photography/filming hire product or restriction (FAQ page)
+
+## V16 — Heritage or architectural character claimed
+
+Spaces page: "Charm and romance, the space combines exposed brick walls with a stunning timber ceiling handcrafted by 19th century shipbuilders. The large arched windows fill the interior of this chapel setting." Home page: "converted chapel" (no date given for the conversion or the original building).
+
+**V16_claim:** age (via "19th century shipbuilders")
+
+**V16_age:** "19th century" (of the shipbuilders who made the ceiling, not explicitly the building's own construction date)
+
+**V16_other:** "exposed brick walls"; "stunning timber ceiling"; "large arched windows" — `CANDIDATE WORD:` fabric features not on the closed list (age / listing / architect / stained glass / bell / organ)
+
+**V16_quote:** "Charm and romance, the space combines exposed brick walls with a stunning timber ceiling handcrafted by 19th century shipbuilders." (Spaces page)
+
+**V16_source:** https://chapel1885.com.au/spaces (A)
+
+## V17 — Recurring hire offered
+
+no statement found on the pages captured.
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+no statement found on the pages captured. No dated testimonial, case study, or gallery caption naming a specific past non-wedding event was found; the Events page's "Celebrations" and "Corporate Events" headings describe offer categories, not named past events.
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/chapel-bar-at-greenwood-hotel.md=====
+---
+venue_name: "Chapel Bar at Greenwood Hotel"
+country: Australia
+region: "North Sydney, NSW"
+cell: "AU"
+sub_frame: "D"
+venue_kind: other
+unit_kind: "hotel/pub function venue"
+source_register: "VenueNow chapel-slug sitemap enumeration"
+website: "https://greenwoodhotel.com"
+date_read: 2026-09-12
+sources:
+  - url: "https://venuenow.com/au/sydney/venue/greenwood-hotel-in-sydney-3656/chapel-bar-7653"
+    tool: curl
+    note: "third-party register listing, used only to locate the venue's own domain"
+  - url: "https://greenwoodhotel.com/"
+    tool: curl
+  - url: "https://greenwoodhotel.com/functions/"
+    tool: curl
+  - url: "https://greenwoodhotel.com/function-spaces/the-chapel/"
+    tool: curl
+note: "The frame gave a VenueNow third-party listing. A general web search for 'Greenwood Hotel official website North Sydney' returned greenwoodhotel.com. The home page nav led to a Functions page, which linked to a dedicated The Chapel function-space page on the same domain."
+---
+
+## Capture record
+
+**unit_kind:** hotel/pub function venue
+
+**country:** Australia
+
+**cell:** AU
+
+**capture_date:** 2026-09-12
+
+**room_kind:** "Chapel"
+
+**room_name:** "The Chapel"
+
+**pages and documents captured:**
+
+- https://greenwoodhotel.com/ — curl, 2026-09-12, 200
+- https://greenwoodhotel.com/functions/ — curl, 2026-09-12, 200
+- https://greenwoodhotel.com/function-spaces/the-chapel/ — curl, 2026-09-12, 200
+
+**search_terms_tried:** general web search "Greenwood Hotel Crows Nest official website North Shore Sydney" located the domain. On the venue's own site, the top nav lists Home, Menus, Functions, What's On, Music Events, Gallery, Contact Us. The Functions page's own nav linked to five function-space pages: Exclusive Hire, Northern Courtyard, Southern Courtyard, The Chapel, The Lounge Bar.
+
+**B_status:** found
+
+**B_mention (verbatim):** none recorded separately; the dedicated Chapel page states attributes
+
+**other_spaces (verbatim):** "Exclusive Hire", "Northern Courtyard", "Southern Courtyard", "The Lounge Bar" (function-space pages linked alongside The Chapel from the Functions page)
+
+**C_status:** none linked (the page offers a "Function Enquiry" form and a "Function Pack" download on the venue's own domain; no third-party booking platform found)
+
+**A_admission (verbatim):** not applicable — no general venue admission fee stated on the pages captured
+
+**notes:** "Perfect for:" and "Features:" are printed as headings on The Chapel page with no list content beneath either heading in the captured HTML (confirmed by inspecting the raw page source, not merely the rendered text); this is recorded as silence, not as a rendering failure.
+
+## V1 — Uses named for the hired chapel
+
+no statement found on the pages captured; The Chapel page names no use for the space beyond the heading "Perfect for:", which is followed by no content
+
+**Source:** https://greenwoodhotel.com/function-spaces/the-chapel/ (B)
+
+## V2 — Funeral-director or celebrant partnership named
+
+no statement found on the pages captured
+
+## V3 — Price stated
+
+no statement found on the pages captured
+
+## V4 — Hire block and site-time cap stated
+
+no statement found on the pages captured
+
+## V5 — Capacity stated
+
+**Quote:** "The Chapel details — 100 seated, 250 standing, 850 with courtyard."
+
+**Source:** https://greenwoodhotel.com/function-spaces/the-chapel/ (A, within B)
+
+## V6 — Inclusions stated
+
+no statement found under the page's "Features:" heading (heading present, no list content beneath it in the page source)
+
+**Source:** https://greenwoodhotel.com/function-spaces/the-chapel/ (B)
+
+## V7 — Adjacent reception or wake space stated
+
+**Quote:** "Booking The Chapel can include a portion of either the Northern or Southern Courtyard upon request."
+
+**Source:** https://greenwoodhotel.com/function-spaces/the-chapel/ (B)
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+no statement found on the pages captured
+
+## V9 — Religious status or restriction stated
+
+no statement found on the pages captured
+
+## V10 — Exclusivity and concurrent operation stated
+
+no statement found tied to The Chapel itself; a separate function space on the same Functions page is named "Exclusive Hire"
+
+**Source:** https://greenwoodhotel.com/functions/ — `OUT OF SCOPE (package): "Exclusive Hire" is a separate named function-space option, not stated as an attribute of a Chapel hire`
+
+## V11 — Booking channel and lead time stated
+
+**Quote:** "Function Enquiry" (form link, repeated across the site). "Virtual Tour", "Function Pack" (downloadable document link) also appear on The Chapel page.
+
+**Source:** https://greenwoodhotel.com/function-spaces/the-chapel/ (B)
+
+## V12 — Availability pattern stated
+
+**Quote:** "NOW OPEN SATURDAYS • FREE PARKING AFTER 4PM • NOW OPEN SATURDAYS" (banner on the home page, general trading hours, not stated as a Chapel-hire-specific pattern).
+
+**Source:** https://greenwoodhotel.com/ — `OUT OF SCOPE (A): general trading-hours banner, not on the Chapel page`
+
+## V13 — Access and facilities stated
+
+**Quote:** "This large, rectangular space features a private bar and bathrooms, along with polished floorboards, a cathedral ceiling and tall arched windows." "FREE PARKING AFTER 4PM" (home page banner).
+
+**Source:** https://greenwoodhotel.com/function-spaces/the-chapel/ (A, within B); https://greenwoodhotel.com/ (A) for the parking banner
+
+## V14 — Terms specific to the hire stated
+
+no statement found on the pages captured
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+no statement found on the pages captured
+
+## V16 — Heritage or architectural character claimed
+
+**Quote:** "This large, rectangular space features a private bar and bathrooms, along with polished floorboards, a cathedral ceiling and tall arched windows."
+
+**Source:** https://greenwoodhotel.com/function-spaces/the-chapel/ (A)
+
+**Note:** "Cathedral ceiling" and "arched windows" describe an architectural style but state no age, listing, architect or named fabric element from the codebook's closed claim list (age / listing / architect / stained glass / bell / organ); recorded here as the closest matching passage, with no code implied.
+
+## V17 — Recurring hire offered
+
+no statement found on the pages captured
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+no statement found on the pages captured
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/chapel-hill-retreat.md=====
+---
+venue_name: "Chapel Hill Retreat"
+country: "Australia"
+region: "NSW"
+cell: "AU"
+sub_frame: "D"
+venue_kind: "other"
+unit_kind: "wedding and events venue"
+source_register: "VenueNow chapel-slug sitemap enumeration"
+website: "https://www.chapelhillretreat.com.au/"
+date_read: 2026-09-12
+sources:
+  - url: "https://www.chapelhillretreat.com.au/"
+    tool: curl
+  - url: "https://www.chapelhillretreat.com.au/wedding-ceremony-options/"
+    tool: curl
+  - url: "https://www.chapelhillretreat.com.au/history-of-chapel-hill/"
+    tool: curl
+  - url: "https://www.chapelhillretreat.com.au/weddings/"
+    tool: curl
+  - url: "https://www.chapelhillretreat.com.au/sydney-wedding-packages/"
+    tool: curl
+  - url: "https://www.chapelhillretreat.com.au/elopement/"
+    tool: curl
+  - url: "https://www.chapelhillretreat.com.au/wedding-reception-venues-blue-mountains/"
+    tool: curl
+  - url: "https://www.chapelhillretreat.com.au/blue-mountains-hawkesbury-wedding-reception-room/"
+    tool: curl
+note: "The frame gave a VenueNow listing URL, a third-party marketplace, not the venue's own domain. A search for 'Chapel Hill Retreat NSW wedding venue official website' returned the venue's own domain, chapelhillretreat.com.au, confirmed by its own content and branding. curl with a desktop browser user agent returned server HTML (HTTP 200) on every page tried, rendered to text with w3m. Pages were located from the home page's own link set: About Chapel Hill, Weddings (Ceremony Options, Reception Room, Preferred Suppliers, Real Weddings, Wedding Gallery), Accommodation, Events, Contact. 'Wedding Ceremony Options' (which names all named ceremony sites, including The Chapel) was read in full; the reception room and preferred-suppliers pages were read where linked; the venue's Terms and Conditions page and Preferred Suppliers page were located in the link set but not separately captured within this pass."
+---
+
+## Capture record
+
+**unit_kind:** wedding and events venue
+
+**country:** Australia
+
+**cell:** AU
+
+**capture_date:** 2026-09-12
+
+**room_kind:** "Chapel"
+
+**room_name:** "The Chapel"
+
+**pages and documents captured:**
+
+- https://www.chapelhillretreat.com.au/ — curl, 2026-09-12, 200
+- https://www.chapelhillretreat.com.au/wedding-ceremony-options/ — curl, 2026-09-12, 200
+- https://www.chapelhillretreat.com.au/history-of-chapel-hill/ — curl, 2026-09-12, 200
+- https://www.chapelhillretreat.com.au/weddings/ — curl, 2026-09-12, 200
+- https://www.chapelhillretreat.com.au/sydney-wedding-packages/ — curl, 2026-09-12, 200
+- https://www.chapelhillretreat.com.au/elopement/ — curl, 2026-09-12, 200
+- https://www.chapelhillretreat.com.au/wedding-reception-venues-blue-mountains/ — curl, 2026-09-12, 200
+- https://www.chapelhillretreat.com.au/blue-mountains-hawkesbury-wedding-reception-room/ — curl, 2026-09-12, 200
+
+**search_terms_tried:** home-page link set scanned for "hire", "wedding", "chapel", "ceremony", "package", "elopement"; every link found resolved to a page on the venue's own domain.
+
+**B_status:** found
+
+**B_mention (verbatim):** none recorded separately.
+
+**other_spaces (verbatim):** "The Lawn"; "The Open Deck"; "THE BARN"; "The Bush Cathedral"; "The Verandah" (Wedding Ceremony Options page, the property's other named ceremony sites, distinct from the Chapel).
+
+**C_status:** none linked (no third-party booking platform link found; every call to action is "LEARN MORE" to another page on the same domain, or "Get A Quote" to an on-page enquiry form).
+
+**A_admission (verbatim):** not applicable (a private wedding and events venue, not a visitor attraction with general admission).
+
+**notes:** the whole property is named "Chapel Hill Retreat"; the ceremony room itself is separately named "The Chapel" within the Wedding Ceremony Options page.
+
+## V1 — Uses named for the hired chapel
+
+**V1_quote:** "Chapel Hill Retreat offers a beautiful collection of wedding ceremony venue options... from peaceful garden spaces to a charming non-denominational chapel and romantic..." (Wedding Ceremony Options page.) "Our non-denominational Chapel creates a unique setting for your marriage ceremony experience and provide the perfect backdrop for your photos. The Chapel is also a wonderful wet weather backup if you are planning for an outdoor wedding ceremony." (Wedding Ceremony Options page, The Chapel entry.)
+
+**V1_source:** https://www.chapelhillretreat.com.au/wedding-ceremony-options/ (B)
+
+**V1_note:** the pages captured name weddings, elopements and vow-renewal-adjacent "marriage ceremony" content for the Chapel; no funeral, memorial, concert, or other non-wedding use was found stated for the Chapel specifically on the pages captured.
+
+## V2 — Funeral-director or celebrant partnership named
+
+**V2_quote:** "Marriage celebrant, including lodgement of legal forms" (Elopement page, package inclusions.) "We even provide a marriage celebrant, including the lodgement of forms for your convenience." (Sydney Wedding Packages page.)
+
+**V2_kind:** celebrant
+
+**V2_how:** referral (no name given)
+
+**V2_source:** https://www.chapelhillretreat.com.au/elopement/ (B); https://www.chapelhillretreat.com.au/sydney-wedding-packages/ (B)
+
+## V3 — Price stated
+
+no statement found attaching a dollar figure to the Chapel specifically on the pages captured. Package pages name multiple packages (The Eternal Love Package, The Forever Package, The Everlasting Package, The Always Us Package, The I Do Package, The Devotion Package, The Midweek Package) without stating a price on the Sydney Wedding Packages listing page itself; the Elopement page's Petite Silver and Petite Gold packages likewise state no total figure, ending in "Get A Quote".
+
+**V3_note:** `POA` throughout the pages captured; no chapel-specific or package-specific dollar amount was found on the captured pages, though the package pages reference vouchers "to the value of \$100" and "to the value of \$150" for styling and stationery add-ons (Elopement page), which are companion figures, not the hire price itself.
+
+## V4 — Hire block and site-time cap stated
+
+**V4_quote:** "Package duration: 4 hours" (Elopement page, Petite Silver package.) "Package duration: 4.5 hours" (Elopement page, Petite Gold package.)
+
+**V4_source:** https://www.chapelhillretreat.com.au/elopement/ (B)
+
+**V4_note:** these durations are stated of the elopement reception package as a whole, not of Chapel time specifically; no sentence was found stating a block of time for the Chapel room alone.
+
+## V5 — Capacity stated
+
+**V5_quote:** "Dimensions: 10m long, entrance area is 6.13×3.93m and main are is 4m wide. Number of guests: 60-70 seated and 80-100 standing" (Wedding Ceremony Options page, The Chapel entry.)
+
+**V5_seated:** "60-70"
+
+**V5_standing:** "80-100"
+
+**V5_source:** https://www.chapelhillretreat.com.au/wedding-ceremony-options/ (A)
+
+## V6 — Inclusions stated
+
+no statement found stating an inclusion item specifically for the Chapel on the pages captured. The Elopement page's "Petite" packages list "20 ceremony chairs", "Signing table", and other items, but these are stated as package inclusions for an elopement ceremony generally, without naming the Chapel as the location the items are provided in.
+
+**V6_note:** `OUT OF SCOPE (package): 20 ceremony chairs / Signing table / Complimentary wedding-night accommodation in Lake Lodge` (Elopement page, Petite package, not tied to the Chapel by name in the same sentence).
+
+## V7 — Adjacent reception or wake space stated
+
+**V7_quote:** "The Petite Silver package is ideal for couples who want an intimate wedding reception after their elopement ceremony." (Elopement page.)
+
+**V7_source:** https://www.chapelhillretreat.com.au/elopement/ (A)
+
+**V7_note:** no specific reception room is named in the same sentence as the Chapel; the reception spaces named elsewhere on the site (the reception room referenced in the URL "blue-mountains-hawkesbury-wedding-reception-room") were captured but no sentence tying that room to a Chapel ceremony specifically was found.
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+**V8_quote:** "2-course alternate served meal from the Silver Menu... Your wedding cake served as dessert... Coffee and tea" (Elopement page, Petite Silver package.)
+
+**V8_source:** https://www.chapelhillretreat.com.au/elopement/ (B)
+
+**V8_note:** stated of the elopement reception package as a whole, not tied to the Chapel by name in the same sentence.
+
+## V9 — Religious status or restriction stated
+
+**V9_quote:** "a charming non-denominational chapel" (Wedding Ceremony Options page.) "Our non-denominational Chapel creates a unique setting for your marriage ceremony experience." (Wedding Ceremony Options page, The Chapel entry.)
+
+**V9_status:** non-denominational
+
+**V9_basis:** present
+
+**V9_source:** https://www.chapelhillretreat.com.au/wedding-ceremony-options/ (B)
+
+## V10 — Exclusivity and concurrent operation stated
+
+**V10_quote:** "You'll receive exclusive access to the Chapel Hill property" (Sydney Wedding Packages page.)
+
+**V10_source:** https://www.chapelhillretreat.com.au/sydney-wedding-packages/ (B)
+
+**V10_note:** stated of the property as a whole (a wedding package), not of the Chapel specifically; `OUT OF SCOPE (package)` per the codebook's package rule.
+
+## V11 — Booking channel and lead time stated
+
+**V11_quote:** "Get A Quote" (Elopement page, button label under each package.) "events@chapelhillretreat.com.au" and "(02) 4567 2156" (site-wide contact details, footer).
+
+**V11_channels:** online form; phone; email
+
+**V11_source:** https://www.chapelhillretreat.com.au/elopement/ (B)
+
+## V12 — Availability pattern stated
+
+no statement found on the pages captured tying a day or hour pattern to the Chapel specifically.
+
+## V13 — Access and facilities stated
+
+**V13_quote:** "Position on property: A short walk from both the reception hall and the accommodation/bridal lounge." (Wedding Ceremony Options page, The Chapel entry.)
+
+**V13_source:** https://www.chapelhillretreat.com.au/wedding-ceremony-options/ (A)
+
+**V13_note:** no wheelchair-access, vehicle-access, parking-count, toilets, or climate statement was found for the Chapel specifically on the pages captured.
+
+## V14 — Terms specific to the hire stated
+
+no statement found on the pages captured naming a cancellation, bond, insurance, noise, or decoration term for the Chapel specifically.
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+**V15_quote:** "The magnificent stained glass windows add atmosphere to your ceremony experience and provide the perfect backdrop for your photos." (Wedding Ceremony Options page, The Chapel entry.)
+
+**V15_source:** https://www.chapelhillretreat.com.au/wedding-ceremony-options/ (B)
+
+**V15_note:** this states the Chapel as a photo backdrop, not a separate photo-session or filming hire, and states no restriction; recorded here for completeness though it may not meet the V15 inclusion rule on a coder's reading.
+
+## V16 — Heritage or architectural character claimed
+
+**V16_quote:** "The magnificent stained glass windows add atmosphere to your ceremony experience." (Wedding Ceremony Options page, The Chapel entry.)
+
+**V16_claim:** stained glass
+
+**V16_source:** https://www.chapelhillretreat.com.au/wedding-ceremony-options/ (A)
+
+## V17 — Recurring hire offered
+
+no statement found on the pages captured.
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+no statement found on the pages captured; the pages captured carry only wedding-couple testimonials (e.g. "Taryn & Adam", "Kelsi & Ravinder" named on the Sydney Wedding Packages page as package examples), no non-wedding event named.
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/chapel-ridge.md=====
+---
+title: "Venue profile: Chapel Ridge"
+date: 2026-09-12
+status: "Collected by batch-01 collector under the chapel-hire codebook v1.0. No coding performed."
+venue_name: "Chapel Ridge"
+country: Australia
+region: "Kulnura, NSW (Lower Hunter Valley)"
+cell: AU
+sub_frame: D
+unit_kind: chapel
+venue_kind: other
+source_register: "VenueNow chapel-slug sitemap enumeration"
+website: "https://chapelridge.com.au"
+date_read: 2026-09-12
+sources:
+  - url: "https://chapelridge.com.au/"
+    tool: curl
+  - url: "https://chapelridge.com.au/about"
+    tool: curl
+  - url: "https://chapelridge.com.au/faqs"
+    tool: curl
+  - url: "https://chapelridge.com.au/careers"
+    tool: curl
+  - url: "https://chapelridge.com.au/gallery"
+    tool: curl
+note: "The frame gave a VenueNow directory URL (venuenow.com/au/central-coast/venue/chapel-ridge-7095), not the venue's own domain. A web search for 'Chapel Ridge venue hire Central Coast NSW wedding chapel' and 'Chapel Ridge Kulnura wedding venue official website' returned the venue's own domain chapelridge.com.au (contact address hello@chapelridge.com.au matched the venue). curl with a desktop browser user agent returned HTTP 200 on every page attempted, rendered to text with w3m. Nav-listed pages read: Home, About, Gallery, FAQs, Careers. /accommodation and /contact returned HTTP 404 on the dates and paths tried (the nav links to these but the pages did not resolve at the guessed URL slugs); their content, where present in the nav-linked pages already captured, is included below."
+---
+
+## Capture record
+
+**unit_kind:** chapel (venue's own word; the venue's trading name is itself "Chapel Ridge")
+
+**room_kind:** Chapel (capitalised, used as a proper-noun space name: "our sandstone Chapel")
+
+**room_name:** (none beyond "the Chapel" / "our Chapel")
+
+**country:** Australia
+
+**cell:** AU
+
+**capture_date:** 2026-09-12
+
+**pages and documents captured:**
+
+- https://chapelridge.com.au/ — curl, 2026-09-12, 200
+- https://chapelridge.com.au/about — curl, 2026-09-12, 200
+- https://chapelridge.com.au/faqs — curl, 2026-09-12, 200
+- https://chapelridge.com.au/careers — curl, 2026-09-12, 200
+- https://chapelridge.com.au/gallery — curl, 2026-09-12, 200
+- https://chapelridge.com.au/accommodation — curl, 2026-09-12, 404 (not retrieved)
+- https://chapelridge.com.au/contact — curl, 2026-09-12, 404 (not retrieved)
+
+**search_terms_tried:** site nav terms visible: About, Accommodation, Gallery, FAQs, Contact, Careers. No search box or sitemap found on the site. No page or heading uses the words funeral, memorial, concert, congregation, retreat, or filming.
+
+**B_status:** found (the FAQ page states an access fact specifically about the chapel: see V13)
+
+**B_mention:** "our sandstone Chapel" (Home); "The Chapel. Chapel Ridge, as the name suggests, offers a beautiful sandstone chapel for your ceremony with it's iconic 17m high crystal window for the perfect 'I Do' backdrop." (About) — names the room with a description of its window, not a hire attribute.
+
+**other_spaces:** "Pavilion", "Wisteria Terrace", "Rustic Bar" (Home, About)
+
+**C_status:** none linked (all enquiry routes are "Book Now" / email / phone to the venue's own contact, no third-party booking platform link found)
+
+**A_admission:** not applicable — no general venue admission stated; the venue's whole business is wedding-day hire ("Exclusively yours for the day, Chapel Ridge hosts only one wedding at a time, no tourists, no public access")
+
+**notes:** Every page captured frames the venue as a single-wedding-per-day business; no page separates "the chapel" as an independently priced or independently hireable unit from the whole-day wedding package. Capacity (120 pax) and pricing statements found on the site are stated of the whole venue/day, not the chapel specifically, and are recorded below under the relevant variable with an OUT OF SCOPE note where that distinction matters.
+
+## V1 — Uses named for the hired chapel
+
+No use word from the codebook's closed mapping table is applied to the chapel specifically. "for your ceremony" (About page) uses the generic word "ceremony", which the codebook's generic list excludes from mapping to "wedding ceremony only". No funeral, memorial, concert, christening, or other named use appears anywhere in the pages captured.
+
+**V1_generic:** "for your ceremony" (About, describing the Chapel)
+
+**V1_source:** https://chapelridge.com.au/about (B)
+
+## V2 — Funeral-director or celebrant partnership named
+
+no statement found on the pages captured. No celebrant, minister, funeral director or planner is named anywhere.
+
+## V3 — Price stated
+
+no amount is stated for the chapel or for the venue anywhere in the pages captured. About page: "Contact us for pricing & package details."
+
+**V3_note:** `POA: Contact us for pricing & package details` (About)
+
+**V3_source:** B
+
+## V4 — Hire block and site-time cap stated
+
+FAQ page: "What is your curfew? Our council governed curfew is 10.30pm." This is a cap on the whole event/venue, not stated as a chapel-specific block.
+
+**V4_cap:** "Our council governed curfew is 10.30pm." — stated of the venue as a whole, `OUT OF SCOPE (not chapel-specific)`. No duration or block is stated for the chapel itself.
+
+**V4_source:** B
+
+## V5 — Capacity stated
+
+FAQ page: "What is your maximum guest capacity? 120 pax." About/Home page: "Ceremony and Reception options accomodating up to 120." Both figures are stated of the venue as a whole (pavilion/terrace reception options), not of the chapel room specifically; no separate seated or standing figure is given for the chapel.
+
+**V5_note:** `OUT OF SCOPE (not the chapel specifically): "120 pax" is the venue's stated maximum guest capacity, not a chapel-only figure` (FAQs; About)
+
+**V5_source:** A
+
+## V6 — Inclusions stated
+
+No item from the closed list is stated as included with hiring the chapel specifically. The About page states general inclusions of the whole wedding package: "planning" and "on-the-day Coordination" services, use of the maze, lawn games, fire pits ("We have three fire pits and two internal fireplaces. We supply the wood and the staff to service them for the entire function," FAQ).
+
+**V6_note:** `OUT OF SCOPE (package, not chapel-specific): "on-the-day Coordination" services, fire pits, maze, lawn games` (About; FAQs)
+
+**V6_source:** B
+
+## V7 — Adjacent reception or wake space stated
+
+Home/About: "From our sandstone Chapel and elegant Pavilion to the Wisteria Terrace and Rustic Bar, every space has been thoughtfully curated..." — the Pavilion and Wisteria Terrace are named as reception spaces alongside the Chapel.
+
+**V7_space:** "Pavilion"; "Wisteria Terrace"
+
+**V7_quote:** "From our sandstone Chapel and elegant Pavilion to the Wisteria Terrace and Rustic Bar, every space has been thoughtfully curated to offer a seamless blend of luxury, privacy, and natural beauty..." (Home)
+
+**V7_source:** https://chapelridge.com.au/ (A)
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+FAQ: "Do you have in-house catering or preferred caterers? Catering is not included in our package. We have great local catering businesses to suggest and it's also something we can help you with as part of our planning services." Stated of the venue/package generally, not of the chapel specifically.
+
+**V8_note:** `OUT OF SCOPE (package, not chapel-specific)` — quote above (FAQs)
+
+**V8_source:** B
+
+## V9 — Religious status or restriction stated
+
+no statement found on the pages captured. No consecration, denomination, or ceremony-content/celebrant restriction is stated anywhere.
+
+## V10 — Exclusivity and concurrent operation stated
+
+Home: "Exclusively yours for the day, Chapel Ridge hosts only one wedding at a time, no tourists, no public access, and no shared spaces." Stated of the whole venue/day, not isolated to the chapel.
+
+**V10_note:** stated of the whole venue, not chapel-specific — quote above (Home)
+
+**V10_source:** B
+
+## V11 — Booking channel and lead time stated
+
+Home: "Book Now" buttons (destination not captured beyond the venue's own contact routes). About/FAQ footer: "hello@chapelridge.com.au", "0407 207 972". FAQ: "Do you have more questions - Contact us! We are here to help..."
+
+**V11_channels:** email; phone
+
+**V11_quote:** "hello@chapelridge.com.au", "0407 207 972" (footer, all pages); "Come visit Chapel Ridge... Book a Private Inspection" (About)
+
+**V11_source:** B
+
+## V12 — Availability pattern stated
+
+About: "This venue is perfect for your special day no matter what the weather throws at you... perfect for your special day the whole year 'round." No specific days, hours or season is stated as an availability rule; this is a general all-weather/all-season claim rather than a stated pattern.
+
+**V12_note:** "perfect for your special day the whole year 'round" is a general claim, not a season or days statement (About)
+
+## V13 — Access and facilities stated
+
+FAQ: "Is the venue handicap accessible (if you have any guests with mobility needs) — There is one small rise to get you into the chapel but other than that the whole complex is on one uninterrupted level. Our staff will assist anyone that needs help on the day." FAQ: "Is there parking? We have plenty of parking onsite for both guests and your vendors." FAQ: "Can busses access the venue? Yes! Anything from a small van to full size coaches, there are no access issues." FAQ: "Do you have enough toilets onsite... We have 9 bathrooms onsite plus a separate luxury bridal bathroom."
+
+**V13_wheelchair:** "There is one small rise to get you into the chapel but other than that the whole complex is on one uninterrupted level."
+
+**V13_vehicle:** "Anything from a small van to full size coaches, there are no access issues." (stated of the venue, not chapel-specific)
+
+**V13_parking:** "We have plenty of parking onsite for both guests and your vendors."
+
+**V13_toilets:** "We have 9 bathrooms onsite plus a separate luxury bridal bathroom."
+
+**V13_source:** https://chapelridge.com.au/faqs (B, and A as V13 reads all of Scope A)
+
+## V14 — Terms specific to the hire stated
+
+no statement found on the pages captured. No cancellation, bond, insurance, noise/alcohol, or decoration rule is stated.
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+no statement found on the pages captured.
+
+## V16 — Heritage or architectural character claimed
+
+About: "sandstone Chapel... with it's iconic 17m high crystal window." No age, listing, architect or named maker is stated; "sandstone" and "17m crystal window" are fabric descriptions without a claim value from the closed list (age / listing / architect / stained glass / bell / organ). "Crystal window" does not map to "stained glass" as stated.
+
+**V16_other:** "17m high crystal window" — `CANDIDATE WORD: crystal window` (About)
+
+**V16_source:** https://chapelridge.com.au/about (A)
+
+## V17 — Recurring hire offered
+
+no statement found on the pages captured.
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+Home page carries one testimonial, undated, naming a wedding only: "'Literally worth every. single. cent. From the moment we first enquired... So many of our guests raved about how it was the best wedding they have ever been to...' - L&N". No non-wedding use is named in any testimonial or gallery caption captured.
+
+**V18_note:** the one testimonial captured names a wedding only, `NEGATED:` not applicable — no non-wedding use appears (Home)
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/chapel-suite-at-the-como-melbourne.md=====
+---
+venue_name: "Chapel Suite at The Como Melbourne"
+country: "Australia"
+region: "VIC"
+cell: "AU"
+sub_frame: "D"
+venue_kind: "other"
+unit_kind: "hotel"
+source_register: "VenueNow chapel-slug sitemap enumeration"
+website: "https://www.comomelbourne.com.au/"
+date_read: 2026-09-12
+sources:
+  - url: "https://www.comomelbourne.com.au/"
+    tool: curl
+  - url: "https://www.comomelbourne.com.au/meetings-and-events"
+    tool: curl
+  - url: "https://www.comomelbourne.com.au/meetings-and-events/chapel-suite"
+    tool: curl
+note: "The frame gave a VenueNow listing URL for 'Chapel Suite at The Como Melbourne', a third-party marketplace. A search for the hotel's own domain returned comomelbourne.com.au, the operator's own site (an Accor/MGallery property). curl with a desktop browser user agent returned server HTML (HTTP 200) on every page tried, rendered to text with w3m. The home page's own nav item 'Meetings and Events' led to a listing of nine named meeting suites, including 'Chapel Suite'; that suite's own detail page was captured. The hotel's own text explains the name is drawn from Chapel Street, the road the hotel sits on in South Yarra, and the room has no religious or ceremonial character on the pages captured: it is one of nine corporate meeting and event suites."
+---
+
+## Capture record
+
+**unit_kind:** hotel
+
+**country:** Australia
+
+**cell:** AU
+
+**capture_date:** 2026-09-12
+
+**room_kind:** "Suite" (the venue never applies a closed-list room noun such as "chapel" as a category word; "Chapel" appears only as the proper name of one meeting suite, drawn from the hotel's Chapel Street address)
+
+**room_name:** "Chapel Suite"
+
+**pages and documents captured:**
+
+- https://www.comomelbourne.com.au/ — curl, 2026-09-12, 200
+- https://www.comomelbourne.com.au/meetings-and-events — curl, 2026-09-12, 200
+- https://www.comomelbourne.com.au/meetings-and-events/chapel-suite — curl, 2026-09-12, 200
+
+**search_terms_tried:** home-page nav scan for "meetings", "events", "chapel", "venue", "hire"; the nav item "Meetings and Events" led to the pages captured, which list "Chapel Suite" among nine named suites.
+
+**B_status:** found
+
+**B_mention (verbatim):** none recorded separately.
+
+**other_spaces (verbatim):** "CLAREMONT SUITE"; "DARLING SUITE"; "CLAREMONT DARLING SUITE"; "TOORAK SUITE"; and, per the site's summary sentence, "the hotel's nine modern and stylish individual meetings and event suites" in total, plus "the roof top sun deck" and the "Gold Suite" for social functions (Meetings and Events page).
+
+**C_status:** none linked (every call to action is "Read more" or "Request for Proposal" to a page on the venue's own domain).
+
+**A_admission (verbatim):** not applicable (a hotel, not a visitor attraction with general admission).
+
+**notes:** "Chapel Suite" is named after Chapel Street, South Yarra, the road on which The Como Melbourne stands ("630 Chapel Street, South Yarra, Victoria, Australia 3141", footer address on every page captured); per S1 a name is not itself a statement of religious or ceremonial character, and none was found stated.
+
+## V1 — Uses named for the hired chapel
+
+**V1_quote:** "The Chapel Suite is a versatile room which is suited to a variety of different events, ranging from conferences, exhibitions, product launches, seated dinners and cocktail receptions." (Chapel Suite page.)
+
+**V1_source:** https://www.comomelbourne.com.au/meetings-and-events/chapel-suite (B)
+
+**V1_note:** the closed-list words present are "conferences" (mapping to "lecture or talk or workshop" per the mapping table's inclusion of "conference"); "exhibitions" (mapping to "exhibition"); "product launches" and "seated dinners" and "cocktail receptions" do not appear on the closed list and would be candidate words for the coder.
+
+## V2 — Funeral-director or celebrant partnership named
+
+no statement found on the pages captured.
+
+## V3 — Price stated
+
+no statement found on the pages captured; every call to action reads "Request for Proposal".
+
+**V3_note:** `POA: Request for Proposal`
+
+## V4 — Hire block and site-time cap stated
+
+no statement found on the pages captured.
+
+## V5 — Capacity stated
+
+**V5_quote:** "CAPACITY CHART: Level: Two / Ceiling Height: 3.4m / Area: 142.00 / Cabaret Cabaret: 64 / Cocktail Cocktail: 150 / Boardroom Boardroom: 40 / Theatre Theatre: 120 / Banquet Banquet: 90 / Classroom Classroom: 45 / U-shape U-shape: 35" (Chapel Suite page.)
+
+**V5_config:** cabaret 64; cocktail 150; boardroom 40; theatre 120; banquet 90; classroom 45; U-shape 35
+
+**V5_source:** https://www.comomelbourne.com.au/meetings-and-events/chapel-suite (A)
+
+## V6 — Inclusions stated
+
+**V6_quote:** "Blackout blinds also offer the option of a darkened room for optimum use of Audio Visual equipment." (Chapel Suite page.)
+
+**V6_source:** https://www.comomelbourne.com.au/meetings-and-events/chapel-suite (B)
+
+## V7 — Adjacent reception or wake space stated
+
+no statement found on the pages captured tying another named space to a Chapel Suite event specifically.
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+**V8_quote:** "Specialising in catering for all styles of events, we can also provide sensational gourmet menus appropriate for all tastes, special dietary needs and budgets." (Meetings and Events page.)
+
+**V8_source:** https://www.comomelbourne.com.au/meetings-and-events (A)
+
+**V8_note:** stated of the hotel's meetings and events offer generally, not of the Chapel Suite specifically in the same sentence.
+
+## V9 — Religious status or restriction stated
+
+no statement found on the pages captured.
+
+## V10 — Exclusivity and concurrent operation stated
+
+no statement found on the pages captured.
+
+## V11 — Booking channel and lead time stated
+
+**V11_quote:** "Read more / Request for Proposal" (Chapel Suite page and Meetings and Events page, per-suite call to action.)
+
+**V11_channels:** online form
+
+**V11_source:** https://www.comomelbourne.com.au/meetings-and-events/chapel-suite (B)
+
+## V12 — Availability pattern stated
+
+no statement found on the pages captured.
+
+## V13 — Access and facilities stated
+
+**V13_quote:** "The Como Melbourne is easily accessible with self parking available on site, and trams and trains within walking distance." (Meetings and Events page.)
+
+**V13_parking:** "self parking available on site"
+
+**V13_source:** https://www.comomelbourne.com.au/meetings-and-events (A)
+
+**V13_note:** stated of the hotel generally, not of the Chapel Suite specifically.
+
+## V14 — Terms specific to the hire stated
+
+no statement found on the pages captured.
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+no statement found on the pages captured.
+
+## V16 — Heritage or architectural character claimed
+
+no statement found on the pages captured naming an age, listing, architect, or fabric claim for the Chapel Suite.
+
+## V17 — Recurring hire offered
+
+no statement found on the pages captured.
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+no statement found on the pages captured.
+
+=====FILE: 0-comparables/chapel-hire-2026-09/venues/christ-church-heaton-norris.md=====
+---
+venue_name: "Christ Church, Heaton Norris"
+country: United Kingdom
+region: Greater Manchester
+cell: UK
+sub_frame: H
+unit_kind: ruined church tower (cared for by a preservation trust; no public access, no hire)
+venue_kind: heritage
+source_register: "Churches Conservation Trust: Hire a church"
+website: "https://www.visitchurches.org.uk/visit/our-churches/christ-church-heaton-norris-lancashire"
+date_read: 2026-09-12
+sources:
+  - url: "https://www.visitchurches.org.uk/visit/our-churches/christ-church-heaton-norris-lancashire"
+    tool: curl
+  - url: "https://www.visitchurches.org.uk/visit/hire"
+    tool: curl
+  - url: "https://cdn.visitchurches.org.uk/uploads/files/CCT-Events-Booking-Guidance-2026.pdf?v=1785425303"
+    tool: curl
+note: "The batch named the register (Churches Conservation Trust: Hire a church) with website marked U. A brave-search located the individual church page directly on visitchurches.org.uk. The general 'Hire a church' page and its Event Booking Guidance PDF, already captured for All Saints Church, Great Steeping in this same batch, were reused as the same site-wide document rather than re-downloaded; the scale-of-charges PDF was not re-fetched here since this church's own page states it has no public access at all, making a charges document moot on this collector's reading."
+---
+
+## Capture record
+
+**unit_kind:** ruined church tower (cared for by a preservation trust; no public access, no hire)
+
+**country:** United Kingdom
+
+**cell:** UK
+
+**capture_date:** 2026-09-12
+
+**room_kind:** "church" (venue's own word, used of the building historically; the surviving structure is described as "a tower only")
+
+**room_name:** Christ Church, Heaton Norris
+
+**pages and documents captured:**
+
+- https://www.visitchurches.org.uk/visit/our-churches/christ-church-heaton-norris-lancashire — curl, 2026-09-12, 200
+- https://www.visitchurches.org.uk/visit/hire — curl, 2026-09-12, 200 (site-wide "Hire a church" page, not specific to this church; same page as captured for All Saints Church, Great Steeping in this batch)
+- https://cdn.visitchurches.org.uk/uploads/files/CCT-Events-Booking-Guidance-2026.pdf — curl, 2026-09-12, 200, converted with pdftotext -layout (site-wide document; same file as captured for All Saints Church, Great Steeping in this batch)
+
+**search_terms_tried:** "Churches Conservation Trust hire a church Christ Church Heaton Norris" (brave-search, located the church's own page). On the church's own page: the "Facilities & hire" and "Access information" / "Disabled access information" sections were read under the page's own "On this page" contents list.
+
+**B_status:** mention only
+
+**B_mention (verbatim):** "Please note that this is a tower only with no visitor access to either the churchyard or the interior." (this sentence appears twice on the page, once under "Opening times" and again verbatim under "Facilities & hire")
+
+**other_spaces:** not applicable
+
+**C_status:** none linked
+
+**A_admission:** not stated (no access at all is stated, so no admission price applies)
+
+**notes:** the church is described as "gutted by fire in 1977" with "all but the tower and spire... destroyed"; "This is a tower only and there is no access to the public." No use, price, capacity, inclusion, or booking route is stated anywhere on the page; the "Facilities & hire" section, which on other CCT church pages in this batch states an attribute, here restates only the no-access fact. This collector recorded B_status as mention only rather than found, on the same reasoning applied to Umberslade Baptist Church in this batch: a blanket no-access/no-hire statement does not by itself state a use, price, block, capacity, inclusion, restriction, exclusivity, booking route, availability, access fact, term, or recurring arrangement in the codebook's closed sense, though a coder may read it differently, particularly since "no visitor access" is itself arguably an access fact under V13's scope (which reads Scope A, not B).
+
+## V1 — Uses named for the hired chapel
+
+no statement found on the pages captured
+
+## V2 — Funeral-director or celebrant partnership named
+
+no statement found on the pages captured
+
+## V3 — Price stated
+
+no statement found on the pages captured
+
+## V4 — Hire block and site-time cap stated
+
+no statement found on the pages captured
+
+## V5 — Capacity stated
+
+no statement found on the pages captured
+
+## V6 — Inclusions stated
+
+no statement found on the pages captured
+
+## V7 — Adjacent reception or wake space stated
+
+no statement found on the pages captured
+
+## V8 — Catering or refreshments for a hired-chapel event stated
+
+no statement found on the pages captured
+
+## V9 — Religious status or restriction stated
+
+no status word from the closed list is stated of this specific church. The general Event Booking Guidance PDF states of CCT churches generally: "All our churches are listed, predominantly Grade I and II*, remain consecrated and can be used for occasional worship," but this is not a statement about Christ Church, Heaton Norris by name.
+
+**V9_source:** `OUT OF SCOPE (site-wide, not naming this church):` CCT-Events-Booking-Guidance-2026.pdf
+
+## V10 — Exclusivity and concurrent operation stated
+
+no statement found on the pages captured
+
+## V11 — Booking channel and lead time stated
+
+no statement found on the pages captured. The church's own page states a contact for the Local Community Officer, but this is framed around visiting/access enquiries rather than hiring, given the stated lack of any access: "For further information please contact Local Community Officer Charlotte Mee via email."
+
+**V11_source:** https://www.visitchurches.org.uk/visit/our-churches/christ-church-heaton-norris-lancashire (A)
+
+**V11_note:** recorded here as a contact fact rather than coded to V11, since the sentence it sits in addresses visiting information, not a hire enquiry route; a coder should weigh whether this counts.
+
+## V12 — Availability pattern stated
+
+no statement found on the pages captured
+
+## V13 — Access and facilities stated
+
+**V13_wheelchair (verbatim):** "Disabled access information — Steps to church from highway."
+
+**V13_vehicle:** not stated
+
+**V13_quote:** "This is a tower only and there is no access to the public." "Please note that this is a tower only with no visitor access to either the churchyard or the interior."
+
+**V13_source:** https://www.visitchurches.org.uk/visit/our-churches/christ-church-heaton-norris-lancashire (A)
+
+## V14 — Terms specific to the hire stated
+
+no statement found on the pages captured
+
+## V15 — Photography or filming of the chapel sold or restricted
+
+no statement found on the pages captured
+
+## V16 — Heritage or architectural character claimed
+
+**V16_claim:** age; architect
+
+**V16_age (verbatim):** "This fearsomely imposing landmark is all that remains of a Victorian church built in 1846." "It was acquired by The Churches Conservation Trust in May 1979."
+
+**V16_named (verbatim):** "The church was formerly a chapelry of the parish of Manchester built by Manchester architect William Hayley in 1846."
+
+**V16_other (verbatim):** "It consisted of a nave, aisles, transepts, chancel and west tower and spire, constructed in coursed sandstone in a developed Early English style." "The tower itself is of four stages and is surmounted by a tall, slender spire." "including the five clock bells by Warner (1896) which were stolen in 1977" (this last would map to the closed value "bell" were the bells still present; here it states their theft, a past-tense loss)
+
+**V16_source:** https://www.visitchurches.org.uk/visit/our-churches/christ-church-heaton-norris-lancashire (A)
+
+**V16_note:** the page states the church "was gutted by fire in 1977 and, all but the tower and spire were destroyed... All the fittings, glass, furnishings appear to have been stolen or destroyed in the fire, including the five clock bells by Warner (1896) which were stolen in 1977." This is a claim about fabric that no longer exists at the site; recorded verbatim for the coder to weigh against V16's present/historic framing.
+
+## V17 — Recurring hire offered
+
+no statement found on the pages captured
+
+## V18 — Testimonial or case study naming a non-wedding use
+
+no statement found on the pages captured
+

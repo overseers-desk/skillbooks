@@ -1,0 +1,31 @@
+card 0: 5 figured options; prior match: True; returned by third derivation
+card 1: 14 figured options; prior match: True; returned by third derivation
+card 10: 4 figured options; prior match: False
+card 11: 4 figured options; prior match: True; returned by third derivation
+card 12: 6 figured options; prior match: True; returned by third derivation
+card 13: 5 figured options; prior match: True; returned by third derivation
+card 14: 5 figured options; prior match: False
+card 15: 4 figured options; prior match: True; returned by third derivation
+card 16: 4 figured options; prior match: False
+card 17: 4 figured options; prior match: True; returned by third derivation
+card 18: 3 figured options; prior match: False
+card 19: 4 figured options; prior match: False
+card 2: 6 figured options; prior match: False
+card 20: 4 figured options; prior match: True; returned by third derivation
+card 21: 4 figured options; prior match: True; returned by third derivation
+card 22: 4 figured options; prior match: True; returned by third derivation
+card 23: 3 figured options; prior match: False
+card 24: 4 figured options; prior match: False
+card 25: 4 figured options; prior match: True; returned by third derivation
+card 26: 4 figured options; prior match: False
+card 27: 3 figured options; prior match: False
+card 28: 3 figured options; prior match: False
+card 29: 4 figured options; prior match: False
+card 3: 6 figured options; prior match: False
+card 4: 4 figured options; prior match: False
+card 5: 3 figured options; prior match: False
+card 6: 5 figured options; prior match: False
+card 7: 5 figured options; prior match: True; returned by third derivation
+card 8: 5 figured options; prior match: False
+card 9: 5 figured options; prior match: False
+30 cards; 12 prior matches; 12 returned by third derivation; 0 outstanding; 0 mismatched margin units; 9 legs marked differs

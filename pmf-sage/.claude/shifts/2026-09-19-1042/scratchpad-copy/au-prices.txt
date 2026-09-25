@@ -1,0 +1,237 @@
+########## australia-zoo.md
+cell: "qld-supplementary"
+**price_and_structure:** no school-group price is published on the pages read; both the Education and Primary Education pages state "For more information, including our program guide and pricing, please contact us below." General public admission, published on the Ticket Information page: "Adult: \$76.95 each"; "Child: \$51.95 each" ("One child (3 – 14 years) entry only... Must be accompanied by a paying adult. Children under 3 years are admitted free!"); "Consession: \$66.95 each" [sic]; "Pensioner: \$66.95 each"; "Family of 4 Pass: \$229.25 each" (2 adults and 2 children 3-14 years); "Family of 5 Pass: \$274.40 each" (2 adults and 3 children 3-14 years); Annual Pass "Adult Annual Pass: \$199 each", "Child Annual Pass: \$149 each". Each admission type is stated to include "Australia Zoo Wildlife Hospital Sneak Peek (\$2)", "Conservation shows throughout the day", "Free shuttle/bus tour", "Splash Park access", and "Access to multiple children's play areas including jumping pillow".
+
+########## beenleigh-historical-village-and-museum.md
+cell: "qld-supplementary"
+**price_and_structure:** none listed for the school programme or for general museum admission. The one price published on the site is for the unrelated one-off public community event described in the news article: "\$5 per person", "\$20 per family (2 adults + unlimited children)", for "Christmas at the Village" on 5 December.
+
+########## belgenny-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** "Students: $16.50 per student, Supervising teachers and teacher aides FREE, Additional parents: $16.50 per person." "Groups of fewer than 20 students pay a flat minimum group fee" (amount not stated).
+
+########## bestbrook-mountain-resort.md
+cell: "qld-supplementary"
+**price_and_structure:** for the general public day-visitor animal feeding tour: "\$50 per family of 4 | \$15 per person (includes animal feed)", covering a "self-guided farm tour" or helping "our farmer feed guinea pigs, ducks, sheep, goats, Gloria the pig, and more." No published price exists for the school camp or school day-visit programme itself; the camps page states only "Contact our office for current pricing and required forms."
+
+########## bidgee-strawberries-and-cream.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:**
+- High School Students - Educational Tour: "$25 per student for the first 12 (Minimum fee: $300 per group), then $10 per additional student"
+- Primary School Students - Educational Tour: "$22 per student for the first 14 (Minimum fee: $300 per group), then $10 per additional student"
+- Preschool non-educational picking excursion: "$12 per person, plus a minimum of one large punnet for $30 per group. More punnets may be purchased"
+- Meet the farmer: "Cost $150/person or $600/group (minimum of 2, maximum of 8)"
+- Pick Your Own general entry: "Adult $10", "Child $3", "Family $25" (2 adults + up to 3 kids under 15)
+
+########## billabong-sanctuary.md
+cell: "qld-supplementary"
+**price_and_structure:** education page and brochure both give the school rate. Education page: "\$26 per student (Optional bag of animal feed- \$3 per student)"; "One FREE adult for every 10 students"; "\$42 for each additional adult"; "Club Billabong Membership entitlements do not apply"; "1 carer FOC per disabled person in wheelchair". The brochure states the same student and feed price but a lower additional-adult figure: "\$26 per student, Kangaroo / duck feed \$3", "One FREE adult for every 10 students", "\$40 for each additional adult" (the brochure's figure of \$40 differs from the web page's \$42; both are transcribed as published, without reconciling which is current). General admission, published on the separate Opening Hours & Prices page rather than the school rate: Adults \$54; Children (4-16 yrs) \$37; Family (2A + 3C) \$152; Additional child \$25; Pensioners \$49; Seniors/Students \$49; a 10 per cent "Group Discount" applies to "Your Group of 10 or More".
+
+########## bilpin-fruit-bowl.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** For general public pick-your-own entry: "$20 for adults, $10 for children aged between 3 and 12. Free for children under 3 years of age. ... This entry fee includes the fruit you eat when on the farm. You just pay for the fruit and veggies that you take home with you." Strawberry punnets: "Cost will be $10 for a 500gm punnet." No school-specific price is published.
+
+########## blackwattle-alpacas.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** Preschool to Primary (2.5 hr): $30 per student. Secondary (3.5 hr): $35 per student. Catering: from $3 per student. The Alpaca Connection Tour (non-school): $30 per person
+
+########## buckley-park-community-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** none listed.
+
+########## camp-coolamatong.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** none listed
+
+########## candlebark-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** No price list or per-person rate is published on any page read. The Enquiry Form is explicitly the mechanism for costing: "To check costs and availability of dates for your camp/retreat, please fill in this form." The form distinguishes "standard price" from a "packaged price" for schools: "For school groups we can provide a packaged price and full program assistance which includes transport, entry to Healesville Sanctuary and instructor numbers geared to the number of children attending." Stated per-item optional-extra charges: linen $12.00 per person (minimum lots of 10); Duty Groups taken over by staff, extra $7.00 per person per meal; instructor-led extras (Super Swooper, Archery, Canoeing, Flying Fox, Swimming Pool lifeguard, "Extra Instructor") are costed on request with "a minimum of 40 applies even if you have fewer".
+
+########## carinya-station.md
+cell: AU-farm + NZ-nature + CA-nature (combined census, three cells)
+########## carramar.md
+cell: AU-farm + NZ-nature + CA-nature (combined census, three cells)
+########## caversham-wildlife-park.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** Excursion pricing table ("Year/Age Group" / "Cost Per Student" / "Ratio of Free Adults"): Kindergarten - Year 3: $14.00, 1 Adult per 5 Students; Years 4-6: $14.00, 1 Adult per 10 Students; Special Needs (all primary school ages): $14.00, 1 Adult per Student; Years 7-9: $14.00, 1 Adult per 10 Students; Years 10-12: $16.00, 1 Adult per 10 Students. "Prices are inclusive of GST. ABN: 55 738 327 271." General admission (non-excursion) prices, from the admission page: Adult $37.00; Child $17.00 (3 years to 14 years); Student $28.00 (Western Australian in-date Student Card required); Pension $28.00 (Western Australian in-date Aged Pension Card or Seniors Card required). "ADMISSION PRICE INCLUDES: Kangaroo Feed, Farm Show, Meet A Koala (photo opportunity!), Meet the Wombat & Friends (interactive meet & greet!), Penguin Keeper Talk & Feed, Molly's Farmyard, Reptile & Nocturnal House, and more!!!"
+
+########## chesterfield-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** "Prices for School Excursion bookings are as follows: Students ~ $15.00 each; Teachers & 2 parent helpers per farm group ~ free of charge; Extra parents ~ $15.00 each (GST included)."
+
+########## collingwood-childrens-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:**
+School Tours: "$430 per class plus booking fees."
+Self-Guided Groups: "$10 per child", "$20 per supervising adult"; an "Initial Deposit" ticket "includes entry for 10 children" secures the booking date.
+Camping Groups: no price stated on the page read.
+Aged Care and Mobility Access (non-school): "$175 per vehicle and up to 12 passengers, plus booking fees."
+General admission (Tickets and Pricing page, not school-specific): Adult $20; Child 24 months-17 years $10; Infant under 24 months free; Student Card Holder $15; Victorian Senior Card Holder $15; Adult Concession Card Holder $10; Concession Child $0 where named on card; Carer $10.
+
+########## currumbin-wildlife-sanctuary.md
+cell: "qld-supplementary"
+**price_and_structure:** "Early Learning Students* (3 - 5 years) \$18.50 per student"; "Primary Students* (4 - 12 years) \$18.50 per student"; "High School Students* (12 - 18 years) \$18.50 per student"; "Adult Students* (18 years+) \$35.00 per student"; "Prices valid until 30.06.2026"; add-on pricing: "Nature Ed Session...\$4.50 per student (Weekends: Saturday - \$12.50 per head, Sunday - \$15 per head, minimum 25 students)"; "Nature Ed First Nations Experience...\$4.50 per student. (Weekends: Saturday rate \$12.50 per head, Sunday rate \$15 per head, minimum 25 students)"; "Walking Tours...Cost \$4.50 per student with a minimum of 10 (Monday to Friday) \$12.50 per student with a minimum of 25 (Saturday) \$15.00 per student with a minimum of 25 (Sunday)"; "Koala Connections...\$30.00 per student"; "Koala Photo...\$39.00 per photo. Price valid until 31.03.2026"; Nest Boxes priced from "Owlet Nightjar \$55.00" to "Cockatoo 175.00"; general (non-school) day admission, from the Tickets page: "Adult (18 years +) \$70", "Concession \$55", "Youth (3-17 years) \$50", "Infant (under 3 years) FREE"
+
+########## david-fleay-wildlife-park.md
+cell: "qld-supplementary"
+**price_and_structure:** "Prices for education bookings" table, "Student price for 10 or more paying students": "School group – self-guided tour \$9.80"; "Wild Ed – Ranger led curriculum aligned experience within living classroom *GST free in accordance with educational tax legislation. \$15.50*"; "Into the Wild – Ranger led wildlife discover show \$15.50"; "Ranger guided park tour \$15.50"; "Above group rate available to school groups with 10 or more paying students. All prices are inclusive of GST and available only to Australian primary and secondary education institutions – noting that as WildEd is linked to curriculum outcomes no GST applies and therefore the price is GST free. Prices updated on the first of July every year and are subject to change without notice."; a separate "Friends of Fleays – Education Experience Program" is named in the site's navigation, described in a search-result snippet (not one of the pages read) as providing "a subsidy of up to \$800 to Primary and Secondary schools in Queensland undertaking a school excursion at David Fleay Wildlife Park between February and June 2025"; this was not verified against the page itself since it falls outside the fixed four-page set and the note above's extra-page allowance
+
+########## drayhorse-shire-horse-farm.md
+cell: "qld-supplementary"
+**price_and_structure:** lunch tour, 11.30am to 3.00pm: "Adults – \$160.00 | Children – \$89 (under 5 free)"; morning tea option, 9.00am to 11.30am: "Adults – \$120 | Children – \$59 (under 5 free)"; both marked "Bookings Essential".
+
+########## edendale-community-environment-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:**
+Early Years excursion (2026 prices, per student, min 15 children): 1 hour/1 activity $9.90 ex GST ($10.89 inc GST), minimum cost $148.50; 2.5 hours/2 activities $17.70 ex GST ($19.47 inc GST), minimum cost $265.50; 3.25 hours/3 activities $20.80 ex GST ($22.88 inc GST), minimum cost $312.00.
+Early Years incursion (2026 prices, per child, min 15 children, Nillumbik or within 10km): 1 hour/1 activity $12.40 ex GST ($13.64 inc GST), minimum cost $186.00; 2.5 hours/2 activities $22.10 ex GST ($24.31 inc GST), minimum cost $331.50.
+Primary and Secondary excursion (2026 prices, per student, min 20 students): 1 hour $9.00 ex GST ($9.90 inc), min $180.00; 2 hours $13.50 ex GST ($14.85 inc), min $270.00; 3 hours $17.00 ex GST ($18.70 inc), min $340.00; 4 hours $21.50 ex GST ($23.65 inc), min $424.00; 5 hours $24.50 ex GST ($26.95 inc, Secondary page; Primary page shows $226.95, an apparent typographical inconsistency between the two pages), min $490.00.
+Primary and Secondary incursion (2026 prices, per student, min 20 children, Nillumbik or within 10km): 1 session $12.00 ex GST ($13.20 inc), min $240.00; 2 sessions $15.00 ex GST ($16.50 inc), min $330.00; 3 sessions $21.00 ex GST ($23.10 inc), min $420.00; 4 sessions $25.00 ex GST ($27.50 inc), min $500.00.
+
+########## elouera-vale-camel-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** none listed
+
+########## forest-lodge-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** none listed
+
+########## gavana-holsteins.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** $7.50 per student
+
+########## golden-ridge-animal-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** "Cost: The cost depends on date and location. Please fill out the form with ALL DETAILS. Travel fees apply from Maroota, NSW" (stated identically on both the Educational Primary K-2 and Early Childhood pages). No fixed price or price table is published. "extra hours are available for larger schools or centres (price will be quoted)" and "extra hours are available for larger centers (price will be quoted)."
+
+########## green-connect-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** Early Childhood: $10.00/child per 1 hour excursion. Secondary: $18.00/student per 1.5 hours. Primary tiers: tour only $18/student ($450 minimum), tour & play $22/student ($550 minimum), tour, play & learning $26/student ($650 minimum); all prices stated as excluding GST
+
+########## green-thumb-farm.md
+cell: "seq-comparator"
+**price_and_structure:** Excursion: "\$750.00 (inc GST) for a group of up to 30 students | \$24.50 each extra student, up to 55 participants in total". Incursion: "\$650.00 + GST per session", "Back-to-back sessions: 2nd session only \$250.00 + GST". Planting Session: no price stated, "Contact us to schedule a planting session"
+
+########## harvest-farms.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** "13–22 students: $35 per student"; "23+ students: $22 per student"; "Teachers and support staff: Free"
+
+########## highfields-pioneer-village.md
+cell: "qld-supplementary"
+**price_and_structure:** "Typical Cost per pupil \$16.00 (this includes morning tea). Please bring your own lunch." A teaser line above the school pricing states "Explore Australian history for as little as \$8 a head:", which matches the Book Online page's separately listed "Damper & Billy Tea" item priced at "\$8" (marked "Ended" as a bookable course), rather than a distinct school rate. Several optional segments carry a named or unstated surcharge: "Ride Henry the Model T Ford Bus... \$5 Adults and \$3 Child. (minimum booking of 12 persons)"; Sheep Shearing, Horse works and the Aboriginal Culture Talk each "involves an extra charge, please contact us for a quote." The Book Online page separately lists "Village Tour" priced "From \$0.01" (a Wix Bookings placeholder rather than a stated admission price) and "Chapel Wedding" priced "\$350" for "1 hr", neither of which is school-related.
+
+########## hillside-harvest.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** Pick Your Own: "Fruit is charged per kilogram or per punnet" (no figure given). Guided farm tours: "30mins to 2 hours", "Bookings essential", no price stated on the pages read. Events (non-school) carry individual prices, e.g. "Brushstrokes and Barrels" $85, "Preserved Lemon Workshop" $45, "Lemon Curd Workshop" $50, "Sun Kissed and Preserved" $80, "Ember Feast" $65 adults, "Beneath the Branches" "From $10", "Trees and Vines Walking Tour" $25, "Sip and Create" $85 per person, "Citrus & Sunshine: Marmalade-Making" $80.
+
+########## hollycott-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** none listed
+
+########## homegrown-organics.md
+cell: AU-farm + NZ-nature + CA-nature (combined census, three cells)
+########## ipswich-nature-centre.md
+cell: "qld-supplementary"
+**price_and_structure:** "Admission is free, however a donation of a gold coin would be appreciated. All donations will be used for the care of the animals and future improvements to the Nature Centre." No separate school-group price or package is stated.
+
+########## iris-lodge-alpacas.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** none listed for school excursions. Private functions/group tours page: "As each private experience is tailored to your unique desires, we invite you to contact us directly for pricing details." A separate, non-school event (Harvest Festival Weekend) lists $25 for ages 3-12 and $27.50 for ages 13+, but this is not the school programme.
+
+########## kur-cow-barnwell-farm.md
+cell: "qld-supplementary"
+**price_and_structure:** no school-group price is published anywhere on the site. The only price found across the pages and the linked booking system is a general accommodation rate shown in the third-party booking widget: "AUD 330.00 AUD 330.00 — Cost for 1 night, 2 guests" for the Family Villa (dates shown were the widget's default current dates, not a school-specific quote), which the widget states includes "Mini animal farm entry for 2 adult and 2 children". No price is shown for the Queen room, nor for Horse Riding, Quad Biking, Archery, or the Sunset Dinner, in the portion of the widget rendered.
+
+########## little-star-bee-sanctuary.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** none listed for a school programme. General hive product prices are listed on the "Hives and Products" page (not school-programme pricing): "Nucleus Hives or Nuc's ... $300 +GST SOLD OUT"; "Single Hives ... $450 +GST"; "Double Hives – $550 +GST"; "Triple Hives – $650 +GST"; "Super ... $130 +GST SOLD OUT".
+
+########## lone-pine-koala-sanctuary.md
+cell: "qld-supplementary"
+**price_and_structure:** school programme, from the Local Student Groups page: Self-Guided Day "\$20 per student (inc. GST)", described as "Explore the Sanctuary at your leisure. Includes 1 bag of free-range animal food per student."; Discovery Session, Kindergarten to Year 12, "\$25 per student (inc. GST)", described as "Choose one of our curriculum-linked Discovery Sessions. Includes a 30-45 minute presentation led by our Education Officer and 1 bag of free-range animal food per student. A minimum of 10 & a maximum of 30 students per session."; the Planning Your Excursion Guide adds "To be eligible for any education rates, all participants must be included in one bulk payment, otherwise standard retail rates apply." General public admission, from the Tickets & Memberships page, is published separately: Adult (18+) \$63; Child (3–13) \$45; Student (14–17, or valid student ID) \$50; Senior/Pensioner (65+, or valid ID) \$50; Family (2 adults + up to 3 children) \$193; Mini Family (1 adult + up to 3 children) \$133; an Adult Yearly Pass is \$101 per year.
+
+########## maleny-botanic-gardens-and-bird-world.md
+cell: "qld-supplementary"
+**price_and_structure:** school pricing, from the Rezdy school-groups booking widget: "School Group - Garden & Farm Friends Entry Only" from AUD \$12.00 per head; "School Group - Garden, Farm Friends & Bird World Entry" from AUD \$25.00 per head. General public admission, from the Admission Fees page: Garden & Farm Friends Only \$19 (child 3-14) / \$24 (senior/concession/student) / \$29 (adult); Garden, Farm Friends & Aviary \$34 (child) / \$44 (senior/concession/student) / \$49 (adult); Family Pass Garden & Farm Friends Only \$77 (2 adults, 2 children); Family Pass Garden, Farm Friends & Bird World \$132 (2 adults, 2 children); Annual Passes from \$45 (child, Garden & Farm Friends) to \$110 (adult, all attractions)
+
+########## maru-koala-and-animal-park.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** School-specific pricing is not published; the School Groups page states booking and payment are "by arrangement with the manager". General admission pricing (effective 27 December 2024): Maru Entry Ticket (Animal Park Entry + Free Mini-Golf): Adult $33, Child $18, Senior $20, Family (2 Adults + 2 Children) $95. Pirate Pete's Mini-Golf only: Adult $20, Child $14, Senior $16, Family $60. Animal Interactions and Experiences (add-ons, all "included with the Maru Entry Ticket" for presentations, but the interactive experiences are priced separately): Koala Feeding Experience "From $75"; Dingo Experience "From $55"; Koala Experience "From $55"; Echidna Experience "From $55"; Quokka Experience "From $55"; Cassowary Experience "From $55"; Meet a Koala "From $35"; Meet a Snake "From $35"; Meet a Lizard "From $35". BBQ Lunch Facilities: "BBQ Hire – Set single fee of $5.50"; "'U-Cook' – price on enquiry".
+
+########## myuna-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:**
+Preschool: Hands on Farming (4 units) $13.90 per person; with pony rides $17.50.
+Foundation to Grade 2: four-unit program $13.90 per person; five-unit program $17.50 per person.
+Grade 3 to 6: $16.50 per student.
+Year 7-12: $17.50 per student.
+Year 9-Tertiary: "$32.90 per student" (includes GST); teachers free.
+Environmental tour: "Flat rate of $260."
+General admission (Things to Do page, non-school): tractor rides $3.60 per person (age 1+); pony rides $3.60 per child (age 1+).
+
+########## northey-street-city-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** From the School Activities page (per participant, GST inclusive, with a stated dollar group minimum): Basic Farm Tour $16 p/participant ($240 group minimum); Compost-making $20 p/participant ($300 group minimum); Propagation $25 p/participant ($375 group minimum); Soil investigation $20 p/participant ($300 group minimum); Australian Bush plants exploration $20 p/participant ($300 group minimum); Earth Connection $20 p/participant ($300 group minimum); Mapping (Biomes and Food Security option) $20 p/participant ($300 group minimum). The Group Tours and Experiences page states different, slightly higher prices for what appears to be the same option set: Basic Tour $18 per person ($270 group minimum); Compost-making $22 per person ($330 minimum); Propagation $28 per person ($420 minimum); Soil investigation $22 per person ($330 minimum); Australian Native plants exploration $22 per person ($330 minimum); Salad-making $28 per person ($420 minimum); Earth Connection $22 per person ($330 minimum); Eco-arts making $24 per person ($360 minimum). Holiday Combinations: Farm adventure + nature games $24 p/participant ($360 group minimum); Farm adventure + gardening $26 p/participant ($390 group minimum); Farm adventure + Seasonal Arts and Crafts $26 p/participant ($390 group minimum); Shelter building + Nature-based games $28 p/participant ($420 group minimum). "Prices are for weekdays only and are on a per person basis. Weekends may be arranged upon request and will have a higher cost."
+
+########## paradise-country.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** No education-specific price is published for Paradise Country on the pages read. General public pricing seen: Single Day Ticket (Paradise Country) "From $59"; Annual Passes "Premium Annual Pass" "$229" ("$199 if you buy 4 or more"); "SAVER ANNUAL PASS" "$189"; 5 Day Multi Park Pass "$179" ("$159 if you buy 4+"); 7 Day Multi Park Pass "$199". Animal encounter add-ons: Marmoset Monkey Encounter "$65 per person"; Meerkat Encounter "$65 per person"; Koala Encounter "$99 per person"; Koala Breakfast "$119 per person" (Adults); Wildlife Photos "From $25 per person"; Save a Mate Ranger for a Day "$115 per person".
+
+########## perth-city-farm.md
+cell: "AU-farm + NZ-nature + CA-nature (combined census, three cells)"
+**price_and_structure:** "SINGLE GROUPS / CLASSES – up to 20 participants (inc GST): Single 1hr tour for up to 10pax $190; Single 1hr tour for up to 20pax $260; 2hr visit with a tour + an activity/demo up to 20pax $540." "LARGER GROUPS / FULL CO-HORT: 2hr visit with a tour + an activity/demo for up to 40pax $950; 3hr visit with a tour + 2x activities/demos for up to 60pax $1800 (Each session is 50mins, allowing for 10min swaps + morning tea break); 4hr visit with a tour + 3x activities/demos for up to 80pax $2650 (Each session is 50mins, allowing for 10min swaps + morning tea break)." High School brochure adds "Interactive demonstrations – up to 40pax, 60mins" priced $530 or $580 depending on topic, and "Hands-on Workshops – various groups/lengths" priced $680 to $1250 depending on topic (see activities_verbatim for the topic-by-price breakdown).
+
+########## qcamel.md
+cell: "seq-comparator"
+**price_and_structure:** none listed. The FareHarbor booking widget shows tour names and durations ("Camel Cuddles Farm Tour", "All ages • 2 Hours"; "Camels & Canapés Date Night/Singles Night", "3 Hours") but no per-person or per-group price is displayed until a calendar date is selected within the widget; no school or group rate is published on any of the pages read.
+
+########## rainforestation-nature-park.md
+cell: "qld-supplementary"
+**price_and_structure:** School group rates (brochure, "2026 Local School Group Rates", minimum group size of 10 students unless noted): All Australian Experience — Year 1-6 \$28.50pp, Year 7-10 \$32.50pp, Year 11-12 \$43.00pp; Dreamtime Discovery — Year 1-6 \$20.00pp, Year 7-10 \$22.00pp, Year 11-12 \$28.50pp; Rainforest & Wildlife — Year 1-6 \$20.00pp, Year 7-10 \$22.50pp, Year 11-12 \$29.50pp (add \$14 per student for the Tree Planting Experience, "1 tree per 2 students"); Indigenous Experience — Year 1-6 \$30.00pp, Year 7-10 \$33.00pp, Year 11-12 \$39.50pp. Optional extras: Boomerang Painting \$23.50pp; Canvas Art Workshop \$23.50pp (small canvas) or \$23.50pp (large canvas, postage extra, minimum 25 pax). Lunch options for local school groups (3 days advance booking required, no minimum or maximum numbers required): Burger \$15.00; Aussie BBQ Lunch \$16.50/\$18.50/\$26.00 (tiered); Sandwich-to-go \$8.00; "Add chips to above options for an additional \$3.00pp." General public pricing (Book Now page): Big Nature Package (Koala & Wildlife Park, Pamagirri Aboriginal Experience, Army Duck Rainforest Tour, "Allow 3 hours") Adult \$71 / Child \$43 / Family \$185; Rainforest Discovery Package (Army Duck plus Pamagirri Rainforest Walkabout, "2 hours") Adult \$59 / Child \$36; Army Duck Tour alone Adult \$34 / Child \$21 / Family \$89; Koala & Wildlife Park alone Adult \$23 / Child \$14 / Family \$60; Pamagirri Aboriginal Experience alone Adult \$34 / Child \$21 / Family \$89; Koala & Wildlife Photos "from \$28 per photo"; Exclusive Koala Experience (min 2, max 8) Adult \$31 / Child \$25; Aussie BBQ Buffet Lunch Adult \$32 / Child \$18.50. "Prices are in Australian Dollars inclusive of GST and are valid from 1 April to 31 March each calendar year." "A deposit is required to secure all group bookings."
+
+########## rockhampton-zoo.md
+cell: "qld-supplementary"
+**price_and_structure:** "Entry to Rockhampton Zoo is FREE." "Rockhampton Zoo is owned and operated by Rockhampton Regional Council." No school-specific charge, package or add-on price is published on the pages read; entry is free for all visitor types alike.
+
+########## sarina-sugar-shed.md
+cell: "qld-supplementary"
+**price_and_structure:** School tours: "\$13.50 per child (age 5 – 17 inclusive)." General group tours (10 or more adults), published on the same page immediately above the School tours section rather than as a school rate: "Adults: \$27 per person" and "Accompanying children: \$13.50 per child (age 5 – 17 inclusive)," with the note "Please note: No concession rates apply to group travel and animals are not permitted on tours (exception of assistance dogs)."
+
+########## sea-world.md
+cell: "qld-supplementary"
+**price_and_structure:** Education admission: Prep & Primary Students \$30.50; Prep & Primary Accompanying Adults \$30.50; Prep & Primary Teachers \$0.00; Secondary Students \$42.00; Secondary Accompanying Adults \$42.00; Secondary Teachers \$0.00; Tertiary Students \$45.00 ("Requires Participation in Education Program"); Persons With Disabilities Groups \$29.50; Persons With Disabilities Carers \$0.00. Educational Program: \$80.00 "per program," "charged per session, not per student," with "Selected programs" also incurring "a per student fee of \$13.00" or the separate Tropical Reef Snorkel fee of \$40.00 (14 years and over). A flat Booking Fee of \$6.00 "applies to all bookings." Rates are stated as "valid 19 December 2025 - 18 December 2026."
+
+########## splitters-farm.md
+cell: "qld-supplementary"
+**price_and_structure:** school-programme pricing itself is not published; the schools page states "Schools can download our School Camp Options and Group Stay Options or contact us directly for customised programs, pricing, and availability at [email]", repeated for each of the four programmes. The Booking Terms & Conditions PDF's "School Camps Payments" section states: "School Camp bookings are quoted in advance and will be based on the individual length of stay, meal requirements, activities and accommodation type." The School Camp Options pack does publish day-trip prices for the general Farm Tours (not stated as school-exclusive): Farm Entry (Self-Guided) "TEACHERS \$22", "CHILD 2-16Y \$16", "INFANT UNDER 2 \$5", plus an optional "+ PICNIC HAMPER" at "TEACHER \$60" / "STUDENT \$40"; Guided Farm Tours "TEACHERS \$35", "STUDENTS 2-16Y \$25", "INFANT UNDER 2 \$5". The Group Stay Options pack (general group product, not school-exclusive) additionally prices: Guided Farm Tour "ADULT \$40" / "CHILD UNDER 16 \$30"; Self-Guided Farm Tour "ADULT \$30" / "CHILD UNDER 16 \$20" (noted as "included in your overnight stay at Splitters Farm - no additional charges apply"); "DAMPER MAKING PER PERSON \$10"; "GO KARTS FROM \$20"; "KAYAK & CANOE HIRE FROM \$20"; "OUTDOOR CINEMA FROM \$150". The general public Farm Entry (Self Guided) page separately publishes: "Adults \$30", "Children 2-16 years \$20", "Infants under 2 years \$8", "Aged Concession \$25", "Disability Carer \$25", "Family of 4 (2A/2C) \$90".
+
+########## summer-land-camels.md
+cell: "seq-comparator"
+**price_and_structure:** "Never too small to meet a Camel": "\$10 per child, for groups of 15+ pax", with an add-on of "\$10 per person for a 30 min. entertaining camel talk". "Farm Tour & Taste" (60 minutes): "\$15 per child under 12 years, \$25 per adult". "Farm Tour & Taste" (90 minutes): "\$20 per child under 12 years, \$30 per adult". "The Cameleer Experience": "\$38 per person, for groups of 15+ pax", with an add-on "ADD a yummy Camel Milk Gelato for an additional \$5". Camel feeding at the enclosure: "\$3 per bag or 4 bags for \$10"
+
+########## the-ginger-factory.md
+cell: "seq-comparator"
+**price_and_structure:** Live Bee Show: \$8 per student. Ginger Growing & Processing Tour: \$8 per student. Overboard Boat Ride: \$7 per student. Ginger Train Ride: \$7 per student. Bundle "2 x Rides": \$12 per student (minimum 1.5 hour). Bundle "2 x Rides, 1 x Educational Tour": \$17 per student (minimum 3 hours). Bundle "2 x Rides, 2 x Educational Tours": \$25 per student (minimum 4 hours). Self-guided Zog: A Forest Adventure and Rainbrella Project & Soundscape are free of charge. A "Business/Marketing discussion (15-20min)" is listed at \$30 total
+
+########## thunderbird-park.md
+cell: "seq-comparator"
+**price_and_structure:** none listed for a school or education booking. General admission and activity prices are not published on the four core pages or on the linked "Activity Guide & Prices" document (hosted on Canva; the link returned a browser-compatibility notice and could not be read). Bird Feeding is stated as "FREE for everyone!"
+
+########## tommerups-dairy-farm.md
+cell: "qld-supplementary"
+**price_and_structure:** no per-student or per-group tour price is published on any of the pages read. The only numeric figure published for the Farm School visit is the ice cream add-on: "Our tour price doesn't include food however, our Jersey Girl ice creams are available to purchase from the Farm Larder at the special school price of \$5 each. These can be chosen as an added extra to the price per person should you wish for the school to organise full payment." The phrase "the price per person" implies a base tour charge exists, but its value is not stated anywhere on the pages read.
+
+########## trevena-glen-farm.md
+cell: "seq-comparator"
+**price_and_structure:** none listed for the school excursion itself; pricing is by individual quotation only: "Once a date has been confirmed, we provide a quotation...". A general "Tours Price List" PDF (dated "From: Jun-25"), linked from the Documents page and unrelated to the school programme, prices the venue's general-public tour range: Public 1hr \$22; Private 1hr \$87 (1 person)/\$47 (2)/\$42 (3-4)/\$37 (5-8)/\$32 (more than 8); Private 2hr \$174/\$87/\$82/\$78/\$72 across the same group-size bands; Private 3hr \$234/\$117/\$112/\$107/\$102; Train \$7 (1)/\$6 (2)/\$5 (3 or more); Pony ride \$15; Pony ride (extended) \$30.
+
+########## white-ridge-farm.md
+cell: "seq-comparator"
+**price_and_structure:** the Schools and Vacation Care page states only "Email us for further information and pricing"; no school-specific price is published. The general admission schedule published sitewide (Book Now, Home, and other pages) is: Child (2-17 years, under 2 free) \$17; Concession/Student/Pensioner \$27; Adult \$34; Family pass (2 adults + 2 children) \$98; Annual Child pass \$55; Annual Adult pass \$90, all marked "*Excluding group bookings"
+
+########## wildlife-hq-zoo.md
+cell: "qld-supplementary"
+**price_and_structure:** from the pricing-chart image on the Prices page: "Big Pineapple Train Rides" \$12 per person ("Enjoy a full train loop starting and ending at the Plantation station. Experience scenic views and a historic tour of the heritage-listed property."); "Zoo Admission" \$49 Adults, \$35 Kids, \$42 Seniors, \$139 Family (2 Adults, 2 Kids) per person; "Zoo & Train Combo Deal" \$58 Adults, \$44 Kids, \$51 Seniors, \$175 Family (2 Adults, 2 Kids), described as "Combo tickets include a train ride from the Big Pineapple to the zoo. Return trip available on the train. During peak times, return train trip not guaranteed; exit via Pineapple Path may be necessary." The Prices page text itself adds: "*Zoo & Train combo and Train tickets not available for online booking. Please purchase at the Big Pineapple." No school-group price is stated anywhere on the pages read. Separately, the homepage states a "Zoo Keeper for a Day" package "for \$449 per adult and \$349 per child", described as a "unique VIP experience" including "an average of 6 up close and personal experiences", bookable only by emailing info@whqzoo.com; this is not stated to be a school-group product.
+
+########## windy-station-woolshed.md
+cell: AU-farm + NZ-nature + CA-nature (combined census, three cells)

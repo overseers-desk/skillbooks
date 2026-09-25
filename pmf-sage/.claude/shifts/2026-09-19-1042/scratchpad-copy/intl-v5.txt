@@ -1,0 +1,548 @@
+=== b01/ballyscullion-park.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **0** under E3: no start-and-finish clock time bounding the wedding hire is stated ("Access time is different for every wedding depending on whether the ceremony is on site or not. We will advise each couple individually"); only an end time is stated (coded at V19). `V5_end_time_stated` = **1**, quote: "the bar and band finish at 1am. Last orders are at 12:45am." `V5_access_before` = **1**, quote: "we ask that you come and setup from between 10:30am and 1:30pm" (day-before or day-of, per the same-day/prior-day condition stated). `V5_access_after` = **1**, quote: "we ask that all your decor and belongings are removed from the venue by 11:30am the following day." `V5_multiday` = **1** (carried from V1; "we have hosted several two day weddings"). All other V5 fields = 0, including `V5_min_hours`, `V5_extra_hour_term` (explicitly denied, not available: "Is it possible to get a late extension for our wedding? Unfortunately not" — recorded here as a stated non-availability; the field's positive condition is not met so it stays 0), `V5_ceremony_slot_times`, `V5_rehearsal_included_stated`, `V5_nights_included_verbatim`.
+
+=== b01/bradmoor-farm.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0**. No block length, start time, finish time, access period or rehearsal statement is published.
+
+=== b01/chenies-manor-house.md ===
+## 8. V5 — Time structure of the day
+
+Row 1: `V5_access_before` = **1**, `V5_access_after` = **1**, quote: "Access the day before and after your wedding for set up and take down." `V5_block_band` = **0** under E3/E4: no start-and-finish clock time bounding the wedding day is stated anywhere in scope; only the setup/takedown access is addressed. `V5_multiday` = 0 (not stated as running "over more than one day"; the access period is setup/takedown, not the wedding itself, per E4 of V5). All other V5 fields = 0. Row 2: every V5 field = 0.
+
+=== b01/cliveden-house.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0** on every row. No block length, start/finish time, access-before/after period or rehearsal statement is published anywhere in scope, including both brochure copies.
+
+=== b01/de-vere-latimer-estate.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0** on every row. No start time, finish time, block length, access-before/after period or rehearsal statement is published anywhere in scope, including all five price sheets.
+
+=== b01/dorney-court.md ===
+## 8. V5 — Time structure of the day
+
+`V5_access_before` = **1**, quote: "The Coach House Barn & Grounds are generally opened at 8am on the day." `V5_end_time_stated` = **1**, quote: "11.30pm: Music & bar close… 12am: Carriages… Packages are until midnight, however we do have a 2am licence if you wish to extend." `V5_curfew_extension` (recorded at V19, not here). `V5_ceremony_slot_times` = **1**, quote: "we always recommend a ceremony time of 2.30pm." `V5_access_after` = **1**, quote: "We do ask you take all your decorations away by 10am." `V5_block_band` = **8**, because the published "Timing examples" table runs from 8am delivery access to 12am carriages, an 8am-to-around-midnight span, but the text never states this timetable **is** the hire's own bounding block rather than an illustrative example ("Timing examples," not "your hire includes"); two readings remain, escalated. `V5_extra_hour_term` = **1**, same 2am-licence quote, figure not published. `V5_rehearsal_included_stated` = 0. `V5_multiday` = 0. All other V5 fields = 0.
+
+=== b01/greenlands.md ===
+## 8. V5 — Time structure of the day
+
+`V5_access_before` = **1**, quote: "Usually, you can have access to the wedding breakfast room from 4pm on the day before your wedding." `V5_end_time_stated` = **1**, quote: "What time does the reception need to finish? We ask that guests vacate by 1am." `V5_multiday` = **1** (carried from V1, row 1). `V5_block_band` = **0** under E3 (no start time bounding the wedding day itself is stated; only the day-before access and the finish time). All other V5 fields = 0.
+
+=== b01/hampden-house.md ===
+## 8. V5 — Time structure of the day
+
+Row 3: `V5_block_band` = **6** (a stated full day/24-hour-adjacent hire), quote: "Hire period midday to midnight." `V5_access_before` = **1**, quote: "Access for suppliers from 9am or day before with prior arrangement." Rows 1, 2: `V5_block_band` = **0** under E3 (no start-and-finish clock time is stated for these rows specifically; only the shared "Full evening bar service until 11.30pm" end time). `V5_end_time_stated` = **1** on rows 1 and 2, quote: "Full evening bar service until 11.30pm" / "11:30pm." `V5_rehearsal_included_stated` = 0. `V5_multiday` = 0. Row 2 only: `V5_access_before` = **1** (carried from the Bridal Suite's own stated access, "get ready from 8:30 until 'I do'," recorded here as a same-day access period). All other V5 fields = 0.
+
+=== b02/hartwell-house.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+Every PCR: `V5_block_band` = **0** (no hire length, start time or finish time is stated for any package; the text gives only day-of-week and headcount conditions). All other V5 fields 0 on every PCR. No access-before, access-after, rehearsal, multiday or end-time statement appears anywhere in the wedding scope.
+
+=== b02/hedsor-house.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+hs-1-1 to hs-3-2: `V5_block_band` = **0** (no hire length or clock times stated for the packages themselves). hs-4-1: `V5_block_band` = **6** (a stated full-day/24-hour hire), quote: "Exclusive use from 10:30am – 10:00am the following day." hs-5-1: `V5_block_band` = **7** (two days or more), quote: "extend the festivities to a multiple day celebration," `V5_multiday` = 1.
+
+Venue-wide (read against every row from the FAQ "Booking Hedsor" section): `V5_access_before` = **1**, quote: "You have exclusive use of Hedsor and its gardens from 10.30am." `V5_access_after` = **1**, quote: "Check out is at 10am the morning after your wedding." `V5_rehearsal_included_stated` = 0 (not addressed).
+
+=== b02/huntsmill-farm.md ===
+## 8. V5 — Time structure of the day
+
+Every PCR: `V5_block_band` = **6** (a stated full-day/24-hour-class hire), quote: "Use of the barn on the day of your wedding from 9am to midnight." `V5_access_before` = **1**, quote: "Access to the barn the day before your wedding from 1pm to 5pm." `V5_access_after` = **1**, quote: "Late check-out at 11am the day after your wedding" and "Two nights in the Old Dairy honeymoon cottage." `V5_multiday` = **1** (the three-night access span: day-before setup, wedding day, next-day checkout). `V5_end_time_stated` = **1**, quote: "Use of the barn... from 9am to midnight."
+
+=== b02/manor-farm-barn.md ===
+## 8. V5 — Time structure of the day
+
+Every PCR: `V5_block_band` = **8**, quoted: no single stated hire-length or clock-bounded block is published for the venue hire itself; the FAQ instead publishes an example running order ("2.30pm – Civil Ceremony... 11:45pm – Finish") introduced as an example ("If you are arriving from a Church...") rather than a stated hire block, and separately states "The last dance is at 11.45pm. The bar closes at 11.30pm," which bounds the evening's end without stating a start time for the hire itself. Two readings remain (the example day plausibly is the hire's bounds, or it is illustrative only), so V5 is left undecidable rather than banding off the example. `V19_curfew_time` and `V16_service_end_time` (below) carry the same 11.30pm/11.45pm facts as stated constraints rather than a time-block code. `V5_access_before` = **1**, quote: "you can therefore spend the day before (10.30am to 4.00pm) decorating the barn."
+
+=== b02/monkton-barn.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **0** (no hire-length or clock-bounded block published). `V5_access_before` = **0** under E4/silence: "Unfortunately, we do not offer prior day access... From 9am on the morning of your wedding" is itself a stated day-of access time, so `V5_access_before` is recorded as **1** with the wording "From 9am on the morning of your wedding," a same-day rather than day-before access statement, and `V5_notes` records the explicit denial of day-before access. `V5_end_time_stated` = **1**, quote: "the venue is licensed until 2am, but we're happy to arrange an extension with prior notice." `V5_extra_hour_term` = **1**, same quote (no figure published for the extension charge).
+
+=== b02/notley-tythe-barn.md ===
+## 8. V5 — Time structure of the day
+
+Every PCR: `V5_end_time_stated` = **1**, quote (day-conditional): "the bar closes at midnight, the music stops at 12.30pm [sic, read as 12.30am], with guests and suppliers being asked to finish their drinks and leave the building and offsite by 1am" (Monday-Saturday, ceremony/arrival from 2pm); "For Sunday, our licensing ends at 11.30pm... the wedding party and all guests expected to leave by 12.30am." `V5_access_before` = **1**, quote: "If there is no event the day before you can set up from midday onwards." `V5_access_after` = **1**, quote: "Collection by 12 noon the following day." `V5_rehearsal_included_stated` = **1**, quote: "1 Week prior to your Wedding — You will have a rehearsal with our Front of House." `V5_block_band` = **8**, quoted: no single stated hire-length is published; the day's bounds are read off separate start-access and finish-time statements rather than one stated block, two readings remain on whether the "from 2pm" arrival time is itself the start of the hire block.
+
+=== b02/old-luxters-barn.md ===
+## 8. V5 — Time structure of the day
+
+Every PCR: `V5_block_band` = **6** (a stated full-day-class package, though not a clock-bounded block on its own), quote: "The packages are until 12am (11.30am [sic, read as 11.30pm] bar & music close + 1/2 an hour drink up)." `V5_access_before` = **1**, quote: "The barn is opened at 8am on the day of your wedding." `V5_extra_hour_term` = **1**, quote: "we do have a 2am licence if you would like to use it! ... We can arrange an extension until 2am should you need. For pricing see your wedding summary" (no figure published on the fetched pages). `V5_end_time_stated` = **1** (same 12am/2am quotes).
+
+=== b02/rackleys-chiltern-hills.md ===
+## 8. V5 — Time structure of the day
+
+Every PCR: `V5_end_time_stated` = **1**, quote: "Under the terms of our license, the music and alcohol service has to end at 11.30pm. You and your guests are politely asked to leave the building quietly... no later than 12 midnight." `V5_curfew`-adjacent fact also coded at V19. `V5_access_before` = **1**, quote: "Bridal Suite with access from 8am" and "Supplier early access to set up." `V5_block_band` = **8**, quoted: no single stated hire-length is published; the day is bounded only by an access-from time and a finish/curfew time with no explicit start-of-hire clock time, two readings remain.
+
+=== b03/richings-park-golf-club.md ===
+## 8. V5 — Time structure of the day
+
+Every field 0/blank. No time block, start or finish clock time, access period or rehearsal statement is published in the wedding scope. (The functions page's "party until midnight or take an extension until 1am" is out of scope under S8, since the functions page carries no wedding trigger word and is not linked from the weddings page.)
+
+=== b03/stowe-house.md ===
+## 8. V5 — Time structure of the day (per PCR; identical across the PCRs of a given row, recorded once per row)
+
+Row 1 (all 150 PCRs): `V5_block_band` = **5** (over 10 hours, same day), quote: "Access from 10am for set up and Guest arrival from midday until midnight" — the stated bounding interval, midday to midnight, is twelve hours. `V5_access_before` = **1**, quote: "Access from 10am for set up" (two hours ahead of guest arrival). `V5_end_time_stated` = **1**, quote: "Guest arrival from midday until midnight." `V5_extra_hour_term` = **1**, quote: "an extension until 1am may be applied for, at an additional fee of £1000+vat" (figure at V8). All other fields 0.
+
+Row 2 (all 4 PCRs): `V5_block_band` = **5**, quote: "12pm guest arrival – midnight departure." All other fields 0.
+
+Row 3 (both PCRs): `V5_block_band` = **5**, quote: "Exclusive use of three State Rooms, midday until midnight." `V5_extra_hour_term` = **1**, quote: "1am extension fee £1000+vat." All other fields 0.
+
+Row 4: `V5_block_band` = **2** (over 2 and up to 4 hours), quote: "Monday - Thursday 3 hour hire packages." All other fields 0.
+
+=== b03/the-sefton-barn-the-horse-trust.md ===
+=== b03/the-tudor-barn.md ===
+## 8. V5 — Time structure of the day
+
+Rows 1-4: `V5_block_band` = **0** (no start/finish clock time or hours figure is stated for the standard packages themselves; only venue-wide facts bound the day). `V5_access_before` = **1**, quote (Barn Brochure PDF): "The brides room... is available from 8am on your wedding day." `V5_end_time_stated` = **1**, quote: "our staff keep you and guests happy till last orders at 11.30pm." Row 5 (Twilight): `V5_block_band` = **4** (over 6 and up to 10 hours; access from 2.30pm to a midnight reception end is a stated bounding interval of roughly 9.5 hours), quote: "The bridal room for getting ready from 2.30pm. Guest arrival and ceremony from 5pm... Evening reception until 12am." `V5_access_before` = **1** ("from 2.30pm"). `V5_end_time_stated` = **1** ("until 12am"). Row 6 (Dry Hire): `V5_block_band` = 0; `V5_access_before` = **1**, quote: "Flexible set-up and breakdown times."
+
+=== b03/the-woodland-lodge.md ===
+## 8. V5 — Time structure of the day
+
+Every field 0/blank. No hire block, access period or rehearsal statement is published for a wedding at the Woodland Lodge; "Dates: All year" bears on availability (V23), not on the length of a booked day, and the premises licence hours ("7am-2am," recorded at V16) are the site's trading licence, not a stated wedding hire block (E1 of §4.5 is the closest parallel: general licensed hours, not stated as the hire's own length).
+
+=== b03/waddesdon-manor.md ===
+## 8. V5 — Time structure of the day (rows 1-4, identical statement on every brochure)
+
+`V5_block_band` = **6** (a stated full-day/24-hour-style hire), quote: "Exclusive hire of The Dairy 8am until midnight." `V5_access_before` = **1**, quote: "(Set up day included if required 8am to 5pm the day before)." `V5_end_time_stated` = **1** ("until midnight"). `V5_extra_hour_term` = **1**, quote: "1am extensions are available on a Friday and Saturday at £2,400 inc VAT. 12.30am extensions are also available on those days at £1,200 inc VAT" (figures at V8). Row 5: every field 0.
+
+=== b03/winters-tale-country-barn.md ===
+## 8. V5 — Time structure of the day
+
+Row 1: `V5_block_band` = **6** (a stated full-day/24-hour-style hire), quote: "Exclusive use of the venue and grounds from 9.30am on the day of your wedding through to 11am the following day." `V5_access_before` = **1**, quote: "Access the prior afternoon from 1pm-5pm for pre-wedding set up." `V5_end_time_stated` = **1**, quote: "Last orders at the Bar are called at 11.20pm, the Bar closes at 11.30pm and Carriages are at midnight."
+
+Row 2: `V5_block_band` = **7** (two days), quote: "Harvest Moon Barn for 2 nights and Ember Eve Barn on your wedding night." `V5_multiday` = **1**, `V5_nights_included_verbatim` = "2 nights."
+
+Row 3: `V5_block_band` = **5** (over 10 hours, same day: 1pm access to 11am departure the next day spans overnight, but the day's own active hours run roughly 1pm to midnight), quote: "Exclusive use of the venue and grounds for wedding set up from 1pm on the day of your wedding through to your departure at 11am the following day." `V5_ceremony_slot_times` = **1**, quote: "A twilight wedding ceremony at Winters Tale Country Barn must start at 5.00pm." `V5_end_time_stated` = **1** ("Bar Closes" 11.30pm, "Carriages" at midnight, per the row's own published timeline).
+
+=== b04/ballykealey-house.md ===
+## 8. V5 — Time structure of the day
+
+No stated time block, start/finish time, access-before or access-after period, or rehearsal-access statement appears anywhere in scope for any row or PCR. Every V5 field = **0** on all eighteen PCRs.
+
+=== b04/bellinter-house.md ===
+## 8. V5 — Time structure of the day
+
+No stated time block, start/finish time, or access period is published anywhere in the reached scope. Every V5 field = **0**.
+
+=== b04/lodge-at-ashford-castle.md ===
+## 8. V5 — Time structure of the day
+
+No stated time block, start/finish time, or access period is published for either row anywhere in the reached scope. Every V5 field = **0**.
+
+=== b04/orlagh-house.md ===
+## 8. V5 — Time structure of the day
+
+No stated time block, start/finish time, or access period is published for the wedding day itself anywhere in the reached scope. `V5_multiday` = **1** (see V1), `V5_nights_included_verbatim` = "your entire stay" (brochure: "The house will be exclusively yours for your entire stay"), a duration stated without a fixed number of nights. `V5_block_band` = **0**.
+
+=== b04/poulaphouca-house.md ===
+## 8. V5 — Time structure of the day
+
+No single stated hire block bounds the wedding day. Three separate, scattered facts touch on timing without the text itself joining them into one statement: "Entry: on the day will not be permitted before 11am on the day of your wedding" (terms §10); "Function room bar will operate until 1.30am, amplified music must cease 30 mins after after non resident bar closes by 2am" (terms §7, verbatim including the document's own repeated "after after"). `V5_block_band` = **0**: per the codebook's own precedent for scattered access/departure facts whose relationship to one hire block is not itself stated (§4.5 ambiguous case, "Access from 9am for styling; guests depart by midnight"), the coder does not assemble these into a single block. The bar/music-close facts are instead coded at V19 (curfew), and the 11am entry restriction is recorded here in `V5_notes` without setting a band. `V9_final_numbers_deadline` (see below) separately captures the six-week guest-number deadline, which is not a time-of-day fact.
+
+=== b04/rock-farm-slane.md ===
+## 8. V5 — Time structure of the day
+
+No stated time block, start/finish time, or access period is published anywhere in scope. `V5_block_band` = **0**. All other V5 fields = 0.
+
+=== b04/roganstown-hotel.md ===
+## 8. V5 — Time structure of the day
+
+`V5_end_time_stated` = **1** on all three rows (a unit-wide fact, applicable identically), quote: "Late bar extension until 1:30am" (brochure, "Your Evening" inclusions panel). No start time or overall block length is stated; `V5_block_band` = **0**.
+
+=== b04/springfort-hall.md ===
+## 8. V5 — Time structure of the day
+
+`V5_extra_hour_term` = **1** (unit level), quote: "A bar extension can be obtained by the hotel on your behalf... €250.00... This is subject to application and approval and will allow the function bar to remain open until 2.00am" (brochure, Terms & Conditions). No overall start time or hire-block length is stated anywhere in the reached scope; `V5_block_band` = **0**.
+
+=== b04/tinakilly-country-house.md ===
+## 8. V5 — Time structure of the day
+
+No stated time block, start/finish time, or access period is published for any row anywhere in the reached scope. Every V5 field = **0** on all four rows.
+
+=== b04/virginia-park-lodge.md ===
+## 8. V5 — Time structure of the day
+
+No stated time block, start/finish time, or access period is published anywhere in the reached scope. Every V5 field = **0**.
+
+=== b05/ballybeg-house.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **7** (more than two days), quote: "Three day venue hire" and the four seasonal options' "4-day celebration duration." `V5_multiday_length_verbatim`: "Three day venue hire"; "4-day celebration duration" (the four weekend options); "3-day celebration duration" (the weekday option). `V5_multiday` = **1**. `V5_access_before` = **1**, quote: "Our approach includes time to settle in, a fantastic wedding day, and the option for a uniquely Irish celebration the next day." All other V5 fields 0, including `V5_ceremony_slot_times`, `V5_min_hours`, `V5_extra_hour_term`, `V5_access_after`, `V5_rehearsal_included_stated`, `V5_end_time_stated`.
+
+=== b05/ballymagarvey-village.md ===
+=== b05/gardenmorris-estate.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **7** (two days), taken as the longest of a stated range, per I5: "the estate can be reserved for a day, a weekend or a full week." `V5_multiday_length_verbatim` = "a day, a weekend or a full week." `V5_all_bands`: a day (band 6, full-day mapping); a weekend (band 7); a full week (band 7, over-two-days statement). `V5_multiday` = **1**. All other V5 fields 0, including `V5_ceremony_slot_times`, `V5_min_hours`, `V5_extra_hour_term`, `V5_access_before`, `V5_access_after`, `V5_rehearsal_included_stated`, `V5_end_time_stated`.
+
+=== b05/kilshane-house.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **0** (no hire-length block, start time or finish time is stated for the row; the text describes a sequence of the day's events — arrival, ceremony, canapés, dinner, fireworks — with no clock times or a stated number of hours). `V5_rehearsal_included_stated` = 0. `V5_access_before` = 0. `V5_multiday` = 0 at PCR level (recorded above at V1 as undecidable for the row's own description; no PCR-level time statement exists to band). All other V5 fields 0.
+
+=== b05/mount-falcon-estate.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = 0. No hire block, start or finish time, or access period is stated anywhere in the captured scope.
+
+=== b05/the-dunraven-adare.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = 0 for the reception day itself. No start time, finish time or hour count is stated for the wedding day; the terms and conditions state process deadlines (six weeks for menu confirmation, 48 hours for final numbers), recorded at V9, not at V5.
+
+=== b05/the-red-door-country-house.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = 0. No hire block, start or finish time, access period or rehearsal statement is published anywhere in the captured scope.
+
+=== b05/the-station-house-hotel.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **0** on rows 1-7 and 10 (no start-to-finish hire block or hour count is stated for the wedding day itself; the FAQ gives clock times for individual moments — "Ceremonies... will start at 2.30pm – 3pm"; "we usually ring the bell at 5.30pm for dinner" — which are event-timing facts, not a stated hire block, and are recorded at V5_element notes rather than banded). `V5_rehearsal_included_stated` = 0. `V5_access_before` = **1** on row 8 only, quote: "On Your Pre-Day-Arrival: Mini scones with freshly brewed tea or coffee on arrival." `V5_multiday` = **1** on rows 8 and 9 (each is itself a day added to the core wedding day; row 9 explicitly: "On Day 2 (Post Wedding Day)"). `V5_block_band` = **6** (a stated full day) on row 9's own added day, verbatim "Day 2." All other V5 fields 0.
+
+=== b05/tulfarris-hotel-golf-resort.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = 0. No hire block, start or finish time, or rehearsal statement is stated anywhere in the captured scope. "Evening food" and "The Day After" (brochure) name sequence but no clock time or hour count.
+
+=== b06/amuri-estate.md ===
+## 8. V5 — Time structure of the day
+
+No time block, access period, rehearsal statement, or end time is published anywhere in scope. `V5_block_band` = **0** on the row's PCR. All other V5 fields 0.
+
+=== b06/broadlands-lodge.md ===
+## 8. V5 — Time structure of the day
+
+Row 1 PCR: `V5_block_band` = **4** (over 6 and up to 10 hours), `V5_block_verbatim` = "up to eight hours" (page) / "up to eight hours" (information pack). `V5_end_time_stated` = **1**, quote: "Ceremonies proceed at 4pm (earlier by arrangement), and conclude by 11.30 p.m." `V5_access_before` = **1**, quote: "The premises will be available for set up and rehearsal (strictly from 2pm until 5pm on the Friday before the wedding.)" `V5_access_after` = **1**, quote: "All props, belongings and hired equipment must be removed from the venue and grounds by 10am the morning after your wedding day." All other V5 fields 0.
+
+Row 2 PCR: `V5_block_band` = **1** (up to 2 hours), `V5_block_verbatim` = "Two hour venue hire." `V5_extra_hour_term` = **1**, quote: "extra time by arrangement" (no figure stated; nothing to V8). All other V5 fields 0.
+
+=== b06/coventry-arena.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **6** (a stated full-day/multi-day hire, mapped per I3's fixed forms for the event day itself, with the surrounding access period recorded separately) — quote: "1 event day" within the 5-day exclusive-use statement. `V5_multiday` = **1**, quote: "Wedding hire includes 5‑days exclusive use - 2 days setup, 1 event day and 2 days pack-down." `V5_multiday_length_verbatim` = "5‑days exclusive use." `V5_access_before` = **1**, quote: "2 days setup." `V5_access_after` = **1**, quote: "2 days pack-down." `V5_end_time_stated` = **1**, quote: "Music must shut down by 1:30am and the premise must be vacated by 2am" (recorded here per V5's own field and again at V19 as a constraint). All other V5 fields 0.
+
+=== b06/larcomb-vineyard.md ===
+## 8. V5 — Time structure of the day
+
+All six PCRs: `V5_block_band` = **4** (over 6 and up to 10 hours), from "Exclusive use of the premises from 2pm - midnight" (a stated 10-hour clock interval, I2). `V5_block_verbatim` = "Exclusive use of the premises from 2pm - midnight with all guests to have departed by 12.30am." `V5_end_time_stated` = **1**, quote: "with all guests to have departed by 12.30am." `V5_access_before` = **1**, quote: "Venue access from 9am the day of your wedding (or earlier by prior arrangement)." `V5_rehearsal_included_stated` = **1**, quote: "Ceremony rehearsal time on an agreed day and time" (inclusions list) and "Our day-of-coordinator will also be present at your ceremony rehearsal." All other V5 fields 0.
+
+=== b06/tarureka-estate.md ===
+## 8. V5 — Time structure of the day
+
+Row 1, all three PCRs: `V5_block_band` = **7** (two days), quote: "Venue hire of the Loft Barn gives you full access to the Barn and Estate grounds from the day before your wedding, up until 2pm the day after your wedding (on the weekend)." `V5_multiday` = **1**. `V5_access_before` = **1**, quote: "full access to The Barn the day before your wedding, from midday until 5pm" (information pack — recorded as a narrower access statement than the page's own "from the day before," both preserved verbatim per S6, neither reconciled). `V5_rehearsal_included_stated` = **1**, quote: "A rehearsal run the day before your wedding" (information pack) / "Wedding rehearsal the day before your wedding" (wedding-packages page). All other V5 fields 0.
+
+Row 2, one PCR: `V5_block_band` = **7** (two days), quote: "Two full days of exclusive estate access." `V5_multiday` = **1**. `V5_nights_included_verbatim` = "Two nights in our heritage accommodation." All other fields 0.
+
+=== b06/the-hunting-lodge.md ===
+## 8. V5 — Time structure of the day
+
+No time block, access period, rehearsal statement, or end time is published anywhere in the wedding scope. `V5_block_band` = **0**. All other V5 fields 0. (The lawn bar and restaurant trading hours published in the site-wide footer are Scope A-venue opening hours, not a stated wedding-hire block — E1.)
+
+=== b06/the-red-barn.md ===
+## 8. V5 — Time structure of the day
+
+No time block, access period, rehearsal statement, or end time is published anywhere in the wedding scope. `V5_block_band` = **0**. All other V5 fields 0.
+
+=== b06/woodhouse-mountain-lodge.md ===
+## 8. V5 — Time structure of the day
+
+`V5_multiday` = 0 (no stated multi-day access; the exclusive-hire requirement covers one night, coded at V17/V18). No time block, access period, rehearsal statement, or end time beyond the one-night accommodation requirement is published anywhere in the wedding scope. `V5_block_band` = **0**. All other V5 fields 0.
+
+=== b07/corban-estate-arts-centre.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+Both PCRs: every field 0. No time block, hours, access period or end time is stated anywhere in scope for either space.
+
+=== b07/eagle-ridge-country-estate.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+All base (non-winter-package) PCRs across all three rows: `V5_block_band` = **4** (over 6 and up to 10 hours), from the FAQ/brochure's stated access window: "Access to the venue[s] from 11 am on the day of your wedding to midnight." `V5_block_verbatim` = "from 11 am... to midnight." `V5_end_time_stated` = **1**, verbatim "midnight." `V5_access_before` = **1**, quote: "If the venue is not booked the day prior access to the venue for theming and early access for hair and makeup will be discussed closer to the time (package dependent)." `V5_rehearsal_included_stated` = **1**, quote: "Ceremony Rehearsal the week of your wedding." `V5_nights_included_verbatim`: on Row 1 only (the row that includes The Homestead), "If you treat yourself to a night in The Homestead, check out is at 10 am the following day" is recorded, but is an optional add-on rather than a stated inclusion of the base configuration, so `V5_multiday` stays 0 and the note is preserved in `V5_notes`. All other V5 fields 0.
+
+The Winter Wedding Package PCRs (I-NZ-10-1-10, I-NZ-10-2-10) carry no separate time statement of their own; the same access window is recorded, banded identically.
+
+=== b07/lansdowne-house.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+All three PCRs: `V5_access_before` = **1**, quote: "can be used and enjoyed for photo shoots from 11.00a.m. onwards on the day of your wedding (or earlier by arrangement)." `V5_rehearsal_included_stated` = **1**, quote: "Time at Lansdowne House for your pre wedding rehearsals wherever possible" and "the wedding rehearsal the day before" (ceremony add-on text). `V5_block_band` = **0** (no start-to-finish hire block or end time is stated for the reception itself; only the 11am photo-access start is given, with no stated finish, E3). All other V5 fields 0.
+
+=== b07/melrose-house.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+Every field 0. No hire block, start/finish time, access period or rehearsal statement is stated on the wedding row itself. (The booking-form field "Time of Hire: Half Day (4 hours) / Full Day / Evening / Other" is a form option, `/venue-bookings/`, not a stated block attached to the wedding price; recorded at V21, not here, S8-consistent caution against reading a form's option list as a stated fact about the wedding row.)
+
+=== b07/muriwai-estate.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+Both PCRs: `V5_block_band` = **5** (over 10 hours, same day), from "Check-In/Setup Access: 8:00 AM to 9:00 AM" through "Check-Out/Guest Departure: 11:00 PM." `V5_block_verbatim` = "Check-In/Setup Access: 8:00 AM to 9:00 AM… Check-Out/Guest Departure: 11:00 PM." `V5_access_before` = **1**, same quote. `V5_end_time_stated` = **1**, verbatim "11:00 PM." `V5_nights_included_verbatim` = 0 on the base PCRs (nights are an addon, see V8 below), `V5_multiday` = 0. All other fields 0.
+
+=== b07/tairoa-lodge.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+Every field 0 on both PCRs. No hire block, start/finish time or access period is stated on the wedding page.
+
+=== b07/the-duke-of-marlborough-hotel.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+All three PCRs: `V5_block_band` = **5** (over 10 hours, same day), from "Exclusive use of the Ballroom from 10am, and the Veranda & Garden from 3:30pm–1am." `V5_block_verbatim` = "10am… 3:30pm–1am." `V5_end_time_stated` = **1**, verbatim "1am." All other fields 0.
+
+=== b07/the-lookout-lodge.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+`V5_multiday` = **1**, quote: "a two nights stay for up to 16 guests." `V5_nights_included_verbatim` = "two nights." `V5_block_band` = **7** (two days), per §5's own fixed mapping for a stated two-day/two-night hire. All other fields 0.
+
+=== b08/caledon-valley-estate.md ===
+=== b08/cambium-farms.md ===
+## 8. V5 — Time structure of the day
+
+Row 1: `V5_multiday` = 0; every field 0 except a seasonal availability statement recorded at V23, not V5 (the Barn's "Available From May to October" is an availability condition, not a time-of-day block). Row 2: every field 0 (the Byre's own quick facts state "Year Round Venue," recorded at V23/V10, not V5).
+
+=== b08/cedar-haven-weddings.md ===
+=== b08/clockworks-weddings.md ===
+=== b08/estate-248.md ===
+=== b08/fermanagh-farms.md ===
+## 8. V5 — Time structure of the day
+
+Rows 1-4, each PCR: `V5_block_band` = **6** (a stated full-day/24-hour-style hire), quote: "Exclusive enjoyment of your booked venue for the full day from 8 am to midnight (until 1 am for cleanup)." `V5_end_time_stated` = **1**, verbatim as above; extended per FAQ, "If you would like to extend that to 1 am, we do allow that under the following terms... A \$500 fee is applicable" (`V19_curfew_extension` also set, below). `V5_access_before` = 0; `V5_access_after` = **1**, verbatim "(until 1 am for cleanup)." `V5_rehearsal_included_stated` = **1**, verbatim: "Rehearsal availability Monday through Thursday." Row 5: `V5_block_band` = 0 (no figure; the builder's own time terms are not visible without interaction).
+
+=== b08/gibsons-farm.md ===
+## 8. V5 — Time structure of the day
+
+Every field 0. No time block, session length or end time is stated anywhere in scope.
+
+=== b08/hollowbrook-highlands.md ===
+## 8. V5 — Time structure of the day (row 1; row 2 has none stated)
+
+`V5_block_band` = **5** (over 10 hours, same day), `V5_block_verbatim` = "a total of 14 hours ending at Midnight." `V5_ceremony_slot_times` = **1**, verbatim: "Ceremony start time 4:00pm." `V5_access_before` = **1**, quote: "access at 11:00am" (Country Cottage preparation access). `V5_end_time_stated` = **1**, verbatim "ending at Midnight." All other fields 0.
+
+=== b08/london-heritage-farm.md ===
+=== b08/maple-rock-resorts.md ===
+## 8. V5 — Time structure of the day
+
+Every field 0. No time block, session length, access-before/after period or end time is stated anywhere in scope. "Everything is yours exclusively and nothing ever closes!" is recorded under V17 (exclusivity), not V5, because it states no hire-length figure.
+
+=== b08/oakview-terrace.md ===
+## 8. V5 — Time structure of the day
+
+Every field 0. No time block, session length or end time is stated anywhere in scope; "MONDAY - SUNDAY 10:00 - 16:00" (home page) is the venue's own visiting/opening hours, not a stated wedding-hire block (V5 E1).
+
+=== b08/parksville-museum.md ===
+## 8. V5 — Time structure of the day
+
+Row 1, every PCR: `V5_block_band` = **4** (over 6 and up to 10 hours, banding the longest stated span per I5), `V5_block_verbatim` = "up to 7 hours (minimum 4 hours)" / "8 to 10 hours," `V5_all_bands` recording both the 4-to-7-hour span and the 8-to-10-hour span. `V5_min_hours` = **1**, verbatim "minimum 4 hours." `V5_access_before` = **1** on the Rehearsal/Set Up PCRs specifically, quote: "Intended for artistic event organizers or wedding clients who require a dedicated setup evening before their ceremony." Row 2, every PCR: `V5_block_band` = **0** (an hourly rate with no stated minimum or maximum block for this space; I4 applies — "an hourly rate with a stated minimum sets V5_min_hours and V5_block_band = 0" — but no minimum is stated for Heritage Room either, so V5_min_hours also stays blank here). All other V5 fields 0 on both rows.
+
+=== b09/addison-woods.md ===
+## 8. V5 — Time structure of the day
+
+Row 1 PCR: `V5_block_band` = **4** (over 6 and up to 10 hours), quote: "Fourteen hours of exclusive access from 10AM to Midnight" — wait, fourteen hours from 10am to midnight is itself the stated block; banded correctly at **6** (a stated full day/24-hour-adjacent hire is not quite it either; the fixed mapping table admits no "fourteen hours" case directly, so the stated interval 10am-midnight is read under I2 as a bounded interval, giving band **5** (over 10 hours, same day)). `V5_extra_hour_term` = **1**, quote: "Additional morning and evening hours available, $" (a stated extra-hour term with the figure itself not printed, recorded as a symbol only, no V8 amount). `V5_access_before`/`V5_access_after` = 0 (not separately stated beyond the fourteen-hour block itself).
+
+Row 2: no independent time statement; the all-inclusive package rides on row 1's own venue-rental hours where a venue rental is also booked, and V5 is not separately coded for row 2 (no PCR-level time statement exists for it).
+
+=== b09/barn-at-flanagan-farm.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+Row 1 PCR: `V5_block_band` = **6** (a stated full multi-day hire), quote: "Exclusive access to the full estate from Thursday–Sunday" and "Single day rental includes 12 hours of site access" is out of scope (private-event-rentals page). `V5_multiday` = **1**. `V5_end_time_stated` = **1**, quote: "At Flanagan Farm, events conclude at 10:30 p.m., with guest departure by 11:00 p.m. An optional one–hour extension is available for an additional fee, allowing celebrations to continue until 11:30 p.m., with departure by midnight." `V5_extra_hour_term` = **1**, same quote, figure not stated (no numeral for the extension fee anywhere in scope; recorded as V7 `per_extra_hour` = 1 with no V8 amount). `V5_access_before` = 0 (not stated for this row specifically; the At-a-Glance table's Thursday-start figure is the access window itself, already coded as the block).
+
+Row 2 PCR: `V5_block_band` = **7** (two days or more; "Friday through Sunday" is two nights and named as multi-day). `V5_multiday` = **1**. `V5_nights_included_verbatim` = "Friday through Sunday." `V5_end_time_stated` = 0 on this row's own text (no winter-specific end time is stated separately from the venue-wide 10:30 p.m./11:00 p.m. figure recorded on row 1, and V19/V5 do not carry that figure onto row 2 without its own statement, per R8 of V13's reasoning applied here: statuses/facts are not carried between rows without their own text).
+
+=== b09/cottonwood-barn.md ===
+## 8. V5 — Time structure of the day
+
+Every field **0** on both rows. No specific start/end clock time or hour count is stated for either package; "exclusive venue use" (row 1) and "extended exclusive use… across two unforgettable days" (row 2) describe duration only in relative terms, with band 6 or 7 implied but not stated as a bounded interval per I2's own requirement (a start and finish clock time, which neither row publishes).
+
+=== b09/fairytale-gardens.md ===
+=== b09/firefly-gardens.md ===
+=== b09/grace-on-the-lake.md ===
+## 8. V5 — Time structure of the day
+
+Every field **0**. No time block, start/end time, access-before or access-after period is stated anywhere in scope.
+
+=== b09/hidden-creek.md ===
+=== b09/old-saco-inn.md ===
+## 8. V5 — Time structure of the day
+
+Every field **0**. No time block, start/end time or access period is stated anywhere in the wedding page's own scope. `V23_days_available` at §26 below records the Saturday-booking pattern, which is an availability fact, not a stated hire-length block.
+
+=== b09/oxbow-brewing.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+Every field **0** on all three rows. No time block, start/end time or access period is stated for any location's wedding offer. The venues' own general opening hours (recorded at unit level from the footer) are trading hours, not a stated wedding-hire length, per E1 of V5.
+
+=== b09/retreat-balcones-springs.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **7** (two days or more), quote: "You can rent The Retreat for an entire weekend of fun and magic… typically lasts from Friday– Sunday, or any two nights of the week." `V5_multiday` = **1**. `V5_nights_included_verbatim` = "Friday– Sunday, or any two nights of the week." `V5_access_before`/`V5_access_after` = 0 (not separately stated beyond the multi-night block itself).
+
+=== b09/sister-grove-farm.md ===
+## 8. V5 — Time structure of the day
+
+PCRs 1-2: `V5_block_band` = **6** (a stated full-day rate), quote: "An all-day rental gives you access to the space from 10am-midnight." `V5_access_before` = **1**, quote: "Rental time includes dropping off of items, setting up." `V5_access_after` = **1**, quote: "take down, and clean-up," same sentence.
+
+PCRs 3-4: `V5_block_band` = **3** (over 4 and up to 6 hours), quote: "Partial day rentals of six hours or less." `V5_extra_hour_term` = **1**, quote: "Any time for a partial day rental that goes beyond six hours is automatically counted as an all-day rental rate and due immediately at that time" (a fixed conversion rather than a per-hour figure; recorded with the mechanism verbatim since no per-hour amount is stated).
+
+=== b09/this-old-barn.md ===
+## 8. V5 — Time structure of the day (per PCR)
+
+Row 1 PCR: `V5_block_band` = **7** (two days), quote: "Friday 4PM through Sunday 10AM." `V5_access_before` = **1**, quote (event-contracts): "We understand we can access the barn the day before our wedding, at no cost, to set up." `V5_access_after` = **1**, quote: "We understand we can come the morning after the event, at no cost, to take down décor." `V5_end_time_stated` = **1**, quote: "we understand we will have 5 hours for the wedding event and the event must end by 10PM" — the 5-hour figure is the ceremony-and-reception block within the wider Friday-to-Sunday access window; recorded here as an element duration distinct from the block itself under E2, with the curfew also coded at V19.
+
+Row 2 PCR: `V5_block_band` = **0** (no length is stated for "day of the event" beyond the same 10PM end time and 5-hour event-service window, which is not stated to belong to this row specifically since the contract text does not distinguish Basic from Deluxe); `V5_end_time_stated` = **1**, same quote as row 1, source_location shared (the event-contracts page's terms apply venue-wide and are not stated to differ by package).
+
+=== h01/calke-abbey.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0** on both PCRs. No block length, start or finish time is published. "Weddings are available to book between May–July for spring-summer weddings, and Sept–Oct for autumnal weddings" is a season condition, coded at V10, not a time block.
+
+=== h01/claydon.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0**.
+
+=== h01/eastbury-manor-house.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0**.
+
+=== h01/east-riddlesden-hall.md ===
+## 8. V5 — Time structure of the day
+
+PCRs 5-6 (evening-only): `V5_block_band` = **3** (over 4 and up to 6 hours), from the stated interval "(6pm – Midnight)" under I2's read-the-interval rule. PCRs 1-4 (full-day bands): `V5_block_band` = **0** (no start/finish time or block length is stated for the full-day rate; only the day and season conditions are published). Every other V5 field = 0 on all PCRs.
+
+=== h01/greyfriars-house-and-garden.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **1** (up to 2 hours), quote: "offering a two-hour opening for your event." Every other V5 field = 0.
+
+=== h01/llanerchaeron.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0** on both PCRs.
+
+=== h01/mussenden-temple-and-downhill-demesne.md ===
+## 8. V5 — Time structure of the day
+
+Row 1: `V5_block_band` = **0** (no hour figure is stated for the day of use itself, only "the day of your ceremony"; recorded as undecided-length full-day access rather than banded, per E5's vague-length caution). `V5_rehearsal_included_stated` = **1**, quote: "Use of the Temple for rehearsal before the day before ceremony" (verbatim, including the source text's own repetition).
+
+Row 2: `V5_block_band` = **2** (over 2 and up to 4 hours), quote: "Three-hours private use of Mussenden Temple for your ceremony."
+
+Row 3: `V5_block_band` = **1** (up to 2 hours), quote: "Two-hours private use of Mussenden Temple for your ceremony."
+
+Row 4: `V5_block_band` = **1**, quote: "Entry into Mussenden Temple for one hour."
+
+=== h01/nymans.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0**.
+
+=== h01/stackpole-estate.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0**.
+
+=== h01/steam-yacht-gondola.md ===
+## 8. V5 — Time structure of the day
+
+All three PCRs: `V5_block_band` per PCR: PCR 1 (1 hour) = **1** (up to 2 hours); PCR 2 (1.5 hour) = **1**; PCR 3 (2 hour) = **1**. `V5_extra_hour_term` = **1** on PCR 1, quote: "then £150 each additional half hour." `V5_access_before` = 0; `V5_end_time_stated` = **1**, quote: "The earliest charter time is 4.45pm and cruises must end by dusk" (recorded at row level as a shared condition across all three PCRs).
+
+=== h02/deans-court.md ===
+## 8. V5 — Time structure of the day (venue-wide, applying to all four PCRs)
+
+`V5_block_verbatim` = not a single stated block; the day is bounded by stated end-times only. `V5_block_band` = **0** under E3 (a curfew/end-time with no stated start time for the hire block itself). `V5_end_time_stated` = **1**, quote: "Our Venue Hire covers music until 11pm, and the bar until 11:30pm." `V5_extra_hour_term` = **1**, quote: "You can ask about extending for 1 hour, on Fridays and Saturdays only, if all of our accommodation is booked for your wedding guests — for this, we charge £375 for music to end at midnight and bar to close at 12:30am" (Guide PDF); the evening page states the same extension at a different figure, "£350 for the hour" — **conflict**, both recorded at V8 with `V8_conflict` = 1. `V5_access_before` = **1**, quote: "you'll have access to the marquee on the day before for set-up and styling" is Hamswell's wording — correcting: for Deans Court, quote instead: "the day before for you to drop these bits off" (decoration drop-off) and "The Day Before…" countdown entry; access timing for suppliers/couple itself is not separately stated beyond the countdown guide, so `V5_access_before` = **1** with the drop-off/rehearsal quote. `V5_rehearsal_included_stated` = **1**, quote: "Carry out a wedding rehearsal at home, so there is no stress tomorrow!" — this states a rehearsal at home, not on site, so on reflection `V5_rehearsal_included_stated` = **0** and the quote is recorded in notes as addressing a home rehearsal, not a site one. `V5_access_after` = **1**, quote: "Guests should vacate by around 12:30am" and "At around 10:30am someone can come and collect any bits."
+
+=== h02/hamswell-house.md ===
+## 8. V5 — Time structure of the day
+
+`V5_access_before` = **1**, quote: "You will have access to the marquee on the day before for set-up and styling and as early as you like on the wedding day." `V5_end_time_stated` = **1**, quote: "Music to stop at midnight and guests depart by 1 am." `V5_multiday` = **1** (the marquee build spans "up to three days before the wedding... and for the dismantling of the marquee the day afterwards," though this is marquee logistics, not guest-facing multi-day hire; recorded on the strength of the stated access period). `V5_block_band` = **0** (no single stated hire-length block; the day's shape is bounded only by the midnight/1am end-times and the day-before access start).
+
+=== h02/sewerby-hall-gardens.md ===
+## 8. V5 — Time structure of the day
+
+`V5_access_before` = 0 (no stated pre-day access period). `V5_end_time_stated` = 0 in the wedding-day sense; a two-hour reset period is stated: `V5_notes`: "we require two hours to reset the Orangery after the ceremony for the reception" — a pack-down/turnaround interval, not a hire-block end time, recorded under E4 as bearing on the day's shape without setting the band. `V19_curfew_time` covers venue closing separately. `V5_block_band` = **0** (no stated hire-length block for the wedding as a whole; the venue's operation is priced per named component, not per hour of hire). Every other V5 field 0.
+
+=== h02/skaill-house.md ===
+=== h02/stourhead.md ===
+## 8. V5 — Time structure of the day
+
+No time block, access period, or end time is stated anywhere in scope. Every V5 field = **0**.
+
+=== h02/stowe-gardens.md ===
+## 8. V5 — Time structure of the day
+
+No time block, access period, or end time is stated for the wedding-venue-hire product on any row. The photoshoot add-on states its own duration ("Each session can last up to three hours"), recorded at V5 as an element duration under E2, not the row's own block. Every V5 field = **0** on all three rows.
+
+=== h02/stradsett-hall.md ===
+## 8. V5 — Time structure of the day
+
+No time block, access period, or end time is stated for any row. `V19_curfew_time` etc. are addressed below at V19 for the marquee page only. Every V5 field = **0** on all four rows, except: `V5_multiday` = **1** on the marquee-page note applying across rows 2-3 where marquees are pitched, quote: "some of which can accommodate after midnight late night finishes by special arrangement," recorded at V19 rather than V5 since it addresses a curfew exception, not a stated multi-day hire block; `V5_multiday` reverts to **0**.
+
+=== h02/tattershall-castle.md ===
+## 8. V5 — Time structure of the day
+
+`V5_access_before` = 0 (no stated pre-day access; "from day one to the big day" describes the planning relationship, not a physical access period). `V5_block_verbatim` = **1**, quote: "During your hire period, you and your guests will enjoy access to the castle grounds" — a "hire period" is named but its length is never itself stated in hours or as a day-rate; `V5_block_band` = **0** under I4's logic extended (a named period with no stated length sets no band). `V5_end_time_stated` = 0.
+
+=== h02/tatton-park.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_verbatim` = **1** on all four rows (venue-wide statement in the shared inclusions), quote: "Access from 8am until midnight." `V5_block_band` = **6** (a stated full-day access window, read as the fixed-mapping "full day" per I3). `V5_end_time_stated` = **1**, same quote.
+
+=== h02/trerice.md ===
+## 8. V5 — Time structure of the day
+
+No time block, access period, or end time is stated for any row. Every V5 field = **0**.
+
+=== h03/boughton-house.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0** on every row. No block length, start time, finish time or access period is stated anywhere on the reached pages.
+
+=== h03/carlton-towers.md ===
+## 8. V5 — Time structure of the day
+
+`V5_multiday` = **1** on row 1, quote: "Carlton Towers remains yours for as long as you desire," read with the Champagne Supper add-on spanning the night before and the day after. `V5_block_band` = **0** (no specific length is stated; "for as long as you desire" states no number of days or nights). Every other V5 field = 0 on both rows.
+
+=== h03/chiddingstone-castle.md ===
+## 8. V5 — Time structure of the day
+
+`V5_multiday` = 0 (not addressed). Every V5 field = **0** on both rows; no block length, start time or finish time is stated anywhere in scope, only that exclusivity runs "throughout the day."
+
+=== h03/dartington-hall.md ===
+## 8. V5 — Time structure of the day
+
+Row 2 (Elmhirst): `V5_block_band` = **7** (two days), `V5_multiday_length_verbatim` = "2 day all-inclusive… bed and breakfast… for 2 nights," `V5_nights_included_verbatim` = "2 nights." Row 3 (Twilight): `V5_block_band` = **8**, quoted: "Party from 6pm and access from 3pm on the day" — an access time and a party-start time are both given with no stated finish, leaving the block length undecidable rather than assignable to a fixed band. Row 6 (Elopement): `V5_block_band` = **4** (over 6 up to 10 hours), quote: "this stress-free, 6 hour celebration." Row 1's own "Access the day before the wedding to decorate" sets `V5_access_before` = **1**. Every other V5 field = 0.
+
+=== h03/duart-castle.md ===
+## 8. V5 — Time structure of the day
+
+Every row: `V5_block_band` = **0** (no length of hire is stated; only start-time windows relative to public opening hours). `V5_ceremony_slot_times` = **1**, quote: "During April (1st to 30th) and October (1st to 18th)… ceremonies to take place in the morning or from 4.30pm… from May to September, weddings can take place from 5.30 pm… We also welcome morning weddings before the Castle opens." `V5_access_before` = 0 (not addressed beyond the ceremony start-time windows themselves). Every other V5 field = 0.
+
+=== h03/firle-place.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0** on both rows. No block length, start time, finish time or access period is stated anywhere in scope.
+
+=== h03/great-ote-hall.md ===
+## 8. V5 — Time structure of the day
+
+Both rows: `V5_block_band` = **7** (two days; the FAQ's own wording maps to I3's "weekend" mapping, with the fuller stated span recorded verbatim), `V5_multiday_length_verbatim` = "arrive on the Friday to setup and leave on the Sunday/Monday." `V5_access_before` = **1** (same quote, Friday setup access). `V5_access_after` = **1** (same quote, "leave on the Sunday/Monday after a pool side brunch"). `V5_end_time_stated` = **1**, quote: "Events typically can start as early as you would like and run until 11:30pm, with music finishing slightly earlier… happy for the party to continue later but only with acoustic music or a silent disco."
+
+=== h03/gwrych-castle.md ===
+## 8. V5 — Time structure of the day
+
+Rows 1-6 (ceremony hire, all PCRs): `V5_block_band` = **1** (up to 2 hours), quote: "Maximum duration of 2 hours for the civil ceremony, to include ceremony and photos (or an agreed time period)." `V5_access_before` = **1**, quote (2026 brochure only): "Suppliers can access the Castle from 9am on the morning of the wedding," and separately: "You will have the full day either side of your booking for setup and packing down" (weddings-page FAQ). `V5_access_after` = **1**, same FAQ quote ("packing down"). Row 7 (Evening Hire): `V5_block_band` = **3** (over 4 up to 6 hours), quote: "Maximum duration of 5 hours from 6pm (or an agreed time)." `V5_end_time_stated` = 0 (a start time and a length are stated, not a finish clock time). Row 8 (Full Venue Hire): `V5_block_band` = **6** (a stated full-day / day-rate form), quote: "The castle will be available from 10am onwards" — a start time with no stated finish, recorded as day-rate under I3's fixed mapping only where the text itself uses that form; here it does not, so `V5_block_band` is instead **8**, quoted, because a start time alone with no finish time or explicit "full day" wording leaves the block length undecidable between "the rest of the day" and some other stated arrangement.
+
+=== h03/ingatestone-hall.md ===
+## 8. V5 — Time structure of the day
+
+Every V5 field = **0** on every row. No block length, start time, finish time, access period or rehearsal statement is published anywhere in the wedding scope.
+
+=== h03/st-marys-house-gardens.md ===
+## 8. V5 — Time structure of the day
+
+`V5_block_band` = **1** (up to 2 hours), quote: "Price includes use of St Mary's front & terrace gardens for up to two hours." No start or finish clock time, access-before, access-after or rehearsal statement is published. Every other V5 field = 0.
+

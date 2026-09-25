@@ -1,0 +1,41 @@
+card 0: 5 figured options; prior match: False; held value: leaves; third derivation: True; rests on: market; chosen: Two priced offers: a full wedding day and a small wedding | runner-up: Three priced offers: a full wedding day, a small wedding, and a ceremony alone
+card 1: 14 figured options; prior match: True; held value: matches; third derivation: True; rests on: own buyers; chosen: Couples buying a full wedding day | runner-up: Couples buying a small wedding or an elopement of 40 guests or fewer
+NOTE card 10: the stamp says leaves and the script reads a match
+card 10: 4 figured options; prior match: False; held value: leaves; third derivation: True; rests on: market; chosen: A package total plus a published rate card for everything outside it | runner-up: No figure at all, the whole total arriving by quote
+card 11: 5 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 12: 4 figured options; prior match: False; held value: leaves; third derivation: True; rests on: market; chosen: An off-peak discount on the months the book is empty | runner-up: A season band on the price
+card 13: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 14: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 15: 4 figured options; prior match: True; held value: matches; third derivation: True; rests on: market; chosen: A block that rises with the tier, two hours to ten | runner-up: One block for every wedding, between five and eight hours
+card 16: 4 figured options; prior match: True; held value: matches; third derivation: True; rests on: market; chosen: Both spaces inside one figure, the couple choosing which, no charge for a second | runner-up: The ceremony priced apart from the reception
+card 17: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 18: 4 figured options; prior match: True; held value: matches; third derivation: True; rests on: market; chosen: On-site accommodation stated and not priced | runner-up: The couple's own room inside the package figure
+card 19: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 2: 6 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 20: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 21: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+NOTE card 22: the stamp says keeps and the script reads no match
+card 22: 4 figured options; prior match: True; held value: matches; third derivation: True; rests on: market; chosen: A place-qualified venue name, the place plus "wedding venue" | runner-up: A size-qualified package name, micro, small or intimate wedding package
+NOTE card 23: the stamp says keeps and the script reads no match
+card 23: 4 figured options; prior match: True; held value: matches; third derivation: True; rests on: both; chosen: Both surfaces at once, the terms this offering sells under | runner-up: The operator's own wedding page and its two forms
+card 24: 4 figured options; prior match: True; held value: matches; third derivation: True; rests on: market; chosen: A non-refundable deposit and a signature, the terms this offering sells under | runner-up: A stated free tentative hold for a named period
+card 25: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+NOTE card 26: the stamp says leaves and the script reads a match
+card 26: 3 figured options; prior match: False; held value: leaves; third derivation: True; rests on: market; chosen: A private appointment at a time the couple picks | runner-up: A dated open day the couple registers for
+NOTE card 27: the stamp says leaves and the script reads a match
+card 27: 4 figured options; prior match: False; held value: leaves; third derivation: True; rests on: market; chosen: Attributed testimonials from named couples | runner-up: No social proof on the operator's own page, the terms this offering sells under
+NOTE card 28: the stamp says leaves and the script reads a match
+card 28: 5 figured options; prior match: False; held value: leaves; third derivation: True; rests on: market; chosen: A named gallery of attributed real-wedding photographs, organised space by space | runner-up: Published spatial documentation: a floor plan, a site map, a capacity chart or stated dimensions
+card 29: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 3: 5 figured options; prior match: True; held value: matches; third derivation: True; rests on: own buyers; chosen: A four-step guest-count ladder at 20, 40, 65 and 100 guests | runner-up: A two-step ladder, one small tier and one full-wedding tier
+NOTE card 30: the stamp says leaves and the script reads a match
+card 30: 7 figured options; prior match: False; held value: leaves; third derivation: True; rests on: market; chosen: A published route whose deliverable is named | runner-up: A named person as the wedding contact
+card 31: 7 figured options; prior match: False; held value: leaves; third derivation: True; rests on: both; chosen: One enquiry form as the lowest-friction route | runner-up: An online request route beside the form
+card 32: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 4: 5 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 5: 6 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 6: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 7: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 8: 5 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+card 9: 4 figured options; prior match: False; held value: withheld held; third derivation: True; rests on: ; chosen:  | runner-up: 
+33 cards; 33 hold a value; 8 match it; 8 leave it; 17 withheld; 33 third derivations; 0 outstanding; 0 mismatched margin units; 67 legs marked differs

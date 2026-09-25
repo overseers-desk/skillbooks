@@ -1,0 +1,66 @@
+import io,sys
+p="/tmp/claude-1000/-usr-local-src-aesop-pmf-sage/71556939-dbe7-4408-8703-686f4079d0ba/scratchpad/stage-c2-river-day-judge.md"
+s=io.open(p,encoding="utf-8").read()
+pairs=[
+("the only demand figure on the card — 210 searches a month against \"no keyword row of any kind is held for an education phrasing\" — with the −38 label count printed against itself.",
+ "the only demand figure on the card. That figure is 210 searches a month, against \"no keyword row of any kind is held for an education phrasing\". The −38 label count is printed against itself."),
+("It turned because the page changed how it counts silence — the review says so on its own face: \"Nothing",
+ "It turned because the page changed how it counts silence, and the review says so on its own face: \"Nothing"),
+("records that the record *does* hold watched items priced on top — \"a zoo park's 'School Talks: £45 per session, up to 30 pupils' and a wildlife park's keeper animal talks at '£1 per child'\" — and says plainly",
+ "records that the record *does* hold watched items priced on top: \"a zoo park's 'School Talks: £45 per session, up to 30 pupils' and a wildlife park's keeper animal talks at '£1 per child'\". It says plainly"),
+("But it still puts the unsold $6 line on the scale — \"has stood on sale for 36 days through five enquiries and one booking without being taken\" — against an option that was never on sale to be taken instead.",
+ "But it still puts the unsold $6 line on the scale, \"has stood on sale for 36 days through five enquiries and one booking without being taken\", against an option that was never on sale to be taken instead."),
+("names the opposite as the market's dominant practice — \"Including the demonstration free inside the day is the market's dominant show treatment (21 corpus venues run shows as schedule items; Paradise Country's arena show sits inside $13.50 admission)\" — and rules against it anyway, on discoverability.",
+ "names the opposite as the market's dominant practice: \"Including the demonstration free inside the day is the market's dominant show treatment (21 corpus venues run shows as schedule items; Paradise Country's arena show sits inside $13.50 admission)\". It rules against it anyway, on discoverability."),
+("The headline margin — 36 venues, 75 to 39 — is against",
+ "The headline margin of 36 venues, 75 to 39, is against"),
+("the count reads **12 stating a packed-lunch-only posture against 27 publishing a paid line — a lead of 15 for the option you ruled.**",
+ "the count reads **12 stating a packed-lunch-only posture against 27 publishing a paid line, a lead of 15 for the option you ruled.**"),
+("The card calls it \"the one that decides it for this venue\" — but what finding 24 actually says of this venue's kitchen type is that it **predicts nothing**:",
+ "The card calls it \"the one that decides it for this venue\". What finding 24 actually says of this venue's kitchen type is that it **predicts nothing**:"),
+("n the absence of a pack\" — and **withholds**.",
+ "n the absence of a pack\". Then it **withholds**."),
+("lands where you ruled — \"a free hosted teacher visit offered before the school commits and said in those words\" — and reads the catchment's 0 of 33",
+ "lands where you ruled, on \"a free hosted teacher visit offered before the school commits and said in those words\". He reads the catchment's 0 of 33"),
+("Page A justified it by inference alone — \"The familiarisation visit doubles as the teacher's own site risk inspection, which Queensland approval expects anyway: one visit, two jobs, zero price\" — with no count of the market and no buyer asking for one.",
+ "Page A justified it by inference alone: \"The familiarisation visit doubles as the teacher's own site risk inspection, which Queensland approval expects anyway: one visit, two jobs, zero price\". There is no count of the market behind it and no buyer asking for one."),
+("1. Card 18's finding T2 — an in-house recode of the venue's own corpus, one clerk, no second coder, on a variable outside the frozen codebook, produced to break a withholding and immediately used to depart from a ruling.",
+ "1. Card 18's finding T2. An in-house recode of the venue's own corpus, one clerk, no second coder, on a variable outside the frozen codebook. It was produced to break a withholding and used at once to depart from a ruling."),
+("against a ruled value the instrument admits it cannot see — *\"a famil offered only in a returned quote is offered nowhere the collection read\"* — while the fence-blind clerk lands on your side.",
+ "against a ruled value the instrument admits it cannot see: *\"a famil offered only in a returned quote is offered nowhere the collection read\"*. The fence-blind clerk meanwhile lands on your side."),
+("3. Decision 10: *\"not one buyer has ever asked for a horse\"* — offered as proof of no demand, at a venue that had never sold a horse element to a school.",
+ "3. Decision 10: *\"not one buyer has ever asked for a horse\"*, offered as proof of no demand, at a venue that had never sold a horse element to a school."),
+("and every one of the six has a stated tie behind it — card 13's \"2, 2, 2 and 1 of the seven\", card 23's three incompatible reads of one field.",
+ "and every one of the six has a stated tie behind it, card 13's \"2, 2, 2 and 1 of the seven\" and card 23's three incompatible reads of one field."),
+("The page's dominant counting rule — silence carries for no option — is applied to shrink",
+ "The page's dominant counting rule, that silence carries for no option, is applied to shrink"),
+("tells you what falls out of what — card 1 first with five cards behind it, cards 24/25/26 as one term, card 22 before card 9 — which is genuinely the thing no other document in this run gives you.",
+ "tells you what falls out of what: card 1 first with five cards behind it, cards 24/25/26 as one term, card 22 before card 9. That is genuinely the thing no other document in this run gives you."),
+("and the two or three rows whose margin cell you cannot parse — call it **10,000 words for a defensible sitting**, against 37,217 for the whole.",
+ "and the two or three rows whose margin cell you cannot parse. Call it **10,000 words for a defensible sitting**, against 37,217 for the whole."),
+("Its own reversing condition — \"a second coder declining the seven venues T2 reads on its wider rule\" — is one pass away.",
+ "Its own reversing condition, \"a second coder declining the seven venues T2 reads on its wider rule\", is one pass away."),
+("withholding, not too much — and every instance of it falls on a card that departs from one of your rulings.",
+ "withholding, not too much, and every instance of it falls on a card that departs from one of your rulings."),
+("it should state in one sentence what instrument could have shown the ruled value winning — which is exactly the discipline card 27 already applies to itself, beautifully: *\"Neither reading has a leg that could have shown the other winning.\"* Make that sentence mandatory on every departure.",
+ "it should state in one sentence what instrument could have shown the ruled value winning. That is exactly the discipline card 27 already applies to itself, and it does it beautifully: *\"Neither reading has a leg that could have shown the other winning.\"* Make that sentence mandatory on every departure."),
+("and add one column — *commission / rule / confirm* — so the 11 withheld,",
+ "and add one column, *commission / rule / confirm*, so the 11 withheld,"),
+("**Yes, decisively — page B puts a figure, a named alternative and a stated limit on every parameter where page A asserted, and it is the first document in this run that tells you when its own evidence will not carry the weight you are about to put on it; I am highly confident of that, and moderately confident you can actually rule from it in one sitting, which depends on the sheet being cut down first.**",
+ "**Yes, decisively: page B puts a figure, a named alternative and a stated limit on every parameter where page A asserted, and it is the first document in this run that tells you when its own evidence will not carry the weight you are about to put on it. I am highly confident of that, and moderately confident you can actually rule from it in one sitting, which depends on the sheet being cut down first.**"),
+("**Part 1 — work the project's goal needs that nobody has asked for**",
+ "**Part 1. Work the project's goal needs that nobody has asked for**"),
+("**Part 2 — things found while doing this work**",
+ "**Part 2. Things found while doing this work**"),
+("Whatever the merits, the sequence — withhold, name the observation, generate the observation internally, depart — is a pattern the reviewer gate should be able to detect,",
+ "Whatever the merits, the sequence is a pattern the reviewer gate should be able to detect: withhold, name the observation, generate the observation internally, depart. It is worth detecting"),
+("has no evidence behind it of any kind** — no count, no comparable, no buyer — and page B's card 28, for all its faults, is right that nothing in the record supports it.",
+ "has no evidence behind it of any kind**, no count, no comparable and no buyer. Page B's card 28, for all its faults, is right that nothing in the record supports it."),
+]
+for old,new in pairs:
+    n=s.count(old)
+    if n!=1:
+        print("MISS(%d): %s"%(n,old[:70])); sys.exit(1)
+    s=s.replace(old,new)
+io.open(p,"w",encoding="utf-8").write(s)
+print("ok")

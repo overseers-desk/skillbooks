@@ -1,0 +1,162 @@
+diff --git a/pmf-sage/forms/card.md b/pmf-sage/forms/card.md
+index eedd0bd..b629ea0 100644
+--- a/pmf-sage/forms/card.md
++++ b/pmf-sage/forms/card.md
+@@ -12,7 +12,7 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
+ |---|---|---|---|---|
+ | <value the market shows> | <number with its unit> | <finding, taxonomy row, search finding, register section or enquiry count> | <mechanism or resource, or the cost line of building it> | <what the person at the gate says to a named roster profile on a Saturday, and that buyer's likely answer> |
+ 
+-**Recommended:** <option name, or the word withheld>; margin: <number in the runner-up's unit; where the figures are values such as minutes or dollars, the count lead behind the recommendation, as N units> over <runner-up option>; <any consequence of the two values, opened as such, after the runner-up's name>. <A withheld line reads: withheld; between <option> and <option>; carried by: <the one observation that would carry either>. A sale taken at the only terms on offer carries nothing against an option never offered, and the limit of a leg is said here, in the recommending sentence, not in a correction below it.>
++**Recommended:** <option name, or the word withheld>; margin: <number in the runner-up's unit; where the figures are values such as minutes or dollars, the count lead behind the recommendation, as N units> over <runner-up option>; rests on: <market, own buyers, or both>; <any consequence of the two values, opened as such, after the runner-up's name>. <A withheld line reads: withheld; between <option> and <option>; standing at: <the counts as they stand, in a clause>; carried by: <the one observation that would carry either>. Withheld is for no lead at all; a thin lead is recommended and called thin. Where the third derivation lands on a third option, that option is one of the two named. A sale taken at the only terms on offer carries nothing against an option never offered, and the limit of a leg is said here, in the recommending sentence, not in a correction below it.>
+ 
+ **Ruled:** <the owner's decision, dated; or open>
+ 
+@@ -24,6 +24,8 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
+ 
+ **Opposite:** · **Further:** · **Joint:** · **Buyer:** <argued between the options>
+ 
++**Held:** <stamped by the priors clerk: keeps, leaves, or nothing held, judged in substance against the owner's ruling where he has ruled, else the terms on sale, else what a draft holds; the clerk who later turns the recommended line restamps it>
++
+ **Priors:** <appended by the priors clerk only, values and nothing else: one entry per source, the file in backticks, its date, and the value it held as a number, a range written `a–b`, or the word it used. No sentence about the recommendation belongs here; a line that discusses the card echoes the card's own words and the match rule fires on the echo. Discussion goes to the priors pass note beside the cards.>
+ 
+ **Third derivation:** <its file in backticks; agrees, differs or declines; where it landed and by what count; where it lands on an option the capability record cannot deliver, that cost line>
+diff --git a/pmf-sage/forms/review.md b/pmf-sage/forms/review.md
+index 84f0222..3bf4042 100644
+--- a/pmf-sage/forms/review.md
++++ b/pmf-sage/forms/review.md
+@@ -4,7 +4,7 @@ The run's decision cards. Each card is a question, the ways the market answers i
+ 
+ ## The ruling sheet
+ 
+-One row a card. *Recommended* reads withheld where no option is carried. *What is held* says whether the recommendation keeps or leaves a value the venue already held. *Third derivation* says where a fresh clerk, reading the market alone, landed against the recommendation.
++One row a card. *Recommended* reads withheld where no option is carried, and the margin column then gives the counts the card stands at. A negative margin means the largest count runs against the recommendation, which then rests on the other evidence its card names. *Rests on* says whether the recommendation stands on the market, on this venue's own buyers, or on both. *What is held* says whether the recommendation keeps or leaves a value the venue already held. *Third derivation* says where a fresh clerk, reading the market alone, landed against the recommendation.
+ 
+ {{sheet}}
+ 
+diff --git a/pmf-sage/sage-A-adjudicate.md b/pmf-sage/sage-A-adjudicate.md
+index f9d583c..d62c8d1 100644
+--- a/pmf-sage/sage-A-adjudicate.md
++++ b/pmf-sage/sage-A-adjudicate.md
+@@ -8,7 +8,7 @@ Every product parameter is decided on a card, not carried in prose, and every ca
+ 
+ - the **question**: the parameter, in the words a buyer meets it;
+ - the **options**: each a value the market shows, carrying a demand figure with its source (a taxonomy prevalence, a search volume, an enquiry or rival count), a capability leg (the mechanism or resource, or the cost line of building it), and a seller's sentence: what the person at the gate says to a named roster profile on a Saturday, and that buyer's likely answer. A seller's sentence without a figure is not an option. Where the offering is already on sale, the terms it sells under are an option like any other, and its figure is the operator's own record of what buyers did at those terms (the bookings, the refusals, the enquiries that did not convert) with the condition line beside it. That record is censored by what was on sale: a sale taken at the only terms on offer shows that buyers accept those terms, not that they prefer them to terms nobody offered, as the condition line already says of an enquiry count. So the sales figure carries the on-sale option against another only where both were on sale at once; against an option never offered, what the record can show is what buyers did for want of it: asked for it, stalled, refused, or left. A value that only an internal document, a sibling run or an unsold present practice holds is not an option; it is a prior, and the priors clerk lists it last;
+-- the **recommended ruling**: one option, with its margin over the runner-up stated in the runner-up's unit; where the options are values (a length, a price) the margin is the count lead behind the recommendation, since a distance between two values says nothing about the evidence for either. A recommendation is carried when its leg could have shown the runner-up winning and its lead is more than a tie once the card's corrections are counted, and the test is asked alike of a recommendation that lands on what the owner holds and of one that leaves it. Where no option is carried the line reads *withheld*, naming the two readings and the one observation that would carry either;
++- the **recommended ruling**: one option, with its margin over the runner-up stated in the runner-up's unit; where the options are values (a length, a price) the margin is the count lead behind the recommendation, since a distance between two values says nothing about the evidence for either. A recommendation is carried when its leg could have shown the runner-up winning and its lead is more than a tie once the card's corrections are counted, and the test is asked alike of a recommendation that lands on what the owner holds and of one that leaves it. A thin lead is recommended as a thin lead, with the observation that would reverse it; *withheld* is for no lead at all, a tie or a leg that could not have shown the other option, and the line then names the two readings (the third derivation's landing among them where it is a third option), the counts as they stand, and the one observation that would carry either. An operator that publishes nothing on a parameter is silent on it and counts for no option, unless what the card rules is whether to say the thing at all. The recommending sentence says what it rests on, the market, the operator's own buyers, or both, since that is the first thing the owner asks of it;
+ - the **ruling**: the owner's decision, which may pick an option, combine two, or leave the parameter open as design freedom;
+ - a **provenance chip** on the value the ruling started from: *inherited* (copied with no market derivation), *anchored* (evidence fitted around a pre-held value), *derived* (traced from evidence independently), *radical* (a new decision that breaks the structure, not just the number). Compound chips are allowed and honest, and a card wearing *inherited* or *anchored* is the card to spend the most minutes on;
+ - the **measured-in line** under the demand leg: the stratum, the cell or cells, the numerator over the denominator, and the measured population's shape on the four dimensions of the operator's shape note, each marked *shared* or *differs* against this operator. A finding carries only as far as the shape it was measured in. Where the population differs on the dimension this card rules, the rate may not stand as the leg, and the clerk names on the card which of three things was done: re-measured within the sub-population that shares the shape, reporting that count even where it is a handful; kept the rate as context and taken the leg from the rival register or the demand notes, which read this operator's own catchment; or marked the card open with the one fact that would close it. A rate whose population differs is still quotable as a rate. Where the leg is an enquiry count rather than a corpus rate, the line instead names the condition the count was taken under: what was offered, under what name, on what surface. A count for an offering not offered, or not named as buyers name it, is provenance and not a leg; an unsolicited enquiry for something not offered is a leg on its own;
+@@ -52,9 +52,9 @@ The owner rules; AI clerks, in three roles that do not share files.
+ 
+ Three **derivation clerks**, by area, write the question, the options, the legs, the seller's sentences and the recommendation. The fenced files, every sibling run and the venue's present-practice documents are closed to them by blacklist. The records they read hold behaviour and no opinion: what buyers did, with the terms they did it under where the offering is on sale, and no value from a draft, a plan, a meeting note, an earlier definition or an earlier run; for an offering not yet sold they carry no price, length, name or session shape for it. A deriving clerk therefore has no opinion to be honest about. Its job is selling the thing to a stranger, not reconciling documents, and each card's seller's sentences are the proof it did that job.
+ 
+-One **priors clerk**, in a single pass over every card, opens the fenced files and the operator's standing records, appends the priors line at the bottom of each card (every held value with its file: the owner's rulings, the terms on sale, whatever a draft holds), and stamps the chip by a stated rule: a recommendation matches a prior when it falls inside the prior's stated range or uses the prior's own word, and the card check applies the rule by script wherever there are numbers. The pass decides nothing; it appends and stamps. A match is not a defect and a departure is not a merit: what the owner holds (a ruling, the terms on sale, a figure in a draft) is a hypothesis the evidence may confirm as readily as overturn, so staying with it and leaving it are asked for the same proof. Every card on which the pass found a held value takes a third derivation, whichever way its recommendation landed, by a fresh clerk who saw neither the fenced files nor the first derivation; the price card always does, since the operator's own fee ladder is the one prior a clerk cannot unsee, and the ladder reaches that card last. The third clerk reads the market side alone, without the operator's own sales record, so the card shows what the market says with the venue's own buyers and without them. It reads no capability record either, so where it lands on an option the record says cannot be delivered, the card puts that cost line beside the landing. The chip is stamped from the two derivations by one rule on either side: where they agree, on the held value or away from it, the agreement is evidence about the market, the chip reads derived, and the card carries both citations; where they differ the card holds two readings, and its recommended line is tested as any other. A defect is a first derivation that matched with the files open, and the third derivation is what tells the two apart. How often the set matches what is held, and how often it leaves it, is reported to the owner as counts; neither rate returns a set. A held value with no third derivation recorded does.
++One **priors clerk**, in a single pass over every card, opens the fenced files and the operator's standing records, appends the priors line at the bottom of each card (every held value with its file: the owner's rulings, the terms on sale, whatever a draft holds), and stamps the chip and the held line by a stated rule: a recommendation matches a prior when it falls inside the prior's stated range or says what the prior says, in whatever words; the card check applies the range rule by script wherever there are numbers and reports where its reading and the clerk's stamp part. The held line is judged against the owner's ruling where he has ruled, else the terms on sale, else what a draft holds. The pass decides nothing; it appends and stamps. A match is not a defect and a departure is not a merit: what the owner holds (a ruling, the terms on sale, a figure in a draft) is a hypothesis the evidence may confirm as readily as overturn, so staying with it and leaving it are asked for the same proof. Every card on which the pass found a held value takes a third derivation, whichever way its recommendation landed, by a fresh clerk who saw neither the fenced files nor the first derivation; the price card always does, since the operator's own fee ladder is the one prior a clerk cannot unsee, and the ladder reaches that card last. The third clerk reads the market side alone, without the operator's own sales record, so the card shows what the market says with the venue's own buyers and without them. It reads no capability record either, so where it lands on an option the record says cannot be delivered, the card puts that cost line beside the landing. The chip is stamped from the two derivations by one rule on either side: where they agree, on the held value or away from it, the agreement is evidence about the market, the chip reads derived, and the card carries both citations; where they differ the card holds two readings, and its recommended line is tested as any other. A defect is a first derivation that matched with the files open, and the third derivation is what tells the two apart. Where a recommendation leaves a ruling the owner has given, the card carries the ruled value among its options with a figure and states its margin against it, since that is the comparison he will make; a departure measured only against some other option has not been measured against what he holds. How often the set matches what is held, and how often it leaves it, is reported to the owner as counts; neither rate returns a set. A held value with no third derivation recorded does.
+ 
+-The **integrator** assembles nothing by hand. `tools/assemble-review.py` builds the review from the card files, `3-decisions/integrator-fields.md` and, where present, `3-decisions/joint-ledger.md`, on the template `forms/review.md`; the integrator's prose enters only through the template's fields: the counts, the unlock section quoting cards by number, and the collisions, where the tool quotes each card's Joint line beside the integrator's own. The review opens with the ruling sheet, which the tool builds from the cards: one row a card giving the question, the recommendation or its withholding, the margin with its sign, whether the recommendation keeps or leaves what the owner holds, where the third derivation landed, and whether the card is ruled; the order of ruling and the groups ruled together follow it, so the owner can rule from the front and open a card only where he doubts a row. The cards come after as reference: an open card prints its question, the recommended option and its runner-up in full, and the other options as a name and a figure; a ruled card prints its ruling and its recommendation; corrections stay in the card file. Prose outside a field is not in the review, and a caution the integrator did not receive from a card does not exist. The counts, from the card check: figured options per card; recommendations that match a held value, that leave one, and that are withheld, each reported and none gated; held values with no third derivation recorded, which return the set to the clerks rather than to the owner; margins stated in a unit other than the runner-up's; demand legs citing a population marked differs on the dimension the card rules.
++The **integrator** assembles nothing by hand. `tools/assemble-review.py` builds the review from the card files, `3-decisions/integrator-fields.md` and, where present, `3-decisions/joint-ledger.md`, on the template `forms/review.md`; the integrator's prose enters only through the template's fields: the counts, the unlock section quoting cards by number, and the collisions, where the tool quotes each card's Joint line beside the integrator's own. The review opens with the ruling sheet, which the tool builds from the cards: one row a card giving the question, the recommendation or its withholding, the margin with its sign or the counts a withheld card stands at, what the recommendation rests on, whether it keeps or leaves what the owner holds, where the third derivation landed, and whether the card is ruled, a ruled row saying so where its card leaves the ruling; the order of ruling and the groups ruled together follow it, so the owner can rule from the front and open a card only where he doubts a row. The cards come after as reference: an open card prints its question, the recommended option and its runner-up in full, and the other options as a name and a figure; a ruled card prints its ruling and its recommendation; corrections stay in the card file. Prose outside a field is not in the review, and a caution the integrator did not receive from a card does not exist. The counts, from the card check: figured options per card; recommendations that match a held value, that leave one, and that are withheld, each reported and none gated; held values with no third derivation recorded, which return the set to the clerks rather than to the owner; margins stated in a unit other than the runner-up's; demand legs citing a population marked differs on the dimension the card rules.
+ 
+ A brief or review relays an invariant by carrying its test whole. Flattening a conditional test into a prohibition rewrites the invariant in transit: a rule admitting a status mark where buyers are shown to consult it, relayed as "no marks", forecloses the very conclusion the study exists to be able to reach ("buyers want an accredited guide, get accredited"), and it does so upstream, by stopping the clerk from ever collecting the buyer evidence the test's condition asks for. The question behind a test's condition is always in scope. Any surface the owner rules from, the cards as presented to him or a sheet derived from them, states each cited fact in plain words with its number beside it, never the number alone; finding numbers and card codes belong in the internal record.
+ 
+diff --git a/pmf-sage/tools/assemble-review.py b/pmf-sage/tools/assemble-review.py
+index ba93cf2..7b7e740 100755
+--- a/pmf-sage/tools/assemble-review.py
++++ b/pmf-sage/tools/assemble-review.py
+@@ -93,17 +93,17 @@ def main():
+     raw = subprocess.run([sys.executable, str(here / "card-check.py"), str(run)], capture_output=True, text=True).stdout.strip()
+     (decisions / "card-check.txt").write_text(raw + "\n")
+     checked = {}
+-    for cid, match, stance, third, chosen, runner in re.findall(
+-            r"^card (\S+):.*?prior match: (True|False); held value: ([a-z ]+); third derivation: (True|False); chosen: (.*?) \| runner-up: (.*)$", raw, re.M):
+-        checked[cid] = {"match": match == "True", "stance": stance, "third": third == "True", "chosen": chosen, "runner": runner}
++    for cid, match, stance, third, rests, chosen, runner in re.findall(
++            r"^card (\S+):.*?prior match: (True|False); held value: ([a-z ]+); third derivation: (True|False); rests on: ([a-z ]*); chosen: (.*?) \| runner-up: (.*)$", raw, re.M):
++        checked[cid] = {"match": match == "True", "stance": stance, "third": third == "True", "rests": rests, "chosen": chosen, "runner": runner}
+     name = lambda c: c["head"].split(" ·")[0].replace("## ", "")
+     cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
+     value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
+ 
+-    sheet = ["| card | the question | recommended | margin | what is held | third derivation | ruled |", "|---|---|---|---|---|---|---|"]
++    sheet = ["| card | the question | recommended | margin, or the counts it stands at | rests on | what is held | third derivation | ruled |", "|---|---|---|---|---|---|---|---|"]
+     open_cards, ruled_cards, joints, landings = [], [], [], {}
+     for c in cards:
+-        k = checked.get(cid_of(c), {"match": False, "stance": "", "third": False, "chosen": "", "runner": ""})
++        k = checked.get(cid_of(c), {"match": False, "stance": "", "third": False, "rests": "", "chosen": "", "runner": ""})
+         rec, ruled = value(c, "Recommended"), value(c, "Ruled")
+         is_ruled = bool(ruled) and ruled.lower() != "open" and not ruled.startswith("<")
+         mm = re.search(r"margin:\s*([^;]+?)\s+over\s", rec)
+@@ -113,7 +113,10 @@ def main():
+         landings[name(c)] = landing(c, k["third"])
+         held = {"matches": "keeps it", "leaves": "leaves it", "withheld held": "held; neither kept nor left", "withheld": "nothing held", "none held": "nothing held"}.get(k["stance"], "")
+         title = c["head"].split("·", 1)[1].strip() if "·" in c["head"] else ""
+-        sheet.append(f"| {cid_of(c)} | {title} | {recommended} | {mm.group(1) if mm else ''} | {held} | {landings[name(c)]} | {'ruled' if is_ruled else 'open'} |")
++        standing = re.search(r"standing at:\s*([^;]+)", rec, re.I)
++        margin = mm.group(1) if mm else standing.group(1).strip() if standing else ""
++        ruled_cell = ("ruled; the card leaves the ruling" if k["stance"] == "leaves" else "ruled") if is_ruled else "open"
++        sheet.append(f"| {cid_of(c)} | {title} | {recommended} | {margin} | {k['rests']} | {held} | {landings[name(c)]} | {ruled_cell} |")
+         if c["joint"]:
+             joints.append(f"{name(c)}: {c['joint']}")
+         if is_ruled:
+diff --git a/pmf-sage/tools/card-check.py b/pmf-sage/tools/card-check.py
+index 99721cf..3f54a90 100755
+--- a/pmf-sage/tools/card-check.py
++++ b/pmf-sage/tools/card-check.py
+@@ -5,7 +5,7 @@ Usage: card-check.py <run-dir>
+ Reads every card under <run-dir>/3-decisions/ written on forms/card.md.
+ Refuses: fewer than two options carrying a figure; a recommendation naming no option or stating its
+ margin in a unit other than the runner-up's, or not the difference of the two figures unless the line states its derivation, or stated against an option weaker than the strongest other; a withheld recommendation that does not name
+-two options and the observation that would carry either; a held value (a Priors line citing a file) with no third derivation recorded (a backticked third-derivation file, on the Third derivation line or the Corrections line, that exists).
++two options, the counts it stands at and the observation that would carry either; a recommending line that does not say what it rests on; a held value (the Held stamp, or without one a Priors line citing a file) with no third derivation recorded (a backticked third-derivation file, on the Third derivation line or the Corrections line, that exists).
+ Reports: figured options per card; recommendations that match a held value, leave one, or are withheld, as counts and no more; mismatched margin units; legs marked differs.
+ """
+ import re, sys
+@@ -47,7 +47,7 @@ def parse(text):
+             continue
+         if in_table and s and not s.startswith("|"):
+             in_table = False
+-        for key in ("Recommended", "Priors", "Measured in", "Ruled", "Third derivation", "Corrections"):
++        for key in ("Recommended", "Held", "Priors", "Measured in", "Ruled", "Third derivation", "Corrections"):
+             if s.startswith(f"**{key}:**"):
+                 card[key] = s.split("**", 2)[2].strip()
+     return card
+@@ -96,8 +96,8 @@ def main():
+         if is_withheld:
+             # no option is carried: the line names the two readings and what would carry either
+             named = [o for o in c["options"] if o["name"] in rec]
+-            if len(named) < 2 or not re.search(r"carried by:\s*\S", rec, re.I):
+-                refusals.append(f"card {c['id']}: a withheld recommendation names two options and, after 'carried by:', the observation that would carry either")
++            if len(named) < 2 or not re.search(r"standing at:\s*\S", rec, re.I) or not re.search(r"carried by:\s*\S", rec, re.I):
++                refusals.append(f"card {c['id']}: a withheld recommendation names two options, the counts after 'standing at:', and after 'carried by:' the observation that would carry either")
+         elif not chosen:
+             refusals.append(f"card {c['id']}: recommended ruling names no option")
+         else:
+@@ -136,9 +136,17 @@ def main():
+                     refusals.append(f"card {c['id']}: margin {m_.group()} is not {chosen['figure']} less {runner['figure']}, and the line does not say how it was derived")
+         # the match is judged on the recommended option's name, which carries its value; a prevalence count is not a value
+         judged = chosen["name"] if chosen else rec.split(";")[0]
+-        matched = not is_withheld and prior_match(judged, c.get("Priors", ""), c["options"])
+-        # a value is held where the priors clerk cited a file for it; staying with it and leaving it take the same third derivation
+-        is_held = "`" in c.get("Priors", "") and not c.get("Priors", "").startswith("<")
++        scripted = not is_withheld and prior_match(judged, c.get("Priors", ""), c["options"])
++        # the priors clerk's stamp judges the match in substance; the script reads ranges and words, and where the two part the check says so
++        stamp = re.match(r"(keeps|leaves|nothing held)\b", c.get("Held", "").lower())
++        matched = (stamp.group(1) == "keeps" and not is_withheld) if stamp else scripted
++        if stamp and not is_withheld and scripted != matched:
++            print(f"NOTE card {c['id']}: the stamp says {stamp.group(1)} and the script reads {'a match' if scripted else 'no match'}")
++        # staying with a held value and leaving it take the same third derivation
++        is_held = stamp.group(1) != "nothing held" if stamp else ("`" in c.get("Priors", "") and not c.get("Priors", "").startswith("<"))
++        rests = re.search(r"rests on:\s*(market|own buyers|both)\b", rec, re.I)
++        if not is_withheld and chosen and not rests:
++            refusals.append(f"card {c['id']}: the Recommended line does not say what it rests on (rests on: market, own buyers, or both)")
+         third = [f for f in re.findall(r"`([^`]+)`", c.get("Third derivation", "") + " " + c.get("Corrections", "")) if "third-" in Path(f).name and ((run / "3-decisions" / f).exists() or (run / f).exists())]
+         withheld += is_withheld
+         matches += matched
+@@ -153,7 +161,7 @@ def main():
+         differs += len(re.findall(r"(?<!marked )(?<!no )(?<!none )\bdiffers\b(?! is marked)", re.sub(r"\b(nothing|none|no \w+)( \w+){0,3} marked differs\b|\bnot marked differs\b", "", c.get("Measured in", "").lower())))
+         stance = ("withheld held" if is_held else "withheld") if is_withheld else "matches" if matched else "leaves" if is_held else "none held"
+         runner_name = runner["name"] if chosen and mm and runner else ""
+-        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}; held value: {stance}; third derivation: {bool(third)}; chosen: {chosen['name'] if chosen else ''} | runner-up: {runner_name}")
++        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}; held value: {stance}; third derivation: {bool(third)}; rests on: {rests.group(1).lower() if rests else ''}; chosen: {chosen['name'] if chosen else ''} | runner-up: {runner_name}")
+     outstanding = held - returned
+     print(f"{len(cards)} cards; {held} hold a value; {matches} match it; {leaves} leave it; {withheld} withheld; {returned} third derivations; {outstanding} outstanding; {mismatched} mismatched margin units; {differs} legs marked differs")
+     for r in refusals:

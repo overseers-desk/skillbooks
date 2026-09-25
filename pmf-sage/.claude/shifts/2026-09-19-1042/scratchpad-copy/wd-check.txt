@@ -1,0 +1,34 @@
+card 0: 5 figured options; prior match: False
+card 1: 14 figured options; prior match: True; returned by third derivation
+card 10: 4 figured options; prior match: True; returned by third derivation
+card 11: 4 figured options; prior match: True; returned by third derivation
+card 12: 4 figured options; prior match: False
+card 13: 4 figured options; prior match: True; returned by third derivation
+card 14: 4 figured options; prior match: False
+card 15: 4 figured options; prior match: True; returned by third derivation
+card 16: 4 figured options; prior match: True; returned by third derivation
+card 17: 4 figured options; prior match: True; returned by third derivation
+card 18: 4 figured options; prior match: True; returned by third derivation
+card 19: 4 figured options; prior match: False
+card 2: 6 figured options; prior match: True; returned by third derivation
+card 20: 4 figured options; prior match: True; returned by third derivation
+card 21: 4 figured options; prior match: True; returned by third derivation
+card 22: 4 figured options; prior match: False
+card 23: 4 figured options; prior match: False
+card 24: 4 figured options; prior match: True; returned by third derivation
+card 25: 4 figured options; prior match: True; returned by third derivation
+card 26: 4 figured options; prior match: True; returned by third derivation
+card 27: 4 figured options; prior match: True; returned by third derivation
+card 28: 4 figured options; prior match: True; returned by third derivation
+card 29: 4 figured options; prior match: True; returned by third derivation
+card 3: 5 figured options; prior match: True; returned by third derivation
+card 30: 6 figured options; prior match: True; returned by third derivation
+card 31: 7 figured options; prior match: False
+card 32: 4 figured options; prior match: True; returned by third derivation
+card 4: 5 figured options; prior match: True; returned by third derivation
+card 5: 6 figured options; prior match: False
+card 6: 4 figured options; prior match: True; returned by third derivation
+card 7: 4 figured options; prior match: True; returned by third derivation
+card 8: 5 figured options; prior match: False
+card 9: 4 figured options; prior match: True; returned by third derivation
+33 cards; 24 prior matches; 24 returned by third derivation; 0 outstanding; 0 mismatched margin units; 67 legs marked differs

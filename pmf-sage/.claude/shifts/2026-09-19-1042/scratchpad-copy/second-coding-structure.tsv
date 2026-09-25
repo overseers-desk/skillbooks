@@ -1,0 +1,57 @@
+file	code	quote	note
+belgenny-farm.md	usable_no_choice	"Students: $16.50 per student, Supervising teachers and teacher aides FREE, Additional parents: $16.50 per person."
+bidgee-strawberries-and-cream.md	usable_choice_spine	"we can prepare a sausage sizzle for $3 per sausage sandwich"	The $3 sausage-sizzle add-on could instead be read as incidental catering logistics rather than a priced programme component, in which case this venue would code no_choice.
+bilpin-fruit-bowl.md	no_usable_pricing	"school_offer_detail_level: no_school_offer"
+blackwattle-alpacas.md	usable_choice_spine	"Catering: from $3 per student."
+buckley-park-community-farm.md	no_usable_pricing	"school_offer_detail_level: no_school_offer"
+camp-coolamatong.md	no_usable_pricing	"price_and_structure: none listed"
+candlebark-farm.md	no_usable_pricing	"To check costs and availability of dates for your camp/retreat, please fill in this form."
+carinya-station.md	no_usable_pricing	"school_offer_detail_level: no_school_offer"
+carramar.md	usable_no_choice	"Price: $5 per child for 2-hour visit"
+caversham-wildlife-park.md	usable_no_choice	"Kindergarten - Year 3: $14.00, 1 Adult per 5 Students; Years 4-6: $14.00 ... Years 10-12: $16.00"
+chesterfield-farm.md	usable_no_choice	"Students ~ $15.00 each"
+collingwood-childrens-farm.md	usable_no_choice	"$430 per class plus booking fees."
+edendale-community-environment-farm.md	usable_choice_pure	"1 hour/1 activity $9.90 ex GST ... 2.5 hours/2 activities $17.70 ex GST ... 3.25 hours/3 activities $20.80 ex GST"	A coder could read the hour/activity-count tiers as duration packages rather than a school actively picking components, and code this no_choice instead of pure.
+elouera-vale-camel-farm.md	no_usable_pricing	"school_offer_detail_level: no_school_offer"
+forest-lodge-farm.md	no_usable_pricing	"No — no price appears on any of the four pages read; pricing is not disclosed before submitting the booking request form."
+gavana-holsteins.md	usable_no_choice	"$7.50 per student"
+golden-ridge-animal-farm.md	no_usable_pricing	"The cost depends on date and location. Please fill out the form with ALL DETAILS."
+green-connect-farm.md	usable_choice_spine	"tour only $18/student ($450 minimum), tour & play $22/student ($550 minimum), tour, play & learning $26/student ($650 minimum)"
+harvest-farms.md	usable_no_choice	"13–22 students: $35 per student" and "23+ students: $22 per student"
+hillside-harvest.md	no_usable_pricing	"school_offer_detail_level: no_school_offer"
+hollycott-farm.md	no_usable_pricing	"school_offer_detail_level: unreachable"	No Scope B text could be captured at all (site unreachable); a coder could instead treat this as excluded from the run rather than coded not-usable, since there is no text to apply the rule to.
+homegrown-organics.md	usable_choice_spine	"$15 per child for 2hrs; or $30 per child for the full day (snacks included)"	The closest call in the set: a coder could instead read the 2hr and full-day options as two separate whole-visit products (excluded from "choice" by the rule's own words) rather than a base visit with an added duration-and-catering component.
+iris-lodge-alpacas.md	no_usable_pricing	"none listed for school excursions"
+little-star-bee-sanctuary.md	no_usable_pricing	"none listed for a school programme"
+maru-koala-and-animal-park.md	no_usable_pricing	"School-specific pricing is not published; the School Groups page states booking and payment are 'by arrangement with the manager'."
+myuna-farm.md	usable_choice_spine	"Hands on Farming (4 units) $13.90 per person; with pony rides $17.50" (activities_verbatim: "Pony rides (optional add-on)")
+northey-street-city-farm.md	usable_choice_spine	"Farm Tour + Hands-On Activity (2-2.5h) ... one of: Compost-making ... Propagation ... Soil investigation ... Australian Bush plants exploration ... Earth Connection" each priced separately ($20/$25/$20/$20/$20)
+paradise-country.md	no_usable_pricing	"No education-specific price is published for Paradise Country on the pages read."
+perth-city-farm.md	usable_choice_spine	"Single 1hr tour for up to 10pax — $190"; "2hr visit with a tour + an activity/demo up to 20pax — $540"; "3hr visit with a tour + 2x activities/demos for up to 60pax — $1800"
+windy-station-woolshed.md	no_usable_pricing	"Germinate School & Tertiary Programs: no price listed, 'Send an Enquiry'."
+green-thumb-farm.md	usable_choice_spine	"Incursion: \"$650.00 + GST per session\", \"Back-to-back sessions: 2nd session only $250.00 + GST\""
+qcamel.md	no_usable_pricing	"none listed ... no school or group rate is published on any of the pages read."
+summer-land-camels.md	usable_choice_spine	"\"Never too small to meet a Camel\": \"$10 per child, for groups of 15+ pax\", with an add-on of \"$10 per person for a 30 min. entertaining camel talk\""
+the-ginger-factory.md	usable_choice_spine	"Bundle \"2 x Rides\": $12 per student ... Bundle \"2 x Rides, 1 x Educational Tour\": $17 per student ... Bundle \"2 x Rides, 2 x Educational Tours\": $25 per student"	Individual rides and tours are also sold singly at their own price outside any bundle; a coder could instead read the three bundles as separate whole-visit products rather than a base plus chosen add-on tours.
+thunderbird-park.md	no_usable_pricing	"school_offer_detail_level: no_school_offer"
+trevena-glen-farm.md	no_usable_pricing	"pricing is by individual quotation only"
+white-ridge-farm.md	no_usable_pricing	"Email us for further information and pricing"
+australia-zoo.md	no_usable_pricing	"For more information, including our program guide and pricing, please contact us below."
+beenleigh-historical-village-and-museum.md	no_usable_pricing	"none listed for the school programme or for general museum admission"
+bestbrook-mountain-resort.md	no_usable_pricing	"Contact our office for current pricing and required forms."
+billabong-sanctuary.md	usable_choice_spine	"$26 per student (Optional bag of animal feed- $3 per student)"
+currumbin-wildlife-sanctuary.md	usable_choice_spine	"Primary Students* (4 - 12 years) $18.50 per student" plus "Nature Ed Session ... $4.50 per student"
+david-fleay-wildlife-park.md	usable_no_choice	"School group – self-guided tour $9.80"; "Wild Ed ... $15.50"; "Into the Wild ... $15.50"; "Ranger guided park tour $15.50"	A coder could instead read these four programmes as tiers built on a shared self-guided base rather than fully separate products, and code this choice/spine.
+drayhorse-shire-horse-farm.md	no_usable_pricing	"school_offer_detail_level: no_school_offer"
+highfields-pioneer-village.md	usable_choice_spine	"Typical Cost per pupil $16.00 (this includes morning tea)." plus "Ride Henry the Model T Ford Bus... $5 Adults and $3 Child. (minimum booking of 12 persons)."
+ipswich-nature-centre.md	no_usable_pricing	"Admission is free, however a donation of a gold coin would be appreciated."	A coder could instead treat the named gold-coin donation as a published price and code this usable/no_choice, since a figure is named even though it is not a fixed charge.
+kur-cow-barnwell-farm.md	no_usable_pricing	"no school-group price is published anywhere on the site"
+lone-pine-koala-sanctuary.md	usable_choice_spine	"Self-Guided Day \"$20 per student (inc. GST)\" ... Discovery Session ... \"$25 per student (inc. GST)\""	A coder could instead read Self-Guided Day and Discovery Session as two separate whole-visit products (excluded from "choice"), rather than Discovery Session being the Self-Guided base plus an added presentation.
+maleny-botanic-gardens-and-bird-world.md	usable_choice_spine	"\"School Group - Garden & Farm Friends Entry Only\" from AUD $12.00 per head; \"School Group - Garden, Farm Friends & Bird World Entry\" from AUD $25.00 per head"	Same ambiguity as Lone Pine: could be coded as two separate products rather than a base entry plus a Bird World add-on.
+rainforestation-nature-park.md	usable_choice_spine	"Rainforest & Wildlife ... (add $14 per student for the Tree Planting Experience...)" plus "Boomerang Painting $23.50pp; Canvas Art Workshop $23.50pp"
+rockhampton-zoo.md	no_usable_pricing	"Entry to Rockhampton Zoo is FREE."
+sarina-sugar-shed.md	usable_no_choice	"School tours: \"$13.50 per child (age 5 – 17 inclusive).\""
+sea-world.md	usable_choice_spine	"The $80.00 Educational Program fee is \"charged per session, not per student\"; \"Selected programs incur a per student fee of $13.00 or an additional fee for the Tropical Reef Snorkel\""
+splitters-farm.md	no_usable_pricing	"school-programme pricing itself is not published; the schools page states \"Schools can download our School Camp Options and Group Stay Options or contact us directly for customised programs, pricing, and availability\""
+tommerups-dairy-farm.md	no_usable_pricing	"no per-student or per-group tour price is published on any of the pages read"
+wildlife-hq-zoo.md	no_usable_pricing	"school_offer_detail_level: no_school_offer"

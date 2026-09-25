@@ -1,0 +1,1294 @@
+########## abbey-farm.md
+
+**school_offer_detail_level**: timed_programme
+
+**programme_names**:
+- Farm Visits
+- EYFS/Primary
+- Secondary/Colleage [sic, as published]
+- Booking Information
+
+**activities_verbatim** (Early Years Foundation Stage: Nursery / Reception / Years 1 & 2, from the EYFS/KS1 information pack):
+- Abbey Farm trail
+- Where does our food come from?
+- Teddy Bear's Picnic (nurseries)
+- The Big Bug Hunt
+- Woodland activities
+
+**activities_verbatim** (Primary schools: Key Stage 2, from the KS2 information pack):
+- Abbey Farm trail
+- Where does our food come from?
+- Farming through the Ages
+- Making Science come to life
+- Plant growth: inhibitors / acclerators [sic]
+- Woodland activities
+- Abbey Farm Numeracy Quiz
+
+**activities_verbatim** (from the "Secondary/Colleage" page, listed as curriculum links rather than named activities):
+- Farming as a business
+- Hedgerow / Microclimate investigation
+- Woodland Comparison
+- Land-Use mapping
+
+
+
+
+########## adam-hensons-cotswold-farm-park.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:**
+
+- "A quintessential School Trip!"
+- "school package" (teacher pack title, 2023)
+
+**activities_verbatim** (in the order given on the schools page and in the school-package-visit-guide-2023.pdf itinerary):
+
+- Tailored Educational Workshops (45-minute talk, KS1–KS3, delivered "In Dolly's")
+- Pre-Visit Learning Material
+- Pre-Visit Teacher Familiarisation
+- Higher/Further Educational groups talks: "Farming and Climate Change"; "Farm to Fork"; "Bio-security – Zoonotic disease control on a farm visitor attraction"
+- Self-Led Activities: play equipment, treasure hunt in the woodlands, animal identification "bingo" on the rare breeds trail
+- Teacher/Leader Information Packs
+- Post-Visit Learning Material (via "Explorify")
+- Rare Breed Walkway Challenge (looped walk, approximately 20 minutes long, laminated bingo cards)
+- Feeding the animals (goats and sheep; feed shoots for double-fenced animals such as cattle)
+- Woodland Walk Activity: "Den building", "Mud kitchen"
+- Conservation area: "Bird spotting", "Bug detecting"
+- "Take a look inside our live bee hive (In the warmer months)"
+- Play Areas (outdoor play areas, allocated time; inflatable bouncy pillows "only open when they are dry")
+- Discovery Barn & Animal Barn Exploration (group splits into two, 15 minutes per barn before swapping over)
+
+
+
+
+- Pre-Visit Teacher Familiarisation: up to 4 adults
+- Pricing tiers, each stated as a maximum: 20 children + 4 adults; 30 children + 6 adults; 40 children + 8 adults; 50 children + 10 adults; 70 children + 14 adults; 100 children + 20 adults; over 100 by quote
+
+########## almond-valley-heritage-centre.md
+
+**school_offer_detail_level**: timed_programme
+
+**programme_names**:
+- Learning Visits (the overall school offer)
+- Inventing Tomorrow (full title: "Inventing Tomorrow - The Story of James Young")
+- Voices of Shale (subtitled "(The Child)")
+- Sow and Grow
+- Meet Our Rare Breeds
+
+**activities_verbatim**:
+- "A 40-minute guided session led by a member of our Learning Team"
+- "Resources to support to self-led activity"
+- "Suggested pre and post visit activities to support your learning visit"
+- Inventing Tomorrow - The Story of James Young: "Who is James Young? Discover more about the life and innovations of the Scottish Chemist. How did James Young's pioneering discoveries shape the future of the Scottish Shale oil industry? Join us on a fact finding mission to unlock the history of Young, take on the STEAM challenge and unleash your creativity and innovation. This activity is suitable for primary school children working at second level."
+- Voices of Shale (The Child): "Explore the voices of the Shale Oil community in this hands on workshop and take on the role of a child in the mines. Immerse yourself in the daily hardships and the physical conditions they endured. Join us in our handling session where we will look at objects, photographs and listen to stories from the past. This activity is suitable for primary school children working at first and second level."
+- Sow and Grow: "Available only during the Autumn term. This session explores our orchards, polytunnel and wartime garden to support historical themes or study of diet and sustainability issues. This activity is suitable for primary school children working at early, first and second level."
+- Meet Our Rare Breeds: "Our animal house is home to many rare breeds animals, which normally include goats, sheep, donkeys and horses. Meet the residents, and consider the characteristics that they share, and what makes them different. This activity is suitable for primary school children aged 5+, and can address learning outcomes related to classification and characteristics of living things. This activity is suitable for primary school children working at early and first level"
+- Tractor and Trailer rides: "Tractor and Trailer rides are available on most dates @ £1 per person. These must be pre-booked."
+
+
+
+- Learning Visit qualification: "The school class must be of at least 15 children; we can accommodate smaller ASN groups"
+- Discovery Session: "Sessions usually involve groups of 15-20 children"
+- Group Visits (non-qualifying groups): "The group must contain 20 or more individuals who are charged for admission"
+- School Group and Nursery ratio: "School Group and Nurseries eligible for 1 free adult ticket for every 10 paying children"
+
+########## aongatete-outdoor-education-centre.md
+
+### school_offer_detail_level
+timed_programme
+
+### programme_names
+No single named "school programme"; the Educational Groups booking page serves schools, youth groups and adult education groups, who select activities from eight named activity categories: Bush Walks and Tramps; Outdoor Safety & Bush Craft; Aongatete River Activities; Nature & Environmental Studies; Self-Confidence / Personal Performance; Night Time Activities; Team Building Challenges; Gap Fillers & other activities. Within Nature & Environmental Studies is a named sub-programme, "Aongatete Forest Discovery Program".
+
+### activities_verbatim
+From the Activities overview page: "we work with you to create customised camp programmes that match your group's goals, age range, and budget. Simply choose the activities you're interested in, and our experienced team will help design a safe, engaging, and memorable outdoor learning experience — with support and activity SOPs provided."
+
+Bush Walks and Tramps:
+Nature Trail: A 20 minute walk through easy terrain following a track with signs about the areas Natural Habitat. This track is ideal for any other nature study activities.
+Short Loop: A 1 hour walk through intermediate terrain, this track is a B grade and is about 2.2km long.
+Long Loop: A 3 hr walk with challenging parts and river crossings. A C grade track about 6.5 km long.
+Swimming Hole Track/River Crossing towards North/South Track: a 30 minute one-way walk to the river.
+Upland Road Track: an easy C grade. It takes about 2 1/2 - 3 hours to reach AOEC and is about 5km long and includes a river crossing.
+Wairere Falls (8 hrs one way): several schools start their AOEC camp by walking in from the Wairere Falls.
+
+Outdoor Safety & Bush Craft:
+The Aongatete Survivor Experience (Full Day)*: a full day experience led by a trained and experienced AOEC Instructor, covering Trip Planning, Outdoor Safety & Environmental Care, Navigation with Map & Compass, Outdoor Cooking, Shelter Building, Environmental Care, River Safety.
+The Aongatete Survivor Experience (Half Day)*: a half day experience, 3hrs in the bush, led by a trained and experienced AOEC Instructor.
+Shelter Building: a simple session designed to learn how to shelter from the elements in different ways.
+Fire Lighting: led by a trained and experienced AOEC Instructor.
+Outdoor Cooking: children can cook on hobo or hexi stoves; equipment available to hire.
+Navigation: Basic Map Orienteering on Lodge Grounds; Map Reading using a Topo50 Map; Compass Confidence Basics; Compass Navigation through the bush led by an AOEC Instructor.
+Camp Outs: sleep in dormitories, in a tent, under canvas or tarpaulin bivvy style, or under the stars.
+
+Aongatete River Activities:
+Aongatete River Challenge: an adventurous walk up/down the river with experienced AOEC Instructors.
+River Studies & Discoveries: find and watch eels, what lives in our rivers, plants that grow in or near the river.
+Dam Building.
+Rock Sculptures.
+Boat Races.
+Swimming.
+
+Nature & Environmental Studies:
+"Thanks to the generous support of the Wright Family Foundation, all of our Environment Education Activities are fully subsidised for 2025, 2026, and 2027."
+Aongatete Forest Discovery Program: an AOEC Instructor led, full day hands on program where students explore the forest, learn about plants and trees, forest colours, pest control and conservation, and identify birds; concludes with a night walk.
+Forest Discovery - Get to know a tree.
+Forest Discovery - Native Birds in our Forest.
+River Studies & Discoveries (as above).
+Layers of the Forest: can be extended with a team building lesson to last a whole morning or afternoon.
+Pest Control & Conservation.
+Nature Trail: 15 minutes to 2 hours depending on detail and design.
+Nature Crafts & Forest Art.
+Rongoa Maori Medicine: with AOEC Rongoa qualified Instructor.
+Waste Management (Mandatory).
+Night Time in the Forest.
+Solos: can be run day or night, for any length of time.
+
+Self-Confidence / Personal Performance:
+Challenge Course: informal (play time, adult supervision and spotting required) or formal (set goals and objectives) sessions.
+Archery: "an AOEC trained staff instructor is required to take this session."
+Indoor Climbing Wall: "(Currently unavailable)".
+
+Night Time Activities:
+Burma Trail.
+Night Walk: equipped with torches, magnifying glasses and night creatures identification cards.
+Candle Trail.
+Camp Concert.
+Camp Fire: "*Strict Conditions apply".
+Bouldering (on the indoor climbing wall): "this activity can only be run with the presence of our rock climbing instructors."
+
+Team Building Challenges:
+Pancake Challenge.
+"Below are collection of short challenges commonly used as team development activities... Each activity takes 15-20 minutes depending on the age and capabilities of the students."
+Tram Tracks. Lava Flow. Tyre Shift. Stacker. Spot Maze/Swamp Crossing. Balancing Pole. The Wall. Pipe Line. Tarp Flip.
+
+Gap Fillers & other activities:
+Fire drill: "a quick 20-30 minute exercise or you can spend a good hour."
+Bouldering (on the indoor climbing wall): "this activity can only be run with the presence of our rock climbing instructors."
+Camp Journal: printable PDF journal available to download.
+Nature Crafts: Nature Weaving and Leaf Creatures.
+
+### duration
+No single fixed duration for a school visit as a whole; occupancy is per booked day/night (see Commercial > booking-related occupancy times below). Individual activities carry stated durations as transcribed above, ranging from 15 minutes (some team-building challenges) to 8 hours one way (Wairere Falls track).
+
+### group_size_min_max
+Booking form: accommodation "no more than 92 total". Facilities page: "A total of 92 people can be accommodated in dormitory style bunkroom accommodation... Regulations allow for a maximum of 100 people on site." Minimum charge applies below 22 occupants (see participant_thresholds).
+
+### participant_thresholds
+Minimum charge of $500 per day/night applies for groups smaller than 22 occupants. Maximum accommodation capacity of 92 people; regulation maximum of 100 people on site.
+
+########## applecast.md
+
+**school_offer_detail_level**: activity_list_no_timings
+
+**programme_names**: AppleCast Academy; AppleCast Farm; Alternative Provision; SEND (Special Educational Needs and Disabilities); The Hive; Work-Based Learning Pathway; Therapeutic Care Pathway; Lakeview Lodge
+
+**activities_verbatim**:
+From the education page: Animal care; Horticulture; Fish breeding; Aquaponics; Agriculture; Woodwork; Construction; Conservation; Angling and fishery management qualifications.
+From the SEND page: Animal Care; Birds of Prey; Angling; Woodwork; Horticulture.
+From the AppleCast Academy page: "Small class sizes and individualised support"; "A restorative and relational approach to behaviour"; "A strong focus on wellbeing, therapeutic support and personal development"; "Opportunities for practical, vocational, animal care and land-based learning".
+
+
+
+
+########## apple-tree-care-farm.md
+
+**school_offer_detail_level:** offer_without_activity_detail
+
+**programme_names:**
+- Group Sessions
+- 1:1 Sessions
+- Alternative Provision
+- CBT
+- Drawing and Talking
+- Farm & Flourish
+- Home Education at the Farm
+- Learning and Development
+- Play Therapy
+- HAF (Holiday Activity and Food)
+- "*FOR ACCREDITED STAFF ONLY** Self guided visit to the Farm" (booking system listing)
+- "Home Ed at the Farm" (booking system listing)
+
+**activities_verbatim:** none listed. Pages describe purpose ("social, emotional, or physical development, or simply providing a hands-on learning experience in animal care and management") and named skill areas (crafts, practical skills, woodwork) but do not list discrete session activities as a sequence
+
+- Group Sessions: "2-3 hour sessions tailored to their specific needs"; elsewhere stated as "minimum 2 hours, adjustable"
+- 1:1 Sessions: "2-3 hours typical"
+- Alternative Provision: "3+ hours, up to full day"
+
+
+
+########## astrolab-du-parc-national-du-mont-megantic.md
+
+### school_offer_detail_level
+
+timed_programme
+
+### programme_names
+
+- ASTROLab à Distance
+- Visite sur place
+- Visite de jour de l'ASTROLab et de l'Observatoire
+- Soirée d'astronomie au pied de la montagne (ASTROLab)
+- Nuits des Perséides
+- Festival d'astronomie du Mont-Mégantic
+- Système solaire géant
+- Semaine Blanche
+- Soirées d'astronomie hivernales
+- Soirée à l'observatoire populaire (2027)
+
+### activities_verbatim
+
+- ASTROLab à Distance: "Une séance d'astronomie dans votre classe"
+- Visite sur place: "DÉCOUVERTES AU COEUR DU PARC NATIONAL DU MONT-MÉGANTIC"
+- Visite de jour de l'ASTROLab et de l'Observatoire
+- Soirée d'astronomie au pied de la montagne (ASTROLab)
+- Nuits des Perséides
+- Festival d'astronomie du Mont-Mégantic
+- Système solaire géant
+- Semaine Blanche
+- Soirées d'astronomie hivernales
+- Soirée à l'observatoire populaire (2027)
+
+### duration
+
+ASTROLab à Distance: 45 minutes. Other on-site activities: no specific durations stated.
+
+### group_size_min_max
+
+ASTROLab à Distance: maximum 40 élèves per class. No minimum stated. "Ne peut pas être donnée dans un auditorium."
+
+### participant_thresholds
+
+ASTROLab à Distance: maximum 40 students per class stated.
+
+########## auckland-zoo.md
+
+**school_offer_detail_level:** activity_list_no_timings
+
+**programme_names:**
+
+- Early Childhood Education
+- Dinosaur Discovery
+- Awesome Aotearoa
+- Adaptations
+- Sustainability
+- Zoo Care (formally known as Role of the Modern Zoo)
+- Classification
+- Matariki
+- Behavioural Enrichment
+- Whakapapa
+- Protecting Aotearoa
+- Endangered Species
+- Human Evolution
+- Tertiary Education
+
+**activities_verbatim:**
+
+- "Early Childhood Education — Visit the Zoo with your little ones."
+- "Dinosaur Discovery — Explore the amazing prehistoric world of dinosaurs through song, story, movement, and play! Available for: ECE, from 10 June 2026"
+- "Awesome Aotearoa — What has shaped New Zealand's biodiversity? Available for: Years 0 - 13"
+- "Adaptations — How have animals adapted to their habitat? Observe animal features and behaviours in action! Available for: Years 0 - 13"
+- "Sustainability — What does living sustainably look like and why is it necessary? Available for: Years 0 - 13"
+- "Zoo Care (formally known as Role of the Modern Zoo) — Taking care of our animals every day in a way that ensures their overall wellbeing. Available for: Years 0 - 13"
+- "Classification — Discover the fascinating world of animal grouping and classification. Available for: Years 0 - 4"
+- "Matariki — Discover how we can celebrate Matariki through stories that link people to nature and Aotearoa's native wildlife. Available for: Years 0 - 8"
+- "Behavioural Enrichment — Explore one of the ways we engage and enrich the species in our care. Available for: Years 0 - 8"
+- "Whakapapa — Discover how living things are classified in te ao Māori (the Māori worldview) Available for: Years 0 - 8"
+- "Protecting Aotearoa — Learn how Aotearoa is home to unique animals which face modern day threats from introduced pests. Available for: Years 5 - 10"
+- "Endangered Species — Learn about endangered species and how we can all help them. Available for: Years 5 - 13"
+- "Human Evolution — Explore Human Evolution and the trends throughout bipedal history in a hands-on learning experience. Available for: Year 13 only"
+- "Tertiary Education — Tertiary Education Sessions specially catered to our oldest students."
+
+
+
+
+- Minimum charge threshold at fewer than 10 students (education sessions).
+- "1 free adult per 6 students" (education sessions and self-guided visits, Years 0-13).
+- "2 free lecturers with groups of more than 10 students" (tertiary).
+- Supervision ratios (minimum adult:student): "ECE 1:3 | Years 0-6 1:6 | Years 7-10 1:15 | Years 11-13 1:30".
+
+########## barleylands-farm-park.md
+
+- school_offer_detail_level: activity_list_no_timings
+- programme_names: "Field to Fork"; "Little Red Hen"; "The Very Hungry Caterpillar"; "Gingerbread Man Day"; "Grass to Gelato"; "Amazing Kitchen Science"; "Edible Science"; "Healthy Lunchbox and Food Miles"; "Rocks and Soils"; "WW2 – Dig for Victory"; "Victorian Days"; "Stone Age to Iron Age"; "Habitats and Food Chains"; "Owl Babies Day"; "Owls and their Habitats"
+- activities_verbatim: "Learn about nutrition and cook a healthy pizza from scratch" (Field to Fork); "peek to see if our hens have laid any eggs" and "make a tasty bread roll from scratch to take home" (Little Red Hen); "make a layered rainbow salad of fruit and vegetables" (The Very Hungry Caterpillar); "make and bake their own gingerbread man to take home" (Gingerbread Man Day); "make your own ice cream" (Grass to Gelato); "cornflour slime to lava lunacy, the day is guaranteed to be messy, noisy and lots and lots of fun" (Amazing Kitchen Science); "churning your own butter and making bread from scratch" (Edible Science); "layered salad and bake a fresh bread roll from scratch" (Healthy Lunchbox and Food Miles, KS2; KS1 salad only); "touch, smell, squish" and "create an edible soil horizon using sweets and biscuits" (Rocks and Soils); "impact felt by ordinary people when our country was at war" (WW2 – Dig for Victory); "ways in which the Victorians affected how we live today" (Victorian Days); "Grind wheat using a quern, prepare and make a Stone Age stew" and "make their own Stone Age bread using an ancient variety of flour" and "visit our Stone Age Fire prop in our Discovery Centre" (Stone Age to Iron Age); "Skulls, Skins and Scales include interaction with a range of bio-facts" and "making owl biscuits from scratch" (Habitats and Food Chains); "create delicious owl biscuits from scratch to take home" (Owl Babies Day); "closely examine Owl feathers and children will undertake their own Owl pellet dissections" (Owls and their Habitats, new 2025)
+- duration: none listed (no duration stated for individual programmes)
+- group_size_min_max: "Minimum group size: 15 paying customers (no minimum for SEND groups)" (self-guided); "Minimum charge: £320 (Sept-May) or £345 (June-July) for groups under 22 children" (guided); workshop cap "groups ≤60 children" for owl-biscuit-making option
+- participant_thresholds: minimum 15 paying visitors for self-guided visits (no minimum for SEND groups); guided visits carry a minimum charge equivalent to 22 children if the group is smaller; owl-biscuit-making and pizza-workshop add-ons within Habitats and Food Chains / Owl Babies Day / Owls and their Habitats are capped at "≤60 children"; groups of 25 or more paying customers "need to book two weeks in advance"
+
+########## belgenny-farm.md
+
+**school_offer_detail_level:** offer_without_activity_detail
+
+**programme_names:** School Excursions – The Dairy Industry at Belgenny Farm; A Smart Farmer: mobile dairy classroom
+
+**activities_verbatim:** none listed as a named activity list. The education page describes topics rather than discrete activities: "How milk is produced, processed and supplied"; "The role of science and technology in dairy farming"; "Changes in dairy practices over time"; "Animal care, hygiene and biosecurity"; "The importance of dairying to regional communities and food systems". The kidstofarms.com.au listing page states "Customised programs are also available" with a link to "Primary and High School excursion details", but that linked document is a risk management plan and COVID safety plan rather than an activity list.
+
+
+
+
+########## bidgee-strawberries-and-cream.md
+
+**school_offer_detail_level:** activity_list_no_timings
+
+**programme_names:**
+- High School Students - Educational Tour
+- Primary School Students - Educational Tour
+- Preschool - Non-educational picking excursion (available during picking season only)
+- Meet the farmer
+
+**activities_verbatim:**
+- "an educational experience by a qualified expert suited to the needs of the group"
+- "educational worksheet/s can be provided (please provide the subject and topics when making your booking)"
+- "a choice of one of the following (i) small ice cream or (ii) small sorbet"
+- "colouring in, find-a-word, dot-to-dot, quiz or scavenger hunt (provided based on age group)"
+- "entry to the strawberry patch"
+- "During the picking season, students can pick a small punnet for an additional cost of $5 per student"
+- "Your tour guide will take you on an adventure through the farm and provide an introduction to hydroponic farming and Integrated Pest Management (IPM) techniques"
+- "Included in the tour is a visit to the scar tree, where you can take a photo feeding the Damara sheep, check out the live display bee hive, and while picking your own punnet of strawberries, enjoy tasting a few samples of the sweet juicy fruit"
+- "you will have the opportunity to taste some of the products, including chocolate coated freeze dried strawberries, a sweet strawberry treat from our display cabinet, as well as our homemade strawberry sorbet and ice cream" (this line under "Meet the farmer")
+
+
+
+- Preschool tour: "a minimum of one adult is required for every three children to assist with picking" (supervision ratio, not a headcount limit)
+- Meet the farmer: minimum of 2, maximum of 8 people per group
+
+########## biodome-de-montreal-espace-pour-la-vie.md
+
+- school_offer_detail_level: timed_programme
+- programme_names: "A sea of discoveries"; "Amazonian expedition"; "Anchors aweigh on the St. Lawrence"; "Explore the Biodôme"; "In tune with the seasons" (Biodôme activities listed on the Educational activities page; the wider Espace pour la vie catalogue also lists activities at the Biosphère, Insectarium, Jardin botanique and Planétarium)
+- activities_verbatim: "Come join our biologists as they explore Amazonian biodiversity! They need a dynamic team to help them collect scientific data and draw up an inventory of vulnerable and endangered species of the Tropical Rainforest of the Americas. Your students will learn that we all have a role to play in conserving biodiversity in the Amazon." (Amazonian expedition, full description); "Students explore a theme: background and environmental issues, discovery of a Biodôme ecosystem, observation record and possibilities for action. The activity ends with a self-guided tour of the other ecosystems and exhibition spaces." (Amazonian expedition, continued)
+- duration: "1 h 30 minutes" (Amazonian expedition); general visit-planning guidance states "Biodôme - 1 to 1.5 hours (add 1.5 hours for an indoor activity)"
+- group_size_min_max: "Capacity Minimum 15 | Maximum 30 (Special needs classes - Contact us)" (Amazonian expedition); group rates apply to "15 people or more"
+- participant_thresholds: Amazonian expedition capacity "Minimum 15 | Maximum 30"; group rates "15 people or more"; supervision ratio "One adult per five students for preschool groups and students in grades 1 and 2" and "One adult per 10 students for grades 3 to 6 and secondary students"
+
+########## bioparc-de-la-gaspesie.md
+
+**school_offer_detail_level:** activity_list_no_timings
+
+**programme_names:** none listed as a named programme title; page describes youth "group workshops" ("ateliers de groupe")
+
+**activities_verbatim:**
+Rendez-vous avec les animaux
+À la découverte de la faune
+Avis de recherche
+Un vrai casse-tête
+Impacts humains
+
+Note: these are drawn from the general activities page (https://bioparc.ca/activites/); the educational-programme page itself names no discrete activity titles, describing only that "young people will discover Quebec biodiversity through games, as well as observation and handling of specimens."
+
+
+
+
+########## blackwattle-alpacas.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:** Preschool to Primary programme; Secondary programme; The Alpaca Connection Tour (general group tour, not school-specific)
+
+**activities_verbatim:** "Meet the Blackwattle Team"; "Introduction to the farm and safety discussion"; "Listen, Learn and Participate Session"; "Meet and pat one of our llamas (preschool and primary)"; "Take our alpacas and llamas for a walk (secondary)"; "Hand feeding session"; optional lunch package add-on
+
+
+
+
+########## blackwell-adventure.md
+
+**school_offer_detail_level**: timed_programme
+
+**programme_names**:
+- Schools, Colleges & Universities
+- RESIDENTIALS
+- ACTIVITY DAYS
+- GCSE CLIMBING COURSE
+- DofE CAMPING
+- Blackwell Court Adventure Day
+- Blackwell Court GCSE Climbing
+- Pikes Pool Adventure Day
+- Pikes Pool Water Day
+- The Manor House
+- Roberts Podded Village
+- Yorks Wood Podded Village
+- Pikes Pool Bell Tent Village
+
+**activities_verbatim** (from All Activities page, with stated minimum age and duration):
+- 3G Swing (ages 8 years plus, 1 hour 15 minutes)
+- Abseiling (ages 7 years plus, 1 hour 15 minutes)
+- Archery (ages 6 years plus, 1 hour 15 minutes)
+- Bushcraft (ages 6 years plus, 1 hour 15 minutes)
+- Campfire (ages 6 years plus, 1 hour 15 minutes +)
+- Caving (ages 6 years plus, 1 hour 15 minutes)
+- Crate Stack (ages 6 years plus, 1 hour 15 minutes)
+- Disc Golf (ages 6 years plus, 1 hour 15 minutes)
+- Fan Descender (ages 8 years plus, 1 hour 15 minutes)
+- Giants Ladder (ages 10 years plus, 1 hour 15 minutes)
+- Grass Sleds (ages 8 years plus, 1 hour 15 minutes)
+- High All Aboard (ages 8 years plus, 1 hour 15 minutes)
+- Indoor Climbing (ages 6 years plus, 1 hour 15 minutes)
+- Junior Tree Trek (ages 6 years plus, 1 hour 15 minutes)
+- Kayaking (ages 8 years plus, 2 hours)
+- Laser Tag (ages 8 years plus, 1 hour 15 minutes)
+- Leap Of Faith (ages 8 years plus, 1 hour 15 minutes)
+- Multi Scramble (ages 6 years plus, 1 hour 15 minutes)
+- Night Line (ages 6 years plus, 1 hour 15 minutes)
+- Obstacle Course (ages 6 years plus, 1 hour 15 minutes)
+- Outdoor Climbing (ages 6 years plus, 1 hour 15 minutes)
+- Outdoor Heated Swimming Pool (ages 6 years plus, 1 hour 15 minutes)
+- Pedal Go-Karts (ages 8 years plus, 1 hour 15 minutes)
+- Pioneering (ages 6 years plus, 1 hour 15 minutes)
+- Raft Building (ages 8 years plus, 2 hours)
+- Stand Up Paddle Boards (ages 8 years plus, 2 hours)
+- Standard & Butterlfly Orienteering [sic] (ages 6 years plus, 1 hour 15 minutes)
+- Team Challenge (ages 6 years plus, 1 hour 15 minutes)
+- Tomahawk (ages 8 years plus, 1 hour 15 minutes)
+- Tree Climbing (ages 7 years plus, 1 hour 15 minutes)
+- Tree Trek (ages 8 years plus, 1 hour 15 minutes)
+- Zip Wires (ages 8 years plus, 1 hour 15 minutes)
+
+
+
+- Day programmes: "MINIMUM GROUP SIZE 10" (both Blackwell Court and Pikes Pool).
+- Pikes Pool day programmes: "MAX NUMBER ON WATER ACTIVITIES - 3 GROUPS, 36 PEOPLE (MONDAY, WEDNESDAY AND FRIDAY)"; "MAX NUMBER ON LAND BASED ACTIVITIES - 8 GROUPS, 96 PEOPLE (TUESDAY AND THURSDAY)."
+- The Manor House: minimum 24 pupils; 50 children's beds, 6 adult's beds.
+- Roberts Podded Village: minimum 24 pupils; 52 children's beds, 6 adult's beds.
+- Yorks Wood Podded Village: minimum 30 pupils; 65 children's beds, 6 adult's beds.
+- Pikes Pool Bell Tent Village: minimum 20 pupils; max 36 children and 6 adults.
+- "IF BOOKING MORE THAN ONE ACCOMMODATION UNIT, YOU MUST MEET FULL CAPACITY IN ONE AND MEET THE MINIMUM NUMBER ON THE SECOND FACILITY."
+- "Free teacher places on Adventure Day - ratio of 1:10" / "Free teacher places on a ratio of 1:10" (repeated across residential and day price lists).
+
+########## bore-place.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:** Marvellous Minibeasts; Habitat Detectives; Sow and Grow; Field to Fork; Team Challenge Day; Weekly Outdoor Education Programmes; Home Education Level 1 Awards 2026-27 (Level 1 Award in Land-based Studies); Additional Needs Club; Bore Place Family Adventure; School Residentials (delivered "in partnership with the Ernest Cook Trust's OWL Collaboration programme")
+
+**activities_verbatim:**
+
+School Day Visits — every visit: "A tour around our regenerative farm giving your class an opportunity to explore and take part in a citizen science survey is part of every visit."
+
+Marvellous Minibeasts:
+- Minibeast hunting in logs, leaf litter and/or grassland
+- Meadow walk
+- Games to learn about predators and prey, and camoflage
+- Maybe some pond dipping!
+
+Habitat Detectives:
+- Seasonal survey e.g. worm, hedgerow, butterfly
+- Habitat trail to compare types of habitats
+- Footprint survey tunnels and mammal ID
+- Nest building or den building
+- If there's time, an animal signs scavenger hunt
+
+Sow and Grow:
+- Parts of a plant, germination and pollination games
+- Visit the garden to see the range of plants and what parts we can eat
+- Exploring the importance of soil
+- Plant a seed to take home/grow at school
+
+Field to Fork:
+- Foraging or harvesting ingredients
+- Look at natural vs. processed foods
+- Cook a simple food (KS2 only)
+- Taste testing
+
+Team Challenge Day (Suitable for KS2; adaptable for KS3 and KS4):
+- Orienteering style challenge trail
+- Den building
+- Firelighting
+- Campfire cooking
+
+Weekly Outdoor Education Programmes: activities not individually named on the education page; programme is described as delivering "hands-on outdoor experiences" toward accredited qualifications
+
+
+
+- School Day Visits, maximum 30 pupils per class ("All programmes are designed for a class of up to 30 pupils")
+- School Day Visits (two classes, Friday only), maximum 60 pupils ("we can often accommodate two classes (up to 60 pupils) on a Friday")
+- SEN School Day Visits, maximum 20 pupils ("the maximum group size for an SEN visit is 20 pupils")
+- Weekly Outdoor Education Programmes, maximum 10 students ("Schools can book for a group of up to 10 students")
+- Home Education Level 1 Award, class size around 6 learners ("Class size: around 6 learners")
+- Residentials, accommodation for up to 28 guests ("Accommodation is available for up to 28 guests (children and accompanying adults) in The Old Stable")
+- Corporate/group stays, groups as large as 65 ("We offer accommodation for small groups as well as groups as large as 65")
+
+########## bosavern-community-farm.md
+
+**school_offer_detail_level:** offer_without_activity_detail
+
+**programme_names:** none listed
+
+**activities_verbatim:** none listed
+
+
+
+
+########## brownings-farm.md
+
+**school_offer_detail_level:** activity_list_no_timings
+
+**programme_names:** none listed. The site has a "School Visits" nav page but that page carries no content beyond the title; the actual offer is described under "What We Offer".
+
+**activities_verbatim:**
+Under "YOUR VISIT" (the structure of a visit):
+- Introduction- which will consist of a brief outline of the farm and an explanation of the ongoing projects.
+- Farm walk- we explore the different areas of the farm focusing on various habitats which include the woodlands, fields, orchard and ponds.
+- Interactive Activity- This depends on the learning objectives you have for your students. The activities range from discovering different species of plants and animals in the woodlands which include building a hybernation chamber and and installing wildlife boxes to provide homes for protected species like bats, owls and dormice.
+- We will look at cattle husbandry and discuss sustainable farming practices.
+- Summing up your visit- We will finish by evaluating what we have learnt and discussing the importance of farming practices within the environment. We will discuss what choices we can make and action we can take that will restore our environment and wildlife.
+
+Under "INTERACTIVE ACTIVITY OPTIONS FOR YOUR STUDENTS":
+- Pond dipping and species identification.
+- Measuring field parcel sizes and calculating fence distances.
+- Collecting and recording samples of plants and bugs.
+- Identifying indicator species like butterflies and bees.
+- Comparing organic and non-organic pastureland for species diversification.
+- Identifying different bird & insect habitats.
+- Damn building to create water bodies.
+- Finding and identifying badger sets and other animal habitats.
+
+
+
+
+########## brynmawr-farm.md
+
+**school_offer_detail_level**: offer_without_activity_detail
+
+**programme_names**: none listed. The page heading is "EDUCATIONAL / ECOTHERAPY" and the sub-menu item is "Farm Education"; neither names a branded school programme.
+
+**activities_verbatim**:
+- We are always seeking ways to maximize the benefit of our work for both people and planet.
+- As well as providing individuals and groups with the opportunity to learn about organic farming, over the years at Brynmawr we have provided positive experiences for people from diverse backgrounds facing various challenges.
+- We believe that engaging both children and adults with, and caring for, animals, tending to plants and vegetables, and performing simple productive tasks in a natural environment can help any individual to address their emotional, social, and educational needs as well as grow, and learn.
+- In addition to the offer of practical sessions available to paying guests, any group or individual looking for a bespoke educational experience can approach us via email to discuss what options are available at that time.
+
+No itemised activity list, session names, or running order is published; the offer is described only in the general terms above.
+
+
+
+
+########## bush-adventures-uk-cic.md
+
+**school_offer_detail_level**: timed_programme
+
+**programme_names**:
+- Alternative Education
+- 1:1 SEMH/NEET
+- Small Group Provision
+- School Safety Net
+- Education Consultancy
+- Lesson Planning for Schools
+- First Aid Training
+- In-School Provision
+- Staff Training & Inset Days
+- Activity Days
+- Residential Trips
+- Groups
+- Residential Packages
+- Day Packages
+- 1 Night Stay Packages
+- 2 Night/3 Day Packages
+- Camping at TMB Campsite
+- A Sleep over in the Bidwell Centre
+- Activity Menu (Tier 1, Tier 2, Tier 3)
+
+**activities_verbatim**:
+
+From "Learning Through Practical Skills" (Alternative Education page):
+- Fire craft
+- Shelter building
+- Wood craft
+- Food
+- Water based
+
+From "Activity Menu" (Development/Residential page), by tier:
+- Tier 1: Paddle Boarding, Canoeing, Climbing, Archery, Raft Building, Mountain Biking
+- Tier 2: Axe Throwing, Bushcraft/ Survival Skills, Archery Tag, Zorb Football, Team Challenge, Shelter building and Lazer tag, Foraging, Campfire cooking/ Wild food prep
+- Tier 3: Campfire, Wide Games, Orienteering, Ice breakers, BAUK Task Master, Star Gazing
+
+From Activities page category groupings (Bush Experiences UK, the leisure/corporate arm):
+- Water Based: Paddle-board and Canoe rentals, Guided Tours, Mega SUP
+- Land Based: Climbing, Abseiling, Axe Throwing
+- Woodland: Outdoor Cooking, Camping, Shelter Building
+
+
+
+- 1:1 SEMH/NEET: "One child per staff member (2:1 available depending on risk assessment)."
+- Small Group Provision: "Minimum 4 young people in each cohort and no more than 6"; "3:1 staffing ratio average."
+- School Safety Net: "Up to 6 young people per session."
+
+########## cammas-hall-fruit-farm.md
+
+**school_offer_detail_level**: activity_list_no_timings
+
+**programme_names**: none listed
+
+**activities_verbatim**:
+- "a tour and a talk about farming"
+- "worksheets"
+- "group scavenger hunt"
+- "access to our play facilities"
+- "nature trail"
+- "a dedicated marquee space to enjoy a packed lunch"
+
+From the Countryside Classroom listing (quoting the farm): "a tour of the farm and a talk about fruit farming at Cammas Hall Farm"; "an education pack with activities for the children to enjoy and learn from"; "Nature Trail which takes you through woodland, farmland and meadows."
+
+
+
+
+########## camp-coolamatong.md
+
+**school_offer_detail_level:** activity_list_no_timings
+
+**programme_names:** Farm Camp; Lake Camp (the two campsites run by Camp Coolamatong; this entry concerns the Farm Camp).
+
+**activities_verbatim:**
+
+- Abseiling/Rock Climbing Tower
+- Canoeing
+- Stand Up Paddle Boarding
+- Bush cooking
+- Farming
+- Mountain Biking
+- Archery
+- Low Ropes
+- Raft Building
+- Adventure Race
+- Survivor (Initiatives Course)
+- Geocaching
+- Night Hike
+- Boat Trip on 49 seat boat, the CC Neill
+
+At extra cost: Overnight Hiking Expedition, Water Tubing, Sailing, Indigenous Experience, Sea Kayaking, White Water Rafting.
+
+
+
+
+########## clifton-college-outdoor-activity-centre.md
+
+**school_offer_detail_level**: activity_list_no_timings
+
+**programme_names**:
+- Outdoor Activity Centre
+- Schools and Colleges
+- Corporate Away Days
+- Birthday Parties
+- Rock Climbing
+- Cookery Courses
+
+**activities_verbatim** (portfolio list of activities shown on the Schools and Colleges page and repeated on the Outdoor Activity Centre home page):
+- Indoor Bouldering
+- Laser Tag
+- Sensory Trail
+- Nerf Combat
+- Combat Archery
+- Rock Climbing
+- Axe Throwing
+- Mountain Biking
+- Trebuchet
+- Problem Solving
+- Orienteering
+- Low Ropes
+- Bushcraft
+- Archery
+
+
+
+
+########## collingwood-childrens-farm.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:**
+School Tours
+Self-Guided Groups
+Camping Groups
+
+**activities_verbatim:**
+(School Tours page, "Itinerary") Students often get to meet and pat our guinea pigs, goats and/or sheep and typically get to see pigs, cows, horses, chickens, ducks, goats, cats and peacocks. We usually visit one of our food growing spaces such as the market garden.
+(School Tours page, "Learning Intentions") To explore the Farm using the senses.
+To learn and use correct terminology for living things, their features and their offspring.
+To explore where our animals live and what we do to keep them healthy and happy.
+To identify the food and fibre products which we get from our Farm animals.
+(Self-Guided Groups page) Self-guided groups are welcome to join in on the daily activities put on by our friendly farmers.
+(Camping Groups page) Immersive & Educational: Get a firsthand look at sustainable urban farming, animal care, and environmental stewardship.
+A Peaceful, Nature-Based Retreat: Step away from screens and city noise for a night of fresh air, open space, and simple living.
+Hands-On Learning: Connect with the rhythms of farm life while gaining practical outdoor skills.
+A Safe & Well-Equipped Site: Stay in designated camping areas with access to the historic Barn, toilets, and a secure overnight setup.
+
+School Tours: "A one-and-a-half-hour tour running from 10:30 am to 12:00 pm." Groups must arrive by 10:00 am.
+Self-Guided Groups: check-in "any time from 9.30am"; no stated end time.
+Camping Groups: "Arrival from 3:30 pm, departure by 9:00 am" (overnight).
+Aged Care and Mobility Access (non-school group product, vehicular access): "Duration approximately 2 ½ hours."
+
+School Tours: "up to three classes" run in parallel, "strict maximum of 30 people per class, including supervising adults."
+Self-Guided Groups: "Minimum group size of 10 children", "up to 60 people"; "Larger groups must divide into smaller groups of no more than 10 children while exploring the Farm."
+Camping Groups: "Suitable for primary and high school groups (8-24 people, including adults)."
+
+School Tours minimum adult-to-student ratios: "Early Childhood - 1:5", "Foundation through Year two - 1:8", "Years three through six - 1:10".
+School Tours: "strict maximum of 30 people per class, including supervising adults."
+Self-Guided Groups: minimum 10 children; maximum 60 people; subgroup cap of "no more than 10 children" per exploring group.
+Camping Groups: 8-24 people including adults.
+Aged Care and Mobility Access: "$175 per vehicle and up to 12 passengers."
+
+########## densholme-farm.md
+
+**school_offer_detail_level:** offer_without_activity_detail
+
+**programme_names:**
+- Alternative Provision
+- Specialist Outreach Service
+- Animal-Assisted Therapy
+
+**activities_verbatim:**
+- Animal care, grooming, and enrichment activities
+- Planting and growing vegetables and flowers
+- Creative projects such as art, nature crafts, or woodwork
+
+
+
+
+########## drusillas-park.md
+
+**school_offer_detail_level**: activity_list_no_timings
+
+**programme_names**:
+- Education at Drusillas
+- Treat Trips
+- Educational Trips
+- Group Visits
+- Teachers' Open Days
+
+**activities_verbatim**:
+- Treat Trips: "Enjoy a whole day of full access to our zoo, play, and rides, learning as you go with endless educational interactives across the whole Park."
+- Educational Trips, Primary topics: Habitats and Adaptations; Tropical Rainforests; Fur, Feathers and Scales; Life Cycles; Minibeasts (Reception and KS1); Maasai Life; Endangered Animals and Conservation; Penguins; Sustainability; Chop, Munch, Chew; Plant Power!
+- Educational Trips, Secondary and Post-16 topics: Tropical Rainforests (KS3); Business Studies; Visitor Attractions; Marketing; Conservation; Customer Service; Animal Management (Post-16)
+- "It's an exciting time at Drusillas! Over the summer, we'll be refreshing our education programme with brand-new sessions and updated resources designed to inspire and engage students."
+
+
+
+
+########## dyson-farming.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:**
+
+- "Summer Series"
+- "CPD Events" / "CPD training for teachers"
+- "School Resources"
+- "Virtual Tour"
+- "Open Farm Sunday"
+- "LEAF Education Pop-Up Knowledge Hub" (held at Mayfield Farm, Compton, a different site to Dyson Farming's Nocton head office, but listed under Dyson Farming's own school-visit tag)
+
+**activities_verbatim:**
+
+CPD training for teachers: guided farm tour with the Dyson Farming team; introduction to "newly developed Dyson Farming resources and their links to the curriculum"; Education Centre exploration; learning about sustainable farming practices and environmental initiatives; networking with other educators.
+
+LEAF Education Pop-Up Knowledge Hub workshop titles: "Discovery and exploration – a holistic approach"; "Getting down and dirty – making soil exciting"; "Let's talk teenagers!"; "Who do you think you could be? – Careers and virtual visits"; "Tour of Mayfield Farm."
+
+Activities described in the Branston Junior Academy case-study visit (bja-visit-oct22 page; a specific past visit reported on the site, not a standing menu): management project (wildlife plot exploration and management planning); "Ask a farmer" Q&A session; farming equipment and soil health demonstration, including a drone flight; soils investigation (soil type identification and crop root comparison); British produce discussion; Nocton Wood walk.
+
+
+
+
+########## earth-products.md
+
+**school_offer_detail_level:** offer_without_activity_detail
+
+The "Farm Visits" page (menu item, URL /educational-visits/) carries a section "Educational and School Visits" that describes the offer in narrative terms but does not itemise activities, times, or a running order. It reads: "Each year we are delighted to welcome school groups to the farm for educational visits under DEFRA's ED1 scheme. This scheme allows us to fund schools on farm for a 2 ½ hour session learning all about the farm, the cows, pigs, crops and how a farm works. The children and their teachers visit different areas on farm and gather knowledge whilst enjoying being out of the classroom in the fresh air." It also states: "With the funding from DEFRA, schools only have to pay to transport the children to us."
+
+- **programme_names:** none listed (the offer is referred to only as "Educational and School Visits" and by the funding scheme name "DEFRA's ED1 scheme")
+- **activities_verbatim:** none listed as a structured list; the page states only that the visit covers "the farm, the cows, pigs, crops and how a farm works" and that children "visit different areas on farm"
+- **duration:** "a 2 ½ hour session"
+- **group_size_min_max:** none listed
+- **participant_thresholds:** none listed
+
+########## ecole-de-la-mer-explos-nature.md
+
+### school_offer_detail_level
+
+timed_programme
+
+### programme_names
+
+- École de la Mer
+- À la découverte du Saint-Laurent
+- Mystérieuses baleines
+- Animaux des fonds marins
+- Les requins du Saint-Laurent
+- Excursion à marée basse
+- Conférences
+
+### activities_verbatim
+
+- À la découverte du Saint-Laurent
+- Mystérieuses baleines
+- Animaux des fonds marins
+- Les requins du Saint-Laurent
+- Excursion à marée basse
+- Conférences
+
+### duration
+
+Half-day to 5 days; individual activities last 1-3 hours. "1 journée" package: 2 activities of 3h. Season: May to October.
+
+### group_size_min_max
+
+none listed
+
+### participant_thresholds
+
+none listed
+
+########## eco-nature.md
+
+### school_offer_detail_level
+
+activity_list_no_timings: six named school activities are listed under two groupings, each with a stated duration length and price, but no clock-timed running order for a school visit day.
+
+### programme_names
+
+Two groupings are named: "Les deux pieds sur terre" (on-land activities) and "Sur l'eau, à l'aventure!" (water activities).
+
+### activities_verbatim
+
+Sur les traces des animaux
+
+Visite animée au musée
+
+La réserve écologique, un monde à découvrir
+
+Pêche en herbe
+
+Excursion écologique
+
+Rallye amphibie
+
+### duration
+
+Sur les traces des animaux: 1h30.
+
+Visite animée au musée: 2h.
+
+La réserve écologique, un monde à découvrir: 2h.
+
+Pêche en herbe: 4h30.
+
+Excursion écologique: 3h.
+
+Rallye amphibie: 3h.
+
+### group_size_min_max
+
+No minimum stated for any activity. Maximums stated per activity: Sur les traces des animaux, "30 pers. maximum"; Visite animée au musée, "45 pers. maximum"; La réserve écologique, un monde à découvrir, "30 pers. maximum"; Pêche en herbe, "48 pers. maximum"; Excursion écologique, "60 pers. maximum"; Rallye amphibie, "60 pers. maximum".
+
+### participant_thresholds
+
+Sur les traces des animaux: maximum 30 persons.
+
+Visite animée au musée: maximum 45 persons.
+
+La réserve écologique, un monde à découvrir: maximum 30 persons.
+
+Pêche en herbe: maximum 48 persons.
+
+Excursion écologique: maximum 60 persons.
+
+Rallye amphibie: maximum 60 persons.
+
+The brochure also states: "L'activité est gratuite pour 1 accompagnateur par groupe de 9 enfants" (a per-9-children accompanying-adult ratio, recorded again under adults_free_ratio).
+
+########## edendale-community-environment-farm.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:**
+Early Years
+Primary
+Secondary
+Teachers' Environment Network
+"Education for Environmental and Climate Action"
+
+**activities_verbatim:**
+
+Early Years:
+Farm Tour
+Minibeasts (invertebrates) - A Bug's Life
+Eltham Copper Butterfly
+Waste not
+Grow Your Own
+Environmental art (Calico Bag Prints, Sculptural Junk)
+Wonderful Worms
+Buzzing Around
+Habitat Heroes
+
+Primary (grouped by theme; the venue's own activity names are listed under each theme):
+Water: What waterbug is that? (Aquatic macroinvertebrates); Tale of a Creek (Year 2+); Water Heroes (Year 2+); Edendale farm tour (water quality focus); Water quality testing (Year 7+)
+Waste: What a Load of Rubbish; Soil Matters; Consumption Down! (Year 4+); Sculptural Junk (F-3); Edendale farm tour (waste focus)
+Biodiversity: Habitat Heroes; It's a Bug's Life; Who am I? Eltham Copper Butterfly; What waterbug is that? (Aquatic macroinvertebrates); Buzzing Around (F-2); Fun with Frogs (F-2)
+Energy and Climate (Year 5+): Cut Your Carbon; Home Green Home; Re-Generate; Jump into Climate Action; Food Footprint
+Food: Edendale farm tour (Food focus); Grow Your Own (F-2); Soil Matters; Food Footprint (Year 4+)
+Sustainable Living (Year 4+): Consumption Down!; Water Heroes; Cut Your Carbon (Year 5+); Habitat Heroes; Food Footprint; Tale of a Creek; Sustainable Edendale farm tour; Young Changemakers (Year 5+)
+Environmental Art: Calico Bag Prints; Sculptural Junk; Build a Bushkin (natural material sculptures)
+
+Secondary (grouped by theme):
+Water: Aquatic macro-invertebrates (identification, classification and interactions); Tale of a creek (story and role play, water quality focus); Edendale Farm tour (water conservation focus); Extended water quality testing for Year 7 Geography
+Waste: Soil matters (soil composition, composting and worm farming); Consumption Down! (waste reduction hierarchy, smarter shopping and a brief recap of what goes in what bin, and why); Fast Fashion (environmental impact of what we wear)
+Biodiversity: Plant local (lifecycles, propagation, planting - seasonal); Aquatic macro-invertebrates; Who Am I? Eltham Copper Butterfly (local endangered species focus)
+Energy and Climate: Cut your carbon; Home green home; Re-Generate; Food footprint; Jump into climate action; Young changemakers
+Food: Sustainable Edendale Farm tour (produce focus); Food footprint; Soil matters; Future of food (food security, potential foods of the future)
+Sustainable Living: Consumption Down!; Cut your carbon; Plant local; Food footprint; Tale of a creek; Sustainable Edendale farm tour; Young changemakers
+
+Early Years excursions: "Each activity runs for approximately 50 minutes."
+Early Years incursions: "Each session runs for approximately one hour."
+Primary and Secondary excursions: "Each activity runs for about 45 minutes" (Primary) / "generally runs for about 45 minutes" (Secondary).
+Excursion length options (Early Years): 1 hour (1 activity); 2.5 hours (2 activities); 3.25 hours (3 activities).
+Excursion length options (Primary and Secondary): 1 hour (1 activity) through 5 hours (5 activities) in Primary; 1 hour through 5 hours in Secondary.
+
+Early Years excursions and incursions: "minimum group size of 15 children."
+Primary excursions and incursions: "minimum class size of 20 students" / "minimum 20 children per class."
+Secondary excursions and incursions: "minimum class size of 20 students" / "minimum 20 children per class."
+
+Early Years: minimum 15 children (both excursion and incursion).
+Primary and Secondary: minimum 20 students (both excursion and incursion).
+
+########## essex-region-conservation-authority.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:**
+
+- Education Programs (page title)
+- In Person Conservation Area Field Trips
+- Virtual Field Trips
+- Nature Near You
+- Specialist High School Major (SHSM)
+- Educator Professional Development for Teachers
+- Early Settlers
+- Spring Programs
+- Wetlands Lifecycles
+- Maple Syrup / Sirop D'erable
+- Fall Programs
+- Harvest Traditions and Celebrations
+- Marvelous Migration
+- Winter Programs
+- Wildlife in Winter
+- Holiday Traditions and Celebrations
+- Homeschool Programs
+- Outdoor Explorer Programs for Homeschoolers
+- First Taste of Spring - Maple Syrup
+- Wetlands and Wildlife
+- Early Explorers
+- Operation Migration
+- Harvest at the Homestead
+- Traditions & Celebrations
+
+**activities_verbatim:**
+
+- "Outdoor education is a methodology that provides a full spectrum, cross curricular experience."
+- "We offer hands-on Outdoor Education programs at several conservation areas in the form of field trips."
+- "We also offer a variety of Nature Near You experiences delivered outdoors at your school."
+- "All of our Education Programs are tailored to fit each grade level (K-12) and meet the Ontario Curriculum for Science, Social Studies, History, Geography, and more!"
+- Programme sub-themes are curriculum connected per grade (example given: "Plants for Pioneers, Simple Machines, Early Technologies, etc.")
+
+
+
+
+- In Person Conservation Area Field Trips: up to 30 participants per group, "$225 per group", including "all staff and up to 6 adult chaperones".
+- Booking form field: "Number of Groups (up to 30 students/$225.00 per group)".
+
+########## whirlow-hall-farm-trust.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:** Residential Visits (School Term Time); Weekends and Holidays; Whirlow L.I.F.E. (Learning In a Farming Environment); Whirlow L.I.F.E. Post Sixteen Provision; Day and residential visits
+
+**activities_verbatim:**
+- "Two hour farm tour and animal encounters: Meet all our animals and discover the wider farm setting, includes feeding sheep and goats, grooming a rabbit and/or guinea pig plus other seasonal activities." (Led Activity, Residential brochure)
+- "There is also time for groups to conduct their own activities. Many take to the trails and explore the countryside around the farm and beyond. We can provide maps and directions for different lengths of walks." (Residential brochure)
+- "Alternatively, opt out of our led activities and use us as a base to explore the surrounding areas." (Residential brochure)
+- Post Sixteen Provision activity list (Post16LIFE.pdf): "Farm animal care", "Small animal care", "Horticulture", "Classroom based activities", "Arts & crafts", "Residential stays on site", "Enterprise projects", "Cooking skills & nutrition", "Working to EHCP targets", "Progress monitoring regularly communicated"
+- Secondary programme (Education page): "developing cooking skills in our new teaching kitchen, 'The Gateway' as well as a wide range of animal and environmental skills"
+
+
+
+
+########## windy-station-woolshed.md
+
+**school_offer_detail_level:** activity_list_no_timings
+
+programme_names: "Germinate School & Tertiary Programs"; "Private Group Tours"; "Back Paddock Farm Tours" (general tour, not specifically a school product)
+
+activities_verbatim: "Germinate turns the farm into a classroom, inspiring the next generation to explore new possibilities across: Science Sustainable agriculture Agri-tech Food production Australian rural history Environmental management"
+
+duration: Germinate School & Tertiary Programs: none listed. Private Group Tours: "Pricing starts at $360 per half day tour (4hrs)". Back Paddock Farm Tour (general, not school-specific): "The tour including smoko goes for 1.5 hours"
+
+group_size_min_max: "Overnight accommodation is available for up to 20 students and staff" (Germinate). Private Group Tours: "Overnight accommodation is available for groups of up to 30 visitors". Stay page states accommodation "can host up to 30 people across all buildings"
+
+participant_thresholds: Back Paddock Farm Tours (general, not school-specific): "There are 4 seats available in each tour"; "we cannot accommodate kids under the age of 7 years on our farm tours for safety reasons"
+
+########## wingspan-national-bird-of-prey-centre.md
+
+### school_offer_detail_level
+
+offer_without_activity_detail
+
+### programme_names
+
+Wingspan School Visits ("the fun way of learning")
+
+### activities_verbatim
+
+none listed (the schools page names no individual activities; it references "Flight of the Falcon", "Behind-the-Scenes Experiences" and "Our New Journey" as separate visitor experiences without describing them as part of the school visit)
+
+### duration
+
+none listed (the general "Flight of the Falcon" display "starts at 11:30am and runs for about an hour", but this is not stated as the school visit duration)
+
+### group_size_min_max
+
+none listed
+
+### participant_thresholds
+
+none listed (booking is described as "essential" for "groups of 10+ people", but no minimum or maximum is stated for school visits specifically)
+
+########## wwt-london-wetland-centre.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:** "Learning at London Wetland Centre" (page heading); the Learning Zone's session catalogue is organised by key stage rather than under a single branded programme name.
+
+**activities_verbatim** (Early Years sessions, as titled on the Learning Sessions page, with the venue's own framing question):
+
+- "Wetlands for Wellbeing - Homes for Nature" — "How can we help nature and how can nature help us?"
+- "Wetlands for Wellbeing – Nature Explorers" — "How does nature make us feel?"
+- "Wetlands for Wellbeing - Nature Painting" — "Can we create art from nature?"
+- "Birds, beaks and feeding techniques" — "How do birds find and eat different foods?"
+- "Minibeast Safari" — "Which minibeasts live in this habitat?"
+- "Nests, eggs and baby birds" — "What do eggs and young birds need to survive?"
+- "Plant Detectives" — "Which plants live in wetlands?"
+- "Pond Explorers" — "What lives in a pond?"
+- "Wetland habitats and their wildlife" — "What is a wetland habitat?"
+- "Wetlands for Wellbeing - Spells for Nature" — "How does nature make us feel?"
+
+**activities_verbatim** (Key Stage 1 sessions):
+
+- "Birds, beaks and feeding techniques" — "What do birds eat and how?"
+- "Brilliant Bird Adaptions" — "How are wetland birds adapted to their habitat?"
+- "Minibeast Safari" — "Which minibeasts live in this habitat?"
+- "Nests, eggs and baby birds" — "What do eggs and young birds need?"
+- "Plant Detectives" — "How are wetland plants adapted to their habitat?"
+- "Plastic Planet" — "Which everyday objects are made from plastic and why is this a problem?"
+- "Pond Explorers" — "What lives in a pond?"
+- "Wetland habitats and their wildlife" — "How can we look after wildlife and get close to it?"
+- "Wetlands for Wellbeing - Homes for Nature" — "How can we help nature and how can nature help us?"
+- "Wetlands for Wellbeing - Nature Art" — "Can we create art from nature?"
+- "Wetlands for Wellbeing - Nature Spotters" — "How does nature make us feel?"
+- "Wetlands for Wellbeing - Spells for Nature" — "How does nature make us feel?"
+
+**activities_verbatim** (Key Stage 2 sessions):
+
+- "Bird ID challenge" — "Which birds live in a wetland?"
+- "Bird Researchers" — "How and why do we monitor birds?"
+- "Brilliant Bird Adaptions" — "How are wetland birds adapted to their habitat?"
+- "Climate Change Champions" — "How can we help reduce climate change?"
+- "Minibeast Safari" — session description not captured
+- "Plant Detectives" — "How are wetland plants adapted to their habitat?"
+- "Plastic Planet" — "How does plastic pollution affect wetlands and what can we do about it?"
+- "Pond Explorers" — session description not captured
+- "The water cycle, wetlands and me" — "What role do we play in the water cycle?"
+- "Wetlands for Wellbeing - Homes for Nature" — "How can we help nature and how can nature help us?"
+- "Wetlands for Wellbeing - Nature Art" — "Can we create art from nature?"
+- "Wetlands for Wellbeing - Nature Spotters" — "How does nature make us feel?"
+- "Wetlands for Wellbeing - Wild Hideaways" — "How does nature make us feel?"
+
+**activities_verbatim** (Key Stage 3 sessions):
+
+- "Bird Adaptions" — "How are wetland birds adapted to their habitat?"
+- "Bird ID Challenge" — "Which birds live in a wetland?"
+- "Bird Researchers" — "How and why do we monitor birds?"
+- "Climate Change Champions" — "How can we help reduce climate change?"
+- "Environmental change in freshwater ecosystems" — "What effects do humans have on freshwater habitats and how can these be measured?"
+- "Plastic Planet" — "How does plastic pollution affect organisms and the environment and what can we do to help?"
+- "The water cycle, wetlands and me" — "How do human and physical processes interact to influence the water cycle?"
+
+**activities_verbatim** (SEND sessions):
+
+- "Bird ID challenge" — "Which birds live at the wetlands?"
+- "Pond Explorers" — "Which animals live in our ponds?"
+
+**activities_verbatim** (Key Stage 4 and Further/Higher Education): "Custom programmes available upon request" — no named sessions listed.
+
+
+
+
+- Minimum of 12 pupils per session (lower minimum available on request for special schools).
+- Group visits (general, non-school): "15% discount on admission for groups of 12 or more paying visitors."
+
+########## yorkshire-wildlife-park.md
+
+**school_offer_detail_level:** timed_programme
+
+**programme_names:** School Trips & Educational Visits (page heading); Primary School Visits; Secondary School Visits; Higher & Further Education; Expedition Day; Expedition Evenings; Ranger Academy; Secondary School Conservation Leaders Conference.
+
+**activities_verbatim:**
+
+Foundation Stage & Key Stage 1 sessions:
+
+- "Aren't Animals Amazing" (on-park or online)
+- "Animal Detectives" (on-park)
+- "Rainforests" (on-park)
+- "Bear Necessities" (on-park, online, or outreach)
+- "Food Chains and Diet" (on-park)
+- "Animal Groups - Fur, Feathers & Scales" (on-park)
+
+Key Stage 2 sessions:
+
+- "Roars, Paws & Claws" (on-park)
+- "World Habitats & Adaptations" (on-park)
+- "Creepy Crawlies" (on-park)
+- "Woodland Wonders" (summer term only, outdoor classroom)
+- "Did You Know?" (summer term only)
+- "Virtual School Visit" (online via Skype)
+- "Wildlife Foundation Assemblies" (outreach or online)
+- "Endangered Animals & Conservation" (Year 4+)
+- "Teeth and Eating" (Year 6 focused)
+- "Animal Adaptations" (Year 6 focused)
+- "Animal Groups & Classification" (Year 6 focused)
+- "Adaptations & Evolution" (Year 6 focused)
+- "After School STEM Club" (5-week outreach programme, 1-hour sessions)
+
+Secondary school sessions:
+
+- "Aren't Animals Amazing" — hands-on education session using animal artefacts and live animals
+- "Zoo Careers – Job Roles and Responsibilities" — includes a presentation with "YWP animal ranger video"
+- "Conservation and Endangered Animals" — "group activity centred around endangered animals" plus biofacts and HMRC-seized items
+- "Marketing" — presentation on "marketing campaigns & strategies"
+- "Customer Service" — "In-depth look at the importance of customer service" with presentation and activity
+- "Employability Day" — "BIAZA award winning session," 3 hours, £150 excluding admission, maximum 20 students, available October–February only
+- "Animal Adaptations" — "Hands-on group activity" examining biofacts and live animals
+- "Branding And Interpretation" — "Group challenges/activities" on YWP branding, recommended for KS4+
+- "Wild At Art" — 45-minute or 90-minute sessions using animal biofacts; students must provide own art supplies
+- "Wildlife Foundation Assembly" — online or in-person fundraising kickoff addressing Foundation work
+
+General park offer: "Shows & Ranger Talks available"; self-guided exploration of the park (under-16s must be supervised at all times).
+
+
+
+
+- Education bookings: minimum of 10 children/students
+- Employability Day: maximum 20 students
+- Employability Day: minimum charge of £150 regardless of numbers (session runs October–February only)
+- Education sessions generally: minimum charge of £45 for groups under 25
+
+########## zealandia-te-mara-a-tane.md
+
+**school_offer_detail_level:** activity_list_no_timings
+
+**programme_names:**
+
+- Nature at Your Place (Yr 1-8)
+- Zealandia at Your Place (Yr 1-8)
+- Experience Zealandia: self-guided (Yr 1-8)
+- The Family of Life
+- Tales Through Time
+- Mini Beasts
+- Nature & Nurture
+- A 500-year Journey
+- Pests & Predators
+- The nature of Science
+- Special Species
+- Nature at Your Place (Yr 9-13)
+- Zealandia at Your Place (Yr 9-13)
+- Experience Zealandia: self-guided (Yr 9-13)
+- Don't Feed the Kākā
+- A Living World
+- Citizen Scientists
+- Sanctuary & Society
+- Pests & Predators: Managing Mammals
+- Where Have all the Takahē Gone?
+- Understanding Plant & Animal Responses
+- Experience Zealandia (Ages 7-18) (for New Zealand and international youth groups)
+
+**activities_verbatim:**
+
+- Nature at Your Place (Yr 1-8): "Nature at Your Place is a free programme for high EQI schools in the greater Wellington region, including two school outreach visits by Zealandia Educators and a sanctuary trip for your students."
+- Zealandia at Your Place (Yr 1-8): "Can't quite find the right date to visit the sanctuary or enough adults to accompany you on your trip? No problem; let us come to you! Our educators will visit you to explore nature at your place."
+- Experience Zealandia: self-guided (Yr 1-8): "Happy to show yourself around Zealandia Te Māra a Tāne? Self-guided school visits are available — come and explore at your own pace and see what you can discover!"
+- The Family of Life: facilitated session: "Zealandia Te Māra a Tāne provides a wonderful context for students to experience the rich biodiversity of Aotearoa New Zealand and consider the impact of people upon it – both positive and negative."
+- Tales Through Time: facilitated session: "The Zealandia valley is loaded with history: from hunting ground to goldrush, from waterworks to sanctuary. Students learn stories from past, present and future as they visit the now thriving valley."
+- Mini Beasts: facilitated session: "Storytelling is intertwined with a bug hunt in the sanctuary, where students will see what's hidden under leaves and in the ground in a place like Zealandia Te Māra a Tāne."
+- Nature & Nurture: facilitated session: "Learn about the importance of acting as kaitiaki of te taiao / nature while exploring the amazing mammalian predator-free valley at Zealandia Te Māra a Tāne."
+- A 500-year Journey: facilitated session: "Students learn about the past, present and future of Zealandia as they experience the valley. What can the valley tell us of the past and what does the future hold in its 500-year restoration journey?"
+- Pests & Predators: facilitated session: "Students learn about the ecological role and effect of endemic, native and introduced predators in Aotearoa, the strategies of their prey and the methods used by people to manage introduced species."
+- The nature of Science: facilitated session: "Students become scientists in the field as they experience the valley and document the many amazing and unique species they can see. Ask questions, make observations and draw conclusions!"
+- Special Species: facilitated session: "Students experience and learn about the unique biodiversity of Aotearoa New Zealand's native and endemic species."
+- Nature at Your Place (Yr 9-13): same wording as the Yr 1-8 entry above.
+- Zealandia at Your Place (Yr 9-13): same wording as the Yr 1-8 entry above.
+- Experience Zealandia: self-guided (Yr 9-13): same wording as the Yr 1-8 entry above.
+- Don't Feed the Kākā: facilitated session: "Get involved in the solution! This session presents Year 9-10 students with a real-world situation challenging them to devise a campaign to help prevent an undesired public behaviour — feeding kākā."
+- A Living World: facilitated session: "Students experience the unique biodiversity of Aotearoa New Zealand at Zealandia Te Māra a Tāne and learn about the dramatic impact of people upon it."
+- Citizen Scientists: facilitated session: "Students become scientists in the field as they experience the Zealandia valley and document the amazing and unique species that live there. Ask questions, make observations and draw conclusions!"
+- Sanctuary & Society: facilitated session: "Students learn about the Zealandia sanctuary's origins, societal impact and ongoing growth as a successful ecotourism project in the heart of Aotearoa New Zealand's capital."
+- Pests & Predators: Managing Mammals: facilitated session: "Learn about the ecological role and effect of endemic, native and introduced predators in Aotearoa New Zealand, the strategies of their prey and the methods used to manage introduced pest species."
+- Where Have all the Takahē Gone? (facilitated session, NCEA Biology): "'Where Have all the Takahē Gone?' explores the communities in which takahē currently live and the impact of the presence or absence of introduced mammals within these communities."
+- Understanding Plant & Animal Responses: facilitated session (NCEA Biology): "Engage and enthuse your students by letting them see how Aotearoa New Zealand species respond to their external environment."
+- Experience Zealandia (Ages 7-18): "Discover some of Aotearoa New Zealand's rare and unique fauna, flora and fungi. Join the Zealandia Educators to explore the sanctuary and witness native wildlife once again thriving on the mainland."
+
+
+
+
+########## zoo-de-granby.md
+
+### school_offer_detail_level
+
+timed_programme
+
+### programme_names
+
+- Groupes scolaires (park visit)
+- Trois types d'ateliers: visite au zoo, Zoomobiles (en classe), Classes-Safaris
+- Exploration du monde animal (atelier TSA et DI)
+- À la bouffe
+- Les animaux sauvent Noël
+- Les métiers du Zoo
+- SOS, espèces en péril!
+- Naître et grandir
+- Planète mammifères!
+- Frissons nocturnes: bestioles au grand jour
+- Ouache! Un reptile!
+- Opération flocons: guide de survie en hiver
+- Halloween, chauves-souris et cie
+- L'univers des insectes
+- Les sens aux aguets
+- Le comportement animal
+- Reproduction animale sous la loupe
+
+### activities_verbatim
+
+- Exploration du monde animal (atelier TSA et DI): "Partons explorer le monde animal! Que ce soit dans l'eau, sur la terre et même dans le ciel, les animaux sont partout autour de nous. Atelier conçu et adapté pour les classes spécialisées avec des élèves à besoins particuliers (TSA et DI)"
+- À la bouffe: "Carnivore, herbivore ou omnivore, mais quelle est la différence? Découvrez de quoi et comment se nourrissent les animaux, qu'ils soient à plumes, à poils ou à écailles!"
+- Les animaux sauvent Noël: "Rudolf, le renne, s'est cassé la patte ! Vite, il faut remplacer notre ami au nez rouge, mais qui pourra relever ce défi ?"
+- Les métiers du Zoo: "Du vétérinaire au technicien en soins animaliers en passant par les biologistes, le zoo de Granby est une véritable ruche où de nombreuses spécialités se côtoient afin de veiller au bien-être de nos animaux."
+- SOS, espèces en péril!: "Les espèces animales disparaissent à un rythme effréné : inquiétant ou normal? Apprenez pourquoi elles sont toutes si importantes à préserver!"
+- Naître et grandir: "Découvrez les petits secrets de la séduction, de la naissance et des soins parentaux chez les animaux par une présentation colorée, interactive et amusante!"
+- Planète mammifères!: "Partez à la découverte des mammifères dans ce tour du monde endiablé! Découvrez les caractéristiques uniques de ces animaux dont nous faisons partie!"
+- Frissons nocturnes: bestioles au grand jour: "Serpents, araignées et chauves-souris hantent peut-être vos cauchemars, mais sous la loupe de nos biologistes, vous les découvrirez sous un tout nouveau jour!"
+- Ouache! Un reptile!: "Qu'est-ce qu'un reptile? Nos biologistes passionnés répondent à cette question en démontrant que c'est ni gluant, ni méchant!"
+- Opération flocons: guide de survie en hiver: "Brrrr! Il fait froid, les animaux font quoi? Explorez les différentes stratégies des animaux à l'arrivée de l'hiver et découvrez quels indices ils nous laissent de leur passage dans notre cour!"
+- Halloween, chauves-souris et cie: "Une fête de l'Halloween sous le thème des chauves-souris! Levons le voile sur ces créatures de la nuit et découvrons ce sympathique petit mammifère volant dans une ambiance ensorcelante!"
+- L'univers des insectes: "Pas besoin de travailler comme une fourmi pour piquer la curiosité sur le monde passionnant des insectes et autres bibittes."
+- Les sens aux aguets: "Participez à l'aventure rocambolesque d'un animal vedette qui doit utiliser tous ses sens afin de surmonter plusieurs obstacles!"
+- Le comportement animal: "Une initiation ludique et interactive à l'étude du comportement animal permettant d'en apprendre davantage sur les besoins des animaux. Découvrez aussi tous les efforts mis en œuvre pour favoriser les comportements naturels chez nos animaux!"
+- Reproduction animale sous la loupe: "Notre biologiste vous conduit sur les chemins de la reproduction animale. Découvrez la séduction en passant par la naissance jusqu'aux soins parentaux chez les animaux!"
+
+### duration
+
+Exploration du monde animal (atelier TSA et DI): 45 minutes. À la bouffe: 60 minutes. Les animaux sauvent Noël: 60 minutes. Les métiers du Zoo: 60 minutes. SOS, espèces en péril!: 60 minutes. Naître et grandir: 60 minutes. Planète mammifères!: 60 minutes. Frissons nocturnes: 60 minutes. Ouache! Un reptile!: 60 minutes. Opération flocons: 60 minutes. Halloween, chauves-souris et cie: 60 minutes. L'univers des insectes: 60 minutes. Les sens aux aguets: 60 minutes. Le comportement animal: 75 minutes. Reproduction animale sous la loupe: 75 minutes.
+
+### group_size_min_max
+
+none listed for individual workshops. Groupes scolaires park visit: group ticket rate applies "à l'achat de 20 billets et plus" (from 20 tickets and up).
+
+### participant_thresholds
+
+Groupes scolaires ticket rate: applicable at purchase of 20 tickets or more, "avec 1 billet gratuit offert pour chaque tranche de 21 billets vendus" (1 free ticket per 21 tickets sold). Zoomobile en classe: "*Un minimum de deux présentations est nécessaire pour autoriser le déplacement" (minimum two presentations required to authorise the trip). "Obtenez un rabais de 7% par présentation lorsque deux présentations ou plus sont planifiés sur un même contrat."
+

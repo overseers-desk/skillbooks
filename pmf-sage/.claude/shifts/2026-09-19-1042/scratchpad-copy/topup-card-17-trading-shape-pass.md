@@ -1,0 +1,74 @@
+## Per-venue table
+
+R1 set, 37 units (36 rivals + `own-site`). "Trades publicly": 1 = publicly stated, 0 = nothing in scope says so, 9 = states it closes to the public / is private only. Sources are the venue's own captured pages under `/usr/local/src/rivermill/product-development/weddings/2026-08-15-wedding-survey/4-collection/data/r1/<venue>/` and, for the seven prior-session units with no stored folder, the quotes carried in `/usr/local/src/rivermill/product-development/weddings/2026-08-15-wedding-survey/4-collection/coded/r1/<venue>.md`.
+
+| Venue | Trades publicly | Quote (page) | Highest exclusivity claim (V17) | Quote (page) |
+|---|---|---|---|---|
+| albert-river-wines | 1 | "Open seven days a week for morning tipples, lunch Wednesday to Sunday and Weddings and Functions any day by arrangement."; footer: "Cellar Door open from / 10am-2.30pm \| Monday and Tuesday / 10am-4:00pm \| Wednesday to Sunday" (home) | Nothing | Coded record: "All twelve rows: 1… No privacy or exclusivity word attaches to any space or the site anywhere in scope." Silent. |
+| bearded-dragon-hotel | 1 | "Restaurant Opening Hours We're open 7 days! Weekdays: Breakfast from 9am – 10.30am. All Day Dining and Blackboard Specials from 10.30am – 8pm. Weekends: Breakfast from 8am – 10.30am." (contact) | Nothing | Silent — record: "Both rows: 1… No privacy or exclusivity word attaches to either package's own space." |
+| binna-burra-lodge | 1 | "choose from almost 60 different room types, including our Sky Lodge apartments or our Tiny Wild Houses"; "Our new lodge will boast an 80 person seated dining space with a bar and restaurant" (weddings page, via coded record) | Nothing | "The Binna Burra Barn is a heritage-listed, recently renovated venue…" — no privacy word anywhere in the rows |
+| cedar-creek-estate-winery | 1 | "Cellar Door open 7 days a week / Mon-Fri from 10am – 3 pm – Sat-Sun from 10am-4pm / Cafè & Restaurant open seven days a week" (about); "Opening Hours: 10 am to 3 pm weekdays. 10 am to 4 pm weekends." (contact) | "Private", no scope stated | "the ideal spaces for your private and exclusive wedding reception" (reception-venues page; coded at the floor under E5) |
+| colliston-farm | 0 | Silent | Whole-site | "All options include exclusive use of our beautiful venue and surrounding farmland"; "Exclusive use of the farm and grounds for your event and photography" |
+| coolibah-downs-private-estate | 0 | Silent (the words "Private Estate" are the trading name only; no statement of closure) | Whole-site | "As we offer exclusive use of the estate, in some cases this is not possible as there may be a wedding booked that night" (FAQ) |
+| cowbell-creek | 9 | "A working farm since 1947, operating exclusively as a wedding venue for the last 12 years" (homepage) | Whole-site | "200 acres of private and picturesque rolling hill farmland for your wedding day"; "Your own private world 15 minutes from Robina CBD" |
+| currumbin-sanctuary-events | 1 | "General admission tickets are valid for entry during normal park operating hours only (excludes after hours events)." (terms & conditions) | Space only | "Exclusive use of The Homestead" |
+| glenrock-farm | 9 | "Q: Do we have exclusive use of the venue? A: Yes, we are a private property, and you will have exclusive use of the venue for your function." (outdoor FAQ) | Whole-site | "When you book with us, you get exclusive access to the property. No sharing with other events. Your privacy is locked in"; "Exclusive use of the property" |
+| gold-coast-farm-house | 0 | Silent | Whole-site | "Exclusive use of our 60 acre property for your wedding" |
+| hampton-estate-wines | 1 | "Open Friday to Sunday, reservations essential" (site header, weddings page; nav: "Book Your Stay • Weddings • Restaurant • Wines • Functions") | Whole-site | "Guests receive full, exclusive access to the grounds, ensuring an intimate and personal celebration." |
+| hilltop-estate | **undecided** | "Do you have a restaurant open to the public? Our on-site restaurant is temporarily closed and bookings are currently paused." (FAQ) | Whole-site | "The entire mountaintop is yours"; "One wedding at a time, always… no strangers in your photos" |
+| intercontinental-sanctuary-cove-resort | 1 | "Resort Day Pass"; "Cove Café □ Verandah Restaurant & Bar □ Lagoon Beach Club □ High Tea Experience"; "Check Availability Check In … Rooms [1 Room] Search" (weddings page) | Nothing | "serene exclusivity - setting the stage for a wedding unlike any other" (coded at floor under E5) |
+| kirra-beach-house | 1 | "Opening Hours Tuesday to Friday 12pm – late Saturday & Sunday 11am – late" (home) | Whole-site | "Have us all to yourself and let your vision come to life with exclusive use of the venue." |
+| kwila-lodge | 1 | "Kwila tasting night ticket $139.40"; "Kwila Lodge open for you to wander and explore at your leisure" (tasting-night page). Counter-statement recorded: "Accommodation is reserved for wedding day guests only. We do not allow 'members of the public' outside of the wedding guests to stay at Kwila." (packages PDF) | Whole-site | "Exclusive use of the Kwila Lodge grounds"; "exclusive venue hire" |
+| mondrian-gold-coast | 1 | "Stay The Night Why not extend the festivities and stay the night… or two?" (weddings); nav "Rooms & Suites • Dine & Drink • Spa & Wellness … CHECK RATES" | Space only | 5-hour exclusive use of the chosen reception space: "Wedding packages include use of your chosen reception space for 5 hours." |
+| nathan-valley-foliage-farm | 0 | Silent | Nothing | "Both rows: 1 — no space or site exclusivity/sharing statement is made anywhere in the reached scope." |
+| oreillys-canungra-valley-vineyards | 1 | "Vineyard Hours EVERYDAY 10:00am – 4:00pm"; "Homestead Kitchen Hours MON-FRI 10:30AM – 2:30PM / sat-suN 10:30AM – 2:30PM" (contact) | Space only | "includes exclusive venue hire from 4pm"; "enjoy the spacious surrounds of this private venue" |
+| **own-site** (excluded from totals) | 1 | "Gold Coast Hinterland · Beside the Coomera River · Open 7 days · Free entry"; "What are your opening hours? We're open seven days a week, with hours that vary by season, and we close only over the Christmas–New Year break." (home) | Whole-site | "3-hour exclusive venue use"; "Up to 8 hours of exclusive venue use"; "8 hours of exclusive venue use" |
+| pacific-beach-function-centre | 1 | "Café 1291, located under the Pacific SLSC is open 6am – 12pm 7 days a week utilising the grassed area and surrounds for café patrons." (terms & conditions) | Space only | "Exclusivity" (both rows' bullet); "private and exclusive function room" |
+| pethers-rainforest-retreat | 1 | "Pethers Award Winning Rainforest Restaurant is set around a massive open sided and elevated fireplace"; "BOOK DIRECT For the best rates & Inclusions" (home) | Whole-site | "Exclusive use of Retreat from 3pm to 11pm." |
+| plunkett-villa-tamborine | 0 | Silent (events page offers hire for club meets, workshops, car shows — hire, not public trading) | Whole-site | "You are guaranteed complete privacy & exclusive use of our gorgeous country space… Only the special people you have invited will be on site." |
+| providence-farm-hall | **undecided** | No domain resolved; coded 9 throughout | — | Scope not captured |
+| rosewood-estate | 0 | Silent | Whole-site | "Exclusive hire of Rosewood Estate"; "Private access to the Rosewood Estate homestead and surrounding manicured gardens and amenities" |
+| sarabah-estate-winery | 1 | "Opening Hours Friday: 10:00 – 17:00 Saturday: 10:00 – 17:00 Sunday: 10:00 – 17:00" (contact); "Vineyard, Restaurant & Cellar Door ‍Friday to Sunday" (home) | **undecided** — no wedding offer at its own premises | "This package is for group celebrations and does not include exclusive venue hire." (bridal-showers page) |
+| secret-garden-estate | **undecided** | "Why not 'Linger a little Longer' and stay at The Secret Garden." (accommodation page) — an accommodation invitation with no stated public booking route and no stated restriction | Whole-site | "Venue Exclusive to you on your wedding day"; "It will be exclusively yours on your special day." |
+| sheraton-grand-mirage-resort | 1 | "Rooms • Villas • Dining • Experiences • Events • Weddings … Check Availability … Rooms & Guests 1 Room" (weddings page) | Nothing | "the only absolute beachfront resort on the Gold Coast" — locational claim only; no use-arrangement stated |
+| sol-gardens | 0 | Silent ("OPEN DAY" in the nav is a wedding-industry open day, not public trading) | Whole-site | "Full Privacy: Enjoy exclusive use of our 7-acre property"; "Exclusive 7-Acre Access: Private use of our lush estate" |
+| southport-yacht-club | 1 | "Our Main Beach Clubhouse is home to the only open-air waterfront north-facing restaurant & bar."; "Hollywell Bar & Bistro Open / OPENING HOURS" (home) | Nothing | "No privacy or exclusivity word attaches to any space or the site." Silent. |
+| tamborine-mountain-glades | 1 | "you are invited to enjoy seasonal flavours at the Rainforest Restaurant or a casual moment at the Terrace Café whenever you feel like it" (home) | Nothing | Silent — "No privacy or exclusivity word is attached to any space or the site anywhere in the captured text." |
+| the-acre-boomerang-hills | 0 | Silent (accommodation listed is third-party, off-site) | Nothing | Silent, all rows |
+| the-bower-estate | 0 | Silent ("The venue is open on event days from 8am to 10pm" — hire hours, not public trading) | Whole-site | "Exclusive use of The Bower Estate for 2 hours"; "Enjoy full exclusive use of the property on your chosen date." |
+| the-imperial-hotel-gold-coast | 1 | "Buffet breakfast for two in our Il Barocco Restaurant"; "15% accommodation discount code for guests to use when booking direct" (wedding-packages PDF) | Space only | "Exclusive venue hire" / "Exclusive 8-hour venue hire", attached to each named room, not the hotel |
+| the-old-church | 0 | Silent (the on-site Grand Chameleon is described as "our onsite venue" for reception dinners; no public hours or public dining statement in scope) | "Private", no scope stated | "Something Beautiful & Private… If your wedding choice is private and modest" (occasion phrase, recorded under E1) |
+| the-valley-estate | 0 | Silent ("BY APPOINTMENT Come in and visit us at The Valley Estate. Meet with our Wedding Coordinator on-site") | Whole-site | "all within the one, exclusive property"; "Exclusively yours." |
+| woodstock-farm | 0 | Silent | Nothing | Silent, both rows |
+| wynmere-estate | 9 | "Visit us By appointment or invitation only" (contact) | Space only | "Exclusive access to all outdoor areas including: the gardens atrium, bathrooms & carpark." |
+
+## Cross-tabulation
+
+Denominator: the 36 rivals. `own-site` is excluded. Four rivals are undecidable on one axis or the other (hilltop-estate, providence-farm-hall, sarabah-estate-winery, secret-garden-estate) and are excluded from the cells, leaving **32 rivals cross-tabulated**.
+
+| | Whole-site exclusive | Space exclusive only | "Private", no scope | Nothing stated | Row total |
+|---|---|---|---|---|---|
+| Trades publicly (1) | 4 | 5 | 1 | 7 | **17** |
+| Nothing in scope says so (0) | 8 | 0 | 1 | 3 | **12** |
+| States it is closed/private (9) | 2 | 1 | 0 | 0 | **3** |
+| **Total** | **14** | **6** | **2** | **10** | **32** |
+
+Cell membership:
+- Trades publicly + whole-site (4/17): hampton-estate-wines, kirra-beach-house, kwila-lodge, pethers-rainforest-retreat.
+- Trades publicly + space only (5/17): currumbin-sanctuary-events, mondrian-gold-coast, oreillys-canungra-valley-vineyards, pacific-beach-function-centre, the-imperial-hotel-gold-coast.
+- Trades publicly + "private" no scope (1/17): cedar-creek-estate-winery.
+- Trades publicly + nothing (7/17): albert-river-wines, bearded-dragon-hotel, binna-burra-lodge, intercontinental-sanctuary-cove-resort, sheraton-grand-mirage-resort, southport-yacht-club, tamborine-mountain-glades.
+- Code 0 + whole-site (8/12): colliston-farm, coolibah-downs-private-estate, gold-coast-farm-house, plunkett-villa-tamborine, rosewood-estate, sol-gardens, the-bower-estate, the-valley-estate.
+- Code 0 + "private" no scope (1/12): the-old-church. Code 0 + nothing (3/12): nathan-valley-foliage-farm, the-acre-boomerang-hills, woodstock-farm.
+- Code 9 (3): cowbell-creek (whole-site), glenrock-farm (whole-site), wynmere-estate (space only).
+
+`own-site`, reported separately: trades publicly (1) and claims whole-site exclusive.
+
+## Could not decide, and why
+
+1. **hilltop-estate** — trades-publicly axis only. Its own FAQ publishes a public restaurant question but answers that the restaurant is shut: "Do you have a restaurant open to the public? Our on-site restaurant is temporarily closed and bookings are currently paused", and "TEMPORARILY CLOSED… Hilltop Estate remains open for weddings and private events." That is neither current public trading (1) nor a statement of being private-only (9). Exclusivity is decided: whole-site.
+2. **providence-farm-hall** — both axes. No own domain resolved at capture (five candidates, all DNS failures); the record is coded 9 throughout. No published text exists to quote.
+3. **sarabah-estate-winery** — exclusivity axis only. Trades publicly is decided (1, hours quoted above), but the site states weddings are hosted at a named sister property pending an undated reopening, so there is no wedding offer at its own premises for V17 to attach to. The only exclusivity sentence in scope is a negation on a bridal-shower package: "This package is for group celebrations and does not include exclusive venue hire."
+4. **secret-garden-estate** — trades-publicly axis only. It publishes an accommodation page addressed to the reader ("Why not 'Linger a little Longer' and stay at The Secret Garden") but states no rate, no booking route and no statement that the cottage is available independently of a wedding; the only published contact is the weddings address. Deciding either way would be inference. Exclusivity is decided: whole-site.
+
+Three further calls are judgements I made on quoted text and would flag for a reviewer, since each turns on how literally a single phrase is read: **cowbell-creek** ("operating exclusively as a wedding venue for the last 12 years"), **glenrock-farm** ("we are a private property"), and **wynmere-estate** ("Visit us By appointment or invitation only") are each coded 9 on the strength of that phrase alone. Read more strictly, all three would fall to 0 (silent), which would move the code-9 row's 2/1/0/0 into the code-0 row, making it 10 whole-site, 1 space-only, 1 private-no-scope, 3 nothing over 15.

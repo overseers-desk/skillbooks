@@ -1,0 +1,34 @@
+card 0: 5 figured options; prior match: False; held value: leaves; third derivation: True; chosen: Two priced offers: a full wedding day and a small wedding | runner-up: Three priced offers: a full wedding day, a small wedding, and a ceremony alone
+card 1: 14 figured options; prior match: True; held value: matches; third derivation: True; chosen: Couples buying a full wedding day | runner-up: Couples buying a small wedding or an elopement of 40 guests or fewer
+card 10: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 11: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 12: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 13: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 14: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 15: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 16: 4 figured options; prior match: True; held value: matches; third derivation: True; chosen: Both spaces inside one figure, the couple choosing which, no charge for a second | runner-up: The ceremony priced apart from the reception
+card 17: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 18: 4 figured options; prior match: True; held value: matches; third derivation: True; chosen: On-site accommodation stated and not priced | runner-up: The couple's own room inside the package figure
+card 19: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 2: 6 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 20: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 21: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 22: 4 figured options; prior match: False; held value: leaves; third derivation: True; chosen: A place-qualified venue name, the place plus "wedding venue" | runner-up: A size-qualified package name, micro, small or intimate wedding package
+card 23: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 24: 4 figured options; prior match: True; held value: matches; third derivation: True; chosen: A non-refundable deposit and a signature, the terms this offering sells under | runner-up: A stated free tentative hold for a named period
+card 25: 4 figured options; prior match: True; held value: matches; third derivation: True; chosen: The answer comes in the reply, the terms this offering sells under | runner-up: A live availability calendar on the venue's own page
+card 26: 4 figured options; prior match: True; held value: matches; third derivation: True; chosen: A private appointment at a time the couple picks | runner-up: No viewing route published at all
+card 27: 4 figured options; prior match: True; held value: matches; third derivation: True; chosen: Attributed testimonials from named couples | runner-up: A volume claim, a count of weddings or years
+card 28: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 29: 4 figured options; prior match: True; held value: matches; third derivation: True; chosen: A populated listing on the platforms the catchment's rivals occupy, pointing at the venue's own domain | runner-up: A listing carrying the venue's only readable figure, where the venue's own site publishes none
+card 3: 5 figured options; prior match: True; held value: matches; third derivation: True; chosen: A four-step guest-count ladder at 20, 40, 65 and 100 guests | runner-up: A two-step ladder, one small tier and one full-wedding tier
+card 30: 6 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 31: 7 figured options; prior match: False; held value: leaves; third derivation: True; chosen: One enquiry form as the lowest-friction route | runner-up: An online request route beside the form
+card 32: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 4: 5 figured options; prior match: True; held value: matches; third derivation: True; chosen: Food and beverage both inside the package figure | runner-up: Food and beverage both outside the figure, with the biller named
+card 5: 6 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 6: 4 figured options; prior match: True; held value: matches; third derivation: True; chosen: A small tier priced from \$2,450 to \$3,000, with a stated guest ceiling | runner-up: A packaged micro wedding at a full-wedding price, \$7,500 to \$9,750 for up to 40 guests
+card 7: 4 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 8: 5 figured options; prior match: False; held value: withheld; third derivation: True; chosen:  | runner-up: 
+card 9: 4 figured options; prior match: True; held value: matches; third derivation: True; chosen: A published non-refundable deposit with a staged payment schedule | runner-up: A stated hold on the date before any money changes hands
+33 cards; 33 hold a value; 12 match it; 3 leave it; 18 withheld; 33 third derivations; 0 outstanding; 0 mismatched margin units; 67 legs marked differs

@@ -1,0 +1,40 @@
+file	code	quote	note
+blackwattle-alpacas.md	yes	"Listen, Learn and Participate Session"; "Introduction to the farm and safety discussion"
+biodome-de-montreal-espace-pour-la-vie.md	no
+bioparc-de-la-gaspesie.md	no
+aongatete-outdoor-education-centre.md	no
+astrolab-du-parc-national-du-mont-megantic.md	no	"ASTROLab à Distance: 'Une séance d'astronomie dans votre classe'"	This session is delivered in the school's own classroom, not at the venue, so it is excluded on that ground rather than on format.
+auckland-zoo.md	no			Session blurbs (e.g. "Zoo Care", "Classification") state a topic but not whether the group's role is to watch/listen or to do; a coder with fuller page text might code some of these yes.
+belgenny-farm.md	no
+bidgee-strawberries-and-cream.md	no	"Your tour guide will take you on an adventure through the farm"	Framed as a guided tour rather than a discrete gathered/addressed episode.
+camp-coolamatong.md	no
+collingwood-childrens-farm.md	no	"a Farmer leading each class"	Framed as a guided tour ("School Tours") rather than a discrete gathered/addressed episode.
+eco-nature.md	no	"Visite animée au musée"	Framed as a guided/animated visit (tour) rather than a discrete gathered/addressed episode; a coder could read "visite animée" as closer to a staged talk and code yes.
+ecole-de-la-mer-explos-nature.md	yes	"Conférences"
+edendale-community-environment-farm.md	no
+essex-region-conservation-authority.md	no	"Two hours of ERCA Education Team led programming"
+windy-station-woolshed.md	no
+wingspan-national-bird-of-prey-centre.md	no	"the schools page names no individual activities; it references 'Flight of the Falcon' ... as separate visitor experiences without describing them as part of the school visit"	The general "Flight of the Falcon" display is a strong candidate for a gathered/addressed episode, but the school-programme text does not state it is part of the school visit, so it cannot be coded from under S3.
+zealandia-te-mara-a-tane.md	no	"as they visit the now thriving valley"	Facilitated sessions are framed as storytelling woven through a guided walk through the valley rather than a discrete non-walk gathered episode.
+zoo-de-granby.md	no	"ateliers de groupe"	Named sessions are workshops ("ateliers"), several explicitly interactive/hands-on (e.g. "Une initiation ludique et interactive").
+abbey-farm.md	no
+adam-hensons-cotswold-farm-park.md	yes	"Tailored Educational Workshops (45-minute talk, KS1–KS3, delivered 'In Dolly's')"
+almond-valley-heritage-centre.md	yes	"Meet Our Rare Breeds: 'Our animal house is home to many rare breeds animals ... Meet the residents, and consider the characteristics that they share'"	"Meet the residents" could instead be read as hands-on petting rather than a watch/listen role, which would make this a participatory session and not qualify.
+apple-tree-care-farm.md	no
+applecast.md	no
+barleylands-farm-park.md	no			Named sessions are cook/make workshops (bread, ice cream, gingerbread, owl biscuits) in which the group does the thing.
+bore-place.md	no			Named sessions are hunts, surveys, games and building activities in which the group does the thing.
+bosavern-community-farm.md	no
+brownings-farm.md	yes	"Introduction- which will consist of a brief outline of the farm and an explanation of the ongoing projects."
+brynmawr-farm.md	no
+cammas-hall-fruit-farm.md	no	"a tour and a talk about farming"	A coder could instead isolate "a talk about farming" from the tour framing and code this yes as a discrete addressed episode.
+densholme-farm.md	no
+dyson-farming.md	yes	"'Ask a farmer' Q&A session; farming equipment and soil health demonstration, including a drone flight"	This wording comes from a reported case-study visit rather than the standing programme menu; a coder could decide not to code from a one-off example and code no instead.
+earth-products.md	no
+whirlow-hall-farm-trust.md	no	"Two hour farm tour and animal encounters"	Framed as a guided tour with hands-on animal encounters (feeding, grooming) rather than a discrete watch/listen episode.
+blackwell-adventure.md	no			All named activities are participant-led physical activities (climbing, archery, kayaking etc.).
+bush-adventures-uk-cic.md	no			All named activities are participant-led practical/outdoor skills.
+clifton-college-outdoor-activity-centre.md	no			All named activities are participant-led physical activities.
+drusillas-park.md	yes	"Educational Trip classroom sessions"	The page names topics only and does not itself describe the session as staff-addressed watch/listen; a coder could judge this insufficiently descriptive and code no instead.
+wwt-london-wetland-centre.md	no			Session titles ("Pond Explorers", "Minibeast Safari") read as field/investigation activities rather than a stated watch/listen role.
+yorkshire-wildlife-park.md	yes	"Shows & Ranger Talks available"; "'Zoo Careers – Job Roles and Responsibilities' — includes a presentation with 'YWP animal ranger video'"

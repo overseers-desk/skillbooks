@@ -1,0 +1,251 @@
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E7. Three package tiers by capacity exist and are sellable today: to 2
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E15. A fourth step described as up to 65 guests appears only in the br
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E3. The chapel is the one ceremony tier priced internally and not publ
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E31. Per-head food and beverage rates exist and are published: \$65, \
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E32. For a Lunch Wedding the food is drawn from the cafe's general men
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E21. The Lunch Wedding exception exists for 20 adults or fewer, ceremo
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E22. The weekend lunch service time and the stated noon-to-4:00 PM Lun
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E17. The venue's entire chair inventory for weddings and functions is 
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-0-one-offer-or-several.md: paragraph under Cost lines: E86. The package cards, prices and capacities on the public wedding pa
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E17. The venue's entire chair inventory for weddings and functions is 
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E14. The public wedding page's FAQ states receptions of up to 200 gues
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E16. Two platform listings the operator controls both state a receptio
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E19. Nothing states what a 200-guest wedding would require in guards, 
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E7. Three package tiers by capacity exist: to 20, to 40 and to 100 gue
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E15. A fourth step described as up to 65 guests appears only in the br
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E3. The chapel is the one ceremony tier priced internally and not publ
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E59. A maximum of four group tours a month is run, all at 3:00 PM, cov
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E60. The celebrant who runs the tour walkthrough is drawn from a suppl
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E63. The Coordinator is the single point of contact during the event, 
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E44. Glamping is not an active offering, though two live booking-confi
+DROPPED card-1-who-it-is-for.md: paragraph under Cost lines: E83. No source assigns ownership of the wedding-directory channel, its
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E7. Three package tiers by capacity exist and are sellable today: to 2
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E15. A fourth step described as up to 65 guests appears only in the br
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E17. The venue's entire chair inventory for weddings and functions is 
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E14. The public wedding page's FAQ states receptions of up to 200 gues
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E19. Nothing states what a 200-guest wedding would require in guards, 
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E20. Standard rental time is 3:00 PM to 11:00 PM excluding set-up and 
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E18. A booking includes one ceremony site and one reception area; an a
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E31. Per-head food and beverage rates exist and are published: \$65, \
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E77. No money term, deposit, payment schedule, cancellation or surchar
+DROPPED card-2-what-it-costs.md: paragraph under Cost lines: E86. The package cards, prices and capacities on the public wedding pa
+DROPPED card-3-a-party-our-size.md: paragraph under Cost lines: E7. Three package tiers by capacity exist and are sellable today: to 2
+DROPPED card-3-a-party-our-size.md: paragraph under Cost lines: E15. A fourth step described as up to 65 guests appears only in the br
+DROPPED card-3-a-party-our-size.md: paragraph under Cost lines: E8. The Barn seats up to 80 guests with a dancefloor, a capacity sitti
+DROPPED card-3-a-party-our-size.md: paragraph under Cost lines: E10. The Barn is given as 60 for general parties against 80 for weddin
+DROPPED card-3-a-party-our-size.md: paragraph under Cost lines: E9. The Main Dining Deck's capacity stands on record two ways, 180 exp
+DROPPED card-3-a-party-our-size.md: paragraph under Cost lines: E17. The venue's entire chair inventory for weddings and functions is 
+DROPPED card-3-a-party-our-size.md: paragraph under Cost lines: E11. The Commons is a large central lawn used for weddings and festiva
+DROPPED card-3-a-party-our-size.md: paragraph under Cost lines: E31. The three wedding menus carry a stated minimum of 40 guests, so n
+DROPPED card-3-a-party-our-size.md: paragraph under Cost lines: E86. The package cards, prices and capacities are rendered from a hand
+DROPPED card-4-food-and-drink-inside.md: paragraph under Cost lines: E31. Per-head food and beverage rates exist and are published: \$65 ca
+DROPPED card-4-food-and-drink-inside.md: paragraph under Cost lines: E32. For a Lunch Wedding the food is drawn from the cafe's general men
+DROPPED card-4-food-and-drink-inside.md: paragraph under Cost lines: E30. Kitchen hours are 9:00 AM to 1:00 PM on weekdays and 8:30 AM to 2
+DROPPED card-4-food-and-drink-inside.md: paragraph under Cost lines: E33. The on-site kitchen is not available to an external caterer, thou
+DROPPED card-4-food-and-drink-inside.md: paragraph under Cost lines: E34. Bring-your-own fees exist for alcohol and for catering; the packa
+DROPPED card-4-food-and-drink-inside.md: paragraph under Cost lines: E36. All alcohol must be served by an RSA-certified bartender, self-se
+DROPPED card-4-food-and-drink-inside.md: paragraph under Cost lines: E37. Where a wedding books neither in-house catering nor bar, a paid g
+DROPPED card-4-food-and-drink-inside.md: paragraph under Cost lines: E64. Catering and beverage service sit with the catering team, coordin
+DROPPED card-4-food-and-drink-inside.md: paragraph under Cost lines: E86. The package cards and their inclusions lists are rendered from a 
+DROPPED card-5-quoted-the-same-way.md: paragraph under Cost lines: E81. Three wedding-specific listings are live: one carrying a descript
+DROPPED card-5-quoted-the-same-way.md: paragraph under Cost lines: E16. Two platform listings the operator controls both state a receptio
+DROPPED card-5-quoted-the-same-way.md: paragraph under Cost lines: E82. One of the three wedding listings' outbound link is recorded as r
+DROPPED card-5-quoted-the-same-way.md: paragraph under Cost lines: E83. No source assigns ownership of the wedding-directory channel, its
+DROPPED card-5-quoted-the-same-way.md: paragraph under Cost lines: E84. The operator was found absent from five of eight reachable weddin
+DROPPED card-5-quoted-the-same-way.md: paragraph under Cost lines: E31. Per-head food and beverage rates exist and are published, so a pe
+DROPPED card-5-quoted-the-same-way.md: paragraph under Cost lines: E80. The operator's general platform-status table covers the main webs
+DROPPED card-5-quoted-the-same-way.md: paragraph under Cost lines: E86. The package cards and prices on the public wedding pages are rend
+DROPPED card-6-the-small-end.md: paragraph under Cost lines: E7. Two tiers below the full wedding exist and are sellable today: up 
+DROPPED card-6-the-small-end.md: paragraph under Cost lines: E21. The Lunch Wedding exception exists for 20 adults or fewer, ceremo
+DROPPED card-6-the-small-end.md: paragraph under Cost lines: E22. The weekend lunch service time and the stated noon-to-4:00 PM Lun
+DROPPED card-6-the-small-end.md: paragraph under Cost lines: E31. The three wedding menus carry a stated minimum of 40 guests, so n
+DROPPED card-6-the-small-end.md: paragraph under Cost lines: E32. For a Lunch Wedding the food is drawn from the cafe's general men
+DROPPED card-6-the-small-end.md: paragraph under Cost lines: E63. The Coordinator is the single point of contact during the event, 
+DROPPED card-6-the-small-end.md: paragraph under Cost lines: E59. A maximum of four group tours a month is run, all at 3:00 PM, abo
+DROPPED card-6-the-small-end.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-6-the-small-end.md: paragraph under Cost lines: E86. The package cards and prices are rendered from a hand-authored la
+DROPPED card-7-ceremony-only.md: paragraph under Cost lines: E3. The chapel seats up to 120 guests with 6 dedicated parking spaces,
+DROPPED card-7-ceremony-only.md: paragraph under Cost lines: E77. No money term, deposit, payment schedule, cancellation or surchar
+DROPPED card-7-ceremony-only.md: paragraph under Cost lines: E86. The package cards, prices and capacities on the public wedding pa
+DROPPED card-7-ceremony-only.md: paragraph under Cost lines: E68. Publishing anything from the website's own source passes a change
+DROPPED card-7-ceremony-only.md: paragraph under Cost lines: E18. A wedding booking includes one ceremony site and one reception ar
+DROPPED card-7-ceremony-only.md: paragraph under Cost lines: E1. Three named ceremony locations exist: the Wedding Chapel, the Rive
+DROPPED card-7-ceremony-only.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-7-ceremony-only.md: paragraph under Cost lines: E4. The chapel building is roughly 40 years old and no current documen
+DROPPED card-7-ceremony-only.md: paragraph under Cost lines: E20. Ceremonies commence at 3:00 PM or later, which bounds when a cere
+DROPPED card-8-day-and-season-banding.md: paragraph under Cost lines: E2. The jacaranda bloom window is given two ways, November to December
+DROPPED card-8-day-and-season-banding.md: paragraph under Cost lines: E78. No seasonal calendar structure is stated anywhere in the source m
+DROPPED card-8-day-and-season-banding.md: paragraph under Cost lines: E79. November is described as the busiest booking month, attributed to
+DROPPED card-8-day-and-season-banding.md: paragraph under Cost lines: E20. Standard rental time is 3:00 PM to 11:00 PM on every day, set-up 
+DROPPED card-8-day-and-season-banding.md: paragraph under Cost lines: E63. The Coordinator is the single point of contact during the event o
+DROPPED card-8-day-and-season-banding.md: paragraph under Cost lines: E76. A 20 per cent surcharge applies to all venue and venue-related fe
+DROPPED card-8-day-and-season-banding.md: paragraph under Cost lines: E17. The venue's entire chair inventory for weddings and functions is 
+DROPPED card-8-day-and-season-banding.md: paragraph under Cost lines: E86. The package cards and prices on the public wedding pages are rend
+DROPPED card-8-day-and-season-banding.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E69. Multiple internal sources agree the wedding or booking deposit is
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E70. The deposit is named two ways across internal sources, a deposit 
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E71. Internal sources disagree on, or are silent on, which entity rece
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E73. The default remaining-balance payment schedule is given two ways,
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E74. Client-cancellation refund terms and a date-change fee table exis
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E72. A separate accommodation deposit is stated in three of four inter
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E76. A 20 per cent public-holiday surcharge applies to all venue and v
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E75. Venue-initiated cancellation for force majeure refunds all paymen
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E77. No money term appears anywhere on the public wedding pages, the b
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E50. The security fee is charged four weeks before the event alongside
+DROPPED card-9-deposit-and-payment.md: paragraph under Cost lines: E86. The wedding pages are rendered from a hand-authored layout templa
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E7. Three package tiers by capacity exist and are sellable today: to 2
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E15. A fourth step described as up to 65 guests appears only in the br
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E31. Per-head food and beverage rates exist and are published: \$65, \
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E32. For a Lunch Wedding the food is drawn from the cafe's general men
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E14. The public wedding page's FAQ states receptions of up to 200 gues
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E17. The venue's entire chair inventory for weddings and functions is 
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E19. Nothing states what a 200-guest wedding would require in guards, 
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E48. A licensed security guard is required for evening events with alc
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E49. One live customer-facing booking-confirmation template states the
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E37. Where a wedding does not book in-house catering or bar, a paid gl
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E76. A 20 per cent public-holiday surcharge applies to all venue and v
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E86. The package cards, prices and capacities on the public wedding pa
+DROPPED card-10-the-all-in-total.md: paragraph under Cost lines: E77. No money term beyond the package figures appears on the public we
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E31. Per-head food rates exist and are published at \$65, \$85 and \$9
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E7. Three package tiers by capacity exist and are sellable today: to 2
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E17. The venue's entire chair inventory for weddings and functions is 
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E14. The public wedding page's FAQ states receptions of up to 200 gues
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E19. Nothing states what a wedding above the published ceiling would r
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E5. Children must be actively supervised near the riverbank at all tim
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E48. A licensed security guard is required for any event with 100 or m
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E49. One live booking-confirmation template states the security trigge
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E32. For a Lunch Wedding the food is drawn from the cafe's general men
+DROPPED card-11-children-in-the-count.md: paragraph under Cost lines: E86. The package cards and capacities on the public wedding pages are 
+DROPPED card-12-the-season.md: paragraph under Cost lines: E2. The jacaranda bloom window is given two ways on the record, Novemb
+DROPPED card-12-the-season.md: paragraph under Cost lines: E78. No other seasonal calendar structure is stated anywhere in the so
+DROPPED card-12-the-season.md: paragraph under Cost lines: E79. November is described as the busiest booking month and the ground
+DROPPED card-12-the-season.md: paragraph under Cost lines: E76. A 20 per cent surcharge applies to all venue and venue-related fe
+DROPPED card-12-the-season.md: paragraph under Cost lines: E1. The Pavilion Under the Jacaranda Tree is one of three named ceremo
+DROPPED card-12-the-season.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-12-the-season.md: paragraph under Cost lines: E59. A maximum of four group tours a month is run, all at 3:00 PM, cov
+DROPPED card-12-the-season.md: paragraph under Cost lines: E61. Internal procedure spells the tour section "Jakaranda Tree" and t
+DROPPED card-13-a-daytime-wedding.md: paragraph under Cost lines: E20. Standard rental time is 3:00 PM to 11:00 PM excluding set-up, set
+DROPPED card-13-a-daytime-wedding.md: paragraph under Cost lines: E21. The Lunch Wedding exception applies where guest count is 20 adult
+DROPPED card-13-a-daytime-wedding.md: paragraph under Cost lines: E22. One source ties the lunch service to the cafe's public closing ti
+DROPPED card-13-a-daytime-wedding.md: paragraph under Cost lines: E30. Kitchen hours are 9:00 AM to 1:00 PM on weekdays and 8:30 AM to 2
+DROPPED card-13-a-daytime-wedding.md: paragraph under Cost lines: E32. For a Lunch Wedding the food is drawn from the cafe's general men
+DROPPED card-13-a-daytime-wedding.md: paragraph under Cost lines: E31. The three wedding menus carry a stated minimum of 40 guests.
+DROPPED card-13-a-daytime-wedding.md: paragraph under Cost lines: E25. Under a Lunch Wedding only the Barn is reserved exclusively, the 
+DROPPED card-13-a-daytime-wedding.md: paragraph under Cost lines: E3. The chapel carries an internal two-hour ceremony window with total
+DROPPED card-13-a-daytime-wedding.md: paragraph under Cost lines: E23. An additional-hours fee exists beyond the package window, subject
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E17. The venue's entire chair inventory for weddings and functions is 
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E7. Three package tiers by capacity exist: to 20, to 40 and to 100 gue
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E14. The public wedding page's FAQ states receptions of up to 200 gues
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E16. Two third-party listings the operator controls both state a recep
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E13. A maximum site capacity of approximately 1,000 guests is stated f
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E9. The Main Dining Deck's capacity is given two ways, 180 expandable 
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E8. The Barn seats up to 80 guests with a dancefloor.
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E3. The chapel seats up to 120 guests with 6 dedicated parking spaces.
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E10. The Red Dining Area is given a capacity of up to 40 guests and is
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E19. Nothing states what a 200-guest wedding would require in guards, 
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E48. A licensed guard is required for evening events with alcohol and 
+DROPPED card-14-how-many-people.md: paragraph under Cost lines: E45. Wedding packages include designated parking stated as 120 to 200 
+DROPPED card-15-how-long-the-day-is.md: paragraph under Cost lines: E20. Standard rental time is 3:00 PM to 11:00 PM excluding set-up and 
+DROPPED card-15-how-long-the-day-is.md: paragraph under Cost lines: E23. An additional-hours fee exists beyond the package window subject 
+DROPPED card-15-how-long-the-day-is.md: paragraph under Cost lines: E51. Alcohol service and consumption must cease one hour before the bo
+DROPPED card-15-how-long-the-day-is.md: paragraph under Cost lines: E52. The departure rule stands two ways on the record, a fixed 11:00 P
+DROPPED card-15-how-long-the-day-is.md: paragraph under Cost lines: E53. Farmstay quiet hours commence at the booked end time.
+DROPPED card-15-how-long-the-day-is.md: paragraph under Cost lines: E63. The Coordinator arrives at guest-arrival time rather than morning
+DROPPED card-15-how-long-the-day-is.md: paragraph under Cost lines: E21. The Lunch Wedding exception runs a different window entirely, noo
+DROPPED card-15-how-long-the-day-is.md: paragraph under Cost lines: E15. The 65-guest step appears only in the brochure and has no home in
+DROPPED card-15-how-long-the-day-is.md: paragraph under Cost lines: E39. The farmstay sleeps 11 with up to 13 present, reserved whole to t
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E18. A wedding booking includes one ceremony site and one reception ar
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E1. Three named ceremony locations exist, the Wedding Chapel indoors, 
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E8. The Barn seats up to 80 guests with a dancefloor and is not one of
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E11. The Commons, a large central lawn used for weddings and festivals
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E10. The Red Dining Area is given a capacity of up to 40 guests and is
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E9. The Main Dining Deck's capacity is given two ways, 180 expandable 
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E24. The site divides into reserved wedding areas exclusive for the re
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E27. A hire covers a space within the site rather than the whole site,
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E29. Every priced package states a wet-weather contingency as an inclu
+DROPPED card-16-the-spaces.md: paragraph under Cost lines: E68. No source states that floor plans are published publicly, and pub
+DROPPED card-22-what-we-call-it.md: paragraph under Cost lines: E86. The package cards, prices, capacities and FAQ text on the public 
+DROPPED card-22-what-we-call-it.md: paragraph under Cost lines: E85. The public wedding section is a main page and five linked pages, 
+DROPPED card-22-what-we-call-it.md: paragraph under Cost lines: E61. Internal procedure documents spell the tour section one way and t
+DROPPED card-22-what-we-call-it.md: paragraph under Cost lines: E7. Three package tiers by capacity exist and are sellable today: to 2
+DROPPED card-22-what-we-call-it.md: paragraph under Cost lines: E15. A fourth step described as up to 65 guests appears only in the br
+DROPPED card-22-what-we-call-it.md: paragraph under Cost lines: E3. The chapel is the one ceremony tier priced internally and not publ
+DROPPED card-22-what-we-call-it.md: paragraph under Cost lines: E81. Three wedding-specific listings are live and carry a description,
+DROPPED card-23-where-we-are-found.md: paragraph under Cost lines: E86. The wedding pages' package cards, prices, capacities and FAQ text
+DROPPED card-23-where-we-are-found.md: paragraph under Cost lines: E85. The public wedding section is a main page and five linked pages; 
+DROPPED card-23-where-we-are-found.md: paragraph under Cost lines: E81. Three wedding-specific listings are live, one carrying a descript
+DROPPED card-23-where-we-are-found.md: paragraph under Cost lines: E82. One of the three listings' outbound link resolves to a different 
+DROPPED card-23-where-we-are-found.md: paragraph under Cost lines: E83. No source assigns ownership of the wedding-directory channel, its
+DROPPED card-23-where-we-are-found.md: paragraph under Cost lines: E84. The operator was found absent from five of eight reachable weddin
+DROPPED card-23-where-we-are-found.md: paragraph under Cost lines: E80. The operator's platform status covers no wedding-specific directo
+DROPPED card-24-holding-the-date.md: paragraph under Cost lines: E70. The deposit is named two ways across internal sources, as a depos
+DROPPED card-24-holding-the-date.md: paragraph under Cost lines: E71. Which entity receives the deposit is disagreed on or silent acros
+DROPPED card-24-holding-the-date.md: paragraph under Cost lines: E74. Client-cancellation refund terms and a date-change fee table exis
+DROPPED card-24-holding-the-date.md: paragraph under Cost lines: E77. No money term, deposit, payment schedule, cancellation or surchar
+DROPPED card-24-holding-the-date.md: paragraph under Cost lines: E73. The default remaining-balance payment schedule is given two ways 
+DROPPED card-24-holding-the-date.md: paragraph under Cost lines: E59. At most four group tours a month are run, which bounds any hold r
+DROPPED card-25-is-the-date-free.md: paragraph under Cost lines: E88. Sonas is the booking and CRM system used for wedding enquiries, s
+DROPPED card-25-is-the-date-free.md: paragraph under Cost lines: E86. The wedding pages' content renders from a hand-authored layout te
+DROPPED card-25-is-the-date-free.md: paragraph under Cost lines: E24. A wedding reserves the booked ceremony site and reception area, w
+DROPPED card-25-is-the-date-free.md: paragraph under Cost lines: E40. The farmstay is reserved whole to the wedding party when booked a
+DROPPED card-25-is-the-date-free.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-25-is-the-date-free.md: paragraph under Cost lines: E18. One ceremony site and one reception area come with a booking, an 
+DROPPED card-26-coming-to-see-it.md: paragraph under Cost lines: E59. A maximum of four group tours a month is run, two recommended, al
+DROPPED card-26-coming-to-see-it.md: paragraph under Cost lines: E60. The Wedding Coordinator greets couples and presents packages; the
+DROPPED card-26-coming-to-see-it.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-26-coming-to-see-it.md: paragraph under Cost lines: E24. Surrounding areas are kept from tourism and other customers only 
+DROPPED card-26-coming-to-see-it.md: paragraph under Cost lines: E27. Closing the whole site to tourists during published hours needs s
+DROPPED card-26-coming-to-see-it.md: paragraph under Cost lines: E2. The jacaranda bloom window stands on the record two ways, November
+DROPPED card-26-coming-to-see-it.md: paragraph under Cost lines: E61. The tour section is spelled one way internally and another public
+DROPPED card-27-what-other-couples-said.md: paragraph under Cost lines: E81. Three wedding-specific listings are live: one carries a 5.0 ratin
+DROPPED card-27-what-other-couples-said.md: paragraph under Cost lines: E82. One of those listings' outbound link resolves to a different doma
+DROPPED card-27-what-other-couples-said.md: paragraph under Cost lines: E83. No source assigns ownership of the wedding-directory channel, its
+DROPPED card-27-what-other-couples-said.md: paragraph under Cost lines: E86. The wedding pages render from a hand-authored layout template rat
+DROPPED card-27-what-other-couples-said.md: paragraph under Cost lines: E68. Publishing anything from the website's own source passes a change
+DROPPED card-27-what-other-couples-said.md: paragraph under Cost lines: E66. Every priced package's inclusions list already states booked coup
+DROPPED card-27-what-other-couples-said.md: paragraph under Cost lines: E67. Whether those planning artefacts exist as files is unconfirmed, w
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E66. Every priced package's inclusions list states booked couples rece
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E67. Whether an actual floor-plan document, itinerary template or supp
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E68. No source states that floor plans are published publicly, and pub
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E86. The package cards, prices, capacities and FAQ text on the public 
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E9. The Main Dining Deck's capacity stands on record two ways, 180 gue
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E17. The venue's entire chair inventory for weddings and functions is 
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E12. The Secret Garden is currently unusable pending pond-sediment rem
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E2. The jacaranda bloom window stands on record two ways, November to 
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E59. A maximum of four group tours a month is run, all at 3:00 PM, cov
+DROPPED card-28-seeing-it-without-coming.md: paragraph under Cost lines: E60. The celebrant who runs the tour walkthrough is drawn from a suppl
+DROPPED card-29-the-listing-as-the-same-place.md: paragraph under Cost lines: E81. Three wedding-specific listings are live: one with a description,
+DROPPED card-29-the-listing-as-the-same-place.md: paragraph under Cost lines: E82. One of the three wedding-specific listings' outbound link is reco
+DROPPED card-29-the-listing-as-the-same-place.md: paragraph under Cost lines: E83. No source assigns ownership of the wedding-directory channel, its
+DROPPED card-29-the-listing-as-the-same-place.md: paragraph under Cost lines: E84. The operator was found absent from five of eight reachable weddin
+DROPPED card-29-the-listing-as-the-same-place.md: paragraph under Cost lines: E80. The general platform-status table covers the main website, OpenTa
+DROPPED card-29-the-listing-as-the-same-place.md: paragraph under Cost lines: E16. Two platform listings the operator controls both state a receptio
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E77. No money term, deposit, payment schedule, cancellation term or su
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E74. Cancellation refund terms and a date-change fee table exist by no
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E73. The default remaining-balance payment schedule stands on record t
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E70. The deposit is named two different ways across internal sources, 
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E71. Which entity receives the deposit is a self-flagged open question
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E60. The Weddings team handles all enquiry response and follow-up, sen
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E63. The Coordinator is the single point of contact during the event, 
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E88. Sonas is the booking and CRM system used for wedding enquiries.
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E66. Every priced package's inclusions list states booked couples rece
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E67. Whether those artefacts exist as deliverable files is not confirm
+DROPPED card-30-what-happens-after-the-form.md: paragraph under Cost lines: E59. A maximum of four group tours a month is run, all at 3:00 PM, abo
+DROPPED card-31-form-or-calendar.md: paragraph under Cost lines: E85. The public wedding section is a main page and five linked pages, 
+DROPPED card-31-form-or-calendar.md: paragraph under Cost lines: E88. Sonas is the booking and CRM system used for wedding enquiries.
+DROPPED card-31-form-or-calendar.md: paragraph under Cost lines: E59. A maximum of four group tours a month is run, two recommended, al
+DROPPED card-31-form-or-calendar.md: paragraph under Cost lines: E60. The Wedding Coordinator greets couples and the celebrant who runs
+DROPPED card-31-form-or-calendar.md: paragraph under Cost lines: E86. The wedding pages render from a hand-authored layout template rat
+DROPPED card-31-form-or-calendar.md: paragraph under Cost lines: E68. Publishing anything from the website's own source passes a change
+DROPPED card-31-form-or-calendar.md: paragraph under Cost lines: E87. The wedding brochure is linked from the public page and is not he
+DROPPED card-32-how-often-we-write.md: paragraph under Cost lines: E60. The Weddings team handles all enquiry response and follow-up, sen
+DROPPED card-32-how-often-we-write.md: paragraph under Cost lines: E63. The Coordinator is the single point of contact during the event, 
+DROPPED card-32-how-often-we-write.md: paragraph under Cost lines: E88. Sonas is the booking and CRM system used for wedding enquiries.
+DROPPED card-32-how-often-we-write.md: paragraph under Cost lines: E85. The public wedding section is a main page and five linked pages, 
+DROPPED card-32-how-often-we-write.md: paragraph under Cost lines: E1. Three named ceremony locations exist, one of them the Pavilion und
+DROPPED card-32-how-often-we-write.md: paragraph under Cost lines: E2. The jacaranda bloom window stands on record two ways, November to 
+DROPPED card-32-how-often-we-write.md: paragraph under Cost lines: E61. Internal procedure documents and the public website spell the jac
+DROPPED card-32-how-often-we-write.md: paragraph under Cost lines: E79. November is described as the busiest booking month on the jacaran
