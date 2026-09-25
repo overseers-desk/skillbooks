@@ -16,7 +16,7 @@
 # owner either admits it to the schema or strikes it from the data.
 level root -keys {version title date sweeper target_type provenance \
                   discovery_criteria rating_rubric scope_note \
-                  geographic_catchment platforms kinds priority}
+                  geographic_catchment platforms kinds presence_gate priority}
 
 # ── Rules ────────────────────────────────────────────────────────────────
 rule vocab root -groups {seed}
@@ -40,8 +40,8 @@ rule require root rating_rubric -nonblank -code missing_rating_rubric \
     -message {Segment definition has no '%k' — sweep workers fall back to the methodology's general-value judgement; a rubric makes stars reproducible} \
     -groups {seed}
 
-rule oneof root version {2.0} -code segment_version_unsupported \
-    -message {version '%v' — segment definitions are authored at "2.0"} -groups {seed}
+rule oneof root version {2.0 2.2} -code segment_version_unsupported \
+    -message {version '%v' — segment definitions are authored at "2.0" or "2.2"} -groups {seed}
 rule oneof root target_type {qualification-only cue-required} \
     -code invalid_target_type \
     -message {target_type '%v' — closed vocabulary: qualification-only | cue-required} \
@@ -67,3 +67,7 @@ rule predicate root platforms_vocab -code invalid_platforms \
 # profiling prompt renders them verbatim, so a blank, duplicate or
 # non-token entry is caught at authoring time.
 rule predicate root kinds_list -code invalid_kinds -groups {seed}
+
+# presence_gate entries are web or a platform module; spar::extract_presence_gate
+# hard-errors on anything else at dispatch time, so catch it at authoring time.
+rule predicate root presence_gate_vocab -code invalid_presence_gate -groups {seed}

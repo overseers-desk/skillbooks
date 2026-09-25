@@ -66,6 +66,14 @@ proc spar::kinds_guidance {kinds} {
         [spar::load_prompt_template kinds-guidance.txt]]
 }
 
+# presence_guidance — the early-exit passage a segment's `presence_gate`
+# earns; empty when the segment lists none.
+proc spar::presence_guidance {checks} {
+    if {[llength $checks] == 0} { return "" }
+    return [string map [list __CHECKS__ [join $checks ", "]] \
+        [spar::load_prompt_template presence-gate.txt]]
+}
+
 # spar::detect_browser_cmd — Probe the host once for a usable browser and
 # return the leading shell command that the agent's bash splices in front of
 # a `"URL"` argument. Memoised after first call so every per-segment prompt
@@ -282,6 +290,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         set platforms [dict create]
         set required_skills {}
         set kinds {}
+        set presence_gate {}
     } else {
         # Version pre-flight (refuse-to-start): refuse a segment whose declared
         # spec version this tool does not support. Unstamped is allowed.
@@ -290,6 +299,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         set platforms [spar::extract_platforms $segment_data $segment_yaml]
         set required_skills [spar::extract_required_skills $segment_data $segment_yaml]
         set kinds [spar::extract_kinds $segment_data $segment_yaml]
+        set presence_gate [spar::extract_presence_gate $segment_data $segment_yaml]
     }
 
     set rows [spar::load_roster $roster_path]
@@ -401,6 +411,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __BROWSER_CMD__   [spar::detect_browser_cmd] \
             __PLATFORM_GUIDANCE__ [spar::platform_guidance $platforms] \
             __KINDS_GUIDANCE__ [spar::kinds_guidance $kinds] \
+            __PRESENCE_GUIDANCE__ [spar::presence_guidance $presence_gate] \
         ] [spar::load_prompt_template spar-p.txt]]
 
         # p_author (campaign prompt_appendices) is NOT appended to the profiler:
