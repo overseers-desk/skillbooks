@@ -129,17 +129,17 @@ discovery_criteria: |
 # kinds:
 #   - {kind}
 
-# --- Presence gate (the checks whose joint emptiness excludes the row: run
+# --- No profile without (the checks a profile's existence depends on: run
 #     once each, one query each, before any directory, review-site or
-#     same-name work (spar-P-profile.md §4.3). Closed vocabulary: web, and
-#     the platform modules (platforms/{key}.md). When every listed check
-#     finds nothing of the person, the row is excluded with the reason in
-#     p_note and a §5.4 exclusion profile; any hit lifts the gate. Omit the
-#     field when every row deserves the full search.) ---
+#     same-name work (spar-P-profile.md §4.3). One key, any_of or all_of,
+#     holding tokens from the closed vocabulary web and the platform modules
+#     (platforms/{key}.md). any_of: the row is profiled only when at least
+#     one check finds the person; all_of: only when every check does. A row
+#     that fails is excluded with the reason in p_note and no profile is
+#     kept. Omit the field when every row deserves the full search.) ---
 
-# presence_gate:
-#   - web
-#   - {platform}
+# no_profile_without:
+#   any_of: [web, {platform}]
 
 # --- Scope note (boundary conditions with other segments, or exclusions from
 #     this segment's scope) ---
