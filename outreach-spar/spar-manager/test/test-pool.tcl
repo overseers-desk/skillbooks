@@ -320,7 +320,7 @@ $d destroy
 # to point at a fake script that returns canned JSON for both `search`
 # and `read`. The fake script branches on its first positional arg
 # after "--imap <account>" to mimic the real courier CLI; `list` returns
-# the identity table T7 resolves the account from.
+# the accounts and identities T7 resolves the reply mailbox against.
 section "4. imap_poll happy path"
 
 set fake_courier [file join $tmp_root fake-courier.tcl]
@@ -436,14 +436,17 @@ if {[string first "Hello back from Dest" $after4] >= 0} {
 $d destroy
 
 # ── 5. roster_update relays to the domain subscriber ──────────────────────
-# 4c. The account T7 searches is the one courier's identity table names
-# for the campaign's sender address; no campaign field carries it.
-section "4c. T7 resolves the courier account from sender.email"
+# 4c. T7 searches the mailbox reply_check.mailbox names, the sender's
+# own address when the campaign names none, through the courier account
+# that reads it.
+section "4c. T7 resolves the courier account from the reply mailbox"
 
-assert_eq [spar::imap::account_for_address $fake_courier "me@acme-venues.au"] acct \
-    "account_for_address: identity address matches case-insensitively"
-assert_eq [spar::imap::account_for_address $fake_courier "nobody@acme-venues.au"] "" \
-    "account_for_address: unknown address resolves to nothing"
+assert_eq [spar::imap::account_reading_address $fake_courier "me@acme-venues.au"] acct \
+    "account_reading_address: identity address matches case-insensitively"
+assert_eq [spar::imap::account_reading_address $fake_courier "LOGIN@acme-venues.au"] acct \
+    "account_reading_address: the account's login address matches"
+assert_eq [spar::imap::account_reading_address $fake_courier "nobody@acme-venues.au"] "" \
+    "account_reading_address: unknown address resolves to nothing"
 
 # A campaign with sender.email and no reply_check block builds T7 rows
 # against that account, folder INBOX.
@@ -468,11 +471,35 @@ set prep7 [[::spar::transitions::get T7] prepare_for_pool \
 set rows7 [dict get $prep7 rows]
 assert_eq [llength $rows7] 1 "T7 without reply_check builds one row per sent approach"
 set row7 [lindex [lindex $rows7 0] 1]
-assert_eq [dict get $row7 account] acct  "T7 row account comes from courier's identity table"
+assert_eq [dict get $row7 account] acct  "T7 row account is the one reading the sender's mailbox"
 assert_eq [dict get $row7 folder]  INBOX "T7 row folder defaults to INBOX"
 assert_eq $::t7_events {} "T7 emits no failure when reply_check is absent"
 
-# A sender address no courier identity carries fails T7 naming it.
+# A campaign sending from an address no courier account reads, whose
+# replies arrive in another mailbox, names that mailbox and its folder.
+set fd [open $camp7 w]
+puts $fd "campaign: Test"
+puts $fd "sender:"
+puts $fd "  email: stranger@acme-venues.au"
+puts $fd "reply_check:"
+puts $fd "  mailbox: login@acme-venues.au"
+puts $fd "  folder: Partnerships"
+puts $fd "segments:"
+puts $fd "  - seg-t7"
+close $fd
+set ::t7_events {}
+set prep7 [[::spar::transitions::get T7] prepare_for_pool \
+    [dict create campaign_file $camp7 courier_bin $fake_courier] \
+    {apply {args {lappend ::t7_events $args}}}]
+set rows7 [dict get $prep7 rows]
+assert_eq [llength $rows7] 1 "T7 with reply_check.mailbox builds one row per sent approach"
+set row7 [lindex [lindex $rows7 0] 1]
+assert_eq [dict get $row7 account] acct        "T7 row account is the one reading the named mailbox"
+assert_eq [dict get $row7 folder]  Partnerships "T7 row folder is reply_check.folder"
+assert_eq $::t7_events {} "T7 emits no failure when the named mailbox resolves"
+
+# A sender address no courier account reads, with no mailbox named,
+# fails T7 naming the address and the field that would resolve it.
 set fd [open $camp7 w]
 puts $fd "campaign: Test"
 puts $fd "sender:"
@@ -486,7 +513,9 @@ set prep7 [[::spar::transitions::get T7] prepare_for_pool \
     {apply {args {lappend ::t7_events $args}}}]
 assert_eq [llength [dict get $prep7 rows]] 0 "T7 builds no rows for an unknown sender"
 assert_match [lindex $::t7_events 0] "*failed*stranger@acme-venues.au*" \
-    "T7 failure names the address no identity sends as"
+    "T7 failure names the address no account reads"
+assert_match [lindex $::t7_events 0] "*reply_check.mailbox*" \
+    "T7 failure names the field that resolves it"
 
 # 4d. An account courier could not search comes back as an error
 # object, not a result set; the row fails with courier's reason and the
