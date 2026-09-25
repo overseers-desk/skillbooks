@@ -1,4 +1,4 @@
-# SPAR — Sweep, Profile, Approach, Revise
+# SPAR — Sweep, Profile, Approach, Reply
 
 AI-executed outreach methodology for discovering contacts, researching them, and writing personalised messages. Each phase has a procedure document that AI agents read and follow during dispatch.
 

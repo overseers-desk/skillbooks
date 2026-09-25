@@ -10,7 +10,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 ### SPAR — Outreach Discovery and Engagement
 
-**Phases:** Sweep, Profile, Approach, Revise
+**Phases:** Sweep, Profile, Approach, Reply
 
 **Direction:** Outbound. The operator has something to offer and needs to find people who might want it, research them, and write a message specific enough that the recipient can tell it was written for them.
 
@@ -19,9 +19,9 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 - **Sweep** discovers names from registries, directories, social graphs, and web searches. Iterates up to three times, each expanding the roster through social-graph and semantic expansion.
 - **Profile** builds a dossier for each contact: what they have said publicly, who they know, their current role, and how relevant they are to the campaign. Produces a star rating: how valuable the contact is to us, independent of any one campaign. The response-likelihood estimate belongs to Approach, because it turns on the angle chosen.
 - **Approach** drafts a personalised message for each contact, tested against a context-isolated challenger agent that role-plays the recipient. The challenger has never read the campaign files and reacts as a stranger would.
-- **Revise** is a human phase. After each band of messages is sent and responses arrive, the human reviews what worked, what did not, and adjusts the strategy for the next band.
+- **Reply** waits for a reply to each sent message. Any reply ends the process for that contact and hands them to the human. Between bands, the human reviews what worked and adjusts the strategy for the next band.
 
-**Model allocation:** S and P are Sonnet-tier (high volume, rubric-following). A is Opus-tier (tone, angle selection, cross-referencing prior relationships). R is human.
+**Model allocation:** S and P are Sonnet-tier (high volume, rubric-following). A is Opus-tier (tone, angle selection, cross-referencing prior relationships). R is the dispatcher's reply check; the review between bands is human.
 
 **Procedure documents:** `outreach-spar/spar-methodology.md` and the phase-specific AESOPs (`spar-S-sweep.md`, `spar-P-profile.md`, `spar-A-approach.md`).
 
