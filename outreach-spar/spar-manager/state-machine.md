@@ -243,7 +243,7 @@ T1–T4 are the cheap (no-parse) transitions; T5 is reserved for a future cheap 
 | T3 | Stale → Re-profile | state = PROFILE_STALE | `spar-transition <campaign.yaml|segments/<name>> T3` | available |
 | T4 | Re-profile → Re-approach | state = APPROACH_STALE (profile_hash mismatch, #63) | `spar-transition <campaign.yaml> T4` | available |
 | T6 | Approach → Send | state = APPROACHED or SENT; routed by the contact's own send channel (`final_auto_send_channel`, its final round's first email-or-linkedin message): email → has_email, not email_sent; linkedin → has_linkedin, not linkedin_sent | `spar-transition <campaign.yaml> T6` (email: AWS SES, serial with --delay; linkedin: overseer POST /run, serial, overseer-paced) | available |
-| T7 | Send → Reply | any_sent, not any_replied, email address known | `spar-transition <campaign.yaml> T7` (courier reply-check against the known address, appends replies to approach YAML) | available |
+| T7 | Send → Reply | campaign-level: any sent approach without a reply on file | `spar-transition <campaign.yaml> T7` (one courier search of the campaign's reply folder; each inbound not from our own domains is placed by the address written to, then by the send's `message_id` in its References; placed replies are appended to the approach YAML, the rest reported for hand attribution) | available |
 | T8 | LinkedIn → Email follow-up | linkedin_sent, not email_sent | LinkedIn checker | not-implemented |
 | T9 | Secondary follow-up | `secondary_ready` | render script + manual marker | manual |
 | T10 | Tertiary follow-up | `tertiary_ready` | render script + manual marker | manual |
@@ -298,10 +298,11 @@ T6 tasks carry the send channel that routed them (the `channel` key on the task 
              T7, T8, detect_duplicates skip EXCLUDED. T2 cannot reach EXCLUDED
              because its gate requires PROFILED.
 
-  T0 — the one campaign-level transition: its tasks are census sources, not contacts,
-       so it is the only edge with no entry state. Both front ends collect them through
+  T0, T7 — the campaign-level transitions. Both front ends collect their tasks through
        the transition class's campaign_tasks (transitions/base.tcl) beside the per-contact
-       eligible walk.
+       eligible walk. T0's tasks are census sources, not contacts, so it is the only edge
+       with no entry state. T7's task is the campaign's mailbox: one search places replies
+       for every sent contact, and a reply may come from an address no contact carries.
 
   T8 — LinkedIn→Email cross-message transition within APPROACHED/SENT (same primary state).
   T9, T10 — secondary/tertiary follow-ups (documented but not wired in transition_eligible).
@@ -327,14 +328,14 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
 | T6  | APPROACHED ∨ SENT    | channel = `final_auto_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel ∉ {email, linkedin} (e.g. phone-first, or no final message): row is omitted entirely | lib/spar/state-1.0.tm |
-| T7  | any ≠ EXCLUDED       | any_sent ∧ ¬any_replied ∧ email-known ∧ A(approach_path) | A invalid → "invalid_approach_yaml". No watchable address → row omitted. Dispatchable rows dispatch through spar::r::run (courier reply-check) | lib/spar/state-1.0.tm |
+| T7  | campaign-level       | ∃ sent approach with no reply on file                    | One task under the `reply-check` stem; no per-contact row. An approach that fails validation is left unwritten by append_reply_to_yaml and named on stderr | transitions/check_replies.tcl |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | lib/spar/state-1.0.tm |
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | lib/spar/state-1.0.tm (T9 branch) |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | lib/spar/state-1.0.tm (T10 branch) |
 
 [†] T6 sends each contact's own primary touch: `final_auto_send_channel` reads the contact's final round and returns the channel of its first email-or-linkedin message, so routing is per contact, not per campaign — an email-only contact in a linkedin-primary campaign dispatches by email (ses_send), a linkedin contact by linkedin_send. The contact's secondary and tertiary channels belong to T9/T10 with wait_days/wait_condition (issue #174); T6 sends only the first.
 
-T7's coverage is bounded by its actuator: it watches one known address per contact (the final round's email `to:`, or the roster email when the send went out on another channel), with a date floor at the earliest final-round `actioned_date`. A reply from any other mailbox, or on any other channel, is not detected automatically; it is recorded by editing the approach YAML (`replied_date` on the message, or a `replies` entry with `direction: received`), which resolves REPLIED on the next classification.
+T7's coverage is bounded by its two keys. A candidate is any message in the campaign's reply folder dated from the earliest final-round `actioned_date` whose sender is not on the sender's or the mailbox's domain. It is placed by the address the approach wrote to (the final round's email `to:`, or the roster email when the send went out on another channel), else by the `message_id` the send stored, looked for in the candidate's In-Reply-To and References (so a colleague answering an internal forward is placed). A candidate neither key places, such as a member writing in fresh, is reported on the run's log with its read command; the reader records it by editing the approach YAML (`replied_date` on the message, or a `replies` entry with `direction: received`), which resolves REPLIED on the next classification. A reply on another channel is recorded the same way. Sends stamped before the id was stored carry no `message_id`, and the orchestration log's DONE line holds the id to backfill.
 
 **Conditions no T-gate checks** (relevant for the cross-check below):
 

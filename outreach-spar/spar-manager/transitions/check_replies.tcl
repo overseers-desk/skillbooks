@@ -1,15 +1,21 @@
 # spar-manager/transitions/check_replies.tcl
 #
-# CheckRepliesTransition (T7, Send → Reply). Queries the mailbox that
-# receives the campaign's replies for replies to sent approaches and
-# appends any new ones to the approach YAML. The class carries the transition metadata,
-# the build_opts hook the dispatcher reads, and the prepare_for_pool
-# method that builds the per-row Pool batch; the per-row search-and-
-# fetch leg the Pool's imap_poll worker proc invokes, spar::imap::check_one,
-# follows the class.
+# CheckRepliesTransition (T7, Send → Reply). One pass per campaign over
+# the mailbox that receives its replies: every inbound message since the
+# first send whose sender is not one of our own domains is a candidate
+# reply, and each candidate is placed against a sent approach by the
+# address the letter went to, then by the transport id the send stored,
+# looked for in the candidate's threading headers. A placed reply is
+# appended to that approach YAML; a candidate neither key places is
+# reported for the reader to attribute by hand. The class carries the
+# transition metadata, the campaign-level task, and the prepare_for_pool
+# method that builds the one-row Pool batch; the per-campaign search-and-
+# fetch leg the Pool's imap_poll worker proc invokes,
+# spar::imap::check_one, follows the class.
 
 package require TclOO
 package require json
+package require spar::email
 
 # ── CheckRepliesTransition ──────────────────────────────────────────
 
@@ -17,39 +23,66 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
     superclass ::spar::transitions::Transition
 
     method build_opts {tasks filter_segments filter_stems} {
-        set segs [dict create]
-        set stems {}
-        foreach c $tasks {
-            dict set segs [dict get $c _segment_dir] 1
-            lappend stems [dict get $c stem]
-        }
-        set segments_list [dict keys $segs]
         return [dict create \
-            segments $segments_list \
-            stems $stems \
-            log_message "[my tid]: [llength $tasks] task(s) across [llength $segments_list] segment(s) (reply-check pass)"]
+            log_message "[my tid]: reply-check pass over the campaign's mailbox"]
+    }
+
+    # T7's task is the campaign's, not a contact's: one search places
+    # replies for every sent contact at once, and a reply may come from
+    # an address no contact carries (a colleague answering a forward, a
+    # member writing in). So `eligible` contributes nothing and the task
+    # arrives through campaign_tasks, as T0's census sources do, whenever
+    # a sent approach still awaits a reply. Both front ends fold
+    # campaign-level tasks in beside the contact walk.
+    method eligible {state contact primary_channel cdata today_iso} {
+        return {}
+    }
+
+    method campaign_tasks {cdata campaign_file segment_paths} {
+        if {$campaign_file eq ""} { return {} }
+        set approach_dir [spar::approach_dir_for_campaign $campaign_file]
+        set seg_dirs {}
+        foreach item $segment_paths { lappend seg_dirs [lindex $item 1] }
+        set awaiting 0
+        foreach entry [spar::collect_sent_approaches $approach_dir $seg_dirs] {
+            if {![dict get $entry replied]} { incr awaiting }
+        }
+        if {$awaiting == 0} { return {} }
+        return [list [my _task $campaign_file dispatchable \
+            "$awaiting sent, awaiting a reply"]]
+    }
+
+    # The task dict both front ends consume, in spar::_task's shape: the
+    # campaign's mailbox stands where a contact would.
+    method _task {campaign_file task_state reason} {
+        return [dict create \
+            contact_name "reply check" \
+            organisation [file rootname [file tail $campaign_file]] \
+            segment      "" \
+            stem         [spar::reply_check_stem] \
+            _segment_dir "" \
+            task_state   $task_state \
+            reason       $reason \
+            channel      email]
     }
 
     # prepare_for_pool — pool-shape entry. Returns
-    # {worker_proc imap_poll rows {{stem opts} ...}}. The unified
-    # Dispatcher in spar-transition enqueues the rows directly;
-    # imap_poll has no rate-limit pacing requirement so it inherits
-    # the global Jobs cap.
+    # {worker_proc imap_poll rows {{stem opts}}}, one row for the
+    # campaign. imap_poll has no rate-limit pacing requirement so it
+    # inherits the global Jobs cap.
     method prepare_for_pool {opts on_progress} {
-        set prep [my _build_rows $opts $on_progress]
+        set prep [my _build_row $opts $on_progress]
         if {$prep eq ""} {
             return [dict create worker_proc imap_poll rows {}]
         }
-        return [dict create \
-            worker_proc imap_poll \
-            rows [dict get $prep rows]]
+        return [dict create worker_proc imap_poll rows [list $prep]]
     }
 
-    # _build_rows — per-row opts dict construction for prepare_for_pool.
-    # Returns {rows {{stem opts} ...}} on success, or "" if a
-    # precondition failed (no sender address, no courier account reading
-    # the reply mailbox, no sent approaches) so the pool skips with no rows.
-    # Synchronous failed/skipped events are emitted through on_progress.
+    # _build_row — the campaign row's opts for prepare_for_pool. Returns
+    # {stem opts} on success, or "" if a precondition failed (no sender
+    # address, no courier account reading the reply mailbox, no sent
+    # approaches) so the pool skips with no rows. Synchronous
+    # failed/skipped events are emitted through on_progress.
     #
     # The mailbox to search is the one reply_check.mailbox names, the
     # sender's own address when the campaign names none. A reply lands in
@@ -57,32 +90,39 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
     # not be an account courier sends from: a campaign relaying through its
     # own SMTP from an alias of another mailbox names that mailbox here.
     # The folder is reply_check.folder, INBOX unless that mailbox's mail
-    # rules file this campaign's replies elsewhere.
-    method _build_rows {opts on_progress} {
+    # rules file this campaign's replies elsewhere. Our own domains are
+    # the sender's and the mailbox's: mail from them is our outgoing copy
+    # or our own answer, never a reply.
+    method _build_row {opts on_progress} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [dict getdef $opts dry_run 0]
         set segments      [dict getdef $opts segments {}]
-        set stems         [dict getdef $opts stems    {}]
         set courier_bin   [dict getdef $opts courier_bin ""]
+        set stem          [spar::reply_check_stem]
 
         set cdata [spar::load_campaign $campaign_file]
 
         if {![dict exists $cdata sender email]} {
             if {$on_progress ne ""} {
-                {*}$on_progress "" failed "campaign YAML missing sender.email"
+                {*}$on_progress $stem failed "campaign YAML missing sender.email"
             }
             return ""
         }
-        set sender  [dict get $cdata sender email]
-        set mailbox [dict getdef $cdata reply_check mailbox $sender]
+        set sender  [string tolower [dict get $cdata sender email]]
+        set mailbox [string tolower [dict getdef $cdata reply_check mailbox $sender]]
         set folder  [dict getdef $cdata reply_check folder INBOX]
+        set own_domains {}
+        foreach a [list $sender $mailbox] {
+            set d [lindex [split $a @] end]
+            if {$d ne "" && $d ni $own_domains} { lappend own_domains $d }
+        }
 
         if {$courier_bin eq ""} {
             set courier_bin [spar::find_tool courier]
         }
         if {$courier_bin eq ""} {
             if {$on_progress ne ""} {
-                {*}$on_progress "" failed "courier not found — check Settings"
+                {*}$on_progress $stem failed "courier not found — check Settings"
             }
             return ""
         }
@@ -90,13 +130,13 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
             set account [spar::imap::account_reading_address $courier_bin $mailbox]
         } aerr]} {
             if {$on_progress ne ""} {
-                {*}$on_progress "" failed "courier list: $aerr"
+                {*}$on_progress $stem failed "courier list: $aerr"
             }
             return ""
         }
         if {$account eq ""} {
             if {$on_progress ne ""} {
-                {*}$on_progress "" failed \
+                {*}$on_progress $stem failed \
                     "no courier account reads mail for $mailbox; name the mailbox that receives replies to $sender as reply_check.mailbox"
             }
             return ""
@@ -116,72 +156,32 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
             }
         }
 
+        # Every sent approach takes part, replied ones included: their
+        # addresses and ids still place a second message from the same
+        # thread, and their fingerprints keep a recorded reply from being
+        # appended again.
         set approaches [spar::collect_sent_approaches $approach_dir $segments]
-        set approaches [spar::filter_approaches_by_stems $approaches $stems]
         if {[llength $approaches] == 0} {
             if {$on_progress ne ""} {
-                foreach s $stems {
-                    {*}$on_progress $s skipped "no email address to watch"
-                }
+                {*}$on_progress $stem skipped "no sent approach to check"
             }
             return ""
         }
-
-        # Build {stem opts} pairs. The Pool's imap_poll worker drives
-        # one (search + zero-or-more reads) cycle per row.
-        set rows {}
-        set seen_stems [dict create]
+        set since ""
         foreach entry $approaches {
-            set approach_path [dict get $entry approach_path]
-            set stem [file rootname [file tail $approach_path]]
-            set to_email [dict get $entry to_email]
-            set fingerprints [dict get $entry fingerprints]
-            dict set seen_stems $stem 1
-            lappend rows [list $stem [dict create \
-                campaign_file $campaign_file \
-                dry_run       $dry_run \
-                approach_path $approach_path \
-                to_email      $to_email \
-                since         [dict getdef $entry first_sent ""] \
-                fingerprints  $fingerprints \
-                account       $account \
-                folder        $folder \
-                sender        $sender \
-                courier_bin   $courier_bin]]
+            set fs [dict getdef $entry first_sent ""]
+            if {$fs ne "" && ($since eq "" || $fs < $since)} { set since $fs }
         }
 
-        # Stems requested but with no watchable sent approach get a
-        # synchronous skipped line naming the reason.
-        if {$on_progress ne ""} {
-            foreach s $stems {
-                if {![dict exists $seen_stems $s]} {
-                    {*}$on_progress $s skipped "no email address to watch"
-                }
-            }
-        }
-
-        return [dict create rows $rows]
-    }
-
-    # T7: a message was sent on some channel, no reply recorded yet,
-    # and an email address is known to watch (the final round's email
-    # to: or the roster email). Contacts without a watchable address
-    # are omitted: the inbox cannot be monitored for them; a reply on
-    # another channel is recorded on the approach YAML directly and
-    # resolves REPLIED without this transition. Gated on approach-YAML
-    # structural validity (#43 principle 7).
-    method eligible {state contact primary_channel cdata today_iso} {
-        set cstate [dict get $contact state]
-        if {$cstate eq "EXCLUDED"} { return {} }
-        if {![dict get $contact any_sent]} { return {} }
-        if {[dict get $contact any_replied]} { return {} }
-        if {[llength [dict get $contact to_addresses]] == 0
-            && ![dict get $contact has_email]} { return {} }
-        set vmsg [$state approach_validation_error $contact]
-        if {$vmsg ne ""} {
-            return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]
-        }
-        return [list [spar::_task $contact dispatchable ""]]
+        return [list $stem [dict create \
+            campaign_file $campaign_file \
+            dry_run       $dry_run \
+            approaches    $approaches \
+            since         $since \
+            own_domains   $own_domains \
+            account       $account \
+            folder        $folder \
+            courier_bin   $courier_bin]]
     }
 }
 
@@ -193,39 +193,40 @@ oo::class create ::spar::transitions::CheckRepliesTransition {
     -dispatch-status available \
     -ui-tree-row 1
 
-# ── spar::imap::check_one — per-row IMAP-poll leg ───────────────────
+# reply_check_stem -- the stem the campaign's one T7 row runs under.
+proc spar::reply_check_stem {} { return "reply-check" }
+
+# ── spar::imap::check_one — per-campaign IMAP-poll leg ──────────────
 #
-# Pure per-row IMAP-poll helper. For one
-# approach YAML (one sent contact), search the configured inbox for
-# new replies from the contact's to_email, fetch each new message
-# body, and append them to the approach via spar::append_reply_to_yaml.
-# Returns counts; no callbacks, no thread::send, no registry, no event
-# loop.
+# Pure per-campaign IMAP-poll helper. Search the configured folder for
+# inbound mail since the first send, drop what our own domains sent,
+# drop what an approach already records, place the rest against the sent
+# approaches (spar::reply_attribution), fetch each placed message's body
+# and append it via spar::append_reply_to_yaml. Returns counts and the
+# remainder; no callbacks, no thread::send, no registry, no event loop.
 #
-# Under the pool model, one row corresponds to one stem: one `courier
-# search`, zero or more `courier read`s, zero or more append_reply_to_yaml
-# calls. The courier children run through spar::pool_exec, which drives the
-# subprocess off the event loop when this helper runs inside a jobloop
-# coroutine (the pool path) and falls back to a plain exec otherwise, so a
-# slow inbox yields the loop to the other jobs instead of freezing it.
+# Under the pool model the campaign is one row: one `courier search`,
+# one `courier read` per candidate, zero or more append_reply_to_yaml
+# calls. The courier children run through spar::pool_exec, which drives
+# the subprocess off the event loop when this helper runs inside a
+# jobloop coroutine (the pool path) and falls back to a plain exec
+# otherwise, so a slow inbox yields the loop to the other jobs instead of
+# freezing it.
 #
 # Inputs (opts dict):
-#   approach_path   abs path to the approach YAML for this stem
-#   to_email        address watched for replies (lower)
-#   since           ISO date floor; messages dated before it are not
-#                   replies to this approach (optional, "" = no floor)
-#   fingerprints    list of "from|date" strings already recorded
+#   approaches      list of dicts from collect_sent_approaches
+#                   (approach_path, to_email, message_ids, fingerprints)
+#   since           ISO date floor; messages dated before it are inbox
+#                   history, not replies (optional, "" = no floor)
+#   own_domains     lowercase domains whose mail is ours, not a reply
 #   account         courier --imap value
 #   folder          courier -f value
-#   sender          our own bare email address (used to filter inbound
-#                   to messages addressed to us, not bounces)
 #   dry_run         1 = parse and report but don't write to YAML
-#   courier_bin    optional path override (tests pass a fake)
+#   courier_bin     optional path override (tests pass a fake)
 #
 # Returns one of:
-#   {ok <new_replies>}              — count of replies appended
+#   {ok {new_replies N unattributed_count M unattributed {line ...}}}
 #   {error <reason>}                — search/read/parse/append failure
-
 
 namespace eval ::spar::imap {}
 
@@ -259,15 +260,13 @@ proc ::spar::imap::account_reading_address {courier_bin address} {
 }
 
 proc ::spar::imap::check_one {opts} {
-    set approach_path [dict get $opts approach_path]
-    set to_email      [dict get $opts to_email]
-    set since         [dict getdef $opts since ""]
-    set fingerprints  [dict getdef $opts fingerprints {}]
-    set account       [dict get $opts account]
-    set folder        [dict get $opts folder]
-    set sender        [dict get $opts sender]
-    set dry_run       [dict getdef $opts dry_run 0]
-    set courier_bin   [dict getdef $opts courier_bin ""]
+    set approaches  [dict get $opts approaches]
+    set since       [dict getdef $opts since ""]
+    set own_domains [dict getdef $opts own_domains {}]
+    set account     [dict get $opts account]
+    set folder      [dict get $opts folder]
+    set dry_run     [dict getdef $opts dry_run 0]
+    set courier_bin [dict getdef $opts courier_bin ""]
 
     if {$courier_bin eq ""} {
         set courier_bin [spar::find_tool courier]
@@ -276,13 +275,21 @@ proc ::spar::imap::check_one {opts} {
         return [list error "courier not found — check Settings"]
     }
 
+    # One fingerprint set across the campaign: a reply recorded by hand
+    # on any approach is recorded, whichever file it sits in.
+    set fingerprints {}
+    foreach entry $approaches {
+        lappend fingerprints {*}[dict getdef $entry fingerprints {}]
+    }
+
     # courier 1.1.15 exits 1 on a successful search that returns zero
     # results (documented), so a non-zero exit is not by itself a failure.
     # Capture the merged output whether exec returns or throws; the JSON
     # payload is present either way, and only an unparseable payload below
     # is treated as a real error.
+    set query [expr {$since ne "" ? "after:$since" : "newer:1m"}]
     catch {spar::pool_exec $courier_bin --imap $account search -f $folder \
-        --limit 50 "from:$to_email"} search_out
+        --limit 500 $query} search_out
 
     # The merged output carries courier's stderr before the JSON (a
     # connect failure is warned there with the server's reason) and may
@@ -317,42 +324,26 @@ proc ::spar::imap::check_one {opts} {
         return [list error "mailbox search JSON parse: $perr"]
     }
 
-    set sender_lower [string tolower $sender]
-    set incoming {}
-    foreach msg $messages {
-        set to_addrs {}
-        set cc_addrs {}
-        if {[dict exists $msg to]} {
-            foreach a [dict get $msg to] {
-                lappend to_addrs [spar::extract_email_address $a]
-            }
-        }
-        if {[dict exists $msg cc]} {
-            foreach a [dict get $msg cc] {
-                lappend cc_addrs [spar::extract_email_address $a]
-            }
-        }
-        if {$sender_lower in $to_addrs || $sender_lower in $cc_addrs} {
-            lappend incoming $msg
-        }
-    }
-
-    set incoming [lsort -command {apply {{a b} {
+    set messages [lsort -command {apply {{a b} {
         set da [dict getdef $a date ""]
         set db [dict getdef $b date ""]
         return [string compare $da $db]
-    }}} $incoming]
+    }}} $messages]
 
     set appended 0
-    foreach msg $incoming {
-        set from_email_addr [spar::extract_email_address \
-            [dict getdef $msg from ""]]
+    set unattributed {}
+    foreach msg $messages {
+        set from_email_addr [string tolower [spar::extract_email_address \
+            [dict getdef $msg from ""]]]
         set date_str [dict getdef $msg date ""]
         if {![regexp {^\d{4}-\d{2}-\d{2}} $date_str]} continue
 
         # Mail predating the send is unrelated inbox history, not a
         # reply; ISO dates order lexically.
         if {$since ne "" && [string range $date_str 0 9] < $since} continue
+
+        # Our own outgoing copy, or our own answer on the thread.
+        if {[lindex [split $from_email_addr @] end] in $own_domains} continue
 
         if {[spar::fingerprint_match $fingerprints $from_email_addr $date_str]} {
             continue
@@ -361,11 +352,12 @@ proc ::spar::imap::check_one {opts} {
         set uid [dict getdef $msg uid ""]
         set from_display [dict getdef $msg from $from_email_addr]
 
-        # Fetch the body. courier-read failure becomes a placeholder
-        # text, exactly as the legacy Driver did, so the user still
-        # sees that a reply arrived even if the body could not be
-        # retrieved.
+        # Fetch the message: its threading headers place it, and its body
+        # is what the approach records. courier-read failure becomes a
+        # placeholder text, so the user still sees that a reply arrived
+        # even if the body could not be retrieved.
         set reply_text "(no text content)"
+        set thread_ids {}
         if {[catch {
             set read_out [spar::pool_exec $courier_bin --imap $account read \
                 -f $folder -u $uid]
@@ -376,8 +368,18 @@ proc ::spar::imap::check_one {opts} {
             if {$body ne ""} {
                 set reply_text [spar::html_to_text $body]
             }
+            set irt [dict getdef $email_data in_reply_to ""]
+            if {$irt ne ""} { lappend thread_ids $irt }
+            lappend thread_ids {*}[dict getdef $email_data references {}]
         } _]} {
             set reply_text "(inbox read failed -- review manually:\n  $courier_bin --imap $account read -f $folder -u $uid)"
+        }
+
+        set approach_path [spar::reply_attribution $approaches \
+            $from_email_addr $thread_ids]
+        if {$approach_path eq ""} {
+            lappend unattributed "unplaced reply $date_str from $from_display, subject \"[dict getdef $msg subject ""]\": record it on its approach by hand ($courier_bin --imap $account read -f $folder -u $uid)"
+            continue
         }
 
         if {!$dry_run} {
@@ -389,7 +391,7 @@ proc ::spar::imap::check_one {opts} {
             }
         }
 
-        # Update local fingerprint set so a duplicate within this batch
+        # Update the fingerprint set so a duplicate within this batch
         # is not re-appended (courier dedup is per-uid; this guards
         # the rare case of two messages from the same address with the
         # same date).
@@ -397,5 +399,8 @@ proc ::spar::imap::check_one {opts} {
         incr appended
     }
 
-    return [list ok $appended]
+    return [list ok [dict create \
+        new_replies $appended \
+        unattributed_count [llength $unattributed] \
+        unattributed $unattributed]]
 }
