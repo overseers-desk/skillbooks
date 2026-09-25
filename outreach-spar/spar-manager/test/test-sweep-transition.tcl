@@ -85,6 +85,8 @@ assert_eq [spar::sweep_status_token "unreachable (login wall)"] unreachable \
 assert_eq [spar::sweep_source_open "exhausted — archive read to 2019"] 0 \
     "exhausted source is closed"
 assert_eq [spar::sweep_source_open "unharvested"] 1 "unharvested source is open"
+assert_eq [spar::transition_auto_safe T0] 1 \
+    "T0 is auto-safe: --auto sweeps every open source"
 
 # ── 3. Quote-safe scalars ──────────────────────────────────────────────
 

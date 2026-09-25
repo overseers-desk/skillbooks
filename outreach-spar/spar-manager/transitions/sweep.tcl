@@ -121,7 +121,7 @@ oo::class create ::spar::transitions::SweepTransition {
     -tid T0 \
     -tier population \
     -label "Seed → Sweep" \
-    -auto-safe 0 \
+    -auto-safe 1 \
     -dispatch-status available \
     -supports-reauthor 0 \
     -ui-tree-row 1
