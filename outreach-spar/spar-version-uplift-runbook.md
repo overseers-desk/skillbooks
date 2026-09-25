@@ -4,7 +4,7 @@
 
 ## 2.1 → 2.2: segment definitions gain `kinds` and `presence_gate`
 
-Spec 2.2 changes the segment definition only, and additively (`segment-schema.yaml`). No script: a segment that adopts either field is stamped `version: "2.2"` by hand; one that adopts neither stays at `2.0` and keeps validating.
+Spec 2.2 names two optional segment-definition fields, `kinds` (already accepted under 2.0) and `presence_gate` (`segment-schema.yaml`). No script: a segment that adopts either field is stamped `version: "2.2"` by hand; one that adopts neither stays at `2.0` and keeps validating.
 
 ## 2.0 → 2.1: the USP moves into the campaign
 

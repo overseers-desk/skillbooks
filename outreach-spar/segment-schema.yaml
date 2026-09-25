@@ -130,12 +130,12 @@ discovery_criteria: |
 #   - {kind}
 
 # --- Presence gate (the checks whose joint emptiness ends a profile at the
-#     rubric's floor: run once each, one query each, before any directory or
-#     same-name work (spar-P-profile.md §4.3). Closed vocabulary: web, and
-#     the platform modules (platforms/{key}.md). When every listed check
-#     finds nothing of the person, the profile is written from the roster and
-#     register facts alone and stops; any hit lifts the gate. Omit the field
-#     when every row deserves the full search.) ---
+#     rubric's floor: run once each, one query each, before any directory,
+#     review-site or same-name work (spar-P-profile.md §4.3). Closed
+#     vocabulary: web, and the platform modules (platforms/{key}.md). When
+#     every listed check finds nothing of the person, the profile is written
+#     from the roster and register facts alone and stops; any hit lifts the
+#     gate. Omit the field when every row deserves the full search.) ---
 
 # presence_gate:
 #   - web
