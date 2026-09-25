@@ -522,12 +522,10 @@ foreach c [$State transition_eligible $contacts "T6" "email"] {
     }
 }
 
-# T7: Send → Reply: email_sent, not any_replied → dispatchable (monitoring)
-set t7 [$State transition_eligible $contacts "T7"]
-set t7_names [lmap c $t7 {dict get $c contact_name}]
-assert_eq [expr {"Sent Sam" in $t7_names}] 1 "T7: SENT+email_sent → in monitoring list"
-# T7 is not a send: its tasks carry no channel, keeping its tree flat.
-assert_eq [dict get [lindex $t7 0] channel] "" "T7: task channel is empty"
+# T7: Send → Reply is the campaign's task (one mailbox search places
+# replies for every sent contact), so the per-contact walk yields none.
+assert_eq [llength [$State transition_eligible $contacts "T7"]] 0 \
+    "T7: no per-contact task"
 
 # transition_eligible result dicts must carry stem and _segment_dir so
 # downstream callers (spar-transition dispatch) can route without

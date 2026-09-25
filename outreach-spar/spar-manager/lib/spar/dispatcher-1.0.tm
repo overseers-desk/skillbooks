@@ -364,7 +364,12 @@ proc imap_poll {row opts} {
     set status [lindex $result 0]
     set detail [lindex $result 1]
     if {$status eq "ok"} {
-        done $row [list new_replies $detail]
+        # A candidate no key places is the reader's to attribute; each is
+        # named on its own line so the run leaves nothing silent.
+        foreach u [dict getdef $detail unattributed {}] {
+            catch {spar::log_row_outcome $row warning $u}
+        }
+        done $row [dict remove $detail unattributed]
     } else {
         failed $row $detail
     }

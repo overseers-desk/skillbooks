@@ -240,6 +240,18 @@ assert_contains $stamped "replied_date: null" "replied_date unchanged"
 set changed2 [spar::stamp_actioned_date $ap "2026-04-11"]
 assert_eq $changed2 0 "stamp_actioned_date returns 0 when already stamped"
 
+# 5a1. The send's transport id lands beside the date, so the reply check
+# can recognise the thread; the file still validates.
+set ap_mid [write_approach_yaml $seg "stamp-mid" $yaml_content]
+assert_eq [spar::stamp_actioned_date $ap_mid "2026-04-10" email "0100019a-ses-token"] 1 \
+    "stamp with message id changes the file"
+set fd [open $ap_mid r]; set stamped_mid [read $fd]; close $fd
+assert_contains $stamped_mid "    actioned_date: 2026-04-10\n    message_id: 0100019a-ses-token" \
+    "message_id written at the message's own indent after the date"
+set mid_data [::yaml::yaml2dict $stamped_mid]
+assert_eq [dict get [lindex [dict get [lindex [dict get $mid_data rounds] 0] messages] 0] message_id] \
+    "0100019a-ses-token" "message_id parses as the message's own field"
+
 # 5b1. One send stamps one message. A final round often carries two
 # messages of the same channel — the invitation note and the DM that
 # follows acceptance — and a send dispatches the first of them
@@ -665,6 +677,50 @@ assert_eq [llength $collected3] 1 "replied approach collected"
 set fps [dict get [lindex $collected3 0] fingerprints]
 assert_eq [llength $fps] 1 "one fingerprint from existing reply"
 assert_eq [lindex $fps 0] "replied@example.com|2026-04-05T10:30:00" "fingerprint format correct"
+assert_eq [dict get [lindex $collected3 0] replied] 1 "a replies entry marks the approach replied"
+assert_eq [dict get $entry replied] 0 "no reply on file: not replied"
+
+# 7c1. A send's stored message id is collected for thread attribution.
+set seg8m [make_temp_segment]
+write_approach_yaml $seg8m "sent-with-id" {decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: idholder@example.com
+    subject: Hello
+    body: Hi
+    actioned_date: 2026-04-01
+    message_id: 0100019a-ses-token
+    replied_date: null
+}
+set collected_mid [spar::collect_sent_approaches [approach_dir_of $seg8m] [list $seg8m]]
+assert_eq [dict get [lindex $collected_mid 0] message_ids] [list 0100019a-ses-token] \
+    "message_ids carries the send's transport id"
+assert_eq [dict get [lindex $collected_mid 0] replied] 0 "replied_date null: not replied"
+
+# ════════════════════════════════════════════════════════════════════════
+# 7e. reply_attribution
+# ════════════════════════════════════════════════════════════════════════
+section "7e. reply_attribution"
+
+set attr_approaches [list \
+    [dict create approach_path /c/alice.yaml to_email alice@u3a.org.au message_ids {0100019a-alice}] \
+    [dict create approach_path /c/bob.yaml   to_email bob@rotary.org   message_ids {0100019a-bob}]]
+assert_eq [spar::reply_attribution $attr_approaches alice@u3a.org.au {}] /c/alice.yaml \
+    "the address the letter went to places a reply"
+assert_eq [spar::reply_attribution $attr_approaches president@u3a.org.au \
+    [list "<outlook-id@u3a.org.au>" "<0100019a-alice@email.amazonses.com>"]] /c/alice.yaml \
+    "our send id inside References places a reply from another address"
+assert_eq [spar::reply_attribution $attr_approaches secretary@gmail.com \
+    [list "<0100019A-BOB@email.amazonses.com>"]] /c/bob.yaml \
+    "the id matches whatever the case"
+assert_eq [spar::reply_attribution $attr_approaches member@hotmail.com {}] "" \
+    "no address and no thread: nothing places it"
+assert_eq [spar::reply_attribution $attr_approaches member@hotmail.com [list "<unrelated@x>"]] "" \
+    "a thread none of our sends started places nothing"
 
 # 7d. Multiple segments
 # One campaign folder holds every approach of the campaign, whichever
