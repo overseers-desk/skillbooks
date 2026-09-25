@@ -7,7 +7,7 @@ SPAR is a four-phase methodology for building a contact pipeline and engaging ta
 - **S** — Sweep. Discover names from all available sources.
 - **P** — Profile. Research each discovered contact to build a dossier of what they have said, who they know, and what they care about.
 - **A** — Approach. Write a non-mechanical connection message tailored to the profile, tested against a simulated recipient personality.
-- **R** — Revise. Review responses from the current band, identify deviations between assumed and actual motivations, adjust the connection strategy, then approach the next band.
+- **R** — Reply. Wait for the sent message to draw a reply, detect it, and hand the contact to the human.
 
 The methodology applies to any outreach campaign — membership recruitment for a foundation, sales for a hospitality venue, community building for an open source project. The domain-specific content (target segments, angles, roster schema, message templates) lives in the instance (`spar-campaign-directory.md`), not in SPAR itself.
 
@@ -17,9 +17,9 @@ SPAR divides into two prongs that run sequentially, not concurrently.
 
 **Prong 1: S&P (Sweep + Profile)** is iterative knowledge accumulation. It runs in up to three iterations — S&P₁, S&P₂, S&P₃ — each expanding the roster and deepening profiles. S&P is Sonnet-tier work: high volume, pattern-following, economical. S&P completes before Prong 2 begins.
 
-**Prong 2: AR (Approach + Revise)** is feedback-controlled engagement. It runs in bands ordered by estimated response likelihood — AR₉₀ (contacts rated ≥90% likely to respond), then AR₈₀, then AR₇₀, and so on. Between bands, a human reviews the communication logs from the prior band, identifies what targets actually responded to (which may differ from what the plan block assumed), and revises the connection strategy before the next band begins. AR is Opus-tier work for the approach drafting, and human work for the revision.
+**Prong 2: AR (Approach + Reply)** is feedback-controlled engagement. It runs in bands ordered by estimated response likelihood — AR₉₀ (contacts rated ≥90% likely to respond), then AR₈₀, then AR₇₀, and so on. Between bands, a human reviews the communication logs from the prior band, identifies what targets actually responded to (which may differ from what the plan block assumed), and revises the connection strategy before the next band begins. AR is Opus-tier work for the approach drafting; the review between bands is human work.
 
-The normal flow is S&P feeding AR: S&P₁ through S&P₃ run autonomously, then AR begins. However, AR is not a dead end. The R (Revise) phase reviews connection messages and responses, and in doing so reliably surfaces a small number of new names — a respondent mentions a colleague, a connection message reveals a relevant person in the same organisation, a revised strategy identifies a segment not covered by S&P₁–S&P₃. These names are few per band (typically single digits) but they appear with high probability. In practice, S&P₄ is more often needed than not.
+The normal flow is S&P feeding AR: S&P₁ through S&P₃ run autonomously, then AR begins. However, AR is not a dead end. The review between bands reads the connection messages and replies, and in doing so reliably surfaces a small number of new names — a respondent mentions a colleague, a connection message reveals a relevant person in the same organisation, a revised strategy identifies a segment not covered by S&P₁–S&P₃. These names are few per band (typically single digits) but they appear with high probability. In practice, S&P₄ is more often needed than not.
 
 The design accommodates this by treating S&P₁–S&P₃ as the autonomous pre-run: these iterations execute without human intervention, closing or escalating per `spar-S-sweep.md` §6. Any S&P iteration beyond S&P₃ is human-initiated, triggered by names accumulated during AR. The new names enter the roster at iteration number max(current) + 1, go through the same S and P steps as any other contact, and their profiles feed back into subsequent AR bands. The quantity is small enough that S&P₄ (or S&P₅) is a lightweight pass, not a full discovery cycle.
 
@@ -131,7 +131,13 @@ A processes contacts in bands, ordered by response likelihood (from P's estimate
 
 1. **AR₉₀** — contacts estimated ≥90% likely to respond. These are people who have publicly stated a concern that the campaign directly addresses, or who are already connected to someone in the campaign's network. They are the easiest to write a credible message to and the most likely to generate a communication log that informs later bands.
 
-2. After AR₉₀ completes and responses are logged: **manual review**. What did respondents actually engage with? Did they care about what the plan block assumed (e.g. jurisdictional independence), or did they care about something else (e.g. cost of compliance)? The connection strategy is revised based on observed evidence. This revision is a human task, not an AI task.
+2. After AR₉₀ completes and replies are logged: **manual review**, a human task, not an AI task:
+   - **Response rate vs estimate:** Did ≥90% contacts actually respond at ≥90%? If not, the response-likelihood model needs recalibration.
+   - **Angle effectiveness:** Which angles generated engagement? Which fell flat? If the campaign assumed targets care about jurisdictional independence but respondents consistently engaged with cost-of-compliance framing instead, the angle table needs revision.
+   - **Unexpected themes:** Did respondents raise concerns not anticipated in the plan block? These may indicate a value proposition the campaign has not articulated.
+   - **Network effects:** Did any respondent offer introductions or mention colleagues who should be contacted? These are warm leads that bypass the pipeline entirely and should be prioritised in the next band or handled outside SPAR through direct relationship channels.
+
+   The revision lands where the next band reads: angle priorities in the campaign's plan blocks, drafting guidance in `prompt_appendices`, and per-contact observations in each approach YAML's `r_note`.
 
 3. **AR₈₀** — contacts estimated ≥80% likely to respond. Messages are written using the revised strategy and can reference relationships established in AR₉₀ ("I've spoken to John at X, who shares your concern about...").
 
@@ -153,16 +159,9 @@ A has two sub-phases:
 
 **Output:** A communications file at `campaigns/{campaign}/{stem}.yaml`. At creation the file records the drafting of the first outbound message: the profile summary, the angle chosen, the A1/A2 iteration history (all drafts and C2 responses, so the human can see how the message took shape), the message body, and the contact method. Subsequent messages and replies on the same contact extend the same log.
 
-### R — Revise
+### R — Reply
 
-R is a human phase, not an AI phase. After each band of A completes and enough time has passed for responses to arrive, the human reviews:
-
-- **Response rate vs estimate:** Did ≥90% contacts actually respond at ≥90%? If not, the response-likelihood model from P needs recalibration.
-- **Angle effectiveness:** Which angles generated engagement? Which fell flat? If the campaign assumed targets care about jurisdictional independence but respondents consistently engaged with cost-of-compliance framing instead, the angle table needs revision.
-- **Unexpected themes:** Did respondents raise concerns not anticipated in the plan block? These may indicate a value proposition the campaign has not articulated.
-- **Network effects:** Did any respondent offer introductions or mention colleagues who should be contacted? These are warm leads that bypass the pipeline entirely and should be prioritised in the next band or handled outside SPAR through direct relationship channels.
-
-The output of R is a revised connection strategy: updated angle priorities, adjusted messaging emphasis, and any new relationship hooks to reference in subsequent bands. The revision lands where the next band reads: angle priorities in the campaign's plan blocks, drafting guidance in `prompt_appendices`, and per-contact observations in each approach YAML's `r_note`.
+R begins when a contact's final-round message is sent and ends when a reply is detected. The dispatcher's reply check (T7 in `spar-manager/state-machine.md`) watches the mailbox the campaign names, appends any reply to the contact's approach YAML, and stamps the message's `replied_date`. A reply in any form, on any channel, ends R for that contact: the contact reaches REPLIED, the reply check stops watching them, and the human holds the thread from there. A contact who has not replied stays in R.
 
 ## Stage notation
 
@@ -185,7 +184,7 @@ Before engagement begins, the marker is just `S&P{n}`. Once the first AR band st
 
 1. The S&P counter only increases. S&P1 → S&P2 → S&P3 is the standard autonomous progression. S&P0 precedes it: market sizing and the source census, written to the segment's `sweep.yaml` (`spar-S-sweep.md` §7) with no roster rows produced. A segment whose `sweep.yaml` exists with no rounds recorded stands at S&P0; file existence carries the state, the same way profile and approach files carry P and A states.
 2. S&P > 3 implies that AR work surfaced new names and a human triggered an additional S&P iteration. This is the normal case, not an exception.
-3. The AR counter only increases. Each band gets one A pass (approach) and one R pass (revise) before the counter increments.
+3. The AR counter only increases. Each band gets one A pass (approach) and one R pass (reply) before the counter increments.
 4. A can begin after any S&P iteration, not only after S&P3. A campaign with a small universe may begin engagement after S&P1.
 5. The S&P counter can increase after the AR counter exists. `S&P3.AR1` → `S&P4.AR1` → `S&P4.AR2` is a valid progression: AR1 triggered S&P4, then AR2 began.
 
@@ -298,7 +297,7 @@ This methodology does not replace any existing document. It provides the concept
 - **SPAR-S** (`spar-S-sweep.md`) — the operational procedure for the sweep phase. Generalises iterative discovery techniques first developed in project-specific SOPs and the research phase of a foundation's direct-outreach-pipeline into a campaign-agnostic procedure.
 - **SPAR-P** (`spar-P-profile.md`) — the operational procedure for profile building, a standalone profiling step that does not also draft messages.
 - **SPAR-A** (`spar-A-approach.md`) — the operational procedure for drafting connection messages, including the A1/A2 sparring loop, communication-log cross-referencing, and band-ordered processing.
-- **R has no procedure document** — it is a human review process. Its inputs and outputs are defined here; its execution is not automatable.
+- **R has no procedure document** — its execution is the dispatcher's reply check (`spar-manager/state-machine.md`); its start and end are defined here.
 - **Segment categorisation** (`spar-segment-categorisation.md`) — criteria for deciding when contacts belong in one segment versus two, when to merge or split segments, and how to handle sub-segments and cross-segment duplicates.
 
 Domain-specific content — target segments, angle tables, roster schemas, conversion benchmarks, funnel math — lives in each instance root (`spar-campaign-directory.md`): segment definitions and sweep files for the populations, campaign YAMLs for the asks. SPAR defines the method; the instance defines the targets.
