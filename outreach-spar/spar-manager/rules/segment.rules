@@ -16,7 +16,7 @@
 # owner either admits it to the schema or strikes it from the data.
 level root -keys {version title date sweeper target_type provenance \
                   discovery_criteria rating_rubric scope_note \
-                  geographic_catchment platforms kinds presence_gate priority}
+                  geographic_catchment platforms kinds no_profile_without priority}
 
 # ── Rules ────────────────────────────────────────────────────────────────
 rule vocab root -groups {seed}
@@ -68,6 +68,7 @@ rule predicate root platforms_vocab -code invalid_platforms \
 # non-token entry is caught at authoring time.
 rule predicate root kinds_list -code invalid_kinds -groups {seed}
 
-# presence_gate entries are web or a platform module; spar::extract_presence_gate
-# hard-errors on anything else at dispatch time, so catch it at authoring time.
-rule predicate root presence_gate_vocab -code invalid_presence_gate -groups {seed}
+# no_profile_without holds one key, any_of or all_of, of web or platform-module
+# tokens; spar::extract_no_profile_without hard-errors on anything else at
+# dispatch time, so catch it at authoring time.
+rule predicate root no_profile_without_shape -code invalid_no_profile_without -groups {seed}

@@ -66,12 +66,20 @@ proc spar::kinds_guidance {kinds} {
         [spar::load_prompt_template kinds-guidance.txt]]
 }
 
-# presence_guidance — the early-exit passage a segment's `presence_gate`
-# earns; empty when the segment lists none.
-proc spar::presence_guidance {checks} {
-    if {[llength $checks] == 0} { return "" }
-    return [string map [list __CHECKS__ [join $checks ", "]] \
-        [spar::load_prompt_template presence-gate.txt]]
+# no_profile_without_guidance — the passage a segment's `no_profile_without`
+# field earns; empty when the segment has none.
+proc spar::no_profile_without_guidance {field} {
+    if {[dict size $field] == 0} { return "" }
+    set checks [join [dict get $field checks] ", "]
+    if {[dict get $field mode] eq "all_of"} {
+        set pass "every check finds this person"
+        set fail "any check finds nothing of this person"
+    } else {
+        set pass "at least one check finds this person"
+        set fail "every check finds nothing of this person"
+    }
+    return [string map [list __CHECKS__ $checks __PASS__ $pass __FAIL__ $fail] \
+        [spar::load_prompt_template no-profile-without.txt]]
 }
 
 # spar::detect_browser_cmd — Probe the host once for a usable browser and
@@ -290,7 +298,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         set platforms [dict create]
         set required_skills {}
         set kinds {}
-        set presence_gate {}
+        set no_profile_without {}
     } else {
         # Version pre-flight (refuse-to-start): refuse a segment whose declared
         # spec version this tool does not support. Unstamped is allowed.
@@ -299,7 +307,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         set platforms [spar::extract_platforms $segment_data $segment_yaml]
         set required_skills [spar::extract_required_skills $segment_data $segment_yaml]
         set kinds [spar::extract_kinds $segment_data $segment_yaml]
-        set presence_gate [spar::extract_presence_gate $segment_data $segment_yaml]
+        set no_profile_without [spar::extract_no_profile_without $segment_data $segment_yaml]
     }
 
     set rows [spar::load_roster $roster_path]
@@ -411,7 +419,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
             __BROWSER_CMD__   [spar::detect_browser_cmd] \
             __PLATFORM_GUIDANCE__ [spar::platform_guidance $platforms] \
             __KINDS_GUIDANCE__ [spar::kinds_guidance $kinds] \
-            __PRESENCE_GUIDANCE__ [spar::presence_guidance $presence_gate] \
+            __NO_PROFILE_WITHOUT__ [spar::no_profile_without_guidance $no_profile_without] \
         ] [spar::load_prompt_template spar-p.txt]]
 
         # p_author (campaign prompt_appendices) is NOT appended to the profiler:

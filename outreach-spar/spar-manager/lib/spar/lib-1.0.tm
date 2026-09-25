@@ -525,18 +525,38 @@ proc spar::extract_kinds {segment_data segment_path} {
     return $kinds
 }
 
-# extract_presence_gate — the segment's `presence_gate` list
-# (segment-schema.yaml): web and platform-module tokens. Empty when absent.
-proc spar::extract_presence_gate {segment_data segment_path} {
+# profile_body — the text below a profile's front matter, trimmed; empty
+# when the file declares and records nothing beyond the roster patch.
+proc spar::profile_body {profile_path} {
+    set fd [open $profile_path r]
+    fconfigure $fd -encoding utf-8
+    set text [read $fd]
+    close $fd
+    if {[regexp {\A---\n.*?\n---\n(.*)\Z} $text -> body]} {
+        return [string trim $body]
+    }
+    return [string trim $text]
+}
+
+# extract_no_profile_without — the segment's `no_profile_without` field
+# (segment-schema.yaml) as a dict {mode any_of|all_of checks {...}}, checks
+# among web and the platform modules. Empty when absent.
+proc spar::extract_no_profile_without {segment_data segment_path} {
+    if {![dict exists $segment_data no_profile_without]} { return {} }
+    set field [dict get $segment_data no_profile_without]
+    set keys [dict keys $field]
+    if {[llength $keys] != 1 || [lindex $keys 0] ni {any_of all_of}} {
+        error "Segment $segment_path: no_profile_without holds one key, any_of or all_of"
+    }
     set allowed [concat web [spar::platform_modules]]
     set checks {}
-    foreach check [dict getdef $segment_data presence_gate {}] {
+    foreach check [dict get $field [lindex $keys 0]] {
         if {$check ni $allowed} {
-            error "Segment $segment_path: presence_gate entry '$check' (allowed: [join $allowed {, }])"
+            error "Segment $segment_path: no_profile_without entry '$check' (allowed: [join $allowed {, }])"
         }
         lappend checks $check
     }
-    return $checks
+    return [dict create mode [lindex $keys 0] checks $checks]
 }
 
 # roster_core_columns — the 14 columns spar-roster-format.md defines, in
