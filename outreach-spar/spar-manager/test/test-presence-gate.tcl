@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh9.0
 # Segment presence gate (segment.yaml `presence_gate:`): the checks whose
-# joint emptiness ends a profile at the floor, their closed vocabulary, and
+# joint emptiness excludes the row, their closed vocabulary, and
 # the passage the dispatcher renders from prompts/presence-gate.txt.
 package require yaml
 package require TclOO
