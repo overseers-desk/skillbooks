@@ -1,6 +1,6 @@
 # Amendment coder, re-coding under an amended rule
 
-Read `briefs/coder-brief-block.md` first, then the whole of `{{AMENDMENT}}`, its latest amendment at the end included, then the comparable profiles listed in your shard file under `{{CORPUS}}/shards/`, with the page texts under `{{PAGES}}` where your prompt says the re-code reads pages. The earlier codings of these units are closed to you.
+Read `briefs/coder-brief-block.md` first, then the whole of `{{AMENDMENT}}`, its latest amendment at the end included, then the comparable profiles listed in your shard file under `{{CORPUS}}/shards/`, with its pages: run bin/corpus-unit {{PAGES}} <unit> (the profile's name without .md) and read every file in the folder it prints; search across units with bin/corpus-grep, where your prompt says the re-code reads pages. The earlier codings of these units are closed to you.
 
 The rule review changed the rules of the variables its change list names, and the codebook has every unit coded again on a changed variable before any figure is computed. Code those variables, and no others, as the rules now read, for every profile in your shard. This brief serves a rule a coder applies; a variable whose test became a phrase list plus a judgement is re-made by a script and two readers instead, and your prompt will not name it.
 

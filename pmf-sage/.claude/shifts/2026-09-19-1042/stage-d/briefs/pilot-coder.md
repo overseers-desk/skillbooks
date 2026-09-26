@@ -1,6 +1,6 @@
 # Pilot coder
 
-Read `briefs/coder-brief-block.md` first, then the whole of `{{AMENDMENT}}`, then the comparable profiles listed in your shard file under `{{CORPUS}}/shards/`, with the page texts your prompt points to under `{{PAGES}}` where the pilot codes from pages.
+Read `briefs/coder-brief-block.md` first, then the whole of `{{AMENDMENT}}`, then the comparable profiles listed in your shard file under `{{CORPUS}}/shards/`, with its pages: run bin/corpus-unit {{PAGES}} <unit> (the profile's name without .md) and read every file in the folder it prints; search across units with bin/corpus-grep, where the pilot codes from pages.
 
 This is a pilot: the variables your prompt names are the ones the study doubts, and your coding is read against another coder's of the same units to find out whether they can be coded at all before the corpus is put through them. Code those variables and no others.
 

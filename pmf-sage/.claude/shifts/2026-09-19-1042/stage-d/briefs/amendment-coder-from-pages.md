@@ -1,6 +1,6 @@
 # Amendment coder, from page text
 
-Read `briefs/coder-brief-block.md` first, then the whole of `{{AMENDMENT}}`, then, for each comparable profile listed in your shard file under `{{CORPUS}}/shards/`, the profile and every page text held for it in the folder of the profile's name under `{{PAGES}}`, and in the folders beneath it, since some units keep their text one folder down.
+Read `briefs/coder-brief-block.md` first, then the whole of `{{AMENDMENT}}`, then, for each comparable profile listed in your shard file under `{{CORPUS}}/shards/`, the profile and its pages: run bin/corpus-unit {{PAGES}} <unit> (the profile's name without .md) and read every file in the folder it prints; search across units with bin/corpus-grep, since some units keep their text one folder down.
 
 Code the variables your prompt names, for every profile in your shard, from the page texts read in full. The profile tells you which page falls in which scope and which unit the coding is about; its quotations are an earlier reader's selection and are not your source, so a value the profile lacks and the page carries is coded from the page.
 

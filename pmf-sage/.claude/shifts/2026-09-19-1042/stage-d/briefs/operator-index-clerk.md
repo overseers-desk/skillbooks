@@ -1,6 +1,6 @@
 # Operator index clerk
 
-Read `briefs/standing-brief-block.md` first, then `0-comparables/corpus-inventory.md`, the corpus index under `{{CORPUS}}`, and the comparable profiles under `{{PROFILES}}` as your rule sends you to them, with the page texts under `{{PAGES}}` where a profile's addresses are not enough. Beyond those and the standing block's own files, nothing in the repository is open to you: no card, no finding, nothing the venue holds.
+Read `briefs/standing-brief-block.md` first, then `0-comparables/corpus-inventory.md`, the corpus index under `{{CORPUS}}`, and the comparable profiles under `{{PROFILES}}` as your rule sends you to them, with its pages: run bin/corpus-unit {{PAGES}} <unit> (the profile's name without .md) and read every file in the folder it prints; search across units with bin/corpus-grep, where a profile's addresses are not enough. Beyond those and the standing block's own files, nothing in the repository is open to you: no card, no finding, nothing the venue holds.
 
 Several units of a corpus of this kind belong to one body that publishes one decision across many sites, so a count of units can count one decision many times; and a frame drawn from several registers can draw one operator twice as two units. Write the one grouping the run will use.
 

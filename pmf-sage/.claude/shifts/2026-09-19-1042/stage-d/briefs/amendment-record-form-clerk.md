@@ -1,6 +1,6 @@
 # Record-form clerk
 
-Read `briefs/standing-brief-block.md` first, then the standing instructions of `{{CODEBOOK}}` and the whole of `{{AMENDMENT}}`, then the corpus index under `{{CORPUS}}`, the listing of `{{PAGES}}`, and any two comparable profiles under `{{PROFILES}}` to see the rows a coder starts from. Beyond those and the standing block's own files, nothing in the repository is open to you.
+Read `briefs/standing-brief-block.md` first, then the standing instructions of `{{CODEBOOK}}` and the whole of `{{AMENDMENT}}`, then the corpus index under `{{CORPUS}}`, the fetch logs in `{{PAGES}}`, and any two comparable profiles under `{{PROFILES}}` to see the rows a coder starts from. Beyond those and the standing block's own files, nothing in the repository is open to you.
 
 Cut the header lines here, once, so that every coder copies one line rather than laying out columns from prose.
 
