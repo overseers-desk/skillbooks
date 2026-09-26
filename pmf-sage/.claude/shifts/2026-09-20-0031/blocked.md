@@ -2,7 +2,6 @@
 
 - Everything under "Needs the user" in `../2026-09-19-1042/blocked.md` still stands (the unpaid River Day booking, the wedding enquiry system's device verification, the rivals'-terms collection rule, the search instruments no run holds, chapel hire's liability policy, a home for the audit table).
 - The stored page copies of the chapel hire and party packages surveys are not on this disk (the capture folder is outside git). If another machine or a backup holds `data/chapel-hire-2026-09/` or the party survey's `4-collection/data/`, copying them here lets the new variables be coded from the pages as read on the capture date.
-- The shift records and the improvements file are untracked files under the method's checkout and exist on this disk only. Name a place they may be committed to, or accept that.
 - Publishing the end-of-run artifact may ask for an approval click.
 - Party packages, document conflicts for the "DMS and Accounts" chat (not posted while you are away): the Main Dining Deck is about 100 seats in `sot/S4-booking-platforms-and-capacity.md` section 5.3 and 180, expandable past 200, in `sot/S2-fees-and-service-hours.md` section 8.2; the Red Tables' party capacity differs across three documents (capability extract E4, E5).
 - Party packages: no working-with-children check, public liability cover or equestrian accreditation appears in any capability file the clerk read (capability extract E70). That is an absence of record, not a finding that none is held; a card that leans on cover needs your answer.
