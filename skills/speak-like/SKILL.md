@@ -1,6 +1,6 @@
 ---
 name: speak-like
-description: Rewrite a draft so it speaks as an identity (human, director, aussie developer, any phrase), tuned by manner adverbs (--warmly, --tersely). Labels each line for AI tells and editorial violations, rewrites only the flagged lines, then smooths the seams. `speak-like human` is the pass for prose that must not read as AI-written. Accepts a judge's findings via --findings; optional project profile and dialect target.
+description: Before drafting prose for a reader other than the user, read its Writing mode. Explicit /speak-like <identity> rewrites a draft line by line as that identity; `speak-like human` strips AI tells.
 argument-hint: <identity> [manner flags] [--profile <path>] [--dialect <varieties>] [--findings <path>] [--two-pass] <draft-path>
 ---
 
@@ -9,6 +9,12 @@ argument-hint: <identity> [manner flags] [--profile <path>] [--dialect <varietie
 The writing skill. It rewrites a draft so the text speaks as the given identity — a human, a director, an aussie developer — touching only the lines that need it and leaving the rest alone. It is the counterpart of `this-guy-aint`, which is the detection skill: that one judges and edits nothing; this one writes and judges nothing. The two compose through a findings file, described below.
 
 `speak-like human` is the most common invocation and is the old tell-tale: remove the signs of AI writing from prose, line by line. It works on any prose a model emits: documentation, posts, release notes, messages, briefs.
+
+## Writing mode
+
+Prose a person other than the user will read is drafted to two entries: `W07` in `editorial-base.md` (the em dash) and the `g01` signal words in `anti-pattern.md`. Read those two entries by grep, not the whole files, then draft. That is all of writing mode; the passes below run only on an explicit `/speak-like`.
+
+In scope: email, chat and social messages, posts, letters, release notes, publications, code comments and docstrings. Out of scope: the reply to the user, dictation and transcription, and text one AI writes for another (memory, plans, worklogs, prompts, briefs, issue bodies).
 
 ## Invocation
 
@@ -98,7 +104,7 @@ Pass 1 is classification and runs well on the session's default tier. Pass 2 on 
 `${CLAUDE_PLUGIN_ROOT}/skills/speak-like/`:
 
 - `anti-pattern.md` — the lowercase AI-tell taxonomy, the living canonical home
-- `editorial-base.md` — the shipped uppercase codes (`W01`–`W06`, `D01`)
+- `editorial-base.md` — the shipped uppercase codes (`W01`–`W07`, `D01`)
 - `label-prompt.md` — the Pass 1 subagent prompt
 - `edit-prompt.md` — the Pass 2 subagent prompt
 

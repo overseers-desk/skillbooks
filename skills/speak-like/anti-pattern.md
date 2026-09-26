@@ -218,7 +218,7 @@ The point is not to forbid the word. The point is that when one appears, you sto
 
 Why a canary and not a blocklist: a model cannot feel these words as unusual, because they are common in its training text. Telling it "do not use them" patches the named word while the AI-speech mode that produced it stays on, and the same mode reaches for the next unlisted cliché. The canary instead trips the high-level rules, which repair the sentence and the mode together.
 
-**Signal words (living list):** *anchor* (as a metaphor), *enabler/enabling*, *load-bearing*, *leverage*, *robust*, *seamless*, *unlock(s)*, *driver/drives*, *harness* (as a verb), *surface* (as a verb), *cornerstone*, *ecosystem*, *delve*. Add a word when it recurs in real drafts.
+**Signal words (living list):** *anchor* (as a metaphor), *enabler/enabling*, *load-bearing*, *leverage*, *robust*, *seamless*, *unlock(s)*, *driver/drives*, *harness* (as a verb), *surface* (as a verb), *cornerstone*, *ecosystem*, *delve*, *smoking gun*. Add a word when it recurs in real drafts.
 
 **Trigger:** the label pass emits `[g01]` for any in-scope line containing a signal word. A `g01` line is always re-examined by the say-it-aloud method and the reader tests, even if it is otherwise below the edit threshold; the word is never swapped for a fancier synonym, the sentence is re-said and kept only if it then reads as speech.
 

@@ -28,7 +28,7 @@ Six rules from George Orwell's "Politics and the English Language" (1946), adopt
 
 ## Punctuation
 
-**`W07` Em dash, LHD-strict.** Any em dash (—) forces a rewrite of its line; one is enough. Recast so dependent words sit closer together and the dash becomes unnecessary, or replace it with a comma, parentheses, a colon, or a full stop, whichever the sense calls for. Two things are not this code and are left alone: attribution after a quotation (`"Knowledge is power." — Bacon`), and the en dash (–) in a numeric range (`pages 12–18`), which is a different mark. This is stricter than the anti-pattern taxonomy's `s05`, which tolerated a lone em dash; the office LHD rule treats a single one as a defect, so em dash lives here as a forcing editorial code rather than there as a tolerated tell.
+**`W07` Em dash, strict.** Any em dash (—) forces a rewrite of its line; one is enough. Recast so dependent words sit closer together and the dash becomes unnecessary, or replace it with a comma, parentheses, a colon, or a full stop, whichever the sense calls for. Two things are not this code and are left alone: attribution after a quotation (`"Knowledge is power." — Bacon`), and the en dash (–) in a numeric range (`pages 12–18`), which is a different mark. This is stricter than the anti-pattern taxonomy's `s05`, which tolerated a lone em dash: here a single one is a defect, so em dash is a forcing editorial code rather than a tolerated tell.
 
 ---
 
