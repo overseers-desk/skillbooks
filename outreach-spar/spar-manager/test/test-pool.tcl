@@ -352,6 +352,9 @@ if {$op eq "search" && [lindex $argv 1] eq "down"} {
         {"uid": "U4", "from": "Member <member@hotmail.com>", "to": ["Me <me@ours.example>"], "subject": "from U3A", "date": "2026-04-27T12:00:00"}
     ], "provenance": {}}}}}
 } elseif {$op eq "read"} {
+    # The real courier writes a notice to stderr ahead of its JSON when its
+    # command file lags the package; the dispatcher reads both streams merged.
+    puts stderr {courier command file is at version 1.1.16, package is 1.1.19. Run `courier install-claude-command --yes` to update it.}
     switch -- $uid {
         U2 { puts {{"read": {"acct": {"body": "Forwarded to me; yes please", "from": "president@acme-venues.au", "date": "2026-04-26T09:00:00", "in_reply_to": "<outlook-id@acme-venues.au>", "references": ["<outlook-id@acme-venues.au>", "<0100019a-dest@email.amazonses.com>"]}}}} }
         U4 { puts {{"read": {"acct": {"body": "from U3A", "from": "member@hotmail.com", "date": "2026-04-27T12:00:00", "references": []}}}} }

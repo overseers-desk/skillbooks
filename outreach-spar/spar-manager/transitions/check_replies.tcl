@@ -358,10 +358,18 @@ proc ::spar::imap::check_one {opts} {
         # even if the body could not be retrieved.
         set reply_text "(no text content)"
         set thread_ids {}
+        set read_error ""
         if {[catch {
             set read_out [spar::pool_exec $courier_bin --imap $account read \
                 -f $folder -u $uid]
-            set raw [::json::json2dict $read_out]
+            # courier's stderr arrives merged ahead of the JSON (a version
+            # notice, a connection warning), as it does for the search.
+            set rb [string first "\{" $read_out]
+            set re [string last  "\}" $read_out]
+            if {$rb < 0 || $re <= $rb} {
+                error "no JSON in courier read output: [string range $read_out 0 199]"
+            }
+            set raw [::json::json2dict [string range $read_out $rb $re]]
             set inner [dict get $raw [lindex [dict keys $raw] 0]]
             set email_data [dict get $inner [lindex [dict keys $inner] 0]]
             set body [dict getdef $email_data body ""]
@@ -371,14 +379,15 @@ proc ::spar::imap::check_one {opts} {
             set irt [dict getdef $email_data in_reply_to ""]
             if {$irt ne ""} { lappend thread_ids $irt }
             lappend thread_ids {*}[dict getdef $email_data references {}]
-        } _]} {
+        } rerr]} {
+            set read_error $rerr
             set reply_text "(inbox read failed -- review manually:\n  $courier_bin --imap $account read -f $folder -u $uid)"
         }
 
         set approach_path [spar::reply_attribution $approaches \
             $from_email_addr $thread_ids]
         if {$approach_path eq ""} {
-            lappend unattributed "unplaced reply $date_str from $from_display, subject \"[dict getdef $msg subject ""]\": record it on its approach by hand ($courier_bin --imap $account read -f $folder -u $uid)"
+            lappend unattributed "unplaced reply $date_str from $from_display, subject \"[dict getdef $msg subject ""]\": record it on its approach by hand ($courier_bin --imap $account read -f $folder -u $uid)[expr {$read_error eq "" ? "" : "; its headers could not be read, so no thread could place it: $read_error"}]"
             continue
         }
 
