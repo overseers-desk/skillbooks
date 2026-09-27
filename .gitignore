@@ -4,3 +4,6 @@ config.yaml
 __pycache__/
 *.pyc
 *.log
+
+# A session's shift records belong to the operator's repository.
+**/.claude/shifts/
