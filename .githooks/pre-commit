@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Pre-commit guard for this repository, which holds methodology and nothing of
+# the business it is run for. It refuses a commit that stages either of:
+#   - a path under a .claude/shifts/ directory: a session's shift records,
+#     which belong to the operator's own repository;
+#   - content naming the business. The names are read from the clone's own
+#     config, never from the tree, so the tree stays clean of them:
+#         git config --add aesop.businessTerm <name>
+# Not yet enforced: how each clone installs it is still to be decided.
+set -u
+
+mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACMR)
+[ "${#staged[@]}" -gt 0 ] || exit 0
+status=0
+
+shifts=()
+for p in "${staged[@]}"; do
+  case "$p" in .claude/shifts/*|*/.claude/shifts/*) shifts+=("$p") ;; esac
+done
+if [ "${#shifts[@]}" -gt 0 ]; then
+  echo "pre-commit: shift records stay out of this repository; unstage:" >&2
+  printf '  %s\n' "${shifts[@]}" | head -20 >&2
+  status=1
+fi
+
+mapfile -t terms < <(git config --get-all aesop.businessTerm)
+if [ "${#terms[@]}" -eq 0 ]; then
+  echo "pre-commit: no business names configured, so staged content cannot be checked." >&2
+  echo "  Add each name the business goes by:  git config --add aesop.businessTerm <name>" >&2
+  exit 1
+fi
+patterns=()
+for t in "${terms[@]}"; do patterns+=(-e "$t"); done
+specs=()
+for p in "${staged[@]}"; do specs+=(":(literal)$p"); done
+hits="$(git grep -i -F -n --cached "${patterns[@]}" -- "${specs[@]}")"
+rc=$?
+case $rc in
+  0)
+    echo "pre-commit: staged content names the business; it belongs in the operator's repository, or the name gives way to its role:" >&2
+    printf '%s\n' "$hits" | head -20 | cut -c1-160 >&2
+    status=1 ;;
+  1) ;;
+  *)
+    echo "pre-commit: git grep failed (exit $rc); the content check did not run." >&2
+    status=1 ;;
+esac
+exit $status
