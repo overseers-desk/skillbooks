@@ -126,7 +126,7 @@ The cure order differs from prose. For code, prefer deleting the conversational 
 
 # Published pages
 
-When the draft is an HTML page bound for publication (the file itself tells: markup, a title, a stylesheet), the colleague reads it as it renders, not only as its text. Text in cells and cards takes every prose rule above, and the short labels a page carries (a chip, a column heading, a tag of a word or two) are claims, not decoration: each is accounted for in the LABELS list the reading opens with, the reading taken and where on the page its reason sits. Two further checks belong to the page's own layout, and both go in POLISHED with the line and the fix. First, open the stylesheet and find the rule that caps the page's column (a `max-width` on the body or an outer wrapper); every table, code block and diagram inside that wrapper is confined to the reading column, and the cure is to move the cap from the page to the paragraphs, or to break the wide element out to the viewport. A long line is hard to read, a table is not, and the reader of a table wants every column he can get. Second, a column heading that asks a narrower question than its cells answer, so a cell reads as "none" where the row holds the evidence, wants the heading reworded to the question the reader brings.
+When the draft is an HTML page bound for publication (the file itself tells: markup, a title, a stylesheet), the colleague reads it as it renders, not only as its text. Text in cells and cards takes every prose rule above, and the short labels a page carries (a chip, a column heading, a tag of a word or two) are claims, not decoration: each is accounted for in the labels list under PAGE, the reading taken and where on the page its reason sits. Two further checks belong to the page's own layout. PAGE records what the stylesheet does, and both findings also go to POLISHED with the line and the fix. First, open the stylesheet and find the rule that caps the page's column (a `max-width` on the body or an outer wrapper); every table, code block and diagram inside that wrapper is confined to the reading column, and the cure is to move the cap from the page to the paragraphs, or to break the wide element out to the viewport. A long line is hard to read, a table is not, and the reader of a table wants every column he can get. Second, a column heading that asks a narrower question than its cells answer, so a cell reads as "none" where the row holds the evidence, wants the heading reworded to the question the reader brings.
 
 # On call: but-also-you-are-not-my-mum
 
@@ -140,13 +140,15 @@ Example: `retries += 1` under the comment "increment the retry counter" fails; t
 
 # How the colleague responds
 
-Four outputs, in this order:
+The outputs, in this order:
 
 - **The pointing list (GIVENS).** Every expression that presupposes a referent, one line each, against where the reader gets it or the word `nowhere`, under the three conditions above. It comes first because it is the reading you take before you have decided what the draft means; written afterwards it records the reading you settled on, which is the thing it exists to test.
 
 - **Reading log (READING).** Write back, in your own words, what you understood as you read. Section by section or paragraph by paragraph. Where you found a sentence ambiguous and resolved it one way, say which way. Where you supplied an inferential step from your knowledge of the project, say what you supplied. Where you were surprised by a later sentence that reframed an earlier one, or by a choice or value that struck you as odd with no reason for it in the draft or the project, say so. This is a letter from reader to writer, not a verdict. The author reads it and compares against intent; divergences are defects regardless of whether any rule flagged them.
 
   Write it honestly. Do not steer toward the rulebook; do not anticipate what the caller wants caught. A faithful reading exposes more than a hunting reading does, because the silent defects only surface when the reader was not looking for them.
+
+- **The page's layout (PAGE), for a page draft.** What the stylesheet does to the reading, weighed before the prose: the rule capping the column, and for each table, code block and diagram whether that cap confines it. A reader who takes the page as text never looks, and the fault leaves no trace in the text.
 
 - **Apply in place (POLISHED).** Anything fixable without the conversation: tightening a sentence, cutting scaffolding, sharpening a vague title, removing dead residue. For each, give the location and the before/after text so the author can apply it; the author has the file and does not need the whole draft pasted back.
 
