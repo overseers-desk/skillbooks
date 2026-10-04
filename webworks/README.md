@@ -125,6 +125,7 @@ Check before running any test. Left column = cargo cult sign, right column = wha
 ### IHG (ihg.com)
 
 - **Block mechanism:** Akamai reads the User-Agent. Headless Chrome-compatible browsers send `HeadlessChrome/...`. Override with `--user-agent`.
+- **Version floor:** the same edge denies an old Chrome version on `apis.ihg.com` POSTs: Chrome 137 and older refused, 139 and newer accepted, observed 2026-10-04. The token may read `Chrome/` or `Chromium/`.
 - **Open API endpoints:** `apis.ihg.com/availability/v3/hotels/offers` and `apis.ihg.com/locations/v1/destinations` work via curl. GraphQL is WAF-protected.
 - **API key:** Static client-side key `se9ym5iAzaW8pxfBjkmgbuGjJcr3Pj6Y`.
 
