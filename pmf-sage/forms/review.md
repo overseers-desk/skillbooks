@@ -4,7 +4,7 @@ The run's decision cards. Each card is a question, the ways the market answers i
 
 ## The ruling sheet
 
-One row a card. *Your part* says what the row asks of you: confirm, rule, commission an observation, or nothing. *Recommended* reads withheld where no option is carried, and the margin column then gives the counts the card stands at. A negative margin means the largest count runs against the recommendation, which then rests on the other evidence its card names. *Rests on* says whether the recommendation stands on the market, on the business's own buyers, or on both, and is blank on a withheld row. *What is held* says whether the recommendation keeps or leaves a value the business already held. *Market-only reading* says where a fresh clerk landed who read the market alone, with neither the business's records nor the first clerk's work in hand (the card files call it the third derivation): agrees, differs, or declines, which means that clerk found nothing in the market to recommend on. *Ruled* says whether you have already ruled the question; where a card leaves your ruling, your ruling stands until you rule again. The clerks are the AI agents who read the survey and wrote the cards. A card's Joint line, where the order of ruling quotes one, is the line on that card saying which other cards it was decided with.
+One row a card. *Your part* says what the row asks of you: confirm, rule, commission an observation, or nothing. *Recommended* reads withheld where no option leads, and the margin column then gives the counts the card stands at. A negative margin means the largest count runs against the recommendation, which then rests on the other evidence its card names. *Rests on* says whether the recommendation stands on the market, on the business's own buyers, or on both; on a withheld row it says what the counts stand on, where the card states it. *What is held* says whether the recommendation keeps or leaves a value the business already held. *Market-only reading* says where a fresh clerk landed who read the market alone, with neither the business's records nor the first clerk's work in hand (the card files call it the third derivation): agrees, differs, or declines, which means that clerk found nothing in the market to recommend on; two words, such as differs / declines, mean the two halves of the question landed differently. *Ruled* says whether you have already ruled the question; where a card's recommendation departs from your ruling, your ruling stands until you rule again. The clerks are the AI agents who read the survey and wrote the cards. A card's Joint line, where the order of ruling quotes one, is the line on that card saying which other cards it was decided with.
 
 {{sheet}}
 
@@ -12,7 +12,7 @@ One row a card. *Your part* says what the row asks of you: confirm, rule, commis
 
 {{order}}
 
-## What passed through
+## What the cards add up to
 
 {{counts}}
 
