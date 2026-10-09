@@ -72,7 +72,7 @@ def check_file(path, refs, finds, nouns, failures, is_brief):
 def main():
     run = Path(sys.argv[1]).resolve()
     emit = "--check-only" not in sys.argv[2:]
-    nouns = BUYER_NOUNS + [w.strip().lower() for w in (run / "buyer-nouns.txt").read_text().splitlines()] if (run / "buyer-nouns.txt").exists() else BUYER_NOUNS
+    nouns = BUYER_NOUNS + [w.strip().lower() for w in (run / "buyer-nouns.txt").read_text(errors="replace").splitlines() if w.strip()] if (run / "buyer-nouns.txt").exists() else BUYER_NOUNS
     refs, rows = ruled_refs(run)
     finds = findings(run)
     failures = []
