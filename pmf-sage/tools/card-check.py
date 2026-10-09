@@ -73,7 +73,9 @@ def prior_match(recommended, priors, options):
     shared = {w for w in re.findall(r"[a-z]{4,}", " ".join(o["name"].lower() for o in options))
               if sum(w in o["name"].lower() for o in options) >= 2}
     words = {w for w in re.findall(r"[a-z]{4,}", priors.lower())} - STOP - shared
-    return any(w in recommended.lower() for w in words)
+    # whole words only, a word inside a longer word is not the prior's; a plural is the same word
+    stem = lambda w: w[:-1] if len(w) > 4 and w.endswith("s") and not w.endswith("ss") else w
+    return bool({stem(w) for w in words} & {stem(w) for w in re.findall(r"[a-z]+", recommended.lower())})
 
 
 def main():
