@@ -22,7 +22,7 @@ Alongside the findings, the corpus yields an activity taxonomy with prevalence f
 
 ## 2. The rival register — the incumbents to beat
 
-The operators that contest the same bookings, the local ones where the offering is bound to a place, profiled one by one and section-numbered, with the demand signal around them, in five kinds: which buyers already go where, what they pay all-in, the live enquiries, the meetings behind those signals, and what buyers type. This is the half that says who has to be displaced, and it feeds the named-buyer boundary test at Adjudicate and the judge scenarios at Game.
+The operators a buyer meets for the same job: the local ones where the offering is bound to a place, and where it is bound to none, the ones met on the same surfaces, drawn from the coded corpus by a rule stated at the register's head. They are profiled one by one and section-numbered, with the demand signal around them, in five kinds: which buyers already go where, what they pay all-in, the live enquiries, the meetings behind those signals, and what buyers type. This is the half that says who has to be displaced, and it feeds the named-buyer boundary test at Adjudicate and the judge scenarios at Game.
 
 A live enquiry is recorded with the date of enquiry, the date wanted, the party, the channel and the outcome; a weekday and a month without a date cannot serve a card's buyer test. Beside any count of enquiries the record states the condition the count was taken under: what was offered in the window, under what name, on what surface. An enquiry for something the operator did not offer is recorded as such and kept apart from the rest. It is the buyer doing the survey's work, and it weighs more than many for what is already on the price list.
 
