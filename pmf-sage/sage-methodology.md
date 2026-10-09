@@ -19,7 +19,7 @@ AI fails at product work in specific, repeatable ways, while being better than a
 
 The named failure modes, each countered by a specific mechanism:
 
-- **Text-generation inheritance**: a parameter copied because a nearby document said it, with evidence fitted around it afterwards. Countered by clerks who derive with the fenced files, the sibling runs and the venue's own current prices and shapes closed to them, a separate priors clerk who appends the priors last, a third derivation on any recommendation that lands on a prior, and a card check that refuses a card with one figured option.
+- **Text-generation inheritance**: a parameter copied because a nearby document said it, with evidence fitted around it afterwards. Countered by clerks who derive with the fenced files, the sibling runs and the operator's own current prices and shapes closed to them, a separate priors clerk who appends the priors last, a third derivation on any recommendation that lands on a prior, and a card check that refuses a card with one figured option.
 - **Librarian anchoring**: asked for market analysis, the AI mines internal opinion and old plans, and the loudest internal adjective becomes the product. Countered by Survey giving the deriving AI a real market to read, and by the rule that a card with one option goes back to Survey.
 - **Confabulated offers**: asked to sell, an AI invents what it does not have; told to sell a pen, it offers a million dollars with the pen. Countered by the Adjudicate table as a bounding box on every downstream promise.
 - **Self-infantisation**: an AI briefing other AIs hardens an undecided parameter into a fixed rule the owner never granted. Countered by the rule that a parameter absent from the decisions table is design freedom.

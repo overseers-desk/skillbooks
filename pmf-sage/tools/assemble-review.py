@@ -155,17 +155,17 @@ def main():
         by = lambda w: [k for k, v in landings.items() if v == w]
         read = [k for k, v in landings.items() if v not in ("none", "not stated")]
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
-                  f"{matches} recommendations keep a value the venue already holds, {leaves} leave one"
+                  f"{matches} recommendations keep a value the business already holds, {leaves} leave one"
                   + (f", {withheld} are withheld because no option is carried" if withheld else "")
-                  + "." + (f" On {n - held} of the {n} the venue held nothing, whatever the line reads." if n - held else "")
-                  + " Keeping and leaving were asked for the same proof, a market-only reading by a fresh clerk who saw neither the venue's records nor the first clerk's work. "
+                  + "." + (f" On {n - held} of the {n} the business held nothing, whatever the line reads." if n - held else "")
+                  + " Keeping and leaving were asked for the same proof, a market-only reading by a fresh clerk who saw neither the business's records nor the first clerk's work. "
                   + f"Of {len(read)} such readings, {len(by('agrees'))} agree with the card"
                   + (f", {len(by('differs'))} differ ({', '.join(by('differs'))})" if by("differs") else "")
                   + (f", {len(by('declines'))} found nothing in the market to recommend on ({', '.join(by('declines'))})" if by("declines") else "")
                   + (f", {len(part)} agree on one half of the question and not the other ({', '.join(part)})" if part else "") + "."
                   + (f" {outstanding} held values have no market-only reading yet." if outstanding else "")
                   + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else "")
-                  + (f" The measured-in lines mark a measured population as differing from this venue's shape {differs} times." if differs else ""))
+                  + (f" The measured-in lines mark a measured population as differing from this business's shape {differs} times." if differs else ""))
     else:
         counts = raw
     # a card's own words about its match must agree with the check's count of it
