@@ -10,7 +10,7 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
 
 | option | figure | source | capability | sentence |
 |---|---|---|---|---|
-| <value the market shows> | <number with its unit> | <finding, taxonomy row, search finding, register section or enquiry count> | <mechanism or resource, or the cost line of building it> | <what the person at the gate says to a named roster profile on a Saturday, and that buyer's likely answer> |
+| <value the market shows> | <number with its unit> | <finding, taxonomy row, search finding, register section or enquiry count> | <mechanism or resource, or the cost line of building it> | <what the seller says to a named roster profile where the sale is made, and that buyer's likely answer> |
 
 Options exclude one another; where two of them can be done together, doing both is an option of its own with its own figure. Operators silent on the parameter are counted once, in a line under the table, and sit in no option's figure. Where saying nothing is itself an option, its figure is that silent count, and the Recommended line gives the margin both ways: among operators that state a posture, and with the silent counted in.
 
@@ -20,7 +20,7 @@ Options exclude one another; where two of them can be done together, doing both 
 
 **Chip:** <inherited | anchored | derived | radical, compound allowed>
 
-**Measured in:** <stratum, cell(s), numerator/denominator; arrival dimensions each marked shared or differs; or the enquiry count's condition line>
+**Measured in:** <stratum, cell(s), numerator/denominator; the shape note's dimensions each marked shared or differs; or the enquiry count's condition line>
 
 **Cost lines:** <existence facts from the capability record that bear on this card, one per line, named>
 
