@@ -91,7 +91,7 @@ def main():
                 check_file(p, refs, finds, nouns, failures, True)
     shape = next(run.glob("**/shape-note.md"), None)
     situation = run / "briefs" / "venue-situation.md"
-    # the shape note's front matter is the file's record, not the operator's situation
+    # a front-matter block (title, date, status) describes the shape note, not the operator
     note = re.sub(r"\A---\n.*?\n---\n", "", shape.read_text(errors="replace").lstrip(), flags=re.S).strip() if shape else ""
     if emit: situation.write_text("# Venue situation (generated; do not edit)\n\n"
                          + (note + "\n\n" if note else "")
