@@ -151,9 +151,9 @@ def main():
     m = re.search(r"(\d+) cards; (\d+) hold a value; (\d+) match it; (\d+) leave it; (\d+) withheld; (\d+) third derivations; (\d+) outstanding; (\d+) mismatched margin units; (\d+) legs marked differs", raw)
     if m:
         n, held, matches, leaves, withheld, thirds, outstanding, mism, differs = (int(x) for x in m.groups())
-        # a landing that agrees with one half is split; one that declines without agreeing found nothing to recommend on
-        part = [k for k, v in landings.items() if "/" in v and "agrees" in v]
-        by = lambda w: [k for k, v in landings.items() if ("declines" if "declines" in v and "agrees" not in v else v) == w]
+        # a landing in two words is split across the question's two halves, and the review quotes its words
+        part = [k for k, v in landings.items() if "/" in v]
+        by = lambda w: [k for k, v in landings.items() if v == w]
         read = [k for k, v in landings.items() if v not in ("none", "not stated")]
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
                   f"{matches} recommendations keep a value the business already holds, {leaves} leave one"
@@ -163,7 +163,7 @@ def main():
                   + f"Of {len(read)} such readings, {len(by('agrees'))} agree with the card"
                   + (f", {len(by('differs'))} differ ({', '.join(by('differs'))})" if by("differs") else "")
                   + (f", {len(by('declines'))} found nothing in the market to recommend on ({', '.join(by('declines'))})" if by("declines") else "")
-                  + (f", {len(part)} agree on one half of the question and not the other ({', '.join(part)})" if part else "") + "."
+                  + (f", {len(part)} split across the two halves of the question ({'; '.join(k + ': ' + landings[k] for k in part)})" if part else "") + "."
                   + (f" {outstanding} held values have no market-only reading yet." if outstanding else "")
                   + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else "")
                   + (f" The measured-in lines mark a measured population as differing from this business's shape {differs} times." if differs else ""))
