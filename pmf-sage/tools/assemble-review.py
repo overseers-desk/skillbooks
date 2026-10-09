@@ -151,8 +151,9 @@ def main():
     m = re.search(r"(\d+) cards; (\d+) hold a value; (\d+) match it; (\d+) leave it; (\d+) withheld; (\d+) third derivations; (\d+) outstanding; (\d+) mismatched margin units; (\d+) legs marked differs", raw)
     if m:
         n, held, matches, leaves, withheld, thirds, outstanding, mism, differs = (int(x) for x in m.groups())
-        part = [k for k, v in landings.items() if "/" in v]
-        by = lambda w: [k for k, v in landings.items() if v == w]
+        # a landing that agrees with one half is split; one that declines without agreeing found nothing to recommend on
+        part = [k for k, v in landings.items() if "/" in v and "agrees" in v]
+        by = lambda w: [k for k, v in landings.items() if ("declines" if "declines" in v and "agrees" not in v else v) == w]
         read = [k for k, v in landings.items() if v not in ("none", "not stated")]
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
                   f"{matches} recommendations keep a value the business already holds, {leaves} leave one"
