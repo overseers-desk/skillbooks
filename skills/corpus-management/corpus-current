@@ -27,12 +27,12 @@ for a in "$@"; do
   else
     printf '%s\n' "$a"
   fi
-done | sort -u |
+done | LC_ALL=C sort -u |
   # sort key is the stem, the name less -pages/-snapshot.tar.zst, so that 2026-09-20
   # sorts before 2026-09-20-0100-refetch; a snapshot ends its folder's older archives
   awk '{ n = $0; sub(/.*\//, "", n); k = n; sub(/-(pages|snapshot)\.tar\.zst$/, "", k)
          d = $0; if (!sub(/[^\/]*$/, "", d)) d = ""; print k "\t" d "\t" $0 }' |
-  sort -t "$(printf '\t')" -k1,1r -k3,3r |
+  LC_ALL=C sort -t "$(printf '\t')" -k1,1r -k3,3r |
   awk -F'\t' '!($2 in cut) { print $2 "\t" $3 }
               $3 ~ /-snapshot\.tar\.zst$/ { cut[$2] = 1 }' > "$work/order"
 
