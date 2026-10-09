@@ -14,7 +14,7 @@ Each claim traces to a decision card, a dated ruling, a register section, or a s
 
 The shipped definition is folded from its inputs by stated rules rather than re-written:
 
-- the programme text is copied verbatim from the crowned sheet under a copy rule, floor fixes included; summarising it loses the interior detail the judges bought;
+- the offering's text is copied verbatim from the crowned sheet under a copy rule, floor fixes included; summarising it loses the interior detail the judges bought;
 - the positioning section merges the numbered claims, citing them by number;
 - the buyer-simulation cost fold carries the judges' own all-in figures and bottom-line counts into the market section, so the definition states what the product costs a real buyer all-in, not only what the operator bills.
 
