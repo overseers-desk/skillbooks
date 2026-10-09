@@ -10,7 +10,7 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
 
 | option | figure | source | capability | sentence |
 |---|---|---|---|---|
-| <value the market shows> | <number with its unit, and in words the population it was counted in (12 of the 40 comparables that state a price), since the review copies it to the owner; a cell name or variable code goes in the source column, never here alone> | <finding, taxonomy row, search finding, register section or enquiry count> | <mechanism or resource, or the cost line of building it> | <what the seller says to a named roster profile where the sale is made, and that buyer's likely answer> |
+| <value the market shows> | <number with its unit, and in words the population it was counted in (12 of the 40 comparables that state a price), since the review copies it to the owner; a cell name or variable code goes in the source column, never here alone> | <finding, taxonomy row, search finding, register section or enquiry count> | <mechanism or resource, or the cost line of building it> | <what the seller says to a named roster profile where the sale or the take-up is made, and that buyer's likely answer; where the roster holds no profile for this buyer, said to the buyer as the comparables' own pages address them, marked "no profile"> |
 
 Options exclude one another; where two of them can be done together, doing both is an option of its own with its own figure. Operators silent on the parameter are counted once, in a line under the table, and sit in no option's figure. Where saying nothing is itself an option, its figure is that silent count, and the Recommended line gives the margin both ways: among operators that state a posture, and with the silent counted in.
 
