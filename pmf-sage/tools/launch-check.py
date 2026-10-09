@@ -91,8 +91,10 @@ def main():
                 check_file(p, refs, finds, nouns, failures, True)
     shape = next(run.glob("**/shape-note.md"), None)
     situation = run / "briefs" / "venue-situation.md"
+    # the shape note's front matter is the file's record, not the operator's situation
+    note = re.sub(r"\A---\n.*?\n---\n", "", shape.read_text(errors="replace").lstrip(), flags=re.S).strip() if shape else ""
     if emit: situation.write_text("# Venue situation (generated; do not edit)\n\n"
-                         + (shape.read_text(errors="replace").strip() + "\n\n" if shape else "")
+                         + (note + "\n\n" if note else "")
                          + ("The frame reaches: " + ", ".join(rows) + ".\n" if rows else "No strike list has been returned; the frame reaches no buyer yet.\n"))
     for f in failures:
         print(f)
