@@ -100,7 +100,7 @@ Each plan block may carry:
 |---|---|---|
 | `objective` | prose | What this campaign aims to accomplish with this segment, in 1–3 sentences. |
 | `usps` | list | Which of the campaign's USPs apply to this segment, and why. Each entry has `id` (from the USP registry), `type` (`emotional` or `functional`, segment-specific), and `framing` (prose: why this one lands with contacts in this segment). The segment selects, orders and reframes; it authors no claim, so a `framing` that would read the same for every segment belongs in the registry entry instead. A USP a segment wants that the registry lacks is added to the registry. |
-| `message_goal` | prose | The outcome the first message aims for (e.g. "agree to a site visit"). |
+| `message_goal` | prose | The outcome the first message aims for (e.g. "agree to a call or a site visit"). |
 | `first_ask` | prose | The model message or pattern for first contact. May contain placeholders the A phase fills from the profile. |
 | `ask_stance` | `direct` or `problem-led` | The stance chosen via the classifier in `spar-methodology.md` ("Classifying the ask"). `direct`: state the want plainly (we are the buyer, or a plain mutual offer). `problem-led`: frame around the recipient's problem, because naming the want would weaken us (we compete to be selected). |
 | `recipient_problem` | prose | Required when `ask_stance` is `problem-led`. The recipient's own problem this campaign solves, which the first message addresses. |
