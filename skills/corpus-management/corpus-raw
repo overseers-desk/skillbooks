@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# corpus-raw - copy corpus folders' raw/ originals to an rclone remote, or back.
+#
+# Usage:
+#   corpus-raw push|pull REMOTE:BASE CORPUS_DIR...
+#
+# Each CORPUS_DIR's raw/ pairs with REMOTE:BASE/<CORPUS_DIR's path within its
+# git repository>/raw. push copies local originals up, pull copies remote ones
+# down; both use rclone copy, so nothing is deleted on either side.
+#
+# Needs rclone and git.
+
+set -euo pipefail
+
+usage() { sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2; }
+[ $# -ge 3 ] || usage
+op=$1; base=${2%/}; shift 2
+case $op in push|pull) ;; *) usage ;; esac
+command -v rclone >/dev/null || { echo "corpus-raw: needs rclone" >&2; exit 2; }
+
+for d in "$@"; do
+  d=${d%/}
+  [ "${d##*/}" = corpus ] || { echo "corpus-raw: $d is not a folder named corpus/" >&2; exit 2; }
+  prefix=$(git -C "$d" rev-parse --show-prefix)
+  remote="$base/${prefix}raw"
+  if [ "$op" = push ]; then
+    [ -d "$d/raw" ] || { echo "corpus-raw: $d has no raw/, skipped" >&2; continue; }
+    rclone copy "$d/raw" "$remote"
+  else
+    rclone copy "$remote" "$d/raw"
+  fi
+  echo "$op $d/raw <-> $remote"
+done

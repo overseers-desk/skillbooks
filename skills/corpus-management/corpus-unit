@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# corpus-unit - unpack one unit's current pages from a corpus folder, to read them whole.
+#
+# Usage:
+#   corpus-unit CORPUS_DIR UNIT
+#
+# Writes the current copy of each of UNIT's pages to CORPUS_DIR/extracted/UNIT/,
+# replacing whatever that folder held, and prints the folder. Read the files
+# there with any file reader; extracted/ is ignored by the corpus folder's
+# .gitignore, so it stays out of git and grep. Delete it freely.
+#
+# Needs GNU tar (gtar on macOS) and zstd.
+
+set -euo pipefail
+
+[ $# -eq 2 ] || { sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2; }
+dir=${1%/}; unit=${2%/}
+tar=$(command -v gtar || command -v tar)
+work=$(mktemp -d); trap 'rm -rf "$work"' EXIT
+
+"$(dirname "$0")/corpus-current" --unit "$unit" "$dir" > "$work/current"
+[ -s "$work/current" ] || { echo "corpus-unit: no pages for unit '$unit' in $dir" >&2; exit 1; }
+
+out="$dir/extracted/$unit"
+rm -rf "$out"; mkdir -p "$dir/extracted"
+cut -f1 "$work/current" | uniq | while read -r a; do
+  awk -F'\t' -v a="$a" '$1 == a { print $2 }' "$work/current" > "$work/list"
+  "$tar" --zstd -xf "$a" -C "$dir/extracted" --verbatim-files-from -T "$work/list"
+done
+echo "$out"

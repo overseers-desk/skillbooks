@@ -1,0 +1,228 @@
+#!/usr/bin/env python3
+"""corpus-add - turn staged pages into the next archive of a corpus folder.
+
+Usage:
+  corpus-add CORPUS_DIR [STAGING_DIR] [--snapshot] [--date YYYY-MM-DD]
+
+STAGING_DIR defaults to CORPUS_DIR/staging. It holds <unit>/NN.md pages (front
+matter optional), <unit>/NN.json for a structured capture with no text, the
+originals as <unit>/NN.<ext>, whiteouts as <unit>/.wh.NN.md, and any other
+file as a by-product. Writes <stem>-pages.tar.zst (or <stem>-snapshot.tar.zst
+with --snapshot) and <stem>-fetch-log.tsv, checks every member against what
+was staged, moves originals and by-products to raw/<stem>/, empties staging,
+and makes sure the folder's .gitignore lists raw/, extracted/ and staging/.
+The stem is the fetch date, from --date, else the earliest staged `fetched`,
+else today; when that date already has an archive, the current time HHMM is
+added. An existing archive is never replaced. SKILL.md describes the layout.
+
+Needs GNU tar (gtar on macOS) and zstd.
+"""
+import argparse
+import datetime
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+COLUMNS = ["unit", "NN", "url", "http", "bytes", "sha256", "raw", "former_path", "archived"]
+IGNORED = ["raw/", "extracted/", "staging/"]
+STAGED = re.compile(r"^(\.wh\.)?(\d+)\.([^/]+)$")
+FIELD = re.compile(r"^([A-Za-z_][\w-]*):\s?(.*)$")
+
+
+def die(msg):
+    sys.exit(f"corpus-add: {msg}")
+
+
+def split_page(data):
+    """Front matter fields and the text below them; a page without front matter is all text."""
+    if not data.startswith(b"---\n"):
+        return {}, data
+    end = data.find(b"\n---\n", 3)
+    if end < 0:
+        die("front matter opened with --- and never closed")
+    fields = {}
+    for line in data[4:end].decode("utf-8").splitlines():
+        m = FIELD.match(line)
+        if not m:
+            continue
+        v = m.group(2).strip()
+        if v.startswith('"'):
+            try:
+                v = json.loads(v)
+            except json.JSONDecodeError:
+                pass
+        fields[m.group(1)] = str(v)
+    body = data[end + 5:]
+    return fields, body[1:] if body.startswith(b"\n") else body
+
+
+def join_page(fields, body):
+    lines = "".join(f"{k}: {json.dumps(v, ensure_ascii=False)}\n" for k, v in fields.items())
+    return b"---\n" + lines.encode("utf-8") + b"---\n\n" + body
+
+
+def gnu_tar():
+    for name in ("gtar", "tar"):
+        path = shutil.which(name)
+        if path and "GNU tar" in subprocess.run([path, "--version"], capture_output=True, text=True).stdout:
+            return path
+    die("needs GNU tar (macOS: brew install gnu-tar)")
+
+
+def main():
+    ap = argparse.ArgumentParser(prog="corpus-add", description=__doc__.split("\n\n")[0])
+    ap.add_argument("corpus_dir")
+    ap.add_argument("staging_dir", nargs="?")
+    ap.add_argument("--snapshot", action="store_true", help="a whole rebuild that supersedes every older archive here")
+    ap.add_argument("--date", help="fetch date, YYYY-MM-DD")
+    args = ap.parse_args()
+
+    tar = gnu_tar()
+    if not shutil.which("zstd"):
+        die("needs zstd")
+    corpus = os.path.abspath(args.corpus_dir)
+    staging = os.path.abspath(args.staging_dir or os.path.join(corpus, "staging"))
+    if os.path.basename(corpus) != "corpus":
+        die(f"{corpus} is not a folder named corpus/")
+    if not os.path.isdir(staging):
+        die(f"no staging folder {staging}")
+
+    pages, whiteouts, byproducts = {}, [], []
+    for root, dirs, files in os.walk(staging):
+        dirs.sort()
+        unit = os.path.relpath(root, staging)
+        for name in sorted(files):
+            path = os.path.join(root, name)
+            m = STAGED.match(name)
+            if unit == "." or not m:
+                if name.endswith(".md") and unit != ".":
+                    die(f"{path}: a page is named NN.md, NN being its order in the unit")
+                byproducts.append(path)
+            elif m.group(1):
+                whiteouts.append(f"{unit}/{name}")
+            else:
+                pages.setdefault((unit, m.group(2)), {})[m.group(3)] = path
+    if not pages and not whiteouts:
+        die(f"nothing staged in {staging}")
+
+    # each page: its member (NN.md, else NN.json) and at most one original
+    plan = []
+    for (unit, nn), exts in sorted(pages.items()):
+        member_ext = "md" if "md" in exts else "json" if "json" in exts else None
+        originals = sorted(e for e in exts if e != member_ext)
+        if len(originals) > 1:
+            die(f"{unit}/{nn} has {len(originals)} originals ({', '.join(originals)}); stage one")
+        fields, body = {}, b""
+        if member_ext == "md":
+            with open(exts["md"], "rb") as f:
+                fields, body = split_page(f.read())
+        elif member_ext == "json":
+            with open(exts["json"], "rb") as f:
+                body = f.read()
+        plan.append([unit, nn, member_ext, exts, originals[0] if originals else None, fields, body])
+
+    fetched = sorted(p[5]["fetched"] for p in plan if p[5].get("fetched"))
+    date = args.date or (fetched[0][:10] if fetched else datetime.date.today().isoformat())
+    if not re.fullmatch(r"\d{4}-\d\d-\d\d", date):
+        die(f"bad date {date}")
+    taken = [n for n in os.listdir(corpus) if n.startswith(date) and (n.endswith(".tar.zst") or n.endswith("-fetch-log.tsv"))]
+    stem = f"{date}-{datetime.datetime.now():%H%M}" if taken else date
+    kind = "snapshot" if args.snapshot else "pages"
+    archive = os.path.join(corpus, f"{stem}-{kind}.tar.zst")
+    log = os.path.join(corpus, f"{stem}-fetch-log.tsv")
+    raw_dir = os.path.join(corpus, "raw", stem)
+    for path in (archive, log, os.path.join(corpus, f"{stem}-pages.tar.zst"), os.path.join(corpus, f"{stem}-snapshot.tar.zst"), raw_dir):
+        if os.path.exists(path):
+            die(f"{path} exists; wait a minute or pass another --date")
+
+    build = tempfile.mkdtemp(prefix=".corpus-add-", dir=corpus)
+    try:
+        rows, members, moves = [], [], []
+        for unit, nn, member_ext, exts, orig, fields, body in plan:
+            raw_rel = f"raw/{stem}/{unit}/{nn}.{orig}" if orig else ""
+            if orig:
+                moves.append((exts[orig], os.path.join(corpus, raw_rel)))
+            if member_ext == "md":
+                fields.setdefault("url", "")
+                if not fields.get("fetched"):
+                    fields["fetched"] = date
+                    fields["fetched_source"] = "corpus-add"
+                if raw_rel:
+                    fields["raw"] = raw_rel
+                content = join_page(fields, body)
+            elif member_ext == "json":
+                content = body
+            measured = body if member_ext else open(exts[orig], "rb").read()
+            if member_ext:
+                member = f"{unit}/{nn}.{member_ext}"
+                os.makedirs(os.path.join(build, unit), exist_ok=True)
+                with open(os.path.join(build, member), "wb") as f:
+                    f.write(content)
+                members.append(member)
+            rows.append([unit, nn, fields.get("url", ""), fields.get("http", ""), str(len(measured)),
+                         hashlib.sha256(measured).hexdigest(), raw_rel, fields.get("former_path", ""), fields.get("archived", "")])
+        for member in whiteouts:
+            os.makedirs(os.path.join(build, os.path.dirname(member)), exist_ok=True)
+            open(os.path.join(build, member), "wb").close()
+            members.append(member)
+        for path in byproducts:
+            moves.append((path, os.path.join(raw_dir, os.path.relpath(path, staging))))
+
+        if members:  # a fetch that yielded only originals gets a log and no archive
+            listing = os.path.join(build, ".members")
+            with open(listing, "w") as f:
+                f.write("".join(m + "\n" for m in sorted(members)))
+            tmp_archive = os.path.join(build, ".archive")
+            tarred = subprocess.Popen([tar, "-C", build, "--no-recursion", "--verbatim-files-from", "-T", listing,
+                                       "--owner=0", "--group=0", "--numeric-owner", f"--mtime={date}",
+                                       "--mode=a+r,u+w,go-w", "-cf", "-"], stdout=subprocess.PIPE)
+            subprocess.run(["zstd", "-19", "-q", "-o", tmp_archive], stdin=tarred.stdout, check=True)
+            if tarred.wait():
+                die("tar failed")
+
+            check = os.path.join(build, ".check")
+            os.mkdir(check)
+            subprocess.run([tar, "--zstd", "-xf", tmp_archive, "-C", check], check=True)
+            for member in members:
+                with open(os.path.join(build, member), "rb") as a, open(os.path.join(check, member), "rb") as b:
+                    if a.read() != b.read():
+                        die(f"{member} differs in the archive; nothing was moved")
+
+        with open(os.path.join(build, ".log"), "w", newline="") as f:
+            f.write("\t".join(COLUMNS) + "\n")
+            f.writelines("\t".join(r) + "\n" for r in rows)
+        if members:
+            os.link(tmp_archive, archive)
+        os.link(os.path.join(build, ".log"), log)
+    finally:
+        shutil.rmtree(build)
+
+    for src, dst in moves:
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        shutil.move(src, dst)
+    for unit, nn, member_ext, exts, *_ in plan:
+        if member_ext:
+            os.remove(exts[member_ext])
+    for member in whiteouts:
+        os.remove(os.path.join(staging, member))
+    for root, dirs, files in os.walk(staging, topdown=False):
+        if root != staging and not os.listdir(root):
+            os.rmdir(root)
+
+    ignore = os.path.join(corpus, ".gitignore")
+    text = open(ignore).read() if os.path.exists(ignore) else ""
+    missing = [p for p in IGNORED if p not in text.split()]
+    if missing:
+        with open(ignore, "a") as f:
+            f.write(("\n" if text and not text.endswith("\n") else "") + "".join(p + "\n" for p in missing))
+
+    print(f"{archive if members else log}: {len(members)} members, {len(rows)} log rows, {len(moves)} files to raw/{stem}/")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# corpus-grep - grep the current copy of every page in corpus archives.
+#
+# Usage:
+#   corpus-grep [GREP-OPTION...] PATTERN ARCHIVE|CORPUS_DIR...
+#
+# Prints archive:member:line for every matching line. A CORPUS_DIR stands for
+# every archive in it. Options before PATTERN go to grep (for example -i, -w,
+# -E, -l); -H and --label are set here. Only the copy newest-wins selects is
+# searched, as listed by corpus-current; SKILL.md describes the rules.
+#
+# Needs GNU tar (gtar on macOS) and zstd.
+
+set -euo pipefail
+
+opts=()
+while [ $# -gt 0 ] && [ "${1#-}" != "$1" ]; do
+  [ "$1" = "--" ] && { shift; break; }
+  opts+=("$1"); shift
+done
+[ $# -ge 2 ] || { sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2; }
+export ZG_PAT=$1; shift
+export ZG_OPTS="${opts[*]:-}"
+
+# a bad pattern or option fails here, once, rather than once per member
+rc=0; grep $ZG_OPTS -e "$ZG_PAT" </dev/null >/dev/null || rc=$?
+[ "$rc" -le 1 ] || exit 2
+
+tar=$(command -v gtar || command -v tar)
+work=$(mktemp -d); trap 'rm -rf "$work"' EXIT
+
+"$(dirname "$0")/corpus-current" "$@" > "$work/current"
+cut -f1 "$work/current" | uniq > "$work/order"
+
+while read -r a; do
+  awk -F'\t' -v a="$a" '$1 == a { print $2 }' "$work/current" > "$work/list"
+  ZG_ARCHIVE=$a "$tar" --zstd -xf "$a" --verbatim-files-from -T "$work/list" \
+    --to-command='grep $ZG_OPTS -H --label="$ZG_ARCHIVE:$TAR_FILENAME" -e "$ZG_PAT" 2>/dev/null || true'
+done < "$work/order"

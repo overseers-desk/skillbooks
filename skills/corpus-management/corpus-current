@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# corpus-current - list the current copy of every page in corpus archives.
+#
+# Usage:
+#   corpus-current [--unit UNIT] ARCHIVE|CORPUS_DIR...
+#
+# Prints archive<TAB>member, newest archive first, for the copy of each member
+# that newest-wins selects. A CORPUS_DIR stands for every *-pages.tar.zst and
+# *-snapshot.tar.zst in it. With --unit, only members whose folder is exactly
+# UNIT. The rules (archive order, whiteouts, snapshots) are in SKILL.md.
+#
+# Needs GNU tar (gtar on macOS) and zstd.
+
+set -euo pipefail
+
+usage() { sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2; }
+unit=
+if [ "${1:-}" = --unit ]; then [ $# -ge 2 ] || usage; unit=${2%/}; shift 2; fi
+[ $# -ge 1 ] || usage
+
+tar=$(command -v gtar || command -v tar)
+work=$(mktemp -d); trap 'rm -rf "$work"' EXIT
+
+for a in "$@"; do
+  if [ -d "$a" ]; then
+    for f in "${a%/}"/*-pages.tar.zst "${a%/}"/*-snapshot.tar.zst; do [ ! -e "$f" ] || printf '%s\n' "$f"; done
+  else
+    printf '%s\n' "$a"
+  fi
+done | sort -u |
+  # sort key is the stem, the name less -pages/-snapshot.tar.zst, so that 2026-09-20
+  # sorts before 2026-09-20-0100-refetch; a snapshot ends its folder's older archives
+  awk '{ n = $0; sub(/.*\//, "", n); k = n; sub(/-(pages|snapshot)\.tar\.zst$/, "", k)
+         d = $0; if (!sub(/[^\/]*$/, "", d)) d = ""; print k "\t" d "\t" $0 }' |
+  sort -t "$(printf '\t')" -k1,1r -k3,3r |
+  awk -F'\t' '!($2 in cut) { print $2 "\t" $3 }
+              $3 ~ /-snapshot\.tar\.zst$/ { cut[$2] = 1 }' > "$work/order"
+
+while IFS="$(printf '\t')" read -r d a; do
+  "$tar" --zstd -tf "$a" | awk -v d="$d" -v a="$a" '!/\/$/ { print d "\t" a "\t" $0 }'
+done < "$work/order" |
+  awk -F'\t' -v u="$unit" '
+    { m = $3; dir = m; if (!sub(/\/[^\/]*$/, "", dir)) dir = "" }
+    u != "" && dir != u { next }
+    m ~ /(^|\/)\.wh\.[^\/]*$/ {
+      p = m; sub(/\.wh\.[^\/]*$/, "", p); n = p substr(m, length(p) + 5)
+      seen[$1 SUBSEP n] = 1; next }
+    !(($1 SUBSEP m) in seen) { seen[$1 SUBSEP m] = 1; print $2 "\t" m }'
