@@ -4,7 +4,7 @@ Tested: the brief itself and the files under briefs/ its read order names; surve
 
 Usage: launch-check.py <run-dir> [--check-only]
 --check-only scans without writing the venue-situation paragraph (use against a run you do not own).
-Reads every brief under <run-dir>/briefs/ and every file its read-order paragraph names.
+Reads every brief under <run-dir>/briefs/ and every file its read-order paragraph names; a buyer is known by BUYER_NOUNS and the lines of <run-dir>/buyer-nouns.txt.
 Emits <run-dir>/briefs/venue-situation.md from the unstruck strike-list rows and the shape note.
 """
 import re, sys
@@ -13,7 +13,7 @@ from pathlib import Path
 BUYER_NOUNS = ["family", "families", "couple", "couples", "senior", "seniors", "school", "schools",
                "child", "children", "kid", "kids", "parent", "parents", "toddler", "toddlers",
                "teen", "teens", "coach party", "coach parties", "walking club", "photographer"]
-FIXING = [r"\$\s?\d", r"\bper (head|person|adult|child|family|guest)\b",
+FIXING = [r"\$\s?\d", r"\bper (head|person|adult|child|family|guest|seat|user|licen[cs]e)\b",
           r"\b(one|single|two|several) (offer|offers|product|products)\b"]
 MARK = re.compile(r"\b(RULED|DEFAULT)\b[\s:(]*([A-Za-z0-9._:-]+)")
 
