@@ -92,7 +92,7 @@ def main():
     shape = next(run.glob("**/shape-note.md"), None)
     situation = run / "briefs" / "venue-situation.md"
     # a front-matter block (title, date, status) describes the shape note, not the operator
-    note = re.sub(r"\A---\n.*?\n---\n", "", shape.read_text(errors="replace").lstrip(), flags=re.S).strip() if shape else ""
+    note = re.sub(r"\A---\r?\n(?:.*?\r?\n)?---[ \t]*(?:\r?\n|\Z)", "", shape.read_text(errors="replace").lstrip(), flags=re.S).strip() if shape else ""
     if emit: situation.write_text("# Venue situation (generated; do not edit)\n\n"
                          + (note + "\n\n" if note else "")
                          + ("The frame reaches: " + ", ".join(rows) + ".\n" if rows else "No strike list has been returned; the frame reaches no buyer yet.\n"))
