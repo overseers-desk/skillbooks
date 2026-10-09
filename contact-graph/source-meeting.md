@@ -77,7 +77,7 @@ When frontmatter is present, it is authoritative — the heading participant lis
 | `finance` | Budget, pricing, payroll, cash management |
 | `sales` | Revenue, bookings, customer acquisition |
 | `marketing` | Promotion, branding, non-crisis PR |
-| `product-development` | New offerings, menu or experience design |
+| `product-development` | New offerings; menu, experience or feature design |
 | `procurement` | Purchasing, vendor selection, equipment |
 | `governance` | Strategy, board decisions, organisational structure |
 | `systems-technology` | IT, integrations, software, AI tools |
@@ -85,7 +85,7 @@ When frontmatter is present, it is authoritative — the heading participant lis
 | `external-relations` | Government, industry bodies, partnerships |
 | `sop` | Process design, documentation, standard procedures |
 | `product` | Discussion of specific products, assets, or offerings (menu items, horses, software features) |
-| `events` | Event planning, venue hire, weddings |
+| `events` | Event planning, venue hire, weddings, conferences |
 
 **Example** (for a systems-integration meeting):
 

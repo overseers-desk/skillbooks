@@ -30,7 +30,7 @@ Each candidate carries a `level` derived from M:
 |---|---|---|
 | 3 | they plainly remember us | bare connect, no note |
 | 2 | a real but faded memory | note that reminds them of the last shared topic |
-| 1 | faint; we mostly crossed paths | note led by a venue USP, claiming only that paths crossed |
+| 1 | faint; we mostly crossed paths | note led by a business USP, claiming only that paths crossed |
 
 The exact formula and its constants (half-life, group weight, band cutoffs) live
 in `pick_next_candidate.py` and nowhere else. Do not re-derive or second-guess
@@ -144,19 +144,19 @@ Repeat until the stop condition fires:
    - **Pick a touch-point** from the most recent thread (subject + date is
      usually enough; fetch one body via `courier --imap <ACCOUNT> read -f <FOLDER> -u <UID>` if a subject
      is too generic to anchor to).
-   - **Decide which venue fits** this contact. Default: Rivermill. Switch
+   - **Decide which business fits** this contact. Default: Rivermill. Switch
      to Bizcocheros if the email-thread topic, organisation, or geography
      points to Spain / Andalucía / cruise / DMC-Europe / Sevilla / Cádiz
      / Jerez / Iberian tourism operator.
 
    Then draft a note of <= 300 characters, shaped by the level:
    - **Level 2**: lead with one concrete shared touch-point from the prior
-     correspondence (not a generic "we connected before"), then one venue USP
+     correspondence (not a generic "we connected before"), then one business USP
      relevant to the person.
-   - **Level 1**: lead with one venue USP relevant to the person's role, and
+   - **Level 1**: lead with one business USP relevant to the person's role, and
      reference the crossing only lightly (the memory is faint; do not overclaim
      a relationship).
-   - Either way, carry the venue's framing (Bizcocheros = honest validation
+   - Either way, carry the business's framing (Bizcocheros = honest validation
      question, not booking pitch), and include no personal identifiers beyond
      `human.display_name`.
    - **Save the draft**:
@@ -190,7 +190,7 @@ operator reviews `linkedin.connection_queue` and decides what to send manually.
 ## Boundaries
 
 - 30 LinkedIn keyword-search calls is the daily ceiling, hard stop.
-- Never write a draft without having read the relevant venue overview file
+- Never write a draft without having read the relevant business overview file
   first.
 - Never include personal identifiers from `weiwu.yaml` / global CLAUDE.md
   rules in `note_text` or `verify_evidence`.
