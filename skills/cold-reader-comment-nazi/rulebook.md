@@ -104,6 +104,10 @@ The test for each comment, and for an explanatory sentence in prose, is "did I l
 
 Example: `retries += 1` under the comment "increment the retry counter" fails; the same line under "the third retry trips the circuit breaker in the gateway, not here" passes.
 
+# The top-level README
+
+In a repository a stranger can reach, the README at its top level is the page a newcomer meets before deciding to adopt. For that file the colleague changes seat: he reads as the newcomer, holding nothing but the page. He first says whether the change is reducing (the README ends shorter) or lateral (material added or swapped in beside what is there). A reducing change passes. In a lateral one, each added sentence does one of two jobs: it moves the visitor toward becoming a user (what this is, the problem it solves, whether it runs here, whether he may use it), or it carries the new user through the first hour (install, the first successful run, where answers live from then on). A sentence doing neither is cut, and its EDITS line names the project document it belongs in, where one exists, for the author to move it there. A README below the top level, or in a repository no stranger reaches, is read like any other prose.
+
 # Comments: the rules that edit
 
 The reading above finds; these rules cut. Their scope is the comments that describe the code the diff changes: the diff marks the code, and a comment or docstring on that code is read whole, wherever its lines sit. The colleague applies the rules with his edit tools, one edit per finding, code lines left as they are. Each rule states a cost and what earns it; the reader weighs both, and where the weighing needs domain knowledge he lacks, the comment stays and goes to QUERIES.
@@ -116,6 +120,8 @@ A mechanism (a type, a function, a field, a config key, a shader, a file) is def
 - The domain's own word, where a role phrase would say less: a shader pass, a protocol state, a named algorithm. That the sibling files spell it the same way is a fair sign it is the word.
 
 What is not worth the cost is decoration: a sentence that keeps its meaning with a role in place of the name ("`flush_outbox` runs before `close_socket`" beside the two calls, "matches `RateLimiter::window_ms`" for "matches the limiter's window"), or a comment that repeats the name of the thing on the next line. Rewrite the first as the role; cut the second. A tree that prefers names so that grep finds every mention loses nothing here: the code carries the names grep needs, and a comment that only decorated with one was not helping grep.
+
+Every reference the diff adds, a link or a path in prose, a name in a comment, a path, URL or import in code itself, is load-bearing or decoration by that weighing. Where you cannot tell which, because you cannot see the problem it was added to solve, it goes to QUERIES, and the query states the price of keeping it as well as the question, since the writer weighs one against the other: each move or rename of its target becomes an edit here too (shotgun surgery), and each such addition leaves the passage it sits in larger against the rest. Stating the price telegraphs no answer; "this was left open" still closes it. A reference in code itself is reported, not edited, since removing it changes what runs.
 
 ## C2. Counts in words
 
@@ -153,7 +159,7 @@ Four outputs, in this order:
 
   Write it honestly. Do not steer toward the rulebook; do not anticipate what the caller wants caught. A faithful reading exposes more than a hunting reading does, because the silent defects only surface when the reader was not looking for them.
 
-- **Edits applied (EDITS).** Each comment edit you made under the Comments rules, as path:line, the text before, the text after (or "deleted"), and the rule. Under `--report`, the same list for edits you would make, with nothing touched. Include a C6 promotion as a line with "reported" in place of an edit. If you made none, say so.
+- **Edits applied (EDITS).** Each edit you made under the Comments rules or the README section, as path:line, the text before, the text after (or "deleted"), and the rule. Under `--report`, the same list for edits you would make, with nothing touched. Include a C6 promotion as a line with "reported" in place of an edit. If you made none, say so.
 
 - **Write a query (QUERIES).** Anything that needs the conversation to close, and any comment you left alone under "what stays without question" because its value may sit in knowledge you lack. Quote the sentence, name what only the conversation can resolve, ask the question. Do not invent the answer, and do not telegraph it. A thing the conversation settled and the draft left out is short of context, failure mode 1; a thing the conversation did not settle is not a withholding and not the draft's fault. Having missed the conversation, the colleague cannot tell the two apart, so he surfaces the gap that blocks his task and phrases the query so "this was left open" closes it. The author classifies: fold the settled answer into the draft, or mark the open matter open.
 
