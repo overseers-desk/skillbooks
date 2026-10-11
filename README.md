@@ -44,7 +44,6 @@ becomes
 | **writing-invariants** | Write or amend a repository's `INVARIANTS.md`: the five questions a candidate rule has to pass, the single-line form, and why changing one is the owner's call rather than the author's. | Agent workflow |
 | **worklog** | Write a durable WORKLOG in the repository so a session's knowledge survives when its JSONL is gone or you continue the work on another machine or in a fresh session. | Handoff |
 | **typst-pdf** | Render a markdown file to PDF with Typst, optionally applying a per-repo template. | Rendering |
-| **serpapi** | Google Maps places and review timelines, Google Flights and Hotels, and Google Search through SerpApi. For web search it stands behind Brave search and spends the monthly quota only when Brave fails. | Lookup |
 
 ## Install
 
@@ -61,7 +60,7 @@ claude --plugin-dir /path/to/skillbooks
 
 ## Prerequisites
 
-The skills are self-contained and need no browser. **typst-pdf** needs [Typst](https://typst.app) on `PATH`. **serpapi** needs a SerpApi key (serpapi.com has a free plan) in `SERPAPI_KEY` or under `[serpapi] api_key` in `${XDG_CONFIG_HOME:-$HOME/.config}/skillbooks/config.ini`.
+The skills are self-contained: they run their own fresh-context subagents and need no credentials and no browser. Only **typst-pdf** has an external dependency: [Typst](https://typst.app) on `PATH`.
 
 ## License
 
