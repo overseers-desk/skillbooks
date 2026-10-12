@@ -126,6 +126,13 @@ assert_eq [$inst_capb cost_cap] 3.50 "meta.env wins over the environment when bo
 $inst_capb destroy
 unset ::env(WORKER_COST_CAP_USD)
 
+# A value that is not a number keeps the bound in force, with a warning.
+set ::env(WORKER_COST_CAP_USD) abc
+set inst_capx [spar::Harness new $cap_env_dir [file join $tmp_root logs-capx]]
+assert_eq [$inst_capx cost_cap] 10.0 "environment: a non-numeric WORKER_COST_CAP_USD keeps the default"
+$inst_capx destroy
+unset ::env(WORKER_COST_CAP_USD)
+
 # ════════════════════════════════════════════════════════════════════════
 section "6. Cost cap is a deliberate budget kill (rc=3, no resume)"
 # ════════════════════════════════════════════════════════════════════════
