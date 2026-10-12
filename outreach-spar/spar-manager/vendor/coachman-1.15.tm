@@ -4,7 +4,7 @@ package require logger
 package require json
 package require json::write
 package require deadman
-package provide coachman 1.13
+package provide coachman 1.15
 
 # coachman - drives one harnessed `claude -p` CLI session.
 #
@@ -52,8 +52,9 @@ package provide coachman 1.13
 # owns the child's pipe, stall clock, and group kill. deadman's home,
 # man page, and test suite are in the teatotal module shelf; vendor a
 # copy beside this file. `package require coachman` fails without it.
-# The default cost meter additionally wants `tallyman` (authored beside
-# this module) and anthropic-rates.tcl; both optional, see COST METER.
+# The default cost meter additionally wants `tallyman` 1.3 or later
+# (authored beside this module) and anthropic-rates.tcl; both optional,
+# see COST METER.
 #
 # SYNOPSIS. Subclass, point the injections at your own services, drive:
 #
@@ -301,43 +302,25 @@ oo::class create coachman::Harness {
         # Zero disables. Stored in ms for direct comparison with clock
         # milliseconds.
         set StallTimeoutMs 600000
-        set meta {}
         if {[file exists [file join $prompt_dir meta.env]]} {
             set meta [my load_meta]
-        }
-        # meta.env wins when it sets the key, since it is the more
-        # specific statement; failing that, the process environment
-        # carries the value for a caller that knows its own dispatch
-        # before meta.env exists (the harness generates that directory
-        # itself, so nothing else can reach the constructor first);
-        # failing that, the default above. A non-numeric value would
-        # otherwise detonate later as an obscure expr error at the
-        # first cap comparison; keep the default and say so instead.
-        if {[dict exists $meta WORKER_COST_CAP_USD]} {
-            set cap [dict get $meta WORKER_COST_CAP_USD]
-        } elseif {[info exists ::env(WORKER_COST_CAP_USD)]} {
-            set cap $::env(WORKER_COST_CAP_USD)
-        } else {
-            set cap $WorkerCostCapUsd
-        }
-        if {[string is double -strict $cap]} {
-            set WorkerCostCapUsd $cap
-        } else {
-            [my log_service]::warn \
-                "\[$Slug\] WORKER_COST_CAP_USD='$cap' is not a number; keeping \$$WorkerCostCapUsd"
-        }
-        if {[dict exists $meta STALL_TIMEOUT_SECS]} {
-            set secs [dict get $meta STALL_TIMEOUT_SECS]
-        } elseif {[info exists ::env(STALL_TIMEOUT_SECS)]} {
-            set secs $::env(STALL_TIMEOUT_SECS)
-        } else {
-            set secs 600
-        }
-        if {[string is double -strict $secs]} {
-            set StallTimeoutMs [expr {int($secs * 1000)}]
-        } else {
-            [my log_service]::warn \
-                "\[$Slug\] STALL_TIMEOUT_SECS='$secs' is not a number; keeping [expr {$StallTimeoutMs / 1000}]s"
+            # A non-numeric value would otherwise detonate later as an
+            # obscure expr error at the first cap comparison; keep the
+            # default and say so instead.
+            set cap [dict getdef $meta WORKER_COST_CAP_USD $WorkerCostCapUsd]
+            if {[string is double -strict $cap]} {
+                set WorkerCostCapUsd $cap
+            } else {
+                [my log_service]::warn \
+                    "\[$Slug\] meta.env WORKER_COST_CAP_USD='$cap' is not a number; keeping \$$WorkerCostCapUsd"
+            }
+            set secs [dict getdef $meta STALL_TIMEOUT_SECS 600]
+            if {[string is double -strict $secs]} {
+                set StallTimeoutMs [expr {int($secs * 1000)}]
+            } else {
+                [my log_service]::warn \
+                    "\[$Slug\] meta.env STALL_TIMEOUT_SECS='$secs' is not a number; keeping [expr {$StallTimeoutMs / 1000}]s"
+            }
         }
         file mkdir $log_dir
         set fd [open $CostLog w]; close $fd
@@ -421,35 +404,33 @@ oo::class create coachman::Harness {
         if {[llength $rates] == 0} {
             error "coachman: session_cost_usd unmetered - no rates table (see cost_rates)"
         }
-        if {[catch {package require tallyman}]} {
-            error "coachman: session_cost_usd unmetered - tallyman is not on the module path"
+        if {[catch {package require tallyman 1.3}]} {
+            error "coachman: session_cost_usd unmetered - tallyman 1.3 or later is not on the module path"
         }
         set files [coachman::_session_files $sid [my transcripts_root]]
         if {[llength $files] == 0} { return 0.0 }
-        # Sum token usage per model across the parent and every subagent
-        # file, then price once. Reading each file's lines is ours
-        # (tallyman does no I/O); the dedup of a request split across
-        # stream records is tallyman's.
-        set per_model [dict create]
+        # Gather every request across the parent and every subagent
+        # file, then price once: each request is priced on its own row,
+        # so a model billed by prompt length pays the card each request
+        # fell on. Reading each file's lines is ours (tallyman does no
+        # I/O); the dedup of a request split across stream records is
+        # tallyman's.
+        set requests [list]
         foreach f $files {
             if {[catch {open $f r} fd]} continue
             fconfigure $fd -encoding utf-8 -profile replace
             set lines [split [read $fd] "\n"]
             close $fd
             set res [tallyman::parse_lines $lines]
-            dict for {m c} [dict get $res per_model] {
-                lassign $c i o w r
-                lassign [dict getdef $per_model $m {0 0 0 0}] pi po pw pr
-                dict set per_model $m [list [expr {$pi+$i}] [expr {$po+$o}] \
-                    [expr {$pw+$w}] [expr {$pr+$r}]]
-            }
+            lappend requests {*}[dict get $res requests]
         }
-        # The session is spending now, so today's date selects the rate
-        # era. compute_usd returns -1.0 when no model matched any rate
-        # (an unpriced local model, or usage not yet landed); the meter
-        # reads that as 0.
+        # Each request is priced in the era of its own date; today's
+        # date stands in for one without a timestamp, since the session
+        # is spending now. compute_usd returns -1.0 when no request
+        # matched any rate (an unpriced local model, or usage not yet
+        # landed); the meter reads that as 0.
         set today [clock format [clock seconds] -format %Y-%m-%d]
-        set usd [tallyman::compute_usd $per_model $rates $today]
+        set usd [tallyman::compute_usd $requests $rates $today]
         return [expr {$usd < 0 ? 0.0 : $usd}]
     }
 
@@ -468,8 +449,8 @@ oo::class create coachman::Harness {
         if {[llength [my cost_rates]] == 0} {
             error "coachman: cost cap \$$WorkerCostCapUsd armed but unmetered - no rates table beside the module; supply cost_rates, override session_cost_usd, or set the cap to 0"
         }
-        if {[catch {package require tallyman}]} {
-            error "coachman: cost cap \$$WorkerCostCapUsd armed but unmetered - tallyman is not on the module path; vendor it beside the module, override session_cost_usd, or set the cap to 0"
+        if {[catch {package require tallyman 1.3}]} {
+            error "coachman: cost cap \$$WorkerCostCapUsd armed but unmetered - tallyman 1.3 or later is not on the module path; vendor it beside the module, override session_cost_usd, or set the cap to 0"
         }
     }
 

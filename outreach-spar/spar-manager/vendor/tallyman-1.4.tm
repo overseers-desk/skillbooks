@@ -1,16 +1,18 @@
 package require Tcl 9
 package require json
-package provide tallyman 1.0
+package require logman
+package provide tallyman 1.4
 
 # tallyman - prices a Claude Code session's token usage.
 #
 # A session transcript is a stream of JSONL records; the assistant records
 # carry a `usage` block (input, output, cache-write, cache-read token counts)
 # and the model that produced them. tallyman reads those counts, dedupes the
-# several stream records that report one request, sums them per model, and
-# prices the total against a time-versioned rate table. It also splits the
-# wall clock into machine and human time and renders the short labels a caller
-# shows for a model id or a duration.
+# several stream records that report one request, prices each request against
+# a time-versioned rate table, and sums per model. It also splits the
+# wall clock into machine and human time, reads the context occupancy off the
+# final request, and renders the short labels a caller shows for a model id
+# or a duration.
 #
 # tallyman is filesystem-free: it never opens a file and never parses a rate
 # file. The caller owns all I/O - it reads the transcript's lines off disk and
@@ -27,65 +29,86 @@ package provide tallyman 1.0
 # by taking the max usage across them.
 #
 #   set res   [tallyman::parse_lines $lines]     ;# lines: a list of JSONL lines
-#   set costd [tallyman::build_cost_dict $res $rates $cap]
+#   set costd [tallyman::build_cost_dict $res $rates $threshold $credit]
 #   dict get $costd cost_usd
-#     ;# $cap is the human-gap cap in seconds (see split_secs): a pause longer
-#     ;# than $cap counts as at most $cap of composing time, the rest as away.
+#     ;# $threshold and $credit, in seconds, are the human-gap rule (see
+#     ;# split_secs): a pause up to $threshold is composing time in full, a
+#     ;# longer one is the user away and back, worth $credit.
 #
 # For spend inside a date window rather than the whole transcript, use
-#   accrue_lines $lines $lo $hi $rates $cap
+#   accrue_lines $lines $lo $hi $rates $threshold $credit
 # where lo/hi are epoch-second window bounds (hi "" for no upper edge).
 #
-# Rates dict: model -> sorted list of {effective_from in out cw cr}, each rate
-# a price per million tokens, rows ordered by effective_from so the row whose
-# date is <= the session's own date is the one that billed. A model absent from
-# the dict (a local model, or one no rate covers) prices as nothing, so an
-# unpriced session reads as a blank figure rather than a false zero.
+# Rates dict: model -> sorted list of
+#   {effective_from in out cw cr ?prompt_min? ?cw_1h?}
+# each rate a price per million tokens. The rows sharing a model's latest
+# effective_from at or before a request's date are the era that billed it; a
+# sixth element, the smallest prompt length (one request's input + cache-write
+# + cache-read tokens) a row prices, splits an era into cards for a model
+# billed by prompt length (Haiku 5.5 from 100,001 tokens), and reads as 0 when
+# absent; a seventh is the price of a cache write kept for an hour, which
+# Anthropic bills above the five-minute write in cw, and reads as cw when
+# absent. A model absent from the dict (a local model, or one no rate covers)
+# prices as nothing, so an unpriced session reads as a blank figure rather than
+# a false zero.
 
 namespace eval tallyman {}
 
-# ── transcript predicate ───────────────────────────────────────────────────
-
-# 1 iff this raw line is a real user turn: a user record carrying a typed
-# prompt, not a harness-written echo. The message holds "role":"user" with
-# either a string "content" or a block array whose FIRST block is a prompt
-# block (text or image, the forms a typed prompt with a pasted image takes) - a
-# tool_result record is also role:user but its array opens with a tool_result
-# block, so it stays excluded. The string content must not be one of the
-# harness echoes the user never typed - a slash-command expansion, its captured
-# stdout or caveat, or a background-task notification. A line-level regex, no
-# parse: it runs over every line of every session file.
-proc tallyman::_is_user_turn {line} {
-    return [expr {[regexp {"role":"user","content":(?:"|\[\{"type":"(?:text|image)")} $line] \
-        && ![regexp {"content":"<(?:command-name|local-command-stdout|local-command-caveat|task-notification)>} $line]}]
-}
-
 # ── rates ──────────────────────────────────────────────────────────────────
 
-# Pick the rate row whose effective_from <= session_date. Empty if no row
-# matches (unknown model, or date before the first listed era).
-proc tallyman::rate_for {rates model session_date} {
+# The row that billed a request: the model's latest era at or before
+# session_date, and within it the card whose prompt_min is the largest not
+# above prompt_len. Empty if no row matches (unknown model, date before the
+# first listed era, or an era whose every card starts above prompt_len).
+proc tallyman::rate_for {rates model session_date {prompt_len 0}} {
     if {![dict exists $rates $model]} { return "" }
-    set best ""
+    set era ""
     foreach row [dict get $rates $model] {
         set ef [lindex $row 0]
-        if {[string compare $ef $session_date] <= 0} { set best $row }
+        if {[string compare $ef $session_date] <= 0 && [string compare $ef $era] > 0} {
+            set era $ef
+        }
+    }
+    if {$era eq ""} { return "" }
+    set best ""
+    set best_min -1
+    foreach row [dict get $rates $model] {
+        if {[lindex $row 0] ne $era} continue
+        set min [lindex $row 5]
+        if {$min eq ""} { set min 0 }
+        if {$min <= $prompt_len && $min > $best_min} {
+            set best $row
+            set best_min $min
+        }
     }
     return $best
 }
 
-# per_model dict {model -> {in out cw cr}} + session date -> USD.
-# -1 signals "no rate row found for any model" -> caller shows blank.
-proc tallyman::compute_usd {per_model rates session_date} {
+# requests, a list of {model in out cw cr ?cw_1h? ?date?} with one entry per
+# request, + the session's date -> USD. Each request is priced on its own row
+# in the era of its own date (the session's date stands in for a request
+# without one), so a model billed by prompt length pays the card each request
+# fell on and a session that crosses a price change pays each side its own;
+# cw is every cache write and cw_1h the part kept for an hour, priced at the
+# row's hour rate where it has one. -1 signals "no rate row found for any
+# request" -> caller shows blank.
+proc tallyman::compute_usd {requests rates session_date} {
     set total 0.0
     set any 0
-    dict for {model counts} $per_model {
-        set row [rate_for $rates $model $session_date]
+    foreach req $requests {
+        lassign $req model in out cw cr cw1h date
+        if {$cw1h eq ""} { set cw1h 0 }
+        if {$date eq ""} { set date $session_date }
+        set row [rate_for $rates $model $date [expr {$in + $cw + $cr}]]
         if {$row eq ""} continue
-        lassign $row _ ri ro rw rr
-        lassign $counts in out cw cr
-        set total [expr {$total + \
-            ($in * $ri + $out * $ro + $cw * $rw + $cr * $rr) / 1000000.0}]
+        lassign $row _ ri ro rw rr _ rw1h
+        if {$rw1h eq ""} { set rw1h $rw }
+        # A record can report more hour-kept writes than writes in all; the
+        # total is what was written, so the hour part is capped at it.
+        if {$cw1h > $cw} { set cw1h $cw }
+        set cw5m [expr {$cw - $cw1h}]
+        set total [expr {$total + ($in * $ri + $out * $ro \
+            + $cw5m * $rw + $cw1h * $rw1h + $cr * $rr) / 1000000.0}]
         set any 1
     }
     if {!$any} { return -1.0 }
@@ -141,6 +164,31 @@ proc tallyman::model_label {id} {
     return $id
 }
 
+# A model id's context window in tokens, the denominator context_pct is
+# computed against. Per Anthropic's model catalog: the Claude 5 family
+# (fable, and its Mythos sibling), Opus/Sonnet from 4.6 and Haiku from 5
+# carry a native 1M window; on older models Claude Code marks the 1M
+# long-context beta with a "[1m]" suffix on the id. Everything else - Haiku
+# before 5, pre-4.6 Opus/Sonnet, old-scheme ids, local models - reads as
+# 200k, the widest window such a transcript can truthfully claim.
+proc tallyman::model_context_window {id} {
+    if {[string match {*\[1m\]*} $id]} { return 1000000 }
+    regsub -- {-\d{6,}$} $id "" id
+    if {[regexp {(opus|sonnet|haiku|fable|mythos)-(\d+)(?:-(\d+))?$} $id -> fam maj min]} {
+        if {$min eq ""} { set min 0 }
+        switch -- $fam {
+            fable - mythos { return 1000000 }
+            opus - sonnet {
+                if {$maj > 4 || ($maj == 4 && $min >= 6)} { return 1000000 }
+            }
+            haiku {
+                if {$maj >= 5} { return 1000000 }
+            }
+        }
+    }
+    return 200000
+}
+
 # The opus/sonnet/haiku/fable family token of a model id, lowercased, or "" for
 # an id fmt_model does not recognise (an old-scheme claude-3-5-sonnet-... or a
 # local model). Reuses fmt_model's exact anchored family/version regexp, so
@@ -159,13 +207,16 @@ proc tallyman::model_family {id} {
 # {epoch class} pairs in any order; the class of the record that ENDS a gap
 # decides whose time the gap is. machine (model output, tool runs, subagent
 # activity inside a turn) counts in full. human (the session waiting for the
-# user: a typed prompt, a dialog answer) counts as composing time up to `cap`
-# seconds; beyond the cap the user was away, and the excess is nobody's time,
-# so resuming a session after hours or days credits at most one cap. neutral
-# (harness records written during the user's absence or at the moment of
-# return) counts for neither side. Returns {machine human}, both blank when
-# fewer than two records carry a timestamp.
-proc tallyman::split_secs {stamps cap} {
+# user: a typed prompt, a dialog answer) is composing time in full when the
+# gap is at most `threshold` seconds - reading, thinking, a form filled in
+# between two prompts; a longer gap means the user went away and came back,
+# and is worth `credit` seconds however long it ran, so resuming a session
+# after hours or days credits one return. A single cap cannot serve both
+# pauses: it discards most of a twenty-minute pause or inflates a night
+# away. neutral (harness records written during the user's absence or at
+# the moment of return) counts for neither side. Returns {machine human},
+# both blank when fewer than two records carry a timestamp.
+proc tallyman::split_secs {stamps threshold credit} {
     if {[llength $stamps] < 2} { return [list "" ""] }
     set stamps [lsort -integer -index 0 $stamps]
     set machine 0
@@ -176,7 +227,7 @@ proc tallyman::split_secs {stamps cap} {
         set gap [expr {$e - $prev}]
         switch -- $class {
             machine { incr machine $gap }
-            human   { incr human [expr {min($gap, $cap)}] }
+            human   { incr human [expr {$gap <= $threshold ? $gap : $credit}] }
         }
         set prev $e
     }
@@ -233,21 +284,42 @@ proc tallyman::_classify_stamp {line ask_ids} {
 # ── transcript compute ─────────────────────────────────────────────────────
 
 # Fold a transcript's raw JSONL lines into a result dict:
-#   {per_model {model -> {in out cw cr}}  first_ts  last_ts  turns
-#    stamps {{epoch class} ...}  last_model  ok}
+#   {per_model {model -> {in out cw cr}}
+#    requests {{model in out cw cr cw_1h date} ...}
+#    first_ts  last_ts  turns  stamps {{epoch class} ...}  last_model
+#    ctx_tokens  ctx_model  ok}
 # `ok` is always 1 - the caller decides what an unreadable file means and builds
 # its own ok-0 result for that case. Dedupes the several stream records that
-# report one requestId by taking the max usage per request, then sums the
-# per-request maxima per model.
+# report one requestId by taking the max usage per request: requests carries
+# those per-request maxima, each with the hour-kept part of its cache writes
+# and the UTC date of its earliest record, which compute_usd prices one by
+# one, and per_model their sums.
+#
+# ctx_tokens is the context occupancy at the transcript's end: the input +
+# cache-read + cache-write tokens of the last assistant record that carries a
+# real usage block - what the final request actually sent, which is how full
+# the window is if the session is resumed. Post-compact records report the
+# compacted context, so the figure survives an auto-compact honestly.
+# ctx_model is that record's own model id, raw (it may carry the "[1m]"
+# long-context suffix), for the window the figure is measured against.
+# Sidechain records are other contexts interleaved into a session's file, so
+# they never set the pair - except in a subagent's own transcript, where every
+# record is marked sidechain and the sidechain reading is the file's own; a
+# non-sidechain record wins whenever one exists at all.
 proc tallyman::parse_lines {lines} {
     set req_usage [dict create]
     set dummy_req 0
     set first_ts ""
     set last_ts ""
     set turns 0
+    set turnstate 1          ;# count_turn_line's run state, one file's worth
     set stamps [list]
     set ask_ids [dict create]
     set last_model ""
+    set ctx_tokens ""
+    set ctx_model ""
+    set side_ctx_tokens ""
+    set side_ctx_model ""
     foreach line $lines {
         if {$line eq ""} continue
         # file-history-snapshot records carry no top-level timestamp; the regex
@@ -255,9 +327,12 @@ proc tallyman::parse_lines {lines} {
         # turn the away gap before a resume into work. They are no part of the
         # conversation timeline, so skip outright.
         if {[regexp {"type":"file-history-snapshot"} $line]} continue
-        # A turn is a prompt the user actually wrote.
-        if {[_is_user_turn $line]} { incr turns }
+        # A turn is a prompt the user actually wrote, and the drafts of a
+        # message edited before the assistant answered are one prompt.
+        if {[::logman::count_turn_line $line turnstate]} { incr turns }
+        set ts ""
         if {[regexp {"timestamp":"([^"]+)"} $line -> m]} {
+            set ts $m
             if {$first_ts eq ""} { set first_ts $m }
             set last_ts $m
             set e [_iso_to_epoch $m]
@@ -301,16 +376,43 @@ proc tallyman::parse_lines {lines} {
         set out_t [dict getdef $u output_tokens 0]
         set cw_t  [dict getdef $u cache_creation_input_tokens 0]
         set cr_t  [dict getdef $u cache_read_input_tokens 0]
+        # cache_creation splits the writes by how long they are kept; a null
+        # there is no split.
+        if {[catch {dict getdef [dict getdef $u cache_creation {}] ephemeral_1h_input_tokens 0} w1_t]} {
+            set w1_t 0
+        }
 
+        # The context this request sent. A <synthetic> filler and a zero-usage
+        # record say nothing about occupancy, so they never overwrite the last
+        # real reading.
+        set ctx [expr {$in_t + $cw_t + $cr_t}]
+        if {$ctx > 0 && $model ne "<synthetic>"} {
+            if {[regexp {"isSidechain":true} $line]} {
+                set side_ctx_tokens $ctx
+                set side_ctx_model $model
+            } else {
+                set ctx_tokens $ctx
+                set ctx_model $model
+            }
+        }
+
+        # A request's date is its earliest record's, UTC.
+        set day [string range $ts 0 9]
         if {[dict exists $req_usage $req_id]} {
-            lassign [dict get $req_usage $req_id] om oi oo ow or
+            lassign [dict get $req_usage $req_id] om oi oo ow or ow1 od
             if {$om eq "unknown"} { set om $model }
+            if {$od eq "" || ($day ne "" && [string compare $day $od] < 0)} { set od $day }
             dict set req_usage $req_id [list $om \
                 [expr {max($in_t, $oi)}] [expr {max($out_t, $oo)}] \
-                [expr {max($cw_t, $ow)}] [expr {max($cr_t, $or)}]]
+                [expr {max($cw_t, $ow)}] [expr {max($cr_t, $or)}] \
+                [expr {max($w1_t, $ow1)}] $od]
         } else {
-            dict set req_usage $req_id [list $model $in_t $out_t $cw_t $cr_t]
+            dict set req_usage $req_id [list $model $in_t $out_t $cw_t $cr_t $w1_t $day]
         }
+    }
+    if {$ctx_tokens eq ""} {
+        set ctx_tokens $side_ctx_tokens
+        set ctx_model $side_ctx_model
     }
 
     set per_model [dict create]
@@ -320,34 +422,42 @@ proc tallyman::parse_lines {lines} {
         dict set per_model $m [list [expr {$pi+$i}] [expr {$po+$o}] [expr {$pw+$w}] [expr {$pr+$r}]]
     }
 
-    return [dict create per_model $per_model \
+    return [dict create per_model $per_model requests [dict values $req_usage] \
         first_ts $first_ts last_ts $last_ts turns $turns stamps $stamps \
-        last_model $last_model ok 1]
+        last_model $last_model ctx_tokens $ctx_tokens ctx_model $ctx_model \
+        ok 1]
 }
 
-# A parse_lines result + the rate table + the human-gap cap (seconds) -> the
-# caller-facing cost dict:
+# A parse_lines result + the rate table + the human-gap rule (threshold and
+# credit, seconds, as split_secs reads them) -> the caller-facing cost dict:
 #   {cost_usd input_tokens output_tokens cache_write_tokens cache_read_tokens
-#    model_breakdown model turns duration_secs human_secs}
-proc tallyman::build_cost_dict {res rates cap} {
+#    model_breakdown model turns duration_secs human_secs context_pct}
+# context_pct is ctx_tokens as a whole percentage of ctx_model's window, ""
+# when the transcript carries no usage at all (an empty or windowed result),
+# so the cell reads as "no figure" rather than a false 0%.
+proc tallyman::build_cost_dict {res rates threshold credit} {
     if {![dict get $res ok]} {
-        return [dict create cost_usd 0.0 turns 0 duration_secs 0 human_secs 0 input_tokens 0 output_tokens 0 cache_write_tokens 0 cache_read_tokens 0 model_breakdown {} model ""]
+        return [dict create cost_usd 0.0 turns 0 duration_secs 0 human_secs 0 input_tokens 0 output_tokens 0 cache_write_tokens 0 cache_read_tokens 0 model_breakdown {} model "" context_pct ""]
     }
     set per_model [dict get $res per_model]
     set first_ts [dict get $res first_ts]
     set turns [dict get $res turns]
 
+    # The session's date stands in for a request that carries none.
     set session_date [string range $first_ts 0 9]
     if {$session_date eq ""} {
         set session_date [clock format [clock seconds] -format %Y-%m-%d]
     }
-    set usd [compute_usd $per_model $rates $session_date]
+    set usd [compute_usd [dict get $res requests] $rates $session_date]
     set in 0; set out 0; set cw 0; set cr 0
     dict for {_ c} $per_model {
         lassign $c i o w r
         incr in $i; incr out $o; incr cw $w; incr cr $r
     }
-    lassign [split_secs [dict get $res stamps] $cap] active human
+    lassign [split_secs [dict get $res stamps] $threshold $credit] active human
+    set ctx [dict getdef $res ctx_tokens ""]
+    set ctx_pct [expr {$ctx eq "" ? "" : round(100.0 * $ctx \
+        / [model_context_window [dict getdef $res ctx_model ""]])}]
     return [dict create \
         cost_usd $usd \
         input_tokens $in \
@@ -358,7 +468,8 @@ proc tallyman::build_cost_dict {res rates cap} {
         model [model_label [dict getdef $res last_model ""]] \
         turns $turns \
         duration_secs $active \
-        human_secs $human]
+        human_secs $human \
+        context_pct $ctx_pct]
 }
 
 # Cost accrued strictly inside the window [lo, hi] by each assistant message's
@@ -372,10 +483,11 @@ proc tallyman::build_cost_dict {res rates cap} {
 # out); hi is the inclusive ceiling, or "" for no upper edge. Returns the
 # build_cost_dict shape with every field windowed; an empty model_breakdown
 # (cost_usd -1.0) with turns 0 marks a window with no in-window spend.
-proc tallyman::accrue_lines {lines lo hi rates cap} {
+proc tallyman::accrue_lines {lines lo hi rates threshold credit} {
     set req_usage [dict create]
     set dummy_req 0
     set turns 0
+    set turnstate 1          ;# count_turn_line's run state, one file's worth
     set stamps [list]
     set ask_ids [dict create]
     set last_model ""
@@ -389,9 +501,11 @@ proc tallyman::accrue_lines {lines lo hi rates cap} {
         if {[regexp {"timestamp":"([^"]+)"} $line -> m]} { set e [_iso_to_epoch $m] }
         set in_win [expr {$e ne "" && $e > $lo && ($hi eq "" || $e <= $hi)}]
 
-        if {$in_win && [_is_user_turn $line]} {
-            incr turns
-        }
+        # The run state advances over every line, in the window or not, so a
+        # window opening mid-run still knows whether a prompt starts a turn;
+        # only the counting is windowed.
+        set opens [::logman::count_turn_line $line turnstate]
+        if {$in_win && $opens} { incr turns }
         if {$in_win} { lappend stamps [list $e [_classify_stamp $line $ask_ids]] }
 
         if {![regexp {"type":"assistant"} $line]} continue
@@ -419,31 +533,40 @@ proc tallyman::accrue_lines {lines lo hi rates cap} {
         set out_t [dict getdef $u output_tokens 0]
         set cw_t  [dict getdef $u cache_creation_input_tokens 0]
         set cr_t  [dict getdef $u cache_read_input_tokens 0]
+        # cache_creation splits the writes by how long they are kept; a null
+        # there is no split.
+        if {[catch {dict getdef [dict getdef $u cache_creation {}] ephemeral_1h_input_tokens 0} w1_t]} {
+            set w1_t 0
+        }
 
         set req_id [dict getdef $rec requestId [dict getdef $msg requestId ""]]
         if {$req_id eq ""} { set req_id "dummy-[incr dummy_req]" }
 
         # Anchor by earliest assistant-record ts; max usage across all records.
         if {[dict exists $req_usage $req_id]} {
-            lassign [dict get $req_usage $req_id] at om oi oo ow or
+            lassign [dict get $req_usage $req_id] at om oi oo ow or ow1
             if {$om eq "unknown"} { set om $model }
             if {$e ne "" && ($at eq "" || $e < $at)} { set at $e }
             dict set req_usage $req_id [list $at $om \
                 [expr {max($in_t, $oi)}] [expr {max($out_t, $oo)}] \
-                [expr {max($cw_t, $ow)}] [expr {max($cr_t, $or)}]]
+                [expr {max($cw_t, $ow)}] [expr {max($cr_t, $or)}] \
+                [expr {max($w1_t, $ow1)}]]
         } else {
-            dict set req_usage $req_id [list $e $model $in_t $out_t $cw_t $cr_t]
+            dict set req_usage $req_id [list $e $model $in_t $out_t $cw_t $cr_t $w1_t]
         }
     }
 
-    # Keep only requests whose anchor falls in the window; fold into per_model
-    # and record the earliest in-window anchor, whose date selects the rate era
-    # that actually billed (rather than the session's possibly-older start date).
+    # Keep only requests whose anchor falls in the window: they are the requests
+    # priced, each in the era of its anchor's UTC date, folded into per_model
+    # for the breakdown; the earliest in-window anchor is the result's date.
+    set requests [list]
     set per_model [dict create]
     set anchor_min ""
     dict for {_ v} $req_usage {
-        lassign $v at mdl i o w r
+        lassign $v at mdl i o w r w1
         if {$at eq "" || !($at > $lo && ($hi eq "" || $at <= $hi))} continue
+        lappend requests [list $mdl $i $o $w $r $w1 \
+            [clock format $at -gmt 1 -format %Y-%m-%d]]
         lassign [dict getdef $per_model $mdl {0 0 0 0}] pi po pw pr
         dict set per_model $mdl [list [expr {$pi+$i}] [expr {$po+$o}] \
             [expr {$pw+$w}] [expr {$pr+$r}]]
@@ -452,6 +575,7 @@ proc tallyman::accrue_lines {lines lo hi rates cap} {
     set first_ts [expr {$anchor_min eq "" ? "" \
         : [clock format $anchor_min -gmt 1 -format %Y-%m-%d]}]
 
-    return [build_cost_dict [dict create per_model $per_model first_ts $first_ts \
-        last_ts "" turns $turns stamps $stamps last_model $last_model ok 1] $rates $cap]
+    return [build_cost_dict [dict create per_model $per_model requests $requests \
+        first_ts $first_ts last_ts "" turns $turns stamps $stamps \
+        last_model $last_model ok 1] $rates $threshold $credit]
 }
