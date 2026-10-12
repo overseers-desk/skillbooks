@@ -47,6 +47,42 @@ oo::class create spar::Harness {
     method prompt_root {}         { return $::spar::root }
     method claude_bin {}          { return [spar::find_tool claude] }
 
+    constructor {prompt_dir log_dir} {
+        next $prompt_dir $log_dir
+        my bounds_from_env $prompt_dir
+    }
+
+    # The process environment carries the cost cap and the stall timeout
+    # for a caller that knows its own dispatch before meta.env exists (the
+    # harness generates that directory itself, so nothing else can reach
+    # the constructor first). meta.env is the more specific statement and
+    # wins when it sets the key, which coachman's constructor has already
+    # applied, so only a key meta.env lacks is read here; a value that is
+    # not a number keeps the bound in force and says so, as coachman does
+    # with meta.env's own.
+    method bounds_from_env {prompt_dir} {
+        set meta [dict create]
+        if {[file exists [file join $prompt_dir meta.env]]} { set meta [my load_meta] }
+        if {![dict exists $meta WORKER_COST_CAP_USD] && [info exists ::env(WORKER_COST_CAP_USD)]} {
+            set cap $::env(WORKER_COST_CAP_USD)
+            if {[string is double -strict $cap]} {
+                my set_worker_cost_cap $cap
+            } else {
+                [my log_service]::warn \
+                    "\[[my slug]\] WORKER_COST_CAP_USD='$cap' is not a number; keeping \$[my cost_cap]"
+            }
+        }
+        if {![dict exists $meta STALL_TIMEOUT_SECS] && [info exists ::env(STALL_TIMEOUT_SECS)]} {
+            set secs $::env(STALL_TIMEOUT_SECS)
+            if {[string is double -strict $secs]} {
+                my set_stall_timeout $secs
+            } else {
+                [my log_service]::warn \
+                    "\[[my slug]\] STALL_TIMEOUT_SECS='$secs' is not a number; keeping [my stall_timeout]s"
+            }
+        }
+    }
+
     # inject_courier: one courier cascade per contact fills both prompts,
     # __COURIER_SECTION__ in the author's brief (accounts header plus the
     # correspondence cascade) and __PRIOR_CORRESPONDENCE__ in the challenger
