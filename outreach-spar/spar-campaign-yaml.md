@@ -47,7 +47,7 @@ Channel vocabulary: `email`, `phone`, and one channel per platform module (the m
 
 | Field | Type | Default | Purpose |
 |---|---|---|---|
-| `filter.min_star` | integer | 0 | Skip entries with `star_rating` below this threshold |
+| `filter.min_star` | integer | 3 | Skip entries with `star_rating` below this threshold; the approach-dispatch gate (T2/T4) applies it, and `0` turns it off. How low a star still justifies drafting is the campaign's call, made here (`spar-A-approach.md` §4.0) |
 | `filter.require_profile` | boolean | true | Skip entries that have no profile document; `false` lets A draft from the roster row alone, which the P phase exists to prevent, so state it only when that is wanted |
 
 ### Optional
