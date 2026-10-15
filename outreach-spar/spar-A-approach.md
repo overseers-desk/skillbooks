@@ -42,7 +42,7 @@ Warmth is engagement state, not profile content (INVARIANTS.md I1; SPAR-P §4.7)
 | Known-of | Reference the shared context: a mutual connection, a shared network, or a specific event. |
 | Cold | Open with their situation, not a compliment. No pretence of a relationship that does not exist. |
 
-When a first-channel contact (e.g. a connection request) is accepted before the follow-up message is sent, the follow-up can acknowledge the connection naturally — the contact is no longer fully cold. This warm transition is a reason to use a multi-channel sequence rather than a single message.
+A multi-channel sequence (a connection request, then an email) has a second message whose context is not known at drafting time: the first touch may go unanswered, be accepted, or draw a reply. Draft one body for it, carrying the whole agenda, and leave only its opening line to be chosen at send time: cold when the first touch drew no response, warm (acknowledging the connection) when it was accepted without a message. Acceptance warms the frame by one notch and changes nothing that is pitched, so a second full body for the accepted case would differ by a line and drift from the first with every fix. The one context the body cannot serve is a substantive reply, whose content cannot be forecast: it is answered by a new round drafted against what the contact said. That warm opener is a reason to use a multi-channel sequence rather than a single message.
 
 If the evidence is contradictory (the approach file and the IMAP record disagree about prior contact), flag it for the human. Do not guess.
 
@@ -67,7 +67,7 @@ Read the plan block (the segment's entry under `segments:` in `campaign.yaml`) f
 
 Channel selection rules, in priority order:
 
-- **Connection channel + email + phone:** Prepare three pieces in sequence: (1) connection message, (2) email after the connection is accepted or after 4–5 days, (3) phone follow-up if the email gets no reply after 3 days.
+- **Connection channel + email + phone:** Prepare three pieces in sequence: (1) connection message, (2) email after the connection is accepted or after 4–5 days, one body whose opener is chosen at send time (§4.1), (3) phone follow-up if the email gets no reply after 3 days.
 - **Email + phone, no connection channel:** Email first, phone follow-up if no reply after 3 days.
 - **Email only:** Email only.
 - **Connection channel, no email:** Connection message only, with slightly more context than usual since there is no email follow-up.
