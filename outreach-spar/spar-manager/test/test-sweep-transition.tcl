@@ -701,4 +701,22 @@ assert_eq [llength $errs] 0 "a stamped deliverable re-validates clean"
 assert_eq [llength [spar::load_roster $h_roster]] 1 "and appends nothing"
 $harness2 destroy
 
+# A meta.env with no MODEL line runs the sweep at Sonnet tier (#152).
+set h_prompt3 [file join $tmpdir prompts sweep-tas-no-model]
+file mkdir $h_prompt3
+set fd [open [file join $h_prompt3 meta.env] w]
+puts $fd "STEM=\"sweep-tas-no-model\""
+puts $fd "OUTFILE=\"$h_out\""
+puts $fd "ROSTER_PATH=\"$h_roster\""
+puts $fd "SWEEP_PATH=\"$h_sweep\""
+puts $fd "SEGMENT_DIR=\"$h_seg\""
+puts $fd "SEGMENT_KEY=\"tas\""
+puts $fd "SOURCE_NAME=\"State register\""
+close $fd
+set harness3 [spar::SweepHarness new $h_prompt3 $h_logs]
+$harness3 load_my_meta
+assert_eq [set [info object namespace $harness3]::Model] sonnet \
+    "an absent MODEL falls back to sonnet"
+$harness3 destroy
+
 finish_tests

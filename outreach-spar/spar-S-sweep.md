@@ -233,6 +233,8 @@ When an AI agent delegates discovery work to a subagent, the prompt must tell th
 
 Do not replicate SPAR-S content in prompts — copies drift and cannot be corrected.
 
+**Model tier:** spawn each subagent at Sonnet tier (`model: sonnet` or the spawning tool's equivalent). The tier in this document's header binds the launcher; a subagent spawned without it inherits the launcher's own model.
+
 **Access cadence:** Signed-in platform lookups share a per-site access cadence that the serialised-browsing skill paces across every worker at once, so subagents may be dispatched concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser is available and lookups are hand-rolled do they run one at a time. Searches that do not sign in (web, register, directory) are exempt.
 
 This AESOP does not prescribe how to access social media; each operator uses their own method and tooling. The access-cadence constraint is the only requirement.

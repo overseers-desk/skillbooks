@@ -971,7 +971,10 @@ oo::class create spar::SweepHarness {
         set SegmentKey [dict get $meta SEGMENT_KEY]
         set SourceName [dict get $meta SOURCE_NAME]
         set Round      [dict getdef $meta SWEEP_ROUND 1]
-        set Model      [dict getdef $meta MODEL opus]
+        # S is Sonnet-tier (spar-methodology.md, "Model assignment"); a
+        # meta.env written without MODEL keeps that tier rather than
+        # promoting the sweep to a dearer one.
+        set Model      [dict getdef $meta MODEL sonnet]
     }
 
     method do_sweep_call {} {
