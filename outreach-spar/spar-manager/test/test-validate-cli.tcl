@@ -108,4 +108,32 @@ set wcodes {}
 foreach w [dict get $parsed warnings] { lappend wcodes [dict get $w code] }
 assert_eq [expr {"placeholder_to" in $wcodes}] 1 "placeholder_to reported as warning"
 
+# stale_* warnings collapse to one count line per segment in the text
+# report; --json still lists each (#188).
+set cdir [make_temp_campaign]
+set seg [file join $cdir segments seg-a]
+file mkdir $seg; file mkdir [file join $cdir campaigns camp]
+write_roster_tsv $seg $::std_headers [list \
+    [make_base_row {stem "alice" contact_name "Alice" star_rating "5" email "alice@test.com"}] \
+    [make_base_row {stem "bob" contact_name "Bob" star_rating "5" email "bob@test.com"}]]
+foreach {stem old} {alice "Alice Old" bob "Bob Old"} {
+    write_profile $seg $stem -contact_name $old -organisation "Old Org" \
+        -role null -date_excluded null
+}
+write_segment_yaml $seg "title: Seg A\nversion: \"2.0\"\n"
+write_campaign_yaml $cdir "campaign: CLI Test\nversion: \"2.0\"\nsegments:\n  - seg-a\nfilter:\n  min_star: 3\n"
+lassign [run_cli $cdir --json] rc out
+set wcodes {}
+foreach w [dict get [::json::json2dict $out] warnings] { lappend wcodes [dict get $w code] }
+assert_eq [llength [lsearch -all $wcodes stale_*]] 4 "--json lists each stale field"
+lassign [run_cli $cdir] rc out
+assert_eq [regexp -all {stale_contact_name: seg-a/} $out] 0 \
+    "the text report prints no per-contact stale line"
+assert_eq [regexp -all -line {^\[WARNING\] stale_profiles: seg-a: } $out] 1 \
+    "it prints one stale count line for the segment"
+assert_match $out "*4 snapshot field(s) across 2 profile(s)*stale_contact_name 2, stale_organisation 2*" \
+    "the line counts fields and profiles, by code"
+assert_match $out "*0 errors, [llength $wcodes] warnings*" \
+    "the summary still counts every warning"
+
 finish_tests

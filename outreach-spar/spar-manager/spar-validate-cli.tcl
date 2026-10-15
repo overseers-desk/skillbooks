@@ -219,9 +219,38 @@ if {$json_mode} {
         errors [::json::write array {*}$err_json] \
         warnings [::json::write array {*}$warn_json]]
 } else {
+    # stale_* warnings (a profile snapshot that no longer matches its roster
+    # row) follow every legitimate roster correction, so one per contact
+    # buries the rest of the report. Text mode prints one count line per
+    # segment in their place; --json still lists each.
+    set stale [dict create]
+    set stale_contacts [dict create]
+    set shown {}
+    foreach i $warnings {
+        set code [dict get $i code]
+        if {![string match stale_* $code]} {
+            lappend shown $i
+            continue
+        }
+        set seg [dict getdef $i segment ""]
+        dict set stale $seg $code [expr {[dict getdef $stale $seg $code 0] + 1}]
+        dict set stale_contacts $seg [dict getdef $i contact_name ""] 1
+    }
     puts "Validating: $campaign_name"
-    foreach i $errors   { puts [_issue_line $i] }
-    foreach i $warnings { puts [_issue_line $i] }
+    foreach i $errors { puts [_issue_line $i] }
+    foreach i $shown  { puts [_issue_line $i] }
+    dict for {seg by_code} $stale {
+        set parts {}
+        set total 0
+        foreach code [lsort [dict keys $by_code]] {
+            lappend parts "$code [dict get $by_code $code]"
+            incr total [dict get $by_code $code]
+        }
+        set ncontacts [dict size [dict get $stale_contacts $seg]]
+        puts "\[WARNING\] stale_profiles: [expr {$seg ne {} ? "$seg: " : {}}]$total\
+            snapshot field(s) across $ncontacts profile(s) differ from the roster\
+            ([join $parts {, }]); --json lists each"
+    }
     puts "[llength $errors] errors, [llength $warnings] warnings"
 }
 
