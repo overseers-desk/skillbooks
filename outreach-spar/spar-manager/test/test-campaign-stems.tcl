@@ -169,15 +169,15 @@ proc _cs_make_dispatch_campaign {seg_name stems_yaml} {
 
 set dp_yaml [_cs_make_dispatch_campaign csdisp1 "    stems:\n      - alpha\n      - gamma"]
 set dp_prep [spar::p::prepare_for_pool \
-    [dict create campaign_file $dp_yaml] {apply {args {}}}]
+    [dict create campaign_file $dp_yaml stems {alpha beta gamma}] {apply {args {}}}]
 assert_eq [llength [dict get $dp_prep rows]] 2 \
-    "stems {alpha gamma} → P queues two of three rows"
+    "stems {alpha gamma} → P queues two of three named rows"
 
 set dp_yaml_all [_cs_make_dispatch_campaign csdisp2 ""]
 set dp_prep_all [spar::p::prepare_for_pool \
-    [dict create campaign_file $dp_yaml_all] {apply {args {}}}]
+    [dict create campaign_file $dp_yaml_all stems {alpha beta gamma}] {apply {args {}}}]
 assert_eq [llength [dict get $dp_prep_all rows]] 3 \
-    "no stems → P queues all three rows (regression guard)"
+    "no campaign stems → P queues all three named rows (regression guard)"
 
 # ── Summary ─────────────────────────────────────────────────────────────
 finish_tests

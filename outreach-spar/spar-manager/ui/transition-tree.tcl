@@ -441,9 +441,9 @@ oo::class create spar::ui::TransitionTree {
         set nchild [llength $leaves]
 
         # When leaves are selected and the runner supports re-author
-        # (currently T1/T3 — profile runners), passing stems bypasses the
-        # "profile exists" skip. Reflect that in the verb so the user
-        # sees the action before firing.
+        # (currently T1/T3 — profile runners), a named stem is rebuilt
+        # over the profile it already has. Reflect that in the verb so
+        # the user sees the action before firing.
         set verb "Dispatch"
         if {$nchild > 0} {
             set tnum [string range $parent 1 end]

@@ -57,28 +57,28 @@ proc _dp_run_count {yaml extra_opts} {
     return [llength [dict get $prep rows]]
 }
 
-# Baseline: no stems → all three rows queued
+# The caller names the rows: no stems is an error, never the whole
+# segment (#62).
 lassign [_dp_make_campaign seg-all] dp_yaml dp_seg
-assert_eq [_dp_run_count $dp_yaml {}] 3 \
-    "prepare_for_pool: no stems → 3 queued"
+assert_error {_dp_run_count $dp_yaml {}} "*opts.stems is required*" \
+    "prepare_for_pool: no stems → error"
+assert_error {spar::a::prepare_for_pool \
+        [dict create campaign_file $dp_yaml] {apply {args {}}}} \
+    "*opts.stems is required*" "A prepare_for_pool: no stems → error"
+assert_eq [_dp_run_count $dp_yaml {stems {alpha beta gamma}}] 3 \
+    "prepare_for_pool: three stems → 3 queued"
 
 # Narrowed: stems={beta} → only beta queued
 lassign [_dp_make_campaign seg-one] dp_yaml dp_seg
 assert_eq [_dp_run_count $dp_yaml {stems {beta}}] 1 \
     "prepare_for_pool: stems={beta} → 1 queued"
 
-# stems selector bypasses profile-exists skip (caller pre-deleted old
-# profile). An existing profiles/beta.md on disk → still 1, not 0.
+# A named row is rebuilt over its existing profile (T3 re-profiles a
+# stale one). An existing profiles/beta.md on disk → still 1, not 0.
 lassign [_dp_make_campaign seg-rebuild] dp_yaml dp_seg
 write_profile $dp_seg beta
 assert_eq [_dp_run_count $dp_yaml {stems {beta}}] 1 \
     "prepare_for_pool: stems+existing profile → rebuild queued"
-
-# Without stems, existing profile is skipped.
-lassign [_dp_make_campaign seg-skip] dp_yaml dp_seg
-write_profile $dp_seg beta
-assert_eq [_dp_run_count $dp_yaml {}] 2 \
-    "prepare_for_pool: no stems + 1 profile exists → 2 queued"
 
 # ════════════════════════════════════════════════════════════════════════
 # 24a. spar::detect_browser_cmd — the serialiser or nothing
