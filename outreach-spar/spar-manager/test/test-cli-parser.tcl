@@ -199,4 +199,37 @@ assert_match [dict get $r error] "*bogus*" \
 set r [spar::parse_cli {c.yaml T6 --action=}]
 assert_eq [dict get $r ok] 0 "empty --action rejected"
 
+# ── numeric flags ───────────────────────────────────────────────────────
+section "numeric flags"
+
+foreach bad {--limit=-3 --limit= --limit=abc --limit=2.5 --jobs=-2 --jobs=abc \
+             --control-port=abc --control-port=-1 --control-port=70000 \
+             --delay=abc --delay=-1} {
+    set r [spar::parse_cli [list c.yaml T1 $bad]]
+    assert_eq [dict get $r ok] 0 "$bad rejected"
+    assert_match [dict get $r error] "*[lindex [split $bad =] 0]*" \
+        "$bad: the error names the flag"
+}
+foreach good {--limit=0 --jobs=0 --control-port=0 --delay=0.5} {
+    assert_eq [dict get [spar::parse_cli [list c.yaml T1 $good]] ok] 1 \
+        "$good accepted"
+}
+
+# ── scope matching ──────────────────────────────────────────────────────
+section "tid_scope_admits: each scope is matched whole"
+
+set sc {{T1 vic jane} {T1 nsw bob}}
+assert_eq [spar::tid_scope_admits $sc T1 vic jane] 1 "named pair admitted"
+assert_eq [spar::tid_scope_admits $sc T1 vic bob] 0 \
+    "segment of one scope and stem of another do not combine"
+set sc {{T1 vic jane} {T1 nsw {}}}
+assert_eq [spar::tid_scope_admits $sc T1 vic other] 0 \
+    "a bare segment scope does not widen another segment's stem scope"
+assert_eq [spar::tid_scope_admits $sc T1 nsw anyone] 1 "bare segment admits its rows"
+assert_eq [spar::tid_scope_admits {{T1 {} {}}} T1 any one] 1 "bare Tn admits all"
+assert_eq [spar::tid_scope_admits {{T2 vic jane}} T1 nsw bob] 1 \
+    "a TID no scope names is unfiltered"
+assert_eq [spar::tid_scope_admits {{T1 vic jane}} T1 nsw jane] 0 \
+    "a stem named in one segment does not select it in another"
+
 finish_tests
