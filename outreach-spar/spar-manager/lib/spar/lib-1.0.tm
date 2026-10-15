@@ -87,6 +87,13 @@ proc spar::campaign_tertiary_channel {cdata} {
     return [spar::_campaign_channel_slot $cdata tertiary_channel]
 }
 
+# campaign_min_star — the campaign's filter.min_star, 3 when unset
+# (spar-campaign-yaml.md). The approach-dispatch gate, the A prompt's
+# filter line and the progress figures all read it here.
+proc spar::campaign_min_star {cdata} {
+    return [dict getdef [dict getdef $cdata filter [dict create]] min_star 3]
+}
+
 # campaign_in_scope_channels — list of channel names configured on a
 # campaign via the primary/secondary/tertiary slots, in that order. Empty
 # slots are omitted. Used by dispatch to decide whether a roster row has
@@ -350,10 +357,7 @@ proc spar::resolve_campaign {campaign_file campaign_dir} {
     set cdata [spar::load_campaign $yaml_path]
     set campaign_name [dict getdef $cdata campaign [file tail $yaml_path]]
     set primary_channel [spar::campaign_primary_channel $cdata]
-    set min_star 0
-    if {[dict exists $cdata filter]} {
-        set min_star [dict getdef [dict get $cdata filter] min_star 0]
-    }
+    set min_star [spar::campaign_min_star $cdata]
     set segments_list [spar::campaign_segment_names $cdata]
 
     # segment_paths carries the rostered segments (what classification

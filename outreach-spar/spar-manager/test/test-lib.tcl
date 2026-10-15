@@ -713,4 +713,12 @@ assert_match [spar::channel_desc {email unknown application_url https://x.test}]
     "*no reachable channel*" \
     "a non-platform *_url column and a masked email reach no one"
 
+section "campaign_min_star"
+
+assert_eq [spar::campaign_min_star {}] 3 "no filter block: the default 3"
+assert_eq [spar::campaign_min_star {filter {skip_excluded true}}] 3 \
+    "a filter block without min_star: the default 3"
+assert_eq [spar::campaign_min_star {filter {min_star 0}}] 0 \
+    "min_star 0 is honoured, turning the filter off"
+
 finish_tests
