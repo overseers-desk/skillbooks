@@ -642,8 +642,8 @@ oo::class create spar::ProfileHarness {
         # Mediated roster and census writes: apply the deliverable's
         # declarations (star sync, one-shot roster_patch, rows_new,
         # sources_new) before validating, so validation sees the roster
-        # the declaration produced. Runs on every attempt: idempotent by stamp, and a
-        # fix-loop resume that edits the declaration gets it applied on
+        # the declaration produced. Runs on every attempt and is idempotent:
+        # a fix-loop resume that edits the declaration gets it applied on
         # the re-validate. Rejections join the error list and drive the
         # same fix loop. Whether a declaration has landed is the harness's
         # own record (Applied), not the deliverable's stamp (#209).
@@ -853,8 +853,8 @@ oo::class create spar::ProfileHarness {
 
     # 1 when the row was dispatched to re-profile a stale snapshot
     # (PROFILE_STALE in meta.env) and the snapshot now agrees with the
-    # roster row. A re-author of a current profile carries no flag, so
-    # it is never cut short here.
+    # roster row. A row built by stem over a current profile carries no
+    # flag, so it is never cut short here.
     method _profile_current {} {
         if {![info exists StaleAtPrepare] || !$StaleAtPrepare} { return 0 }
         if {![file exists $Outfile]} { return 0 }

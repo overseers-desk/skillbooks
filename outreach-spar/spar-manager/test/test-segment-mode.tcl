@@ -122,7 +122,7 @@ assert_match $env_text "*CAMPAIGN_FILE=\"\"*" "meta.env carries an empty campaig
 # A row named by stem is prepared over its existing profile. meta.env
 # flags it PROFILE_STALE only when the snapshot disagrees with the row
 # (#193), so the harness's pre-call re-check never cuts short a
-# re-author of a current profile.
+# rebuild of a current profile.
 proc alice_meta_env {seg} {
     set prep [spar::p::prepare_for_pool \
         [dict create segment_dirs [list $seg] stems {alice-acme}] {apply {args {}}}]

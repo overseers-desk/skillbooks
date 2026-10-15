@@ -22,8 +22,7 @@
 # ── Levels ───────────────────────────────────────────────────────────────
 # root's -keys must stay in sync with the front-matter fields listed in
 # spar-P-profile.md §5.1. authored_model is optional and harness-written
-# (#154): the full model id from the profile call's init event, absent on
-# a profile that predates the record.
+# (#154).
 level root           -keys {profile_date star_rating yield dependent_data \
                             roster_patch roster_patch_applied rows_new sources_new \
                             authored_model}
