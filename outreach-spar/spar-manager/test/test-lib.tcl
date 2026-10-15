@@ -650,4 +650,29 @@ assert_eq [llength $rc_contacts] 1 "classification reads the roster with no fold
 assert_eq [dict get [lindex $rc_contacts 0] state] DISCOVERED \
     "the contact awaits P"
 
+# ════════════════════════════════════════════════════════════════════════
+# channel_desc: the §4.2 branch from the row's populated channels (#176)
+# ════════════════════════════════════════════════════════════════════════
+section "channel_desc"
+
+assert_match [spar::channel_desc {facebook_url https://facebook.com/x}] \
+    "*connection channel (Facebook), no email*" \
+    "facebook only → connection channel, no email (not email only)"
+assert_match [spar::channel_desc {linkedin_url https://linkedin.com/in/x phone "0400 000 000"}] \
+    "*connection channel (LinkedIn), no email*" \
+    "linkedin + phone, no email → connection message only"
+assert_match [spar::channel_desc {linkedin_url https://linkedin.com/in/x email a@x.test}] \
+    "*connection channel (LinkedIn) + email, no phone*" \
+    "linkedin + email → connection then email"
+assert_match [spar::channel_desc {linkedin_url l facebook_url f email a@x.test phone "02 9999 0000"}] \
+    "*connection channel (Facebook, LinkedIn) + email + phone*" \
+    "every populated platform is named"
+assert_match [spar::channel_desc {email a@x.test phone "02 9999 0000"}] \
+    "*email + phone, no connection channel*" "email + phone"
+assert_match [spar::channel_desc {email a@x.test}] "*email only*" "email only"
+assert_match [spar::channel_desc {phone "02 9999 0000"}] "*phone only*" "phone only"
+assert_match [spar::channel_desc {email unknown application_url https://x.test}] \
+    "*no reachable channel*" \
+    "a non-platform *_url column and a masked email reach no one"
+
 finish_tests
