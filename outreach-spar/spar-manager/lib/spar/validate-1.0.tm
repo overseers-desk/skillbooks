@@ -1604,8 +1604,7 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
             lassign $entry seg cname org
             lappend parts "$seg ($cname)"
         }
-        # The within-segment categories (validate_roster), read across
-        # segments; still a warning here, whatever the category.
+        # Whatever the category, a cross-segment duplicate stays a warning.
         set cats [lmap c [dict getdef $item category {}] {
             string cat $c " " [dict get {case_1 "same person, same organisation"
                 case_2 "shared inbox" case_3 "personal email reused"} $c]
@@ -1927,10 +1926,9 @@ proc spar::_pred_negative_evidence {node meta} {
 }
 
 # A census source's status, control or probe written as a block scalar
-# (| or >) cannot be rewritten by the T0 harness, which finds that out
-# after the run's rows have landed (spar::sweep_block_scalar_fields).
-# Scans the text (context `raw`), since the parsed value no longer shows
-# how it was written.
+# (| or >), which a T0 run cannot write back (spar::sweep_block_scalar_fields).
+# Scans the text (context `raw`): the parsed value no longer shows how it
+# was written.
 proc spar::_pred_source_block_scalar {node meta} {
     set raw [dict getdef [dict get $meta context] raw ""]
     set out {}

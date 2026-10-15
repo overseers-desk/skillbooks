@@ -1706,7 +1706,7 @@ proc spar::sweep_latest_round {sweep_data} {
 # selection rule: T0's task list and the prompt dirs its prepare builds
 # both ask it, so a source reported as dispatchable is a source dispatched.
 #
-# An open source (spar::sweep_source_open) is due, its status the reason.
+# An open source is due, its status the reason.
 # Unreachable closes a source for the round that probed it, not forever:
 # with no probe record it is due for the probe (nothing distinguishes a
 # closed gate from a wrong query until one is recorded), and with a probe

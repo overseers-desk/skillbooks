@@ -124,11 +124,11 @@ rule predicate root rows_new_shape -code invalid_row -groups {profile}
 rule predicate root profile_discovered_via -needs stem \
     -code discovered_via_not_profile -groups {profile}
 
-# The four dependent_data fields, required once the contact has a roster
+# The dependent_data fields, required once the contact has a roster
 # row (context has_roster_row, which validate_profile always sets): the
 # staleness comparison skips a field the snapshot lacks. Root-level so the
 # guard reads the context, and so a missing block stays one issue
-# (missing_dependent_data) rather than five.
+# (missing_dependent_data) rather than one more per field.
 rule predicate root dependent_data_complete -code missing_dependent_data_field \
     -groups {profile}
 

@@ -850,7 +850,7 @@ Emit exactly one of these lines as the very last line of your output:"
 #                  or a T0:<seg>/<stem> scope names sources this way)
 proc spar::s::prepare_for_pool {opts on_progress} {
     lassign [spar::_population_prep_scope $opts s] cdata root segments logs_path_src
-    # One prep error for a host with no browser, as in spar::p::prepare_for_pool.
+    # The same up-front check as P's prep: S prompts name the browser command too.
     spar::detect_browser_cmd
     set campaign_file [dict getdef $opts campaign_file ""]
     set user_logs    [dict getdef $opts logs_dir ""]
@@ -888,9 +888,8 @@ proc spar::s::prepare_for_pool {opts on_progress} {
 # not re-find what an earlier one found.
 #
 # A source whose status, control or probe is a block scalar fails here
-# through on_progress and gets no prompt dir: the harness could not write
-# its verdict back, and would find that out only after the paid run had
-# landed its rows.
+# through on_progress and gets no prompt dir, since a paid run's verdict
+# could not be written back (spar::sweep_block_scalar_fields).
 proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
                                 campaign_file segment_name on_progress} {
     set segment_dir [file normalize $segment_dir]
