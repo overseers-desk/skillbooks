@@ -160,8 +160,8 @@ oo::objdefine $ph {
 assert_eq [$ph run] 0 "an untouched profile that now agrees with its row is DONE"
 $ph destroy
 
-# A re-author of a current profile carries no flag: the worker runs, and
-# a turn that writes nothing still requeues (#181).
+# A row built by stem over a current profile carries no flag: the worker
+# runs, and a turn that writes nothing still requeues (#181).
 set ::called 0
 set ph [spar::ProfileHarness new [make_prompt_dir t3d $stem $profile $roster] \
     [file join $tmpdir logs]]
