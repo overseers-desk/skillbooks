@@ -46,7 +46,7 @@ assert_eq [llength [lsearch -all $calls mu*]] 2 \
     "index misses: one mu find per pass"
 assert_match [dict get $b author] "*\$ mu find 'from:jo@stranger.example OR to:jo@stranger.example'*no messages in the local mail index*" \
     "the author block shows the index lookup and its empty answer"
-assert_eq [dict get $b prior] "" "no hits: the persona's section stays empty"
+assert_eq [dict get $b prior] "" "no hits: the prior-correspondence block stays empty"
 
 # A pass-1 hit in the index: courier runs that pass for the UID and
 # folder, and pass 2 is skipped as before.
@@ -58,9 +58,9 @@ assert_eq $calls [list "mu from:jo@known.example OR to:jo@known.example" \
 assert_match [dict get $b author] "*\$ courier -A search*UID 41*Pass 1 hit*" \
     "the author block carries courier's output"
 assert_match [dict get $b prior] "*Prior correspondence*UID 41*" \
-    "the persona's section carries courier's hits"
+    "the prior-correspondence block carries courier's hits"
 assert_eq [string match "*\$ courier*" [dict get $b prior]] 0 \
-    "the persona's section carries no command line"
+    "the prior-correspondence block carries no command line"
 
 # Pass 1 empty in the index, pass 2 a hit: courier runs pass 2 only.
 cr_calls
