@@ -121,7 +121,7 @@ Columns 13–14 are empty during S and populated by P. Empty columns are expecte
 | S | Roster row (this is S's primary output) | roster `s_note`: why this person was included |
 | P | Profile document (`segments/{segment}/{stem}.md` with YAML front matter) | roster `p_note`: one-line relevance summary and routing for A |
 | A | Approach file (`{stem}.yaml`) | approach YAML `a_note` root key: angle and outcome summary for R |
-| R | Campaign YAML updates (plan-block angle priorities, `prompt_appendices` guidance) | approach YAML `r_note` root key: per-contact observation from the human reviewer |
+| R | Campaign YAML updates (plan-block `usps` order and framings, `prompt_appendices` guidance) | approach YAML `r_note` root key: per-contact observation from the human reviewer |
 
 A phase note should answer: "what does the next phase need to know about this contact from my phase, in one line?" If the observation requires more than a short sentence, it belongs in the full artefact, not in the note. The S and P notes live in the roster; the A and R notes live in the approach YAML, beside the messages they summarise.
 

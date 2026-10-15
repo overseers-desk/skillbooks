@@ -1,7 +1,7 @@
 # SPAR-A: Approach (draft + separate-agent spar)
 
 **Applies to:** AI agents (Opus tier) performing the A phase of the SPAR outreach methodology. "A" means draft then spar, where the spar is a context-cleared separate agent, not self-review within the drafting agent.
-**Prerequisite reading:** The profile document for the contact being approached, the campaign's plan block for the segment (approach sequencing, angle tables; `spar-campaign-yaml.md`), and the SPAR methodology (`spar-methodology.md`, A section).
+**Prerequisite reading:** The profile document for the contact being approached, the campaign's plan block for the segment (approach sequencing, the `usps` framings; `spar-campaign-yaml.md`), and the SPAR methodology (`spar-methodology.md`, A section).
 
 ## 1. When to use this procedure
 
@@ -26,7 +26,7 @@ Use this procedure when the S&P prong is complete (or the human has approved ear
 Before drafting, verify that this contact is a valid campaign target:
 
 1. Check the roster: `star_rating` must be ≥ 1 and `date_excluded` must be empty. If either condition fails, skip this contact.
-2. Read the profile's angle assessment. If the profile states or implies the contact should not be approached (e.g. "not a Phase 1 contact", "deferred", "competing operator"), do not draft. Instead: declare the exclusion in the approach file's root `roster_patch:` block (`star_rating: 0`, `date_excluded: <today>`) for the harness to apply, record the reason in `a_note` (a minimal approach file with no draft rounds is fine — the exclusion is the outcome), and move to the next contact.
+2. Read the profile's `## Relevance assessment`. If the profile states or implies the contact should not be approached (e.g. "not a Phase 1 contact", "deferred", "competing operator"), do not draft. Instead: declare the exclusion in the approach file's root `roster_patch:` block (`star_rating: 0`, `date_excluded: <today>`) for the harness to apply, record the reason in `a_note` (a minimal approach file with no draft rounds is fine — the exclusion is the outcome), and move to the next contact.
 3. If `star_rating` is below the campaign's `filter.min_star` (`spar-campaign-yaml.md`), skip this contact. Whether a low-star contact justifies the drafting cost is the campaign's judgement, set in that field, since it turns on the campaign's cost structure and on how its segment's `rating_rubric` spreads valid contacts across the stars. The dispatcher applies the same filter, so a dispatched contact already meets it.
 
 This gate exists because A is the first point where profile content and campaign goals are jointly evaluated. P assesses relevance to the campaign in general; A assesses whether a specific approach is viable. A contact may pass P's filter but fail A's — for example, a strategically interesting person for whom no viable first-touch exists.
@@ -88,7 +88,7 @@ Read the full profile document. Then:
 
 1. **Note what the contact has said publicly.** These are the hooks: specific statements, positions, or activities that connect their situation to the campaign's offering.
 2. **Note what the contact has NOT said.** The profile records a bearing absence inline where it found one (`No public statements found on [topic].`), and says nothing where it found nothing. Neither licenses inventing relevance; respect both throughout drafting.
-3. **Derive the angles.** The profile carries no angle list (angles are campaign-bound; INVARIANTS.md I1). Construct candidate angles from the profile's `## Relevance assessment` and evidence sections together with the plan block's angle table, order them by evidence strength, select the primary angle, and record the rationale in the approach file.
+3. **Derive the angles.** The profile carries no angle list (angles are campaign-bound; INVARIANTS.md I1). Construct candidate angles from the profile's `## Relevance assessment` and evidence sections together with the plan block's `usps` framings (which of the campaign's USPs apply to this segment, and why each lands), order them by evidence strength, select the primary angle, and record the rationale in the approach file.
 4. **Cross-reference prior approaches.** If a related contact (same organisation, network, or segment) has already been approached (the campaign folder's approach YAMLs; each `a_note` summarises the angle used), use a compatible angle — not identical, but consistent, so the campaign's voice does not contradict itself across contacts who may compare notes.
 
 ### 4.5 Draft the message (A1)
@@ -169,9 +169,9 @@ A processes contacts in bands ordered by response likelihood, as defined in the 
 1. Order contacts by star rating (highest first).
 2. Process sequentially, not in parallel. Each approach file may inform the next.
 3. After the band is complete, the human reviews all drafts, approves/edits/rejects each one, and sends approved messages.
-4. After responses arrive, the human revises the campaign for the next band: angle priorities in the plan blocks, drafting guidance in `prompt_appendices`, per-contact observations in `r_note`.
+4. After responses arrive, the human revises the campaign for the next band: the order and framings of the plan blocks' `usps`, drafting guidance in `prompt_appendices`, per-contact observations in `r_note`.
 
-Re-read the campaign's plan block and `prompt_appendices` before starting each new band; R may have changed angle priorities, tone guidance, or the ask.
+Re-read the campaign's plan block and `prompt_appendices` before starting each new band; R may have changed the `usps` order or framings, tone guidance, or the ask.
 
 ## 6. Approach file structure
 
