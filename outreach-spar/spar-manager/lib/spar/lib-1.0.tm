@@ -1934,6 +1934,29 @@ proc spar::update_source_status {sweep_path source_name status} {
     return [spar::update_source_field $sweep_path $source_name status $status]
 }
 
+# sweep_block_scalar_fields — the census fields a T0 run rewrites in place
+# (status, control, probe) whose value in the sweep file's text is a block
+# scalar, as a dict of source name → keys. update_source_field refuses to
+# rewrite such a value, and the harness reaches those writes only after
+# the run's rows are on disk; T0 prep and the sweep validator ask here
+# first, by the same test the writer applies.
+proc spar::sweep_block_scalar_fields {text} {
+    set lines [split [string trimright [string map {\r\n \n} $text] "\n"] "\n"]
+    set out [dict create]
+    foreach entry [dict get [spar::_yaml_block_entries $lines sources] entries] {
+        lassign $entry first last
+        set nm [spar::_entry_scalar $lines $first $last name]
+        if {[llength $nm] == 0} continue
+        foreach key {status control probe} {
+            set v [spar::_entry_scalar $lines $first $last $key]
+            if {[llength $v] > 0 && [string index [lindex $v 1] 0] in {| >}} {
+                dict lappend out [lindex $nm 1] $key
+            }
+        }
+    }
+    return $out
+}
+
 # append_sweep_round — write a round record into the rounds log.
 #
 # One T0 dispatch is one round worked source by source, and each source's

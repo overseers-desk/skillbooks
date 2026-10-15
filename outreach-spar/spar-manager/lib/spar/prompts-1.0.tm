@@ -858,7 +858,8 @@ proc spar::s::prepare_for_pool {opts on_progress} {
         if {![file exists [spar::sweep_yaml_for_segment $segdir]]} continue
         if {[catch {
             set prepared [spar::s::_prepare_segment \
-                $segdir $cdata $opts $datestamp $logs_dir $campaign_file $segment]
+                $segdir $cdata $opts $datestamp $logs_dir $campaign_file $segment \
+                $on_progress]
         } err]} {
             {*}$on_progress "_segment_${segment}" failed "setup error: $err"
             continue
@@ -879,8 +880,13 @@ proc spar::s::prepare_for_pool {opts on_progress} {
 # the harness's batch applier. What the worker is told about the roster is
 # its column vocabulary and the stems already in it, so a later round does
 # not re-find what an earlier one found.
+#
+# A source whose status, control or probe is a block scalar fails here
+# through on_progress and gets no prompt dir: the harness could not write
+# its verdict back, and would find that out only after the paid run had
+# landed its rows.
 proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
-                                campaign_file segment_name} {
+                                campaign_file segment_name on_progress} {
     set segment_dir [file normalize $segment_dir]
     set sel_stems   [dict getdef $opts stems {}]
 
@@ -962,6 +968,7 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
     file mkdir $prompts_dir
 
     set template [spar::load_prompt_template spar-s.txt]
+    set block_fields [spar::sweep_block_scalar_fields [spar::_sweep_read $sweep_path]]
     set created {}
     foreach src [dict getdef $sweep_data sources {}] {
         set name [string trim [dict getdef $src name ""]]
@@ -970,6 +977,10 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
         if {![lindex [spar::sweep_source_due $src $latest_n] 0]} continue
         set stem [spar::sweep_task_stem $segment_name $name]
         if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
+        if {[dict exists $block_fields $name]} {
+            {*}$on_progress $stem failed "[join [dict get $block_fields $name] {, }] is a block scalar in $sweep_path, which the run could not write back; rewrite it as a quoted single-line value"
+            continue
+        }
 
         set pdir [file join $prompts_dir $stem]
         file mkdir $pdir
