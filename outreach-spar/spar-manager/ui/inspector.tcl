@@ -2,8 +2,8 @@
 #
 # spar::ui::Inspector — per-contact detail pane with four tabs labelled
 # S, P, A, R (the pipeline's own vocabulary: Roster, Profile, Approach,
-# Reply). Fills .pw.right (already created by spar-ui) with a header
-# strip and a ttk::notebook. Each tab's enabled/disabled state reflects
+# Reply). A PaneViewer: fills its sub-frame of .pw.right below the
+# header strip with a ttk::notebook. Each tab's enabled/disabled state reflects
 # which data exists for the contact; render selects the latest-reached
 # tab so arrow-keying down the tree lands on whichever surface carries
 # the newest information for each contact. Read-only. Opens on leaf
@@ -17,44 +17,27 @@ package require TclOO
 namespace eval spar::ui {}
 
 oo::class create spar::ui::Inspector {
+    superclass spar::ui::PaneViewer
     variable Campaign Tree
-    variable Pane CurrentStem Visible SashPos
+    variable CurrentStem
     variable Right HeaderStem Notebook
     variable Tabs TabFrames TabCanvases CollapseMemory
-    variable Subs
 
     constructor {campaign tree parent_panedwindow} {
+        next $parent_panedwindow insp
         set Campaign        $campaign
         set Tree            $tree
-        set Pane            $parent_panedwindow
         set CurrentStem     ""
-        set Visible         0
-        set SashPos         0
         set Tabs            [dict create]
         set TabFrames       [dict create]
         set TabCanvases     [dict create]
         set CollapseMemory  [dict create]
-        set Subs            [dict create]
 
-        # Own a sub-frame inside .pw.right so SegmentViewer can pack a
-        # peer sub-frame in the same pane and the two can swap visibility
-        # without their widget trees colliding. Pack the sub-frame at
-        # construction so .pw.right contributes its natural width to the
-        # toplevel's initial layout — otherwise the window opens narrower
-        # and the half-of-current-width sash math shrinks .pw.main more
-        # than it did before this refactor.
-        set Right ${Pane}.right.insp
-        ttk::frame $Right
+        # Pack the sub-frame at construction, though not yet shown, so
+        # .pw.right contributes its natural width to the toplevel's
+        # initial layout — otherwise the window opens narrower and the
+        # half-of-current-width sash math shrinks .pw.main.
         pack $Right -fill both -expand 1
-
-        ttk::frame ${Right}.hdr
-        pack ${Right}.hdr -fill x -side top
-        ttk::button ${Right}.hdr.close -text "✕" -style Toolbutton \
-            -command [list [self] hide]
-        pack ${Right}.hdr.close -side right -padx {0 6}
-        set HeaderStem ${Right}.hdr.stem
-        ::spar::ui::inspector_widgets::copy_text $HeaderStem ""
-        pack $HeaderStem -side left -fill x -expand 1 -padx 6 -pady 4
 
         # Notebook sits directly under the header so its tab strip stays
         # fixed. Each tab owns its own scrollable canvas, so scrolling
@@ -81,16 +64,6 @@ oo::class create spar::ui::Inspector {
         $Campaign subscribe fully-loaded  [list [self] on_fully_loaded]
     }
 
-    # ─── Subscription / accessors ─────────────────────────────────────────
-    method subscribe {event cb} { dict lappend Subs $event $cb }
-
-    method fire {event args} {
-        if {![dict exists $Subs $event]} return
-        foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
-    }
-
-    method is_visible       {} { return $Visible }
-
     # ─── Event handlers ───────────────────────────────────────────────────
 
     # Ignore empty stems so multi-select and non-leaf selections keep the
@@ -98,7 +71,7 @@ oo::class create spar::ui::Inspector {
     method on_selection_changed {stem} {
         if {$stem eq ""} return
         set CurrentStem $stem
-        if {$Visible} { my render }
+        if {[my is_visible]} { my render }
     }
 
     method on_double_clicked {stem} {
@@ -107,41 +80,7 @@ oo::class create spar::ui::Inspector {
         my show
     }
 
-    method on_fully_loaded {} { if {$Visible} { my render } }
-
-    # ─── Visibility control ───────────────────────────────────────────────
-
-    method show {} {
-        # Fire `shown` first so any peer viewer pack-forgets its
-        # sub-frame before we pack ours and slide the sash open.
-        my fire shown
-        pack $Right -fill both -expand 1
-        set Visible 1
-        set w [winfo width $Pane]
-        if {$SashPos <= 0 || $SashPos >= $w} {
-            set SashPos [expr {int($w * 0.5)}]
-        }
-        catch { $Pane sashpos 0 $SashPos }
-        my render
-    }
-
-    method hide {} {
-        catch { set SashPos [$Pane sashpos 0] }
-        pack forget $Right
-        catch { $Pane sashpos 0 [winfo width $Pane] }
-        set Visible 0
-    }
-
-    # displace — peer viewer is taking the pane. Pack-forget our
-    # sub-frame but leave the sash position alone; the peer's show()
-    # will set it. Distinct from `hide` (which retracts the sash) so
-    # the show→displace→pack→sashpos flow doesn't fight itself.
-    method displace {} {
-        pack forget $Right
-        set Visible 0
-    }
-
-    method toggle {} { if {$Visible} { my hide } else { my show } }
+    method on_fully_loaded {} { if {[my is_visible]} { my render } }
 
     # ─── Rendering ────────────────────────────────────────────────────────
 

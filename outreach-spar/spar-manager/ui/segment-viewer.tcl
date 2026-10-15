@@ -2,9 +2,8 @@
 #
 # spar::ui::SegmentViewer — read-only pane that renders the parsed
 # segment.yaml of one segment. Opens on Double-1 against a row in the
-# ProgressTable. Shares `.pw.right` with the per-contact Inspector via
-# a `shown` event: each viewer hides on the other's `shown`, so the
-# pane shows one or the other but not both. Closes via the ✕ button.
+# ProgressTable. A PaneViewer: shares `.pw.right` with its peers, one
+# at a time. Closes via the ✕ button.
 #
 # The viewer is deliberately read-only. The segment schema is still
 # settling; an editor is premature.
@@ -14,32 +13,16 @@ package require TclOO
 namespace eval spar::ui {}
 
 oo::class create spar::ui::SegmentViewer {
-    variable Campaign Progress Pane
+    superclass spar::ui::PaneViewer
+    variable Campaign Progress
     variable Right HeaderStem Body Canvas
-    variable CurrentSegment Visible SashPos Subs
+    variable CurrentSegment
 
     constructor {campaign progress parent_panedwindow} {
+        next $parent_panedwindow seg
         set Campaign       $campaign
         set Progress       $progress
-        set Pane           $parent_panedwindow
         set CurrentSegment ""
-        set Visible        0
-        set SashPos        0
-        set Subs           [dict create]
-
-        # Sub-frame inside .pw.right so Inspector and SegmentViewer can
-        # coexist as peer subtrees and pack-forget independently.
-        set Right ${Pane}.right.seg
-        ttk::frame $Right
-
-        ttk::frame ${Right}.hdr
-        pack ${Right}.hdr -fill x -side top
-        ttk::button ${Right}.hdr.close -text "✕" -style Toolbutton \
-            -command [list [self] hide]
-        pack ${Right}.hdr.close -side right -padx {0 6}
-        set HeaderStem ${Right}.hdr.stem
-        ::spar::ui::inspector_widgets::copy_text $HeaderStem ""
-        pack $HeaderStem -side left -fill x -expand 1 -padx 6 -pady 4
 
         set Body [::spar::ui::inspector_widgets::scrollable $Right]
         set Canvas [winfo parent $Body]
@@ -48,50 +31,12 @@ oo::class create spar::ui::SegmentViewer {
             [list [self] on_segment_double_clicked]
     }
 
-    # ─── Subscription ─────────────────────────────────────────────────────
-    method subscribe {event cb} { dict lappend Subs $event $cb }
-
-    method fire {event args} {
-        if {![dict exists $Subs $event]} return
-        foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
-    }
-
-    method is_visible          {} { return $Visible }
-
     # ─── Event handlers ───────────────────────────────────────────────────
 
     method on_segment_double_clicked {seg_name} {
         if {$seg_name eq ""} return
         set CurrentSegment $seg_name
         my show
-    }
-
-    # ─── Visibility control ───────────────────────────────────────────────
-
-    method show {} {
-        my fire shown
-        pack $Right -fill both -expand 1
-        set Visible 1
-        set w [winfo width $Pane]
-        if {$SashPos <= 0 || $SashPos >= $w} {
-            set SashPos [expr {int($w * 0.5)}]
-        }
-        catch { $Pane sashpos 0 $SashPos }
-        my render
-    }
-
-    method hide {} {
-        catch { set SashPos [$Pane sashpos 0] }
-        pack forget $Right
-        catch { $Pane sashpos 0 [winfo width $Pane] }
-        set Visible 0
-    }
-
-    # displace — peer viewer is taking the pane. Pack-forget only;
-    # leave the sash to the peer's show().
-    method displace {} {
-        pack forget $Right
-        set Visible 0
     }
 
     # ─── Rendering ────────────────────────────────────────────────────────
@@ -170,18 +115,12 @@ oo::class create spar::ui::SegmentViewer {
         # discovery_criteria, etc.) get a soft-wrapped read-only text
         # block under a label header; single-line values become a kv_row.
         if {[string first "\n" $value] >= 0} {
-            my render_label_header $parent $key
+            ::spar::ui::inspector_widgets::label_header $parent $key
             ::spar::ui::inspector_widgets::wrapped_text_block \
                 $parent [string trim $value]
         } else {
             ::spar::ui::inspector_widgets::kv_row $parent $key $value
         }
-    }
-
-    method render_label_header {parent key} {
-        set lbl ${parent}.[::spar::ui::inspector_widgets::_uniq lh]
-        ttk::label $lbl -text "$key:" -anchor w
-        pack $lbl -fill x -padx 6 -pady {6 0}
     }
 
     method render_list_of_dicts {parent key value} {
@@ -196,7 +135,7 @@ oo::class create spar::ui::SegmentViewer {
             if {[llength $item] % 2 == 0} {
                 foreach {ik iv} $item {
                     if {[string first "\n" $iv] >= 0} {
-                        my render_label_header $ibody $ik
+                        ::spar::ui::inspector_widgets::label_header $ibody $ik
                         ::spar::ui::inspector_widgets::wrapped_text_block \
                             $ibody [string trim $iv]
                     } else {

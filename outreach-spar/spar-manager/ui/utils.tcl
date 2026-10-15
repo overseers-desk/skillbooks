@@ -262,6 +262,16 @@ namespace eval ::spar::ui::inspector_widgets {
         return $row
     }
 
+    # label_header parent key indent — pack a "key:" label heading the
+    # block that follows it. indent as in kv_row.
+    proc label_header {parent key {indent 0}} {
+        set lpad [expr {$indent * 16 + 6}]
+        set lbl ${parent}.[_uniq lh]
+        ttk::label $lbl -text "${key}:" -anchor w
+        pack $lbl -fill x -padx [list $lpad 4] -pady {6 0}
+        return $lbl
+    }
+
     # wrapped_text_block parent text pack_args max_lines: pack a flat
     # read-only Text widget under $parent, sized to its wrapped display-line
     # count. Resizes on width change (sash drag, window resize, expanding
