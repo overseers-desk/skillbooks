@@ -210,6 +210,29 @@ assert_match [alice_meta_env $seg] "*PROFILE_STALE=1*" \
     "a stale profile prepared by stem is flagged for the re-check"
 write_profile $seg "alice-acme"
 
+section "a host with no browser fails prep once (#204)"
+
+# Stand in for a host with neither browser-serialiser nor chromium: the
+# probe throws, and counts how often it is asked.
+rename spar::detect_browser_cmd _real_detect_browser_cmd
+proc spar::detect_browser_cmd {} {
+    incr ::browser_probes
+    error "spar::detect_browser_cmd: neither browser-serialiser nor chromium on PATH"
+}
+foreach {kind segdir stems} [list p $seg {alice-acme} s $swseg {}] {
+    set ::browser_probes 0
+    set ::prep_events {}
+    assert_error {spar::${kind}::prepare_for_pool \
+            [dict create segment_dirs [list $segdir $segdir] stems $stems] \
+            {apply {args { lappend ::prep_events $args }}}} \
+        "*neither browser-serialiser nor chromium*" \
+        "$kind prep raises the missing browser as its own error"
+    assert_eq $::browser_probes 1 "$kind prep asks for the browser once"
+    assert_eq $::prep_events {} "$kind prep reports no per-segment failure"
+}
+rename spar::detect_browser_cmd {}
+rename _real_detect_browser_cmd spar::detect_browser_cmd
+
 section "tier filtering at the CLI"
 
 set cli [file join $script_dir .. spar-transition]
