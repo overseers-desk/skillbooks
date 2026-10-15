@@ -494,7 +494,6 @@ if {$dispatching} {
                                {all_segment_paths {}}} {
         set ready_by_tid [dict create]
         foreach tid $active_tids {
-            lassign [tid_scope_filter $tid_scopes $tid] segs stems
             set eligible [$state transition_eligible \
                 $all_contacts $tid $primary_channel $cdata]
             # Campaign-level tasks (T0's census sources) are not derived
@@ -506,13 +505,9 @@ if {$dispatching} {
             set ready_list {}
             foreach c $eligible {
                 if {[dict get $c task_state] ne "dispatchable"} continue
-                if {[llength $segs] > 0} {
-                    set seg_name [file tail [dict get $c _segment_dir]]
-                    if {$seg_name ni $segs} continue
-                }
-                if {[llength $stems] > 0} {
-                    if {[dict get $c stem] ni $stems} continue
-                }
+                if {![spar::tid_scope_admits $tid_scopes $tid \
+                        [file tail [dict get $c _segment_dir]] \
+                        [dict get $c stem]]} continue
                 set key [dict get $c stem]
                 if {[dict exists $seen_stems $key]} continue
                 dict set seen_stems $key 1
@@ -903,7 +898,6 @@ foreach tid [spar::transition_tids] {
     if {$tid ni $active_tids} continue
     set label [spar::transition_label $tid]
 
-    lassign [tid_scope_filter $tid_scopes $tid] segs stems
     set eligible [$State transition_eligible $all_contacts $tid $primary_channel $cdata]
     # As in compute_ready_by_tid: campaign-level tasks (T0) join the
     # per-contact ones, so the report ladder counts them too.
@@ -913,13 +907,8 @@ foreach tid [spar::transition_tids] {
     set awaiting_list {}
     set blocked_list {}
     foreach c $eligible {
-        if {[llength $segs] > 0} {
-            set seg_name [file tail [dict get $c _segment_dir]]
-            if {$seg_name ni $segs} continue
-        }
-        if {[llength $stems] > 0} {
-            if {[dict get $c stem] ni $stems} continue
-        }
+        if {![spar::tid_scope_admits $tid_scopes $tid \
+                [file tail [dict get $c _segment_dir]] [dict get $c stem]]} continue
         switch -- [dict get $c task_state] {
             dispatchable { lappend dispatchable_list $c }
             awaiting     { lappend awaiting_list $c }

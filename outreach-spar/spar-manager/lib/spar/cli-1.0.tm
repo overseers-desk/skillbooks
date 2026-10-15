@@ -178,7 +178,45 @@ proc spar::parse_cli {argv} {
             "--auto excludes positional Tn tokens — drop one"]
     }
 
+    # Numeric flags are checked here so a bad value fails the parse with
+    # the flag's name, rather than meaning "no cap" (a negative --limit)
+    # or failing deep inside dispatch.
+    foreach {key flag} {jobs --jobs limit --limit control_port --control-port} {
+        set v [dict get $spec $key]
+        if {![string is digit -strict $v]} {
+            return [dict create ok 0 error \
+                "$flag needs a non-negative integer, got \"$v\""]
+        }
+    }
+    if {[dict get $spec control_port] > 65535} {
+        return [dict create ok 0 error \
+            "--control-port must be 0..65535, got [dict get $spec control_port]"]
+    }
+    set v [dict get $spec delay]
+    if {![string is double -strict $v] || $v < 0} {
+        return [dict create ok 0 error \
+            "--delay needs a non-negative number of seconds, got \"$v\""]
+    }
+
     return [dict create ok 1 spec $spec]
+}
+
+# tid_scope_admits — whether a task in segment seg with stem stem falls
+# inside one of the scopes that name this TID. Each scope is matched
+# whole: Tn admits everything, Tn:seg the whole segment, Tn:seg/stem
+# that one row. Two scopes never combine into a pair neither named. A
+# TID no scope names (a run with no Tn tokens) is unfiltered.
+proc spar::tid_scope_admits {tid_scopes tid seg stem} {
+    set named 0
+    foreach scope $tid_scopes {
+        lassign $scope st sg sm
+        if {$st ne $tid} continue
+        set named 1
+        if {$sg eq ""} { return 1 }
+        if {$sg ne $seg} continue
+        if {$sm eq "" || $sm eq $stem} { return 1 }
+    }
+    return [expr {!$named}]
 }
 
 # _tid_known — predicate for the registry. Defined as a separate proc
