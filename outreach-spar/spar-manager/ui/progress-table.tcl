@@ -21,8 +21,13 @@
 
 package require Tk
 package require TclOO
+package require logger
 
-namespace eval spar::ui {}
+namespace eval spar::ui {
+    # Logger service for table-side warnings (a roster row the treeview
+    # cannot hold). Routed to the LogWindow by install_logger_appender.
+    variable progress_log [logger::init spar::ui::progress]
+}
 
 oo::class create spar::ui::ProgressTable {
     variable Campaign PTree PtreeCols PtreeColIds DenomParent
@@ -549,6 +554,13 @@ oo::class create spar::ui::ProgressTable {
             set name [dict get $c contact_name]
             set stem [dict getdef $c stem ""]
             if {$stem eq ""} continue
+            # Treeview ids are widget-global: a stem a roster carries twice
+            # (#109) would abort the loader mid-segment. Keep the first row.
+            if {[$PTree exists "c:$stem"]} {
+                ${::spar::ui::progress_log}::warn \
+                    "Duplicate stem '$stem' (segment $seg_name, '$name'): an earlier row holds it, this one is not shown"
+                continue
+            }
             $PTree insert $seg_name end -id "c:$stem" -text "  $name" \
                 -values [my _contact_values $c]
         }
