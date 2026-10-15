@@ -2,7 +2,7 @@
 #
 # ApproachTransition — T2 (Profile → Approach) and T4 (Re-profile →
 # Re-approach). Both dispatch through ::spar::a::prepare_for_pool in a
-# campaign-wide pass; filters are propagated as opts to the runner.
+# campaign-wide pass, restricted to the ready tasks' stems.
 
 oo::class create ::spar::transitions::ApproachTransition {
     superclass ::spar::transitions::Transition
@@ -13,9 +13,9 @@ oo::class create ::spar::transitions::ApproachTransition {
         if {[llength $filter_segments] > 0} {
             dict set result segments $filter_segments
         }
-        if {[llength $filter_stems] > 0} {
-            dict set result stems $filter_stems
-        }
+        set stems {}
+        foreach c $tasks { lappend stems [dict get $c stem] }
+        dict set result stems $stems
         return $result
     }
 

@@ -902,4 +902,19 @@ set lg_t2_tasks [$State transition_eligible $lg_t2_contacts "T2" email $lg_none 
 assert_eq [dict get [lindex $lg_t2_tasks 0] task_state] "dispatchable" \
     "no start_date → drafting (T2) still dispatchable"
 
+section "build_opts: stems come from the trimmed ready tasks"
+
+# dispatch_ready trims each TID's ready tasks to --limit before
+# build_opts. Per-stem tokens on the command line arrive as
+# filter_stems; the runner must still receive only the trimmed stems.
+set bo_tasks [list \
+    [dict create stem alpha segment s1 _segment_dir /x/s1] \
+    [dict create stem beta  segment s1 _segment_dir /x/s1]]
+set bo_named {alpha beta gamma delta}
+foreach bo_tid {T0 T1 T2} {
+    set bo [[::spar::transitions::get $bo_tid] build_opts $bo_tasks {} $bo_named]
+    assert_eq [dict get $bo stems] {alpha beta} \
+        "$bo_tid: named stems do not widen the trimmed task list"
+}
+
 finish_tests

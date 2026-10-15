@@ -9,7 +9,10 @@
 #                     {worker_proc <name> rows {{stem opts} ...}}
 #   build_opts        adapt (ready_tasks, filter_segments, filter_stems) to
 #                     the per-runner opts dict merged onto
-#                     {campaign_file, dry_run, jobs}
+#                     {campaign_file, dry_run, jobs}; a runner that
+#                     selects by stem takes its stems from ready_tasks,
+#                     which the caller has already filtered and trimmed
+#                     to --limit
 #
 # The remaining methods (tid, label, auto_safe, dispatch_status,
 # supports_reauthor, ui_tree_row) read from params set at construction.
