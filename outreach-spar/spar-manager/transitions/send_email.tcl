@@ -78,14 +78,19 @@ proc ::spar::smtp_credentials {host user {cdata ""}} {
     }
 }
 
-# send_channels — the auto-send channel vocabulary: every value
-# spar::final_auto_send_channel routes to a send worker (email →
-# ses_send, linkedin → the overseer /run leg). --action validates
-# against this list and _build_rows filters by it; a new send leg
-# (another platform's worker) adds its channel here in the same
-# commit that adds its routing below.
+# send_workers — the one channel → send-worker map. T6's eligible
+# blocks a contact whose primary touch (spar::final_auto_send_channel)
+# has no entry here, and _build_rows takes each row's worker from it;
+# a new send leg (another platform's worker) is one entry here plus
+# its worker proc in spar::dispatcher.
+proc ::spar::transitions::send_workers {} {
+    return {email ses_send linkedin linkedin_send}
+}
+
+# send_channels — the auto-send channel vocabulary, the channels
+# send_workers serves. --action validates against this list.
 proc ::spar::transitions::send_channels {} {
-    return {email linkedin}
+    return [dict keys [::spar::transitions::send_workers]]
 }
 
 # ── SendEmailTransition ─────────────────────────────────────────────
@@ -100,9 +105,9 @@ oo::class create ::spar::transitions::SendEmailTransition {
     }
 
     # prepare_for_pool — pool-shape entry. Returns
-    # {worker_proc ses_send rows {{stem opts} ...}}; a row's opts may
-    # carry its own worker_proc (linkedin rows carry linkedin_send),
-    # which the enqueuers honour over the batch default. The callers
+    # {worker_proc ses_send rows {{stem opts} ...}}; each row's opts
+    # carry its own worker_proc from send_workers, which the enqueuers
+    # honour over the batch default. The callers
     # (spar-transition's dispatch_ready, the GUI's pool setup)
     # install set_kind_cap 1 for both send workers on the shared
     # Dispatcher so send rows run serially even when other transition
@@ -137,10 +142,11 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # per-row dict carries everything the send worker needs for one
     # message. Each contact's OWN primary touch
     # (spar::final_auto_send_channel, the same selector eligible routes
-    # on) decides the worker: email rows go to ses_send, linkedin rows to
-    # linkedin_send (which also gets the contact's linkedin_url from the
-    # segment roster). The send path is a full-file bypass site, so it
-    # reads the approach directly.
+    # on) picks the row's worker from send_workers; a linkedin row also
+    # gets the contact's linkedin_url from the segment roster. A channel
+    # with no worker is skipped with a reason (eligible blocks it, so
+    # only a caller-built task list reaches here with one). The send
+    # path is a full-file bypass site, so it reads the approach directly.
     method _build_rows {opts on_progress} {
         set campaign_file [dict get $opts campaign_file]
         set dry_run       [dict getdef $opts dry_run 0]
@@ -153,6 +159,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
         set camp_sender [dict getdef $cdata sender [dict create]]
 
         set delay_ms [expr {$delay * 1000}]
+        set workers [::spar::transitions::send_workers]
         set rows {}
         set rosters [dict create]
         foreach c $tasks {
@@ -166,12 +173,17 @@ oo::class create ::spar::transitions::SendEmailTransition {
                     "channel '$channel' outside --action=[join $actions ,]"
                 continue
             }
+            if {![dict exists $workers $channel]} {
+                {*}$on_progress $stem skipped "no send actuator for channel '$channel'"
+                continue
+            }
             set row [dict create \
                 campaign_file $campaign_file \
                 dry_run       $dry_run \
                 approach_path $approach_path \
                 sender        $camp_sender \
-                delay_ms      $delay_ms]
+                delay_ms      $delay_ms \
+                worker_proc   [dict get $workers $channel]]
             if {$channel eq "linkedin"} {
                 if {![dict exists $rosters $seg_dir]} {
                     dict set rosters $seg_dir \
@@ -185,7 +197,6 @@ oo::class create ::spar::transitions::SendEmailTransition {
                         break
                     }
                 }
-                dict set row worker_proc linkedin_send
                 dict set row linkedin_url $linkedin_url
             }
             lappend rows [list $stem $row]
@@ -198,7 +209,11 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # campaign channel, so an email-only contact in a linkedin-primary
     # campaign sends by email. email → SES rows (has_email, not yet
     # email_sent); linkedin → overseer /run rows (has_linkedin, not yet
-    # linkedin_sent). Secondary/tertiary channels belong to T9/T10 with
+    # linkedin_sent). A primary touch on a channel send_workers does not
+    # serve is blocked until it is actioned by hand, so a campaign
+    # drafted for an unwired actuator never drops out of T6 unseen; a
+    # final round of manual touches only (phone) belongs to no T6 row.
+    # Secondary/tertiary channels belong to T9/T10 with
     # wait_days/wait_condition (#174). Approach-YAML structural validity
     # is a hard gate (#43 principle 7). primary_channel is unused here;
     # it is part of the eligible signature every transition class shares.
@@ -219,17 +234,24 @@ oo::class create ::spar::transitions::SendEmailTransition {
                 }
                 if {[dict get $contact linkedin_sent]} { return {} }
             }
-            default {
+            "" {
                 # No auto-send channel resolves for a phone-only final
                 # round, but also for a structurally broken approach
                 # file (no final round at all). The broken file stays
-                # visible as blocked; only the genuinely other-channel
-                # contact drops out of T6.
+                # visible as blocked; only the manual-touch contact
+                # drops out of T6.
                 set vmsg [$state approach_validation_error $contact]
                 if {$vmsg ne ""} {
                     return [list [spar::_task $contact blocked "invalid_approach_yaml: $vmsg"]]
                 }
                 return {}
+            }
+            default {
+                if {$channel in [dict getdef $contact sent_channels {}]} { return {} }
+                if {![dict exists [::spar::transitions::send_workers] $channel]} {
+                    return [list [spar::_task $contact blocked \
+                        "no send actuator for channel '$channel'" $channel]]
+                }
             }
         }
         set vmsg [$state approach_validation_error $contact]

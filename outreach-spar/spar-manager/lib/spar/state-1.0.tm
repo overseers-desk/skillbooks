@@ -190,23 +190,33 @@ proc spar::final_email_message {data} {
     return [spar::final_channel_message $data email]
 }
 
+# manual_touch_channels -- the channels a person actions by design: a
+# phone script is read on a call (spar-A-approach.md §4.2, "Phone only"),
+# so it is never a T6 send and its follow-ups surface through T9/T10.
+proc spar::manual_touch_channels {} {
+    return {phone}
+}
+
 # final_auto_send_channel returns a contact's own primary send channel:
-# the channel of the first final-round message that is email or linkedin.
-# Message order in the final round encodes the contact's primary touch;
-# secondary and tertiary channels belong to T9/T10. Routing is per
+# the channel of the first final-round message that is not a manual
+# touch. Message order in the final round encodes the contact's primary
+# touch; secondary and tertiary channels belong to T9/T10. Routing is per
 # contact, not per campaign, so an email-only contact in a
-# linkedin-primary campaign still sends by email. Returns email,
-# linkedin, or "" when the final round leads with no auto-send channel
-# (e.g. phone-only).
+# linkedin-primary campaign still sends by email. Returns "" when the
+# final round holds only manual touches (e.g. phone-only) or no final
+# round exists. The channel is returned whether or not a send worker
+# serves it: T6 looks it up in ::spar::transitions::send_workers and
+# blocks the contact when none does.
 proc spar::final_auto_send_channel {data} {
     if {$data eq "" || ![dict exists $data rounds]} { return "" }
+    set manual [spar::manual_touch_channels]
     foreach round [dict get $data rounds] {
         if {![dict exists $round type]} continue
         if {[dict get $round type] ne "final"} continue
         if {![dict exists $round messages]} { return "" }
         foreach msg [dict get $round messages] {
             set ch [dict getdef $msg channel ""]
-            if {$ch eq "email" || $ch eq "linkedin"} { return $ch }
+            if {$ch ne "" && $ch ni $manual} { return $ch }
         }
         return ""
     }

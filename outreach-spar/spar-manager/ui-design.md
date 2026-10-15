@@ -141,6 +141,7 @@ Expanding a transition type reveals its individual tasks as child rows (under th
 **blocked** rows need an operator to fix the underlying data before they can move:
 
 - "No email address" (T6, channel is email but contact has no email)
+- "no send actuator for channel '…'" (T6, the contact's lead touch is on a channel no send worker serves)
 - "invalid_approach_yaml: …" (the approach YAML fails structural validation)
 - "invalid_profile: …" (T2/T4, the profile A would draft from fails validation)
 
