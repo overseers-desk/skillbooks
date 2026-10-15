@@ -598,6 +598,34 @@ write_roster_tsv $t6f_seg $::std_headers [list \
 set t6f_tasks [list \
     [spar::_task [dict create stem "mailer" _segment_dir $t6f_seg] dispatchable] \
     [spar::_task [dict create stem "connector" _segment_dir $t6f_seg] dispatchable]]
+
+# A band with a linkedin row probes the overseer's /health at prep, so the
+# test stands up a one-shot stand-in answering ok:true on a free port.
+proc t6_health_accept {chan addr port} {
+    chan configure $chan -translation crlf -blocking 0
+    chan event $chan readable [list t6_health_read $chan]
+}
+proc t6_health_read {chan} {
+    # Answer once the request's blank line has arrived; the client writes
+    # from the same event loop, so the read must not block.
+    while {[set n [gets $chan line]] > 0} {}
+    if {$n < 0 && ![chan eof $chan]} return
+    chan event $chan readable {}
+    set body {{"ok": true, "jobCodes": {}, "holds": {}, "gates": {}}}
+    puts $chan "HTTP/1.1 200 OK"
+    puts $chan "Content-Type: application/json"
+    puts $chan "Content-Length: [string length $body]"
+    puts $chan "Connection: close"
+    puts $chan ""
+    chan configure $chan -translation binary
+    puts -nonewline $chan $body
+    close $chan
+}
+set t6_health_srv [socket -server t6_health_accept -myaddr 127.0.0.1 0]
+set t6_health_url "http://127.0.0.1:[lindex [chan configure $t6_health_srv -sockname] 2]"
+set t6_real_overseer $::spar::li::default_overseer
+set ::spar::li::default_overseer $t6_health_url
+
 set t6f_prep [[::spar::transitions::get T6] prepare_for_pool \
     [dict create campaign_file $t6f_campaign tasks $t6f_tasks] {}]
 assert_eq [dict get $t6f_prep worker_proc] "ses_send" \
@@ -615,6 +643,25 @@ foreach pair [dict get $t6f_prep rows] {
             "T6-f: linkedin row carries the contact's url"
     }
 }
+
+# T6-g: with no overseer listening, a band holding a linkedin row fails
+# at prep, once, naming the overseer; the rows are never built into a batch.
+close $t6_health_srv
+set ::spar::li::default_overseer $t6_health_url
+assert_error {[::spar::transitions::get T6] prepare_for_pool \
+    [dict create campaign_file $t6f_campaign tasks $t6f_tasks] {}} \
+    "overseer not available at $t6_health_url*" \
+    "T6-g: absent overseer fails the band at prep"
+
+# An email-only band needs no overseer, and a dry run calls none.
+set t6g_mail [list [lindex $t6f_tasks 0]]
+assert_eq [llength [dict get [[::spar::transitions::get T6] prepare_for_pool \
+    [dict create campaign_file $t6f_campaign tasks $t6g_mail] {}] rows]] 1 \
+    "T6-g: an email-only band does not probe the overseer"
+assert_eq [llength [dict get [[::spar::transitions::get T6] prepare_for_pool \
+    [dict create campaign_file $t6f_campaign tasks $t6f_tasks dry_run 1] {}] rows]] 2 \
+    "T6-g: a dry run does not probe the overseer"
+set ::spar::li::default_overseer $t6_real_overseer
 
 # ── T7 ──────────────────────────────────────────────────────────────────
 # T7 is the campaign's task, not a contact's: one search over the

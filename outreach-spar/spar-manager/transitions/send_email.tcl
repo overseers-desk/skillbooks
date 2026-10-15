@@ -109,7 +109,27 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # kinds parallelise.
     method prepare_for_pool {opts on_progress} {
         set rows [my _build_rows $opts $on_progress]
+        my _preflight_overseer $opts $rows
         return [dict create worker_proc ses_send rows $rows]
+    }
+
+    # _preflight_overseer — one GET /health before a band that holds a
+    # linkedin row, so an absent or unhealthy overseer fails the
+    # transition at prep (both front ends report a prep error) instead of
+    # each row failing its own probe in turn. A dry run calls no
+    # overseer, so it probes nothing.
+    method _preflight_overseer {opts rows} {
+        if {[dict getdef $opts dry_run 0]} return
+        foreach pair $rows {
+            if {[dict getdef [lindex $pair 1] worker_proc ""] ne "linkedin_send"} {
+                continue
+            }
+            set overseer $::spar::li::default_overseer
+            if {[catch {::spar::li::_health $overseer} err]} {
+                error "overseer not available at $overseer — start it before T6 linkedin sends ($err)"
+            }
+            return
+        }
     }
 
     # _build_rows — per-row opts dict construction for prepare_for_pool.
