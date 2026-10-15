@@ -5,6 +5,7 @@ Tested: the brief itself and the files under briefs/ its read order names; surve
 Usage: launch-check.py <run-dir> [--check-only]
 --check-only scans without writing the venue-situation paragraph (use against a run you do not own).
 Reads every brief under <run-dir>/briefs/ and every file its read-order paragraph names; a buyer is known by BUYER_NOUNS and the lines of <run-dir>/buyer-nouns.txt.
+A guard (buyer, price shape, product count) that matched no line is reported as a gap, not passed as clean: its words may not be this run's.
 Emits <run-dir>/briefs/venue-situation.md from the unstruck strike-list rows and the shape note.
 """
 import re, sys
@@ -13,8 +14,11 @@ from pathlib import Path
 BUYER_NOUNS = ["family", "families", "couple", "couples", "senior", "seniors", "school", "schools",
                "child", "children", "kid", "kids", "parent", "parents", "toddler", "toddlers",
                "teen", "teens", "coach party", "coach parties", "walking club", "photographer"]
-FIXING = [r"\$\s?\d", r"\bper (head|person|adult|child|family|guest|seat|user|licen[cs]e)\b",
-          r"\b(one|single|two|several) (offer|offers|product|products)\b"]
+PRICE = [r"\$\s?\d", r"\bper (head|person|adult|child|family|guest|seat|user|licen[cs]e)\b"]
+COUNT = [r"\b(one|single|two|several) (offer|offers|product|products)\b"]
+GAP = {"buyer": "no brief fixes a buyer (as on day one), or this run's buyer words are in neither BUYER_NOUNS nor buyer-nouns.txt",
+       "price shape": "no brief fixes a price, or this run states one in words the check does not hold",
+       "product count": "no brief fixes how many offers there are, or this run states it in words the check does not hold"}
 MARK = re.compile(r"\b(RULED|DEFAULT)\b[\s:(]*([A-Za-z0-9._:-]+)")
 
 
@@ -54,15 +58,19 @@ def findings(run):
     return ids
 
 
-def check_file(path, refs, finds, nouns, failures, is_brief):
+def check_file(path, refs, finds, nouns, failures, is_brief, hits):
     """Brief text is where scoping hides; a survey record naming a buyer or a price in a dated count is evidence.
     So the tests run over the brief and over the files under briefs/ it names, and over nothing else."""
     for n, line in enumerate(path.read_text(errors="replace").splitlines(), 1):
         # a cited path is a file's name, not a line fixing a buyer
         low = re.sub(r"`[^`]*`", " ", line).lower()
-        fixing = any(re.search(p, low) for p in FIXING) or (is_brief and any(re.search(r"\b" + re.escape(w) + r"\b", low) for w in nouns))
-        if not fixing:
+        matched = [g for g, hit in (("price shape", any(re.search(p, low) for p in PRICE)),
+                                    ("product count", any(re.search(p, low) for p in COUNT)),
+                                    ("buyer", is_brief and any(re.search(r"\b" + re.escape(w) + r"\b", low) for w in nouns))) if hit]
+        if not matched:
             continue
+        for g in matched:
+            hits[g] += 1
         m = MARK.search(line)
         ok = m and ((m.group(1) == "RULED" and m.group(2) in refs) or (m.group(1) == "DEFAULT" and m.group(2) in finds))
         if not ok:
@@ -76,6 +84,7 @@ def main():
     refs, rows = ruled_refs(run)
     finds = findings(run)
     failures = []
+    hits = dict.fromkeys(GAP, 0)
     briefs = sorted((run / "briefs").glob("*.md"))
     for brief in briefs:
         if brief.name == "venue-situation.md":
@@ -85,10 +94,10 @@ def main():
         if paths is None:
             failures.append(f"{brief}: no read-order paragraph (see forms/brief-read-order.md)")
             continue
-        check_file(brief, refs, finds, nouns, failures, True)
+        check_file(brief, refs, finds, nouns, failures, True, hits)
         for p in paths:
             if p.is_file() and p.suffix == ".md" and p.parent == run / "briefs" and p.name != "venue-situation.md":
-                check_file(p, refs, finds, nouns, failures, True)
+                check_file(p, refs, finds, nouns, failures, True, hits)
     shape = next(run.glob("**/shape-note.md"), None)
     situation = run / "briefs" / "venue-situation.md"
     # a front-matter block (title, date, status) describes the shape note, not the operator
@@ -98,7 +107,10 @@ def main():
                          + ("The frame reaches: " + ", ".join(rows) + ".\n" if rows else "No strike list has been returned; the frame reaches no buyer yet.\n"))
     for f in failures:
         print(f)
-    print(f"{len(briefs)} briefs, {len(failures)} failures")
+    gaps = [g for g in GAP if not hits[g]]
+    for g in gaps:
+        print(f"gap: the {g} guard matched no line: {GAP[g]}")
+    print(f"{len(briefs)} briefs, {len(failures)} failures, {len(gaps)} gaps")
     sys.exit(1 if failures else 0)
 
 
