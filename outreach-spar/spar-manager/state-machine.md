@@ -139,7 +139,7 @@ The approach YAML's final round can contain multiple messages across channels (e
 - `contact_name`, `organisation`, `role` — any difference is staleness.
 - `date_excluded` — **asymmetric**. Stale iff snapshot holds a date and current value is empty (contact was re-validated after exclusion). The reverse (empty → date) is not staleness — EXCLUDED state supersedes.
 
-A profile missing its front matter, or with unparseable front matter, is classified as `PROFILED` at the file-existence level but `validate_profile` emits an error; it is not marked `PROFILE_STALE`. Staleness is about roster-vs-snapshot divergence (or missing-profile-with-approach), not file integrity.
+A profile missing its front matter, or with unparseable front matter, is classified as `PROFILED` at the file-existence level but `validate_profile` emits an error; it is not marked `PROFILE_STALE`. Staleness is about roster-vs-snapshot divergence (or missing-profile-with-approach), not file integrity. File integrity is T2/T4's `P(profile_path)` gate instead: such a contact shows as a blocked `invalid_profile` row until the profile is repaired.
 
 `APPROACH_STALE` is raised when the approach's stored `profile_hash` diverges from the current profile file's sha256 (#63). The hash is recorded by the A harness at generation time and verified by `classify_contact`. Approaches without `profile_hash` (legacy or manually authored) are classified `APPROACHED` and never raise `APPROACH_STALE` — without a stored hash, the state machine cannot prove staleness. Once such an approach is re-run through A, the new file carries a hash and re-enters the staleness loop.
 
@@ -269,6 +269,7 @@ T6 tasks carry the send channel that routed them (the `channel` key on the task 
 - T6 (contact's send channel is email): no email address → "No email address"
 - T6 (contact's send channel is linkedin): no linkedin_url on the roster → "No linkedin_url"
 - any parse-TID: approach YAML fails structural validation → "invalid_approach_yaml: …"
+- T2/T4: the profile A would draft from fails `validate_profile` with an error → "invalid_profile: …"
 
 `awaiting` reasons name the dependency that will clear itself:
 - T8: LinkedIn message sent N days ago, waiting for acceptance → "LinkedIn request sent N days ago, waiting until day 5"
@@ -318,15 +319,15 @@ This section inventories both, and cross-checks them so misalignments surface.
 
 ### Transition gates (formal)
 
-Each T has a state predicate plus zero or more secondary predicates that must all hold for `task_state: dispatchable`. Where the code takes a different branch (`task_state: awaiting` for a self-resolving dependency, `task_state: blocked` for a defect, each carrying a reason), that branch is noted. `A(path)` = `_approach_validation_error(path) == ""` (approach YAML validates).
+Each T has a state predicate plus zero or more secondary predicates that must all hold for `task_state: dispatchable`. Where the code takes a different branch (`task_state: awaiting` for a self-resolving dependency, `task_state: blocked` for a defect, each carrying a reason), that branch is noted. `A(path)` = `_approach_validation_error(path) == ""` (approach YAML validates). `P(path)` = the State's `profile_validation_error(contact) == ""` (no error-severity `validate_profile` issue; cached per path, re-validated when the file's mtime or size moves).
 
 | T   | State                | Secondary predicates (all, for dispatchable)            | Awaiting / blocked branch                                      | Source            |
 |-----|----------------------|---------------------------------------------------------|----------------------------------------------------------------|-------------------|
 | T0  | (no contact state)   | sweep.yaml source status base token ∉ {exhausted, unreachable} | sweep.yaml unparseable → blocked, "sweep.yaml does not parse". Segment with no sweep.yaml → no rows (not seeded) | transitions/sweep.tcl |
 | T1  | DISCOVERED           | —                                                       | —                                                              | lib/spar/state-1.0.tm |
-| T2  | PROFILED             | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — `spar::_approach_dispatch_gate`, SSOT with T4; #56) | — | transitions/approach.tcl |
+| T2  | PROFILED             | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — `spar::_approach_dispatch_gate`, SSOT with T4; #56) ∧ P(profile_path) | gate fails: row omitted. ¬P: blocked, "invalid_profile: …" | transitions/approach.tcl |
 | T3  | PROFILE_STALE        | —                                                       | —                                                              | transitions/profile.tcl |
-| T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) | —                                  | transitions/approach.tcl |
+| T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) ∧ P(profile_path) | same as T2 | transitions/approach.tcl |
 | T6  | APPROACHED ∨ SENT    | channel = `final_auto_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel ∉ {email, linkedin} (e.g. phone-first, or no final message): row is omitted entirely | lib/spar/state-1.0.tm |
 | T7  | campaign-level       | ∃ sent approach with no reply on file                    | One task under the `reply-check` stem; no per-contact row. An approach that fails validation is left unwritten by append_reply_to_yaml and named on stderr | transitions/check_replies.tcl |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | lib/spar/state-1.0.tm |
@@ -340,7 +341,6 @@ T7's coverage is bounded by its two keys. A candidate is any message in the camp
 **Conditions no T-gate checks** (relevant for the cross-check below):
 
 - `contact_name` quality — T1 has no placeholder check, by design: P §4.1 accepts placeholder rows as input and resolves the name, so a DISCOVERED row with `contact_name="Unknown"` dispatching P is the intended path and `roster_placeholder_name` is an audit signal, not a missed gate.
-- `validate_profile` passing — T2/T4 assert PROFILED by file existence, not by profile validity; the symmetric P(profile_path) counterpart to T6's A(approach_path) is #179.
 
 ### Warnings catalog
 

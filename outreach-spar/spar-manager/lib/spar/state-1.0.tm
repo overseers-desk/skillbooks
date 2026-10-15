@@ -337,10 +337,15 @@ proc spar::analyse_final_round {data} {
 # main-thread work overlaps with worker parses. Further reduction
 # extends avoidance (e.g. front-matter caching for _profile_is_stale)
 # before adding more parallelism.
+#
+# ProfileCache is a dict profile_path → {mtime size error} holding the
+# first error-severity validate_profile message ("" when clean), which
+# profile_validation_error serves until the file's mtime or size moves.
 oo::class create spar::State {
-    variable ApproachCache Pool PendingJobs
+    variable ApproachCache ProfileCache Pool PendingJobs
     constructor {} {
         set ApproachCache [dict create]
+        set ProfileCache [dict create]
         set Pool ""
         set PendingJobs [dict create]
     }
@@ -515,6 +520,28 @@ oo::define spar::State method approach_summary {contact} {
     dict set ApproachCache $ap [dict create \
         hash $cur_hash mtime $cur_mtime summary $summary]
     return $summary
+}
+
+# profile_validation_error -- the first error-severity validate_profile
+# message for the contact's profile, or "" when it is clean or absent.
+# T2/T4 gate on it so A never drafts from a profile that fails its own
+# contract. The errors read only the file's bytes (the roster row feeds
+# the staleness warnings alone), so the result is cached per path and
+# re-validated when the file's mtime or size moves.
+oo::define spar::State method profile_validation_error {contact} {
+    set pp [dict getdef $contact profile_path ""]
+    if {$pp eq "" || ![file exists $pp]} { return "" }
+    set mtime [file mtime $pp]
+    set size [file size $pp]
+    if {[dict exists $ProfileCache $pp]} {
+        set entry [dict get $ProfileCache $pp]
+        if {[dict get $entry mtime] == $mtime && [dict get $entry size] == $size} {
+            return [dict get $entry error]
+        }
+    }
+    set err [spar::_profile_validation_error $contact]
+    dict set ProfileCache $pp [dict create mtime $mtime size $size error $err]
+    return $err
 }
 
 # project_approach_data -- build the render-path projection of a parsed

@@ -750,6 +750,53 @@ set t2_zero [$State transition_eligible $ct4 "T2" email $t4_cdata 2026-04-15]
 assert_eq [llength $t2_zero] 0 \
     "T2: APPROACH_STALE not eligible for T2 (T4's territory)"
 
+# T2/T4 gate on the profile validating (#179): a malformed profile still
+# classifies PROFILED but surfaces as a blocked invalid_profile row, and
+# a repaired file is re-validated on its next mtime/size.
+set seg_ip [make_temp_segment]
+set ip_path [write_profile_raw $seg_ip "bad-prof" "no front matter here\n"]
+write_roster_tsv $seg_ip $::std_headers [list \
+    [make_base_row {contact_name "Bad Prof" star_rating 4 email "bad@acme-venues.au" stem "bad-prof"}] \
+]
+set ip_ct [$State classify_segment $seg_ip [approach_dir_of $seg_ip]]
+assert_eq [dict get [lindex $ip_ct 0] state] PROFILED "malformed profile still PROFILED"
+set ip_t2 [$State transition_eligible $ip_ct "T2" email $t4_cdata 2026-04-15]
+assert_eq [llength $ip_t2] 1 "T2: malformed profile → one row"
+assert_eq [dict get [lindex $ip_t2 0] task_state] blocked "T2: malformed profile → blocked"
+assert_match [dict get [lindex $ip_t2 0] reason] "invalid_profile: *front matter*" \
+    "T2: reason names invalid_profile and the validator's message"
+file delete $ip_path
+write_profile $seg_ip "bad-prof"
+file mtime $ip_path [expr {[clock seconds] + 5}]
+set ip_t2b [$State transition_eligible $ip_ct "T2" email $t4_cdata 2026-04-15]
+assert_eq [dict get [lindex $ip_t2b 0] task_state] dispatchable \
+    "T2: repaired profile is re-validated and dispatches"
+
+set seg_ip4 [make_temp_segment]
+write_profile_raw $seg_ip4 "bad-stale" "---\nprofile_date: \[unclosed\n---\n"
+write_approach_yaml $seg_ip4 "bad-stale" {profile_hash: sha256:0000000000000000000000000000000000000000000000000000000000000000
+decisions:
+  channel: email
+rounds:
+- type: final
+  number: 1
+  messages:
+  - channel: email
+    to: test@acme-venues.au
+    subject: Test
+    body: Hello
+    actioned_date: null
+    replied_date: null
+}
+write_roster_tsv $seg_ip4 $::std_headers [list \
+    [make_base_row {contact_name "Bad Stale" star_rating 4 email "test@acme-venues.au" stem "bad-stale"}] \
+]
+set ip4_ct [$State classify_segment $seg_ip4 [approach_dir_of $seg_ip4]]
+set ip_t4 [$State transition_eligible $ip4_ct "T4" email $t4_cdata 2026-04-15]
+assert_eq [dict get [lindex $ip_t4 0] task_state] blocked "T4: malformed profile → blocked"
+assert_match [dict get [lindex $ip_t4 0] reason] "invalid_profile: *" \
+    "T4: reason names invalid_profile"
+
 # ════════════════════════════════════════════════════════════════════════
 # 16. progress_counts edge cases
 # ════════════════════════════════════════════════════════════════════════
