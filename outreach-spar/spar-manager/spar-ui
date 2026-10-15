@@ -101,6 +101,7 @@ source [file join $script_dir ui transition-tree.tcl]
 source [file join $script_dir ui dispatch-controller.tcl]
 source [file join $script_dir ui utils.tcl]
 source [file join $script_dir ui collapsible.tcl]
+source [file join $script_dir ui pane-viewer.tcl]
 source [file join $script_dir ui inspector.tcl]
 source [file join $script_dir ui segment-viewer.tcl]
 source [file join $script_dir ui campaign-viewer.tcl]
@@ -488,18 +489,10 @@ proc ::spar::ui::build_loaded_body {path} {
 
     # SegmentViewer opens on Double-1 in the progress table. CampaignViewer
     # opens on the "View full…" button in the Campaign Configuration
-    # labelframe. All three peers (Inspector, SegmentViewer, CampaignViewer)
-    # share `.pw.right` via cross `shown` subscriptions: each hides itself
-    # when any other shows, so the pane carries exactly one at a time.
+    # labelframe. All three are PaneViewers on .pw: showing one displaces
+    # the others, so `.pw.right` carries exactly one at a time.
     set segviewer [spar::ui::SegmentViewer new $campaign $progress .pw]
     set cmpviewer [spar::ui::CampaignViewer new $campaign .pw]
-
-    $inspector subscribe shown [list $segviewer displace]
-    $inspector subscribe shown [list $cmpviewer displace]
-    $segviewer subscribe shown [list $inspector displace]
-    $segviewer subscribe shown [list $cmpviewer displace]
-    $cmpviewer subscribe shown [list $inspector displace]
-    $cmpviewer subscribe shown [list $segviewer displace]
 
     # ============================================================
     # Initial sash position

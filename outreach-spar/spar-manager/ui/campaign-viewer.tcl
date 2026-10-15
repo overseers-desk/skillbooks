@@ -2,10 +2,8 @@
 #
 # spar::ui::CampaignViewer is a read-only pane that renders the parsed
 # campaign.yaml. Opens via the "View full" button in the Campaign
-# Configuration labelframe and shares `.pw.right` with the per-contact
-# Inspector and the SegmentViewer through cross `shown` subscriptions:
-# each viewer hides on the others' `shown`, so the pane carries one of
-# the three at a time. Closes via the X button (toggle reuses show/hide).
+# Configuration labelframe, which toggles it. A PaneViewer: shares
+# `.pw.right` with its peers, one at a time. Closes via the ✕ button.
 #
 # The viewer is read-only because campaign YAML is hand-curated (often
 # with comments) and round-tripping through a Tcl YAML writer would lose
@@ -16,72 +14,17 @@ package require TclOO
 namespace eval spar::ui {}
 
 oo::class create spar::ui::CampaignViewer {
-    variable Campaign Pane
+    superclass spar::ui::PaneViewer
+    variable Campaign
     variable Right HeaderStem Body Canvas
-    variable Visible SashPos Subs
 
     constructor {campaign parent_panedwindow} {
+        next $parent_panedwindow cmp
         set Campaign $campaign
-        set Pane     $parent_panedwindow
-        set Visible  0
-        set SashPos  0
-        set Subs     [dict create]
-
-        set Right ${Pane}.right.cmp
-        ttk::frame $Right
-
-        ttk::frame ${Right}.hdr
-        pack ${Right}.hdr -fill x -side top
-        ttk::button ${Right}.hdr.close -text "✕" -style Toolbutton \
-            -command [list [self] hide]
-        pack ${Right}.hdr.close -side right -padx {0 6}
-        set HeaderStem ${Right}.hdr.stem
-        ::spar::ui::inspector_widgets::copy_text $HeaderStem ""
-        pack $HeaderStem -side left -fill x -expand 1 -padx 6 -pady 4
 
         set Body [::spar::ui::inspector_widgets::scrollable $Right]
         set Canvas [winfo parent $Body]
     }
-
-    # Subscription
-    method subscribe {event cb} { dict lappend Subs $event $cb }
-
-    method fire {event args} {
-        if {![dict exists $Subs $event]} return
-        foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
-    }
-
-    method is_visible {} { return $Visible }
-
-    # Visibility control
-
-    method show {} {
-        my fire shown
-        pack $Right -fill both -expand 1
-        set Visible 1
-        set w [winfo width $Pane]
-        if {$SashPos <= 0 || $SashPos >= $w} {
-            set SashPos [expr {int($w * 0.5)}]
-        }
-        catch { $Pane sashpos 0 $SashPos }
-        my render
-    }
-
-    method hide {} {
-        catch { set SashPos [$Pane sashpos 0] }
-        pack forget $Right
-        catch { $Pane sashpos 0 [winfo width $Pane] }
-        set Visible 0
-    }
-
-    # displace: a peer viewer is taking the pane. Pack-forget the
-    # sub-frame; leave the sash to the peer's show().
-    method displace {} {
-        pack forget $Right
-        set Visible 0
-    }
-
-    method toggle {} { if {$Visible} { my hide } else { my show } }
 
     # Rendering
 
@@ -172,33 +115,9 @@ oo::class create spar::ui::CampaignViewer {
             return
         }
         foreach {k v} $value {
-            my render_label_header $body $k 1
+            ::spar::ui::inspector_widgets::label_header $body $k 1
             ::spar::ui::inspector_widgets::wrapped_text_block \
                 $body [string trim $v] {-fill x -padx {22 4} -pady {2 4}}
         }
     }
-
-    method render_list {parent key value} {
-        my render_label_header $parent $key 0
-        if {[llength $value] == 0} {
-            ttk::label ${parent}.[::spar::ui::inspector_widgets::_uniq lstem] \
-                -text "(empty)" -foreground "#777777" -anchor w
-            pack [lindex [winfo children $parent] end] \
-                -fill x -padx 22 -pady 2
-            return
-        }
-        foreach item $value {
-            set lbl ${parent}.[::spar::ui::inspector_widgets::_uniq lstit]
-            ttk::label $lbl -text "• $item" -anchor w
-            pack $lbl -fill x -padx {22 4} -pady 1
-        }
-    }
-
-    method render_label_header {parent key indent} {
-        set lpad [expr {$indent * 16 + 6}]
-        set lbl ${parent}.[::spar::ui::inspector_widgets::_uniq lh]
-        ttk::label $lbl -text "${key}:" -anchor w
-        pack $lbl -fill x -padx [list $lpad 4] -pady {6 0}
-    }
-
 }
