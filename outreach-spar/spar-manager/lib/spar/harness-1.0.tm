@@ -121,6 +121,30 @@ proc spar::write_file {path content} {
     close $fd
 }
 
+# session_model — the full model id a claude session ran on, from the
+# init event of its stream-json transcript (#154); "" when the transcript
+# is absent or carries no init event. Read here rather than through
+# coachman, which parses the same event for session_id and drops the
+# model.
+proc spar::session_model {json_file} {
+    if {![file exists $json_file]} { return "" }
+    set fd [open $json_file r]
+    try {
+        while {[gets $fd line] >= 0} {
+            if {![string match {*"init"*} $line]} continue
+            if {[catch {
+                set obj [::json::json2dict $line]
+                expr {[dict getdef $obj type ""] eq "system"
+                      && [dict getdef $obj subtype ""] eq "init"}
+            } is_init] || !$is_init} continue
+            return [dict getdef $obj model ""]
+        }
+    } finally {
+        close $fd
+    }
+    return ""
+}
+
 # ── ApproachHarness class ─────────────────────────────────────────────
 
 oo::class create spar::ApproachHarness {
@@ -193,6 +217,21 @@ oo::class create spar::ApproachHarness {
         $State forget_approach $Outfile
     }
 
+    # Which models wrote the draft and ran the challenger (#154), from
+    # the init events of the author's first call and the first challenger
+    # pass. The ids are the harness's to record: a line the author wrote
+    # for either key is replaced, and a key whose transcript carries no
+    # init event is left as it is.
+    method stamp_models {} {
+        if {![file exists $Outfile]} { return }
+        foreach {key stage} {authored_model author-draft challenger_model challenger-pass1} {
+            set model [spar::session_model "[my log_prefix]-${stage}.log.json"]
+            if {$model eq ""} continue
+            spar::_stamp_yaml_root $Outfile $key [spar::yaml_scalar $model]
+        }
+        $State forget_approach $Outfile
+    }
+
     # Run the full A-phase pipeline. Returns 0 on success, 1 on failure.
     # The try/on-error wrapper turns an uncaught exception into a logged
     # FAIL line — without it, an exception in load_my_meta or any phase
@@ -207,6 +246,7 @@ oo::class create spar::ApproachHarness {
             if {[my do_assembly]}                 { return 1 }
             if {[my do_post_assembly_validation]} { return 1 }
             my apply_declarations
+            my stamp_models
             my do_summary
             return 0
         } on error {err opts} {
@@ -754,6 +794,7 @@ oo::class create spar::ProfileHarness {
             # invariants.
             my sanitise_roster_email $RosterPath [my slug]
             if {[my validate_and_correct $Outfile $RosterPath $RequiredSkills]} { return 1 }
+            my stamp_authored_model
             my do_summary
             return 0
         } on error {err opts} {
@@ -974,6 +1015,17 @@ oo::class create spar::ProfileHarness {
                 STEM        $Stem \
                 OUTFILE     $Outfile \
                 ROSTER_PATH $RosterPath]]
+    }
+
+    # The model that researched and wrote the profile (#154), from the
+    # init event of the profile call. Stamped after validation, so a
+    # gated row whose file the fix loop deleted has nothing to stamp; a
+    # line the worker wrote for the key is replaced.
+    method stamp_authored_model {} {
+        if {![file exists $Outfile]} { return }
+        set model [spar::session_model "[my log_prefix]-profile.log.json"]
+        if {$model eq ""} { return }
+        spar::_stamp_front_matter $Outfile authored_model [spar::yaml_scalar $model]
     }
 
     method do_summary {} {
