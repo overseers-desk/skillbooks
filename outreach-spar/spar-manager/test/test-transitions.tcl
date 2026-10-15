@@ -81,6 +81,40 @@ assert_eq [_dp_run_count $dp_yaml {}] 2 \
     "prepare_for_pool: no stems + 1 profile exists → 2 queued"
 
 # ════════════════════════════════════════════════════════════════════════
+# 24a. spar::detect_browser_cmd — the serialiser or nothing
+# ════════════════════════════════════════════════════════════════════════
+section "24a. detect_browser_cmd routes through browser-serialiser only"
+
+# A PATH holding chromium but no serialiser: the worker gets no browser
+# command, since spar never launches one itself (#125). auto_execok and
+# the proc both memoise, so both caches are cleared around each probe.
+set bc_dir [make_temp_dir]
+foreach exe {chromium browser-serialiser} {
+    file mkdir [file join $bc_dir $exe-bin]
+    set fd [open [file join $bc_dir $exe-bin $exe] w]
+    puts $fd "#!/bin/sh"
+    close $fd
+    file attributes [file join $bc_dir $exe-bin $exe] -permissions 0755
+}
+set bc_path $::env(PATH)
+proc bc_detect {path} {
+    set ::env(PATH) $path
+    array unset ::auto_execs
+    unset -nocomplain ::spar::_browser_cmd_cache
+    return [spar::detect_browser_cmd]
+}
+assert_error {bc_detect [file join $bc_dir chromium-bin]} \
+    "*browser-serialiser not on PATH*" \
+    "detect_browser_cmd: chromium alone is no browser command"
+assert_eq [bc_detect [join [list [file join $bc_dir browser-serialiser-bin] \
+        [file join $bc_dir chromium-bin]] :]] \
+    "browser-serialiser --dump -t 20" \
+    "detect_browser_cmd: the serialiser's --dump when it is on PATH"
+set ::env(PATH) $bc_path
+array unset ::auto_execs
+unset -nocomplain ::spar::_browser_cmd_cache
+
+# ════════════════════════════════════════════════════════════════════════
 # 24b. T-id → runner routing table
 # ════════════════════════════════════════════════════════════════════════
 section "24b. transition runner routing"
