@@ -1205,7 +1205,7 @@ proc spar::_approach_dispatch_gate {row cdata} {
         set filter [dict getdef $cdata filter [dict create]]
         set skip_excluded [string is true -strict \
             [dict getdef $filter skip_excluded true]]
-        set min_star [dict getdef $filter min_star 3]
+        set min_star [spar::campaign_min_star $cdata]
         set in_scope [spar::campaign_in_scope_channels $cdata]
     }
     if {$skip_excluded && $date_ex ne ""} {

@@ -542,7 +542,7 @@ proc spar::a::_build_prompts {opts on_progress} {
     # has at least one populated field for a channel the campaign declares.
     set filter [dict getdef $cdata filter [dict create]]
     set filter_skip_excluded [string is true -strict [dict getdef $filter skip_excluded true]]
-    set filter_min_star [dict getdef $filter min_star 0]
+    set filter_min_star [spar::campaign_min_star $cdata]
     set filter_require_profile [string is true -strict [dict getdef $filter require_profile true]]
     set in_scope_channels [spar::campaign_in_scope_channels $cdata]
 
