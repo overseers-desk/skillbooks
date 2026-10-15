@@ -62,7 +62,8 @@ write_campaign_yaml $cdir \
     "campaign: Duplicate Stem\nversion: \"$spar::CURRENT_SPEC_VERSION\"\nsegments:\n  - seg-a\n  - seg-b\n"
 
 set prep [spar::p::prepare_for_pool \
-    [dict create campaign_file [file join $cdir campaigns camp.yaml]] \
+    [dict create campaign_file [file join $cdir campaigns camp.yaml] \
+        stems {alice bob carol}] \
     {apply {args {}}}]
 set stems [lmap pair [dict get $prep rows] {lindex $pair 0}]
 assert_eq [llength $stems] 4 "prep builds one row per segment listing"

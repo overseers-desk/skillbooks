@@ -26,7 +26,7 @@ proc versioned_campaign {ver} {
 section "50. dispatch version pre-flight"
 
 set cdir [versioned_campaign "3.0"]
-set opts [dict create campaign_file [file join $cdir campaigns camp.yaml]]
+set opts [dict create campaign_file [file join $cdir campaigns camp.yaml] stems {x}]
 
 assert_error {spar::p::prepare_for_pool $opts $noop} \
     "*spec version*" "P refuses unsupported campaign version"
@@ -36,7 +36,7 @@ assert_error {spar::a::prepare_for_pool $opts $noop} \
 # A current-version campaign passes the version gate (it may stop later for
 # other reasons — empty roster set — but not with a version error).
 set cdir_ok [versioned_campaign $spar::CURRENT_SPEC_VERSION]
-set opts_ok [dict create campaign_file [file join $cdir_ok campaigns camp.yaml]]
+set opts_ok [dict create campaign_file [file join $cdir_ok campaigns camp.yaml] stems {x}]
 catch {spar::p::prepare_for_pool $opts_ok $noop} perr
 assert_eq [string match "*spec version*" $perr] 0 "current version clears the P gate"
 

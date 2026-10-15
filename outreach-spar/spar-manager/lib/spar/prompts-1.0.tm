@@ -155,8 +155,9 @@ proc spar::_population_prep_scope {opts phase} {
 #                  campaign exists and cdata stays {}
 #   logs_dir       (string, optional) override log directory base
 #   segments       (list, optional) only process named segments
-#   stems          (list, optional) only process rows with matching stems;
-#                                    also bypasses the "profile exists" skip
+#   stems          (list, required) the rows to profile, each rebuilt
+#                  over any profile it already has; the caller passes
+#                  its ready tasks' stems, and an empty list is an error
 #
 # on_progress is used only for prep-time skipped/failed events
 # emitted during _prepare_segment; row-level progress is delivered by
@@ -164,6 +165,9 @@ proc spar::_population_prep_scope {opts phase} {
 #
 # Returns: dict {logs_dir <abs path> rows {{stem pdir} ...}}
 proc spar::p::prepare_for_pool {opts on_progress} {
+    if {[llength [dict getdef $opts stems {}]] == 0} {
+        error "spar::p::prepare_for_pool: opts.stems is required and names the rows to profile"
+    }
     lassign [spar::_population_prep_scope $opts p] cdata root segments logs_path_src
     set campaign_file [dict getdef $opts campaign_file ""]
     set user_logs    [dict getdef $opts logs_dir ""]
@@ -195,8 +199,8 @@ proc spar::p::prepare_for_pool {opts on_progress} {
 #   {result <per-segment result dict>
 #    prompt_dirs <list of prompt dirs this invocation created>
 #    pre_snapshot <dict of pre-existing roster issues>}
-# "skipped profile exists" events are emitted synchronously via
-# on_progress during the row loop.
+# Skipped events (a row outside the campaign's stems) are emitted
+# synchronously via on_progress during the row loop.
 proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress campaign_file segment_name} {
     set segment_dir [file normalize $segment_dir]
 
@@ -344,7 +348,7 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         if {$date_invalid ne ""} continue
         if {$stem eq ""} continue
 
-        if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
+        if {$stem ni $sel_stems} continue
 
         # Campaign stems allowlist (segments.<seg>.stems in the campaign
         # YAML): rows outside it are out of campaign scope, mirroring
@@ -356,15 +360,6 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         }
 
         set outfile [spar::profile_path_for_stem $segment_dir $stem]
-
-        # Skip existing profile unless caller supplied an explicit stems
-        # list — then they have accepted responsibility for pre-deleting
-        # the old profile and want a rebuild.
-        if {[llength $sel_stems] == 0 && [file exists $outfile]} {
-            incr skipped
-            {*}$on_progress $stem skipped "profile exists"
-            continue
-        }
 
         incr count
         set pdir [file join $prompts_dir $stem]
@@ -476,7 +471,9 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
 #   campaign_file  (required) path to campaign YAML
 #   logs_dir       (string, optional) override log directory
 #   segments       (list, optional) only process named segments
-#   stems          (list, optional) only process rows with matching stems
+#   stems          (list, required) the rows to approach; the caller
+#                  passes its ready tasks' stems, and an empty list is
+#                  an error
 proc spar::a::prepare_for_pool {opts on_progress} {
     set prep [spar::a::_build_prompts $opts $on_progress]
     set result      [dict get $prep result]
@@ -504,6 +501,9 @@ proc spar::a::_build_prompts {opts on_progress} {
     set user_logs [dict getdef $opts logs_dir ""]
     set sel_segments [dict getdef $opts segments {}]
     set sel_stems [dict getdef $opts stems {}]
+    if {[llength $sel_stems] == 0} {
+        error "spar::a::_build_prompts: opts.stems is required and names the rows to approach"
+    }
 
     set cdata [spar::load_campaign $campaign_file]
     # Version pre-flight (refuse-to-start): do not run A on a campaign whose
@@ -623,17 +623,9 @@ proc spar::a::_build_prompts {opts on_progress} {
             if {$org eq "organisation" || $name eq ""} continue
             if {$org eq ""} continue
 
-            if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
-
-            # Approach file always {stem}.yaml (stem is authoritative —
-            # classify_segment reads it from the same path). Rows without
-            # a stem are sweep artefacts and cannot be approached; checked
-            # before the stems allowlist so they keep their legible label.
-            if {$stem eq ""} {
-                incr skipped
-                {*}$on_progress "[spar::slugify $name]-[spar::slugify $org]" skipped "no stem"
-                continue
-            }
+            # A row without a stem is a sweep artefact no caller can
+            # name, so the selection drops it here.
+            if {$stem ni $sel_stems} continue
 
             # Campaign stems allowlist (segments.<seg>.stems): rows
             # outside it are out of campaign scope, mirroring
@@ -650,10 +642,7 @@ proc spar::a::_build_prompts {opts on_progress} {
             set gate_reason [spar::_approach_dispatch_gate $row $cdata]
             if {$gate_reason ne ""} {
                 incr skipped
-                set label [expr {$stem ne "" \
-                    ? $stem \
-                    : "[spar::slugify $name]-[spar::slugify $org]"}]
-                {*}$on_progress $label skipped $gate_reason
+                {*}$on_progress $stem skipped $gate_reason
                 continue
             }
 

@@ -112,9 +112,9 @@ assert_eq [llength [dict get $sprep rows]] 1 "S prep builds the source row campa
 section "campaign-free P prep"
 
 set prep [spar::p::prepare_for_pool \
-    [dict create segment_dirs [list $seg]] {apply {args {}}}]
+    [dict create segment_dirs [list $seg] stems {bob-none}] {apply {args {}}}]
 set stems [lmap pair [dict get $prep rows] {lindex $pair 0}]
-assert_eq $stems bob-none "only the unprofiled contact needs P"
+assert_eq $stems bob-none "the named contact is prepared with no campaign"
 set pdir [lindex [lindex [dict get $prep rows] 0] 1]
 set fd [open [file join $pdir meta.env] r]; set env_text [read $fd]; close $fd
 assert_match $env_text "*CAMPAIGN_FILE=\"\"*" "meta.env carries an empty campaign file"
