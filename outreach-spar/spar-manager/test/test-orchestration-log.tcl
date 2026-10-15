@@ -18,6 +18,7 @@ wm withdraw .
 
 package require spar::state
 package require spar::dispatcher
+source [file join $script_dir .. ui subscribable.tcl]
 source [file join $script_dir .. ui log-window.tcl]
 
 # ── Scratch orchestration-log root, mirroring test-lib.tcl's idiom ─────

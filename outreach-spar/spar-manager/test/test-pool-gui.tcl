@@ -62,6 +62,7 @@ package require Thread
 # test exercises.
 package require spar::state
 package require spar::dispatcher
+source [file join $script_dir .. ui subscribable.tcl]
 source [file join $script_dir .. ui campaign-model.tcl]
 source [file join $script_dir .. ui log-window.tcl]
 source [file join $script_dir .. ui transition-tree.tcl]

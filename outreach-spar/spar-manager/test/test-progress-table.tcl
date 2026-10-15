@@ -15,6 +15,7 @@ if {![info exists ::env(DISPLAY)] || $::env(DISPLAY) eq ""} {
 package require Tk
 wm withdraw .
 set ::colours(totals_bg) "#e2e2e2"
+source [file join $script_dir .. ui subscribable.tcl]
 source [file join $script_dir .. ui progress-table.tcl]
 
 # Stub model: the four calls ProgressTable makes, over a fixed contact list.

@@ -11,12 +11,12 @@ package require TclOO
 namespace eval spar::ui {}
 
 oo::class create spar::ui::Collapsible {
-    variable Frame Header Body Expanded HeaderText Subs
+    mixin spar::ui::Subscribable
+    variable Frame Header Body Expanded HeaderText
 
     constructor {parent header_text {expanded_default 1}} {
         set HeaderText $header_text
         set Expanded   [expr {!!$expanded_default}]
-        set Subs       [dict create]
 
         set Frame  ${parent}.cl[incr ::spar::ui::_collapsible_seq]
         ttk::frame $Frame
@@ -37,10 +37,8 @@ oo::class create spar::ui::Collapsible {
     method toggle {} {
         set Expanded [expr {!$Expanded}]
         my sync
-        my fire toggled $Expanded
+        my _fire toggled $Expanded
     }
-
-    method subscribe {event cb} { dict lappend Subs $event $cb }
 
     method sync {} {
         set glyph [expr {$Expanded ? "▾" : "▸"}]
@@ -52,10 +50,6 @@ oo::class create spar::ui::Collapsible {
         }
     }
 
-    method fire {event args} {
-        if {![dict exists $Subs $event]} return
-        foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
-    }
 }
 
 set ::spar::ui::_collapsible_seq 0

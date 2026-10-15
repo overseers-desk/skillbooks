@@ -32,10 +32,10 @@ package require TclOO
 namespace eval spar::ui {}
 
 oo::class create spar::ui::TransitionTree {
+    mixin spar::ui::Subscribable
     variable Campaign Tree RowNames SlugToRow ShowCompleted OngoingOnly
     variable Dispatch NextTransitionIdx
     variable DetachedRows
-    variable Subs
 
     constructor {campaign parent_frame} {
         set Campaign           $campaign
@@ -46,7 +46,6 @@ oo::class create spar::ui::TransitionTree {
         set Dispatch           ""
         set NextTransitionIdx  0
         set DetachedRows       {}
-        set Subs               [dict create]
 
         # Toolbar with Show-completed and Ongoing-only checkboxes.
         ttk::frame ${parent_frame}.toolbar
@@ -116,14 +115,6 @@ oo::class create spar::ui::TransitionTree {
     # consult the controller's is_dispatching flag, and the controller
     # itself needs this tree at construction time.
     method set_dispatch {dispatch} { set Dispatch $dispatch }
-
-    # ─── Subscription ─────────────────────────────────────────────────────
-    method subscribe {event cb} { dict lappend Subs $event $cb }
-
-    method _fire {event args} {
-        if {![dict exists $Subs $event]} return
-        foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
-    }
 
     # ─── Accessors ────────────────────────────────────────────────────────
     method get_tree_widget  {} { return $Tree }

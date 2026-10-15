@@ -41,13 +41,13 @@ package require TclOO
 namespace eval spar::ui {}
 
 oo::class create spar::ui::CampaignModel {
+    mixin spar::ui::Subscribable
     variable CampaignFile CampaignDir CampaignName SenderText FilterDesc
     variable Cdata SegmentOrder SegmentPaths AllSegmentPaths ApproachDir
     variable Segments AllContacts Transitions Warnings
     variable FullLoadDone SegmentPathsForAsync
     variable LoaderCoro LoaderAfterId
     variable ScriptDir
-    variable Subs
     variable State
 
     constructor {campaign_file script_dir} {
@@ -70,7 +70,6 @@ oo::class create spar::ui::CampaignModel {
         set SegmentPathsForAsync  {}
         set LoaderCoro    ""
         set LoaderAfterId ""
-        set Subs [dict create]
         # State lives for the model's lifetime so Phase B can reuse cache
         # entries across refresh() calls; refresh does not destroy/recreate.
         set State [spar::State new]
@@ -81,14 +80,6 @@ oo::class create spar::ui::CampaignModel {
         if {[info exists State] && [info commands $State] ne ""} {
             $State destroy
         }
-    }
-
-    # ─── Subscription ─────────────────────────────────────────────────────
-    method subscribe {event cb} { dict lappend Subs $event $cb }
-
-    method _fire {event args} {
-        if {![dict exists $Subs $event]} return
-        foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
     }
 
     # ─── Accessors ────────────────────────────────────────────────────────

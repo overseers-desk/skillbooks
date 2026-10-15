@@ -30,15 +30,15 @@ namespace eval spar::ui {
 }
 
 oo::class create spar::ui::ProgressTable {
+    mixin spar::ui::Subscribable
     variable Campaign PTree PtreeCols PtreeColIds DenomParent
     variable SegCounts SegChecked FsDependentCols ColCountKeys
-    variable Subs ChildRows
+    variable ChildRows
 
     constructor {campaign parent_frame} {
         set Campaign    $campaign
         set SegCounts   [dict create]
         set SegChecked  [dict create]
-        set Subs        [dict create]
 
         # Column definitions: id, heading, anchor. Each data column
         # combines count + pct into one cell ("123 45%"). Widths are
@@ -149,14 +149,6 @@ oo::class create spar::ui::ProgressTable {
         $Campaign subscribe segment-loaded [list [self] on_segment_loaded]
         $Campaign subscribe fully-loaded   [list [self] on_fully_loaded]
         $Campaign subscribe reloading      [list [self] on_reloading]
-    }
-
-    # ─── Subscription ─────────────────────────────────────────────────────
-    method subscribe {event cb} { dict lappend Subs $event $cb }
-
-    method _fire {event args} {
-        if {![dict exists $Subs $event]} return
-        foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
     }
 
     # ─── Accessors ────────────────────────────────────────────────────────
