@@ -1604,7 +1604,14 @@ proc spar::build_warnings {all_classified_contacts {cdata {}}} {
             lassign $entry seg cname org
             lappend parts "$seg ($cname)"
         }
-        lappend messages "Duplicate email: $addr in [join $parts { and }]"
+        # The within-segment categories (validate_roster), read across
+        # segments; still a warning here, whatever the category.
+        set cats [lmap c [dict getdef $item category {}] {
+            string cat $c " " [dict get {case_1 "same person, same organisation"
+                case_2 "shared inbox" case_3 "personal email reused"} $c]
+        }]
+        set tag [expr {[llength $cats] ? " \[[join $cats {; }]\]" : ""}]
+        lappend messages "Duplicate email: $addr in [join $parts { and }]$tag"
         incr dup_email_count
     }
 

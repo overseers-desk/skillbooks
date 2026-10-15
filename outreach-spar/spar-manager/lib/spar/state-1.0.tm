@@ -1328,6 +1328,38 @@ oo::define spar::State method transition_eligible {classified_contacts transitio
     return $out
 }
 
+# _cross_segment_email_category -- the categories validate_roster gives a
+# within-segment email collision, read across segments: over every pair of
+# entries {segment name org} from different segments, case_1 for the same
+# name at the same organisation, case_2 for different names at the same
+# organisation (a shared inbox), case_3 for the same name at different
+# organisations (one person's email under two affiliations). Returns the
+# sorted set found; empty when every pair differs in both name and org.
+proc spar::_cross_segment_email_category {entries} {
+    set found {}
+    set n [llength $entries]
+    for {set i 0} {$i < $n} {incr i} {
+        lassign [lindex $entries $i] seg name org
+        set name [spar::normalise_name $name]
+        set org [string tolower [string trim $org]]
+        for {set j [expr {$i + 1}]} {$j < $n} {incr j} {
+            lassign [lindex $entries $j] oseg oname oorg
+            if {$oseg eq $seg} continue
+            set same_name [expr {$name eq [spar::normalise_name $oname]}]
+            set same_org [expr {$org eq [string tolower [string trim $oorg]]}]
+            if {$same_name && $same_org} {
+                set c case_1
+            } elseif {$same_org} {
+                set c case_2
+            } elseif {$same_name} {
+                set c case_3
+            } else continue
+            if {$c ni $found} { lappend found $c }
+        }
+    }
+    return [lsort $found]
+}
+
 # detect_duplicates -- detect cross-segment duplicates.
 #
 # all_classified_contacts  flat list of all classified contacts across all segments
@@ -1336,7 +1368,8 @@ oo::define spar::State method transition_eligible {classified_contacts transitio
 # Returns a dict with keys:
 #   duplicate_to      — list of dicts {address files} where same To: email in multiple approach files
 #   duplicate_name    — list of dicts {name entries} where same normalised name in multiple segments
-#   duplicate_email   — list of dicts {email entries} where same email in multiple segments
+#   duplicate_email   — list of dicts {email entries category} where same email in multiple
+#                       segments; category per spar::_cross_segment_email_category
 #   identical_subject — list of dicts {subject files} where same subject in multiple unsent approach files
 #
 proc spar::detect_duplicates {all_classified_contacts} {
@@ -1438,7 +1471,8 @@ proc spar::detect_duplicates {all_classified_contacts} {
             }
         }
         if {[llength $seen_segments] > 1} {
-            lappend dup_email [dict create email $addr entries $entries]
+            lappend dup_email [dict create email $addr entries $entries \
+                category [spar::_cross_segment_email_category $entries]]
         }
     }
 

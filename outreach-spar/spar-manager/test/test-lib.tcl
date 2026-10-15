@@ -55,6 +55,44 @@ set dups45 [spar::detect_duplicates [concat $c4 $c5]]
 assert_eq [llength [dict get $dups45 duplicate_email]] 0 \
     "duplicate_email: unique emails → not flagged"
 
+# 9c2. A cross-segment duplicate_email carries the category validate_roster
+# gives the same collision within a segment, and the warning prints it (#50).
+assert_eq [spar::_cross_segment_email_category {
+    {a {Jo Lee} Acme} {b {Sam Poe} acme}}] case_2 \
+    "different names at one organisation across segments → case_2"
+assert_eq [spar::_cross_segment_email_category {
+    {a {Jo Lee} Acme} {b {jo lee} {Rotary Club}}}] case_3 \
+    "one name at two organisations across segments → case_3"
+assert_eq [spar::_cross_segment_email_category {
+    {a {Jo Lee} Acme} {b {Jo Lee} Acme}}] case_1 \
+    "one name at one organisation across segments → case_1"
+assert_eq [spar::_cross_segment_email_category {
+    {a {Jo Lee} Acme} {b {Sam Poe} Beta}}] {} \
+    "different names at different organisations → no category"
+assert_eq [spar::_cross_segment_email_category {
+    {a {Jo Lee} Acme} {a {Sam Poe} Acme} {b {Kim Ng} Beta}}] {} \
+    "a pair within one segment is validate_roster's, not counted here"
+
+set cat_headers {contact_name organisation email star_rating date_excluded stem}
+set seg_ca [make_temp_segment]
+set seg_cb [make_temp_segment]
+write_roster_tsv $seg_ca $cat_headers [list [dict create contact_name "Rev Colin" \
+    organisation "Rotary Club" email "colin@example.com" star_rating 3 \
+    date_excluded "" stem "colin-rotary"]]
+write_roster_tsv $seg_cb $cat_headers [list [dict create contact_name "Rev Colin" \
+    organisation "St Mark's" email "colin@example.com" star_rating 3 \
+    date_excluded "" stem "colin-church"]]
+set c_cat [concat \
+    [$State refine_segment [$State classify_segment $seg_ca [approach_dir_of $seg_ca]]] \
+    [$State refine_segment [$State classify_segment $seg_cb [approach_dir_of $seg_cb]]]]
+set de [lindex [dict get [spar::detect_duplicates $c_cat] duplicate_email] 0]
+assert_eq [dict get $de category] case_3 "detect_duplicates tags the entry with its category"
+set w_cat [spar::build_warnings $c_cat]
+assert_eq [dict get $w_cat duplicate_email] 1 "it still counts as one duplicate_email warning"
+assert_match [join [dict get $w_cat messages] \n] \
+    "*Duplicate email: colin@example.com in * \\\[case_3 personal email reused\\\]*" \
+    "the warning prints the category"
+
 # 9d. duplicate_name: same normalised name across two different segments → flagged
 set seg6 [make_temp_segment]
 set seg7 [make_temp_segment]
