@@ -127,7 +127,7 @@ oo::class create spar::ApproachHarness {
     superclass spar::Harness
     variable State Outfile RosterEmail ContactName RosterOrg \
              MaxPasses ContactSummary ChallengerModel AuthorModel ContactNameMeta \
-             Pass Verdict ProfilePath SegmentDir
+             Pass Verdict ProfilePath SegmentDir AppliedPatch
 
     constructor {prompt_dir log_dir} {
         next $prompt_dir $log_dir
@@ -186,7 +186,7 @@ oo::class create spar::ApproachHarness {
     method apply_declarations {} {
         set roster_path [spar::roster_path_for_segment $SegmentDir]
         set stem [file rootname [file tail $Outfile]]
-        foreach issue [spar::apply_approach_patch $Outfile $roster_path $stem] {
+        foreach issue [spar::apply_approach_patch $Outfile $roster_path $stem $AppliedPatch] {
             ${::spar::harness_log}::warn \
                 "\[[my slug]\] roster_patch rejected: [dict getdef $issue message ?]"
         }
@@ -235,6 +235,15 @@ oo::class create spar::ApproachHarness {
         set SegmentDir       [dict get $meta SEGMENT_DIR]
         set stem    [file rootname [file tail $Outfile]]
         set ProfilePath [spar::profile_path_for_stem $SegmentDir $stem]
+        # The roster_patch an earlier run's harness applied, read before
+        # this run's author writes: a stamp that appears later is the
+        # author's copy of a sibling approach's (#209).
+        set AppliedPatch [dict create roster_patch {}]
+        if {[file exists $Outfile] \
+                && ![catch {spar::read_approach_yaml $Outfile} prior] \
+                && $prior ne "" && [dict exists $prior roster_patch_applied]} {
+            dict set AppliedPatch roster_patch [dict getdef $prior roster_patch {}]
+        }
     }
 
     # --model for the author's calls when the campaign's meta.env names
@@ -484,7 +493,7 @@ oo::class create spar::ProfileHarness {
 
     variable State Outfile RosterPath SweepPath RequiredSkills Stem \
              ContactLinkedin ContactName ContactOrg ContactEmail \
-             OutfilePreexisted OutfileSnapshot CampaignFile
+             OutfilePreexisted OutfileSnapshot CampaignFile Applied
 
     # Profile workers run under an explicit allow-list instead of
     # skip-permissions, so a research delegation can only reach the
@@ -595,9 +604,11 @@ oo::class create spar::ProfileHarness {
         # the declaration produced. Runs on every attempt: idempotent by stamp, and a
         # fix-loop resume that edits the declaration gets it applied on
         # the re-validate. Rejections join the error list and drive the
-        # same fix loop.
-        set errors [spar::apply_roster_patch $Outfile $RosterPath $Stem $SweepPath]
+        # same fix loop. Whether a declaration has landed is the harness's
+        # own record (Applied), not the deliverable's stamp (#209).
+        set errors [spar::apply_roster_patch $Outfile $RosterPath $Stem $SweepPath $Applied]
         if {[llength $errors] == 0} {
+            my _record_applied
             set row [my _roster_row $RosterPath $slug]
         }
         lappend errors {*}[spar::validate_profile $Outfile $row $slug]
@@ -750,6 +761,32 @@ oo::class create spar::ProfileHarness {
         set OutfilePreexisted [file exists $Outfile]
         set OutfileSnapshot \
             [expr {$OutfilePreexisted ? [spar::read_file $Outfile] : ""}]
+        # What of the deliverable's declarations has landed (#209). A
+        # stamp the file carries before the worker's turn was written by
+        # an earlier run's harness; one that appears during the turn is
+        # the worker's copy of a sibling's, and counts for nothing.
+        set Applied [dict create roster_patch {} appended 0]
+        if {$OutfilePreexisted} {
+            set fm [spar::read_profile_front_matter $Outfile]
+            if {$fm ne "" && [dict exists $fm roster_patch_applied]} {
+                set Applied [dict create \
+                    roster_patch [dict getdef $fm roster_patch {}] appended 1]
+            }
+        }
+    }
+
+    # After a clean apply: the declared roster_patch is on the row, and
+    # declared rows_new and sources_new are appended. A fix turn that
+    # later corrects or adds a roster_patch key gets that key applied.
+    method _record_applied {} {
+        set fm [spar::read_profile_front_matter $Outfile]
+        if {$fm eq ""} { return }
+        dict set Applied roster_patch [dict merge \
+            [dict get $Applied roster_patch] [dict getdef $fm roster_patch {}]]
+        if {[llength [dict getdef $fm rows_new {}]] \
+                || [llength [dict getdef $fm sources_new {}]]} {
+            dict set Applied appended 1
+        }
     }
 
     # A re-profile row's outfile already exists, so "the run closed

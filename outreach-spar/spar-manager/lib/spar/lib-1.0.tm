@@ -782,7 +782,22 @@ proc spar::update_roster_field {tsv_path key_col key_val field_col new_val} {
 # update_roster_field: the dispatcher's single event loop is the sole
 # writer. Returns a list of issue dicts (severity/code/message), empty
 # when applied clean; issues feed the caller's fix loop.
-proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""}} {
+#
+# applied says what has already landed. Empty, the deliverable's own
+# stamp decides: the startup reconcile has no record of its own. The
+# profile harness passes its record instead (#209), because the worker
+# holds Write on the deliverable and copies the stamp line from a
+# finished sibling it reads as an example; a stamp the harness did not
+# write would otherwise skip the patch with no issue raised. The record
+# is a dict of
+#   roster_patch  the column writes already made from this deliverable;
+#                 a declared key holding the same value is not rewritten,
+#                 so a fix turn's new or corrected key lands and a
+#                 human's later edit of an untouched key stands
+#   appended      1 once rows_new and sources_new have landed, which a
+#                 second append would reject as already held
+# and with it the file's stamp is not read, only rewritten.
+proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {applied ""}} {
     set fm [spar::read_profile_front_matter $profile_path]
     if {$fm eq ""} { return {} }
 
@@ -812,14 +827,23 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""}} {
         }
     }
 
-    set stamped [dict exists $fm roster_patch_applied]
+    if {$applied eq ""} {
+        set stamped [dict exists $fm roster_patch_applied]
+        set appended $stamped
+        set declared_patch [dict getdef $fm roster_patch {}]
+    } else {
+        set stamped 0
+        set appended [dict getdef $applied appended 0]
+        set declared_patch [spar::_patch_unapplied \
+            [dict getdef $fm roster_patch {}] [dict getdef $applied roster_patch {}]]
+    }
     # star_rating is admitted for the A-phase exclusion write (star 0 with
     # date_excluded); P declares its star through the front matter itself.
     set allowed {contact_name organisation role phone email \
                  linkedin_url facebook_url date_excluded p_note star_rating}
 
-    if {[dict exists $fm roster_patch] && !$stamped} {
-        dict for {k v} [dict get $fm roster_patch] {
+    if {!$stamped} {
+        dict for {k v} $declared_patch {
             if {$k ni $allowed} {
                 lappend issues [dict create severity error \
                     code patch_unknown_column \
@@ -841,7 +865,7 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""}} {
     set accepted {}
     set columns {}
     set sources_new {}
-    if {!$stamped} {
+    if {!$appended} {
         set declared [dict getdef $fm rows_new {}]
         if {[llength $declared] > 0} {
             set iteration [string trim [dict getdef $row sweep_iteration ""]]
@@ -910,22 +934,40 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""}} {
     return {}
 }
 
+# _patch_unapplied — the entries of a declared roster_patch that the
+# applied record does not already hold at the same value.
+proc spar::_patch_unapplied {declared applied} {
+    set out [dict create]
+    dict for {k v} $declared {
+        if {[dict exists $applied $k] && [dict get $applied $k] eq $v} continue
+        dict set out $k $v
+    }
+    return $out
+}
+
 # apply_approach_patch — the A-phase twin of apply_roster_patch. Approach
 # files are whole-file YAML rather than front-matter documents, so the
-# declaration is a root roster_patch key; the stamp is appended as a root
-# line. No star sync: the approach is not star_rating's home. Same
-# one-shot semantics and issue-list return.
-proc spar::apply_approach_patch {approach_path roster_path stem} {
+# declaration is a root roster_patch key; the stamp is a root line. No
+# star sync: the approach is not star_rating's home. Same one-shot
+# semantics and issue-list return, and the same applied argument: the
+# harness passes the roster_patch it knows landed (none, for an approach
+# that carried no stamp before the run), so a stamp the author copied
+# from a sibling approach is not honoured.
+proc spar::apply_approach_patch {approach_path roster_path stem {applied ""}} {
     if {[catch {spar::read_approach_yaml $approach_path} adata]} { return {} }
     if {$adata eq "" || ![dict exists $adata roster_patch]} { return {} }
-    if {[dict exists $adata roster_patch_applied]} { return {} }
-    set fm [dict create \
-        roster_patch [dict get $adata roster_patch]]
-    set issues [spar::_apply_patch_only $fm $roster_path $stem]
+    if {$applied eq ""} {
+        if {[dict exists $adata roster_patch_applied]} { return {} }
+        set patch [dict get $adata roster_patch]
+    } else {
+        set patch [spar::_patch_unapplied [dict get $adata roster_patch] \
+            [dict getdef $applied roster_patch {}]]
+    }
+    set issues [spar::_apply_patch_only [dict create roster_patch $patch] \
+        $roster_path $stem]
     if {[llength $issues] == 0} {
-        set fd [open $approach_path a]
-        puts $fd "roster_patch_applied: [clock format [clock seconds] -format %Y-%m-%d]"
-        close $fd
+        spar::_stamp_yaml_root $approach_path roster_patch_applied \
+            [clock format [clock seconds] -format %Y-%m-%d]
     }
     return $issues
 }
@@ -1187,23 +1229,33 @@ proc spar::append_sweep_sources {sweep_path entries} {
     return {}
 }
 
-# _stamp_patch_applied — insert the applied-stamp key into the
-# deliverable's front matter, before the closing --- delimiter. tmp+rename
-# like the roster writes, so a crash leaves the old file whole. The key is
-# an argument because a sweep return stamps sweep_batch_applied, on the
-# same one-shot reasoning: a later comparison cannot tell "not yet
-# applied" from "a human corrected the roster afterwards".
+# _stamp_patch_applied — write the applied-stamp key into the
+# deliverable's front matter. The key is an argument because a sweep
+# return stamps sweep_batch_applied, on the same one-shot reasoning: a
+# later comparison cannot tell "not yet applied" from "a human corrected
+# the roster afterwards".
 proc spar::_stamp_patch_applied {profile_path {key roster_patch_applied}} {
+    spar::_stamp_front_matter $profile_path $key \
+        [clock format [clock seconds] -format %Y-%m-%d]
+}
+
+# _stamp_front_matter — set a root key of the deliverable's front matter,
+# written just before the closing --- delimiter. A line the file already
+# carries for the key is replaced, not doubled: the worker may have
+# written one, copied from a sibling it read. tmp+rename like the roster
+# writes, so a crash leaves the old file whole.
+proc spar::_stamp_front_matter {profile_path key value} {
     set fd [open $profile_path r]
     set content [read $fd]
     close $fd
     set lines [split $content \n]
     set out {}
     set delims 0
-    set today [clock format [clock seconds] -format %Y-%m-%d]
     foreach line $lines {
         if {[string trim $line] eq "---" && [incr delims] == 2} {
-            lappend out "${key}: $today"
+            lappend out "${key}: $value"
+        } elseif {$delims == 1 && [string match "${key}:*" $line]} {
+            continue
         }
         lappend out $line
     }
@@ -1213,6 +1265,30 @@ proc spar::_stamp_patch_applied {profile_path {key roster_patch_applied}} {
         puts -nonewline $fd [join $out \n]
         close $fd
         file rename -force $tmp $profile_path
+        set tmp ""
+    } finally {
+        if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
+    }
+}
+
+# _stamp_yaml_root — _stamp_front_matter for a whole-file YAML document
+# (an approach): the key's root line is replaced, or appended at the end.
+proc spar::_stamp_yaml_root {path key value} {
+    set fd [open $path r]
+    set content [read $fd]
+    close $fd
+    set out {}
+    foreach line [split [string trimright $content \n] \n] {
+        if {[string match "${key}:*" $line]} continue
+        lappend out $line
+    }
+    lappend out "${key}: $value"
+    set tmp [exec mktemp "${path}.XXXXXX"]
+    try {
+        set fd [open $tmp w]
+        puts $fd [join $out \n]
+        close $fd
+        file rename -force $tmp $path
         set tmp ""
     } finally {
         if {$tmp ne "" && [file exists $tmp]} { catch {file delete $tmp} }
