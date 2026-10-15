@@ -27,7 +27,7 @@ Before drafting, verify that this contact is a valid campaign target:
 
 1. Check the roster: `star_rating` must be ≥ 1 and `date_excluded` must be empty. If either condition fails, skip this contact.
 2. Read the profile's angle assessment. If the profile states or implies the contact should not be approached (e.g. "not a Phase 1 contact", "deferred", "competing operator"), do not draft. Instead: declare the exclusion in the approach file's root `roster_patch:` block (`star_rating: 0`, `date_excluded: <today>`) for the harness to apply, record the reason in `a_note` (a minimal approach file with no draft rounds is fine — the exclusion is the outcome), and move to the next contact.
-3. If `star_rating` is 1 or 2, request explicit human confirmation before proceeding. Low-star contacts rarely justify the drafting cost.
+3. If `star_rating` is below the campaign's `filter.min_star` (`spar-campaign-yaml.md`), skip this contact. Whether a low-star contact justifies the drafting cost is the campaign's judgement, set in that field, since it turns on the campaign's cost structure and on how its segment's `rating_rubric` spreads valid contacts across the stars. The dispatcher applies the same filter, so a dispatched contact already meets it.
 
 This gate exists because A is the first point where profile content and campaign goals are jointly evaluated. P assesses relevance to the campaign in general; A assesses whether a specific approach is viable. A contact may pass P's filter but fail A's — for example, a strategically interesting person for whom no viable first-touch exists.
 
