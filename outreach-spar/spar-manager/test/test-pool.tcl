@@ -643,4 +643,45 @@ assert_eq [spar::abort_live_harnesses] 2 "both live harnesses told to abort"
 assert_eq [llength $::aborted] 2 "each harness's abort was called"
 set ::spar::live_harnesses [dict create]
 
+section "8. cancelling a running harness row aborts the run (#88)"
+
+# A harness that runs until aborted: run parks its coroutine, abort
+# resumes it and run returns non-zero, as a coachman abort does.
+oo::class create HangingHarness {
+    variable Co
+    constructor {prompt_dir log_dir} {}
+    method run {} {
+        set Co [info coroutine]
+        set ::hang_started 1
+        yield
+        return 1
+    }
+    method abort {} { after 0 $Co; return 1 }
+    method fail_cause {} { return aborted }
+}
+
+set d [spar::Dispatcher new 2 test_log]
+lassign [make_harness_dirs hang ""] p_h l_h
+set ::hang_started 0
+$d enqueue h_hang harness_run [dict create \
+    prompt_dir $p_h log_dir $l_h harness_class HangingHarness]
+wait_for {expr {$::hang_started}} 3000
+assert_eq [$d state h_hang] running "hanging harness is running"
+$d cancel h_hang
+wait_for_terminal $d h_hang 3000
+assert_eq [$d state h_hang] cancelled "cancel of a running harness row ends it cancelled"
+assert_eq [spar::live_harness_count] 0 "the aborted harness is unpublished"
+
+# An abort with no cancel behind it (the toolbar's abort-all) still
+# reports the row failed.
+lassign [make_harness_dirs hang2 ""] p_h2 l_h2
+set ::hang_started 0
+$d enqueue h_hang2 harness_run [dict create \
+    prompt_dir $p_h2 log_dir $l_h2 harness_class HangingHarness]
+wait_for {expr {$::hang_started}} 3000
+spar::abort_live_harnesses
+wait_for_terminal $d h_hang2 3000
+assert_eq [$d state h_hang2] failed "abort without cancel ends the row failed"
+$d destroy
+
 finish_tests
