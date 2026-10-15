@@ -23,26 +23,18 @@ package require logger
 namespace eval spar::ui {}
 
 oo::class create spar::ui::LogWindow {
+    mixin spar::ui::Subscribable
     variable LogBuffer LogUnread LogToStderr
-    variable Subs
 
     constructor {log_to_stderr} {
         set LogBuffer   {}
         set LogUnread   0
         set LogToStderr $log_to_stderr
-        set Subs        [dict create]
     }
 
-    # ─── Subscription ─────────────────────────────────────────────────────
-    method subscribe {event cb} { dict lappend Subs $event $cb }
-
+    # ─── Accessors ────────────────────────────────────────────────────────
     # get_buffer — read-only accessor onto the log line buffer, for tests.
     method get_buffer {} { return $LogBuffer }
-
-    method _fire {event args} {
-        if {![dict exists $Subs $event]} return
-        foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
-    }
 
     # ─── Public entry points ──────────────────────────────────────────────
 

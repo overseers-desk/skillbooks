@@ -39,12 +39,12 @@ package require TclOO
 namespace eval spar::ui {}
 
 oo::class create spar::ui::DispatchController {
+    mixin spar::ui::Subscribable
     variable Campaign Transitions Log Dispatcher
     variable PlayBtn PauseBtn CancelBtn ProgressFrame
     variable AutoTid AutoStems AutoQuit AutoDryRun ScriptDir CampaignFile
     variable PlayMenu LastWasDryRun
     variable AggregateTick AggregateAfter AggregateFrames
-    variable Subs
     variable RowTid RowReason RowPhase RowMeta RowDryRun
     variable BurstStems BurstFinished BurstFailed BurstActive
     variable RetryPending
@@ -87,7 +87,6 @@ oo::class create spar::ui::DispatchController {
         set AggregateFrames [list ⠋ ⠙ ⠹ ⠸ ⠼ \
                                   ⠴ ⠦ ⠧ ⠇ ⠏]
 
-        set Subs [dict create]
         set RowMenu ""
         set RowMenuRow ""
 
@@ -132,14 +131,6 @@ oo::class create spar::ui::DispatchController {
         # button's enable/disable + label.
         $Transitions subscribe dispatch-target-changed \
             [list [self] on_target_changed]
-    }
-
-    # ─── Subscription ─────────────────────────────────────────────────────
-    method subscribe {event cb} { dict lappend Subs $event $cb }
-
-    method _fire {event args} {
-        if {![dict exists $Subs $event]} return
-        foreach cb [dict get $Subs $event] { {*}$cb {*}$args }
     }
 
     # ─── Accessors ────────────────────────────────────────────────────────
