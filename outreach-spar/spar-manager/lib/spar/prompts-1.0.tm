@@ -169,6 +169,10 @@ proc spar::p::prepare_for_pool {opts on_progress} {
         error "spar::p::prepare_for_pool: opts.stems is required and names the rows to profile"
     }
     lassign [spar::_population_prep_scope $opts p] cdata root segments logs_path_src
+    # Every prompt names the browser command. Asked here, outside the
+    # per-segment catch, a host with none fails the batch as one prep
+    # error naming the missing binary, not as a failure per segment.
+    spar::detect_browser_cmd
     set campaign_file [dict getdef $opts campaign_file ""]
     set user_logs    [dict getdef $opts logs_dir ""]
 
@@ -846,6 +850,8 @@ Emit exactly one of these lines as the very last line of your output:"
 #                  or a T0:<seg>/<stem> scope names sources this way)
 proc spar::s::prepare_for_pool {opts on_progress} {
     lassign [spar::_population_prep_scope $opts s] cdata root segments logs_path_src
+    # One prep error for a host with no browser, as in spar::p::prepare_for_pool.
+    spar::detect_browser_cmd
     set campaign_file [dict getdef $opts campaign_file ""]
     set user_logs    [dict getdef $opts logs_dir ""]
 
