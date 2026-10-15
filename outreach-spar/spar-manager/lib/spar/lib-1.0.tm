@@ -1256,25 +1256,38 @@ proc spar::lang_instruction {code} {
     }
 }
 
-# channel_desc — channel selection per SPAR-A §4.2
-# Port of spar-a-batch.sh lines 221-230
-proc spar::channel_desc {linkedin phone email} {
-    set has_linkedin [expr {$linkedin ne ""}]
+# channel_desc — the SPAR-A §4.2 branch a roster row falls in, as the
+# sentence A's prompt carries. The connection channels are the row's
+# populated platform columns ({key}_url for each platform module key;
+# a platform with no roster column, instagram, has none to populate),
+# so a facebook-only contact reads as a connection channel with no
+# email, not as email only.
+proc spar::channel_desc {row} {
+    set titles {linkedin LinkedIn}
+    set conn {}
+    foreach key [spar::platform_modules] {
+        if {[string trim [dict getdef $row ${key}_url ""]] eq ""} continue
+        lappend conn [dict getdef $titles $key [string totitle $key]]
+    }
+    set phone [string trim [dict getdef $row phone ""]]
     set has_phone [expr {$phone ne "" && [regexp {\d} $phone]}]
-    set has_email [string match *@* $email]
+    set has_email [string match *@* [string trim [dict getdef $row email ""]]]
+    set c [join $conn ", "]
 
-    if {$has_linkedin} {
-        if {$has_phone} {
-            return "Per SPAR-A §4.2: LinkedIn + email + phone = prepare (1) LinkedIn connection note, (2) email after acceptance or 5 days, (3) phone follow-up if no email reply after 3 days."
-        } else {
-            return "Per SPAR-A §4.2: LinkedIn + email = prepare (1) LinkedIn connection note, (2) email after acceptance or 5 days."
-        }
-    } elseif {$has_phone && !$has_email} {
-        return "Per SPAR-A §4.2: phone only = phone script only; the email comes after the call, in a later round."
+    if {[llength $conn] > 0 && $has_email && $has_phone} {
+        return "Per SPAR-A §4.2: connection channel ($c) + email + phone = prepare (1) connection message, (2) email after acceptance or 4–5 days, (3) phone follow-up if no email reply after 3 days."
+    } elseif {[llength $conn] > 0 && $has_email} {
+        return "Per SPAR-A §4.2: connection channel ($c) + email, no phone = prepare (1) connection message, (2) email after acceptance or 4–5 days."
+    } elseif {[llength $conn] > 0} {
+        return "Per SPAR-A §4.2: connection channel ($c), no email = connection message only, with slightly more context than usual since there is no email follow-up."
+    } elseif {$has_email && $has_phone} {
+        return "Per SPAR-A §4.2: email + phone, no connection channel = prepare (1) email, (2) phone follow-up script if no reply after 3 days."
+    } elseif {$has_email} {
+        return "Per SPAR-A §4.2: email only, no phone, no connection channel = email only."
     } elseif {$has_phone} {
-        return "Per SPAR-A §4.2: email + phone, no LinkedIn = prepare (1) email, (2) phone follow-up script."
+        return "Per SPAR-A §4.2: phone only = phone script only; the email comes after the call, in a later round."
     } else {
-        return "Per SPAR-A §4.2: email only, no phone, no LinkedIn = email only."
+        return "Per SPAR-A §4.2: no reachable channel = flag for human resolution."
     }
 }
 
