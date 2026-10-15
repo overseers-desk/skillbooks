@@ -1,7 +1,8 @@
 #!/usr/bin/env tclsh9.0
 # Values tcllib yaml 0.4.2 parses without complaint yet returns other than
-# written (spar::_pred_scalars_as_written): text after a closing quote, and
-# ': ' in an unquoted value. Each is reported at its line, YAML that parses
+# written (spar::_pred_scalars_as_written): text after a closing quote,
+# ': ' in an unquoted value, and a line that is none of key, list item,
+# continuation or comment. Each is reported at its line, YAML that parses
 # as written is not, and the approach, profile, seed and sweep-return
 # validators hand the scan their file's text.
 package require yaml
@@ -39,6 +40,12 @@ foreach {text want label} {
     "note: a long value\n  that goes: on"       2 "': ' in a continuation line"
     "a: 1\r\nnote: a: b\r\nc: 2\r\n"            2 "CRLF line ends"
     "---\nrole: Owner: sole\n---\nBody: not: YAML" 2 "front matter, counted from the fence"
+    "a: 1\nb: 2\n</content>"                     3 "a leaked tag at the end of the file"
+    "rounds:\n  - n: 1\n    final: true\n  </content>" 4 "a leaked tag inside a list"
+    "a:\n  b: 1\n  stray words"                  3 "a bare line under a key that already has a value"
+    "a: 1\n\"quoted stray\""                     2 "a bare quoted line where a key belongs"
+    "a:\n  note: >-\n  under-indented text\nb: 1" 3 "block scalar text no deeper than its key"
+    "c: \"x\" / the\n  rest of it\nd: 1"        1 "a dropped tail running on: one report"
 } {
     assert_eq [flagged $text] $want $label
 }
@@ -57,6 +64,11 @@ foreach {text label} {
     "said: He said\n  \"hello\" to them"               "a continuation opening with a quote"
     "\"quoted: key\": value"                          "a quoted key"
     "- map:\r\n    a: 1\r\n"                          "a key ending a CRLF line"
+    "note:\n  a plain value\n    on two lines\nnext: 1" "a plain value on the lines below its key"
+    "note:  # why\n  'quoted below'\nnext: 1"         "a quoted value below its key"
+    "items:\n  -\n    bare item\n  - x"               "a list item's value on the next line"
+    "a: 1\n---\nb: 2\n..."                            "document markers"
+    "d: 'the tier''s\n  count: 3'\nnext: 1"           "a doubled quote before the line ends inside the value"
 } {
     assert_eq [flagged $text] {} $label
 }
@@ -72,6 +84,12 @@ assert_eq [lines_of [spar::validate_approach $ap "" "Jane"]] 6 \
     "validate_approach reports the line"
 assert_eq [lines_of [spar::validate_approach_data [spar::read_approach_yaml $ap] $ap "" "Jane"]] {} \
     "validate_approach_data has no text to scan"
+write_approach_yaml $seg jane "[approach_yaml_final_unsent]</content>\n"
+set leaked [llength [split [approach_yaml_final_unsent] \n]]
+assert_eq [lines_of [spar::validate_approach $ap "" "Jane"]] $leaked \
+    "validate_approach reports a leaked closing tag on its line"
+write_approach_yaml $seg jane [string map {"source: profile" "source: site (Contact: +61)"} \
+    [approach_yaml_final_unsent]]
 assert_eq [spar::stamp_actioned_date $ap 2026-09-24] 1 \
     "a send is still stamped in a file carrying one"
 
