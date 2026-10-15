@@ -212,12 +212,12 @@ write_profile $seg "alice-acme"
 
 section "a host with no browser fails prep once (#204)"
 
-# Stand in for a host with neither browser-serialiser nor chromium: the
+# Stand in for a host without browser-serialiser: the
 # probe throws, and counts how often it is asked.
 rename spar::detect_browser_cmd _real_detect_browser_cmd
 proc spar::detect_browser_cmd {} {
     incr ::browser_probes
-    error "spar::detect_browser_cmd: neither browser-serialiser nor chromium on PATH"
+    error "spar::detect_browser_cmd: browser-serialiser is not on PATH"
 }
 foreach {kind segdir stems} [list p $seg {alice-acme} s $swseg {}] {
     set ::browser_probes 0
@@ -225,7 +225,7 @@ foreach {kind segdir stems} [list p $seg {alice-acme} s $swseg {}] {
     assert_error {spar::${kind}::prepare_for_pool \
             [dict create segment_dirs [list $segdir $segdir] stems $stems] \
             {apply {args { lappend ::prep_events $args }}}} \
-        "*neither browser-serialiser nor chromium*" \
+        "*browser-serialiser is not on PATH*" \
         "$kind prep raises the missing browser as its own error"
     assert_eq $::browser_probes 1 "$kind prep asks for the browser once"
     assert_eq $::prep_events {} "$kind prep reports no per-segment failure"
