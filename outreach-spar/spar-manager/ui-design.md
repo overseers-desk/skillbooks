@@ -142,6 +142,7 @@ Expanding a transition type reveals its individual tasks as child rows (under th
 
 - "No email address" (T6, channel is email but contact has no email)
 - "invalid_approach_yaml: …" (the approach YAML fails structural validation)
+- "invalid_profile: …" (T2/T4, the profile A would draft from fails validation)
 
 Tasks in the **done** state are shown greyed out. A "Show completed" checkbox above the treeview toggles their visibility.
 

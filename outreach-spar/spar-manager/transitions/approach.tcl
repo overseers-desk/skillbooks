@@ -43,22 +43,29 @@ oo::class create ::spar::transitions::ApproachTransition {
 
     # T2: PROFILED contacts that pass the campaign-wide approach-dispatch
     # gate (min_star, in_scope_channel, skip_excluded — SSOT with
-    # spar::a::_build_prompts per #56).
+    # spar::a::_build_prompts per #56); a passing contact whose profile
+    # fails validation is blocked with reason "invalid_profile: …".
     # T4: APPROACH_STALE contacts. classify_contact assigns this state when
     # the approach's profile_hash diverges from the current profile bytes
     # (#63); T4 re-runs A on those, dispatching through the same gate so
     # filter rules stay symmetric with T2.
     method eligible {state contact primary_channel cdata today_iso} {
         set tid [my tid]
-        set state [dict get $contact state]
+        set cstate [dict get $contact state]
         if {$tid eq "T2"} {
-            if {$state ne "PROFILED"} { return {} }
+            if {$cstate ne "PROFILED"} { return {} }
         } elseif {$tid eq "T4"} {
-            if {$state ne "APPROACH_STALE"} { return {} }
+            if {$cstate ne "APPROACH_STALE"} { return {} }
         } else {
             return {}
         }
         if {[spar::_approach_dispatch_gate $contact $cdata] ne ""} { return {} }
+        # A drafts from the profile, so one that fails validate_profile is
+        # a defect to surface, not a row to dispatch.
+        set perr [$state profile_validation_error $contact]
+        if {$perr ne ""} {
+            return [list [spar::_task $contact blocked "invalid_profile: $perr"]]
+        }
         return [list [spar::_task $contact dispatchable ""]]
     }
 }
