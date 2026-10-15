@@ -119,6 +119,25 @@ set pdir [lindex [lindex [dict get $prep rows] 0] 1]
 set fd [open [file join $pdir meta.env] r]; set env_text [read $fd]; close $fd
 assert_match $env_text "*CAMPAIGN_FILE=\"\"*" "meta.env carries an empty campaign file"
 
+# A row named by stem is prepared over its existing profile. meta.env
+# flags it PROFILE_STALE only when the snapshot disagrees with the row
+# (#193), so the harness's pre-call re-check never cuts short a
+# re-author of a current profile.
+proc alice_meta_env {seg} {
+    set prep [spar::p::prepare_for_pool \
+        [dict create segment_dirs [list $seg] stems {alice-acme}] {apply {args {}}}]
+    set pdir [lindex [lindex [dict get $prep rows] 0] 1]
+    set fd [open [file join $pdir meta.env] r]; set t [read $fd]; close $fd
+    return $t
+}
+write_profile $seg "alice-acme" -contact_name "Alice"
+assert_eq [string match "*PROFILE_STALE*" [alice_meta_env $seg]] 0 \
+    "a current profile prepared by stem carries no stale flag"
+write_profile $seg "alice-acme" -contact_name "Alicia"
+assert_match [alice_meta_env $seg] "*PROFILE_STALE=1*" \
+    "a stale profile prepared by stem is flagged for the re-check"
+write_profile $seg "alice-acme"
+
 section "tier filtering at the CLI"
 
 set cli [file join $script_dir .. spar-transition]
