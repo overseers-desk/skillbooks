@@ -1571,6 +1571,7 @@ proc spar::_yamlmuster_sweep {} {
     $inst predicate escapes_seeded      ::spar::_pred_escapes_seeded
     $inst predicate denominator_reconciled ::spar::_pred_denominator_reconciled
     $inst predicate scalars_as_written  ::spar::_pred_scalars_as_written
+    $inst predicate source_block_scalar ::spar::_pred_source_block_scalar
     spar::_yamlmuster_load $inst sweep.rules sweep
     set _yamlmuster_sweep_inst $inst
     return $inst
@@ -1782,6 +1783,21 @@ proc spar::_pred_negative_evidence {node meta} {
             lappend out [dict create message \
                 "source '$name' claims yield $yield with no control: name the known member found through the same instrument and query shape"]
         }
+    }
+    return $out
+}
+
+# A census source's status, control or probe written as a block scalar
+# (| or >) cannot be rewritten by the T0 harness, which finds that out
+# after the run's rows have landed (spar::sweep_block_scalar_fields).
+# Scans the text (context `raw`), since the parsed value no longer shows
+# how it was written.
+proc spar::_pred_source_block_scalar {node meta} {
+    set raw [dict getdef [dict get $meta context] raw ""]
+    set out {}
+    dict for {name keys} [spar::sweep_block_scalar_fields $raw] {
+        lappend out [dict create message \
+            "source '$name': [join $keys {, }] is a block scalar, which a T0 run cannot write back; rewrite it as a quoted single-line value"]
     }
     return $out
 }

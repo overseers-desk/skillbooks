@@ -142,6 +142,45 @@ set sprep [spar::s::prepare_for_pool \
 assert_eq [lsort [lmap pair [dict get $sprep rows] {lindex $pair 0}]] $task_stems \
     "S prep builds a row for every source the task list reports, and no other"
 
+# A source whose control or probe is a block scalar fails at prep, before
+# a worker is paid for: the harness could not write its verdict back
+# (#218). The validator names the same source.
+set fd [open [spar::sweep_yaml_for_segment $swseg] w]
+puts $fd {version: "2.0"}
+puts $fd "segment: swept"
+puts $fd "sources:"
+puts $fd "- name: State register"
+puts $fd "  type: registry"
+puts $fd "  status: open"
+puts $fd "- name: Trade directory"
+puts $fd "  type: directory"
+puts $fd "  status: partial"
+puts $fd "  control: >-"
+puts $fd "    Known member found"
+puts $fd "    through the same query."
+puts $fd "rounds: \[\]"
+close $fd
+set ::prep_events {}
+set sprep [spar::s::prepare_for_pool \
+    [dict create segment_dirs [list $swseg]] \
+    {apply {args { lappend ::prep_events $args }}}]
+assert_eq [lmap pair [dict get $sprep rows] {lindex $pair 0}] \
+    [list [spar::sweep_task_stem swept "State register"]] \
+    "a source with a block-scalar control gets no prompt dir"
+assert_eq [llength $::prep_events] 1 "and is reported once"
+lassign [lindex $::prep_events 0] ev_stem ev_status ev_msg
+assert_eq [list $ev_stem $ev_status] \
+    [list [spar::sweep_task_stem swept "Trade directory"] failed] \
+    "as a failed row under its own stem"
+assert_match $ev_msg "control is a block scalar*" "naming the field"
+set codes [lmap i [spar::validate_seed $swseg] {
+    if {[dict get $i code] ne "block_scalar_source_field"} continue
+    dict get $i message
+}]
+assert_eq [llength $codes] 1 "the sweep validator flags the block-scalar field"
+assert_match [lindex $codes 0] "*'Trade directory': control*" \
+    "naming the source and the field"
+
 section "campaign-free P prep"
 
 set prep [spar::p::prepare_for_pool \
