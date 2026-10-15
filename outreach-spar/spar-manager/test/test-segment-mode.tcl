@@ -109,6 +109,39 @@ set sprep [spar::s::prepare_for_pool \
     [dict create segment_dirs [list $swseg]] {apply {args {}}}]
 assert_eq [llength [dict get $sprep rows]] 1 "S prep builds the source row campaign-free"
 
+# An unreachable source whose probe predates the latest round is due a
+# re-probe; one probed in the latest round is not. Prep builds a row for
+# exactly the sources the task list reports as dispatchable (#216).
+set fd [open [spar::sweep_yaml_for_segment $swseg] w]
+puts $fd {version: "2.0"}
+puts $fd "segment: swept"
+puts $fd "sources:"
+puts $fd "- name: State register"
+puts $fd "  type: registry"
+puts $fd "  status: open"
+puts $fd "- name: Gated forum"
+puts $fd "  type: informal"
+puts $fd "  status: unreachable (login wall)"
+puts $fd "  probe: login wall (round 1)"
+puts $fd "- name: Gated group"
+puts $fd "  type: informal"
+puts $fd "  status: unreachable (login wall)"
+puts $fd "  probe: login wall (round 2)"
+puts $fd "rounds:"
+puts $fd "- n: 1"
+puts $fd "- n: 2"
+close $fd
+set t0_tasks [spar::transition_campaign_tasks T0 {} "" \
+    [list [list swept $swseg]]]
+set task_stems [lsort [lmap t $t0_tasks {dict get $t stem}]]
+assert_eq $task_stems [lsort [list [spar::sweep_task_stem swept "State register"] \
+    [spar::sweep_task_stem swept "Gated forum"]]] \
+    "the stale-probe unreachable source is a task; the freshly probed one is not"
+set sprep [spar::s::prepare_for_pool \
+    [dict create segment_dirs [list $swseg]] {apply {args {}}}]
+assert_eq [lsort [lmap pair [dict get $sprep rows] {lindex $pair 0}]] $task_stems \
+    "S prep builds a row for every source the task list reports, and no other"
+
 section "campaign-free P prep"
 
 set prep [spar::p::prepare_for_pool \

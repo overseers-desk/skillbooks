@@ -870,8 +870,9 @@ proc spar::s::prepare_for_pool {opts on_progress} {
     return [dict create logs_dir $logs_dir rows $rows]
 }
 
-# _prepare_segment — write one prompt dir per open source in this
-# segment's census. Returns the list of prompt dirs created (their
+# _prepare_segment — write one prompt dir per source in this segment's
+# census that spar::sweep_source_due admits, the rule T0's task list
+# selects by. Returns the list of prompt dirs created (their
 # basenames are the task stems, as P's are).
 #
 # No roster is required: the first sweep of a segment creates it, through
@@ -948,13 +949,8 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
     # The round this dispatch belongs to: one past the highest recorded.
     # Every worker in the batch carries the same number, and the round
     # record they merge into is keyed by it (spar::append_sweep_round).
-    set round_n 1
-    foreach r [dict getdef $sweep_data rounds {}] {
-        set n [dict getdef $r n 0]
-        if {[string is integer -strict $n] && $n >= $round_n} {
-            set round_n [expr {$n + 1}]
-        }
-    }
+    set latest_n [spar::sweep_latest_round $sweep_data]
+    set round_n [expr {$latest_n + 1}]
 
     set cost_cap [dict getdef $cdata worker_cost_cap_usd ""]
     set cost_line [expr {$cost_cap eq ""
@@ -971,7 +967,7 @@ proc spar::s::_prepare_segment {segment_dir cdata opts datestamp logs_dir \
         set name [string trim [dict getdef $src name ""]]
         if {$name eq ""} continue
         set status [string trim [dict getdef $src status ""]]
-        if {![spar::sweep_source_open $status]} continue
+        if {![lindex [spar::sweep_source_due $src $latest_n] 0]} continue
         set stem [spar::sweep_task_stem $segment_name $name]
         if {[llength $sel_stems] > 0 && $stem ni $sel_stems} continue
 
