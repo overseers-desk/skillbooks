@@ -757,12 +757,14 @@ section "spar::li::health_note: what stands in a send's way"
 
 # A healthy overseer with every host free: nothing to say.
 set hn_clear {ok true version 0.1 pools {browser {cap 1 inUse 0}} \
-    fault null lanes {} holds {} gates {linkedin.com {opensIn_s 0 interval_s 900}}}
+    fault null jobCodes {} holds {} \
+    siteLanes {linkedin.com {lane {state open} signin {state signedIn when 2026-07-19T21:04:02} accounts {}}} \
+    gates {linkedin.com {opensIn_s 0 interval_s 900}}}
 assert_eq [spar::li::health_note $hn_clear linkedin.com linkedin.com/send-invite] "" \
     "health_note: clear runner says nothing"
 
 # A host whose rate gate has not freed yet.
-set hn_gated {ok true fault null lanes {} holds {} \
+set hn_gated {ok true fault null jobCodes {} holds {} \
     gates {linkedin.com {opensIn_s 40 interval_s 900}}}
 assert_eq [spar::li::health_note $hn_gated linkedin.com linkedin.com/send-invite] \
     "linkedin.com gate 40s" "health_note: a closed gate names host and seconds"
@@ -771,19 +773,43 @@ assert_eq [spar::li::health_note $hn_gated linkedin.com linkedin.com/send-invite
 assert_eq [spar::li::health_note $hn_gated facebook.com facebook.com/send] "" \
     "health_note: another host's gate is not this send's business"
 
-# An open breaker on this send's lane, and a hold on this send's host.
+# An open breaker on this send's JobCode, and a hold on this send's host.
 set hn_all {ok true fault null \
-    lanes {linkedin.com/send-invite {since 2026-07-19T12:00:00 count 2 detail boom}} \
+    jobCodes {linkedin.com/send-invite {since 2026-07-19T12:00:00 count 2 detail boom}} \
     holds {linkedin.com {jo@example.com {since 2026-07-19T12:00:00 checked p1}}} \
     gates {linkedin.com {opensIn_s 40 interval_s 900}}}
 assert_eq [spar::li::health_note $hn_all linkedin.com linkedin.com/send-invite] \
-    "linkedin.com gate 40s; lane tripped after 2 failures; account not signed in: jo@example.com" \
+    "linkedin.com gate 40s; linkedin.com/send-invite tripped after 2 failures; account not signed in: jo@example.com" \
     "health_note: gate, trip and hold read together in one phrase"
 
-# A trip on a different lane leaves this one alone.
+# A trip on a different JobCode leaves this one alone.
 assert_eq [spar::li::health_note $hn_all linkedin.com linkedin.com/send-message] \
     "linkedin.com gate 40s; account not signed in: jo@example.com" \
-    "health_note: another lane's trip is not this send's"
+    "health_note: another JobCode's trip is not this send's"
+
+# The pre-0.7.0 name for the breakers is not read: a document carrying
+# only `lanes` reports no trip.
+assert_eq [spar::li::health_note \
+    {ok true lanes {linkedin.com/send-invite {count 2}}} \
+    linkedin.com linkedin.com/send-invite] "" \
+    "health_note: the retired lanes key is not the breaker field"
+
+# The site's lane: a challenged lane and a signed-out sign-in are both
+# named, on this host only.
+set hn_lane {ok true fault null jobCodes {} holds {} \
+    siteLanes {linkedin.com {lane {state challenged when 2026-07-19T20:00:00} \
+                             signin {state signedOut when 2026-07-19T20:00:00}} \
+               instagram.com {lane {state open} signin {state signedIn}}}}
+assert_eq [spar::li::health_note $hn_lane linkedin.com linkedin.com/send-invite] \
+    "linkedin.com lane challenged; linkedin.com signed out, /run will refuse" \
+    "health_note: a challenged lane and a signed-out sign-in are named"
+assert_eq [spar::li::health_note $hn_lane instagram.com instagram.com/send] "" \
+    "health_note: another site's lane is not this send's"
+
+# A lane with no sign-in field yet (no probe has landed) asserts nothing.
+assert_eq [spar::li::health_note {ok true siteLanes {linkedin.com {lane {state open}}}} \
+    linkedin.com linkedin.com/send-invite] "" \
+    "health_note: an unprobed lane reads as clear"
 
 # A document missing the keys entirely (an older runner) reads as clear
 # rather than erroring.

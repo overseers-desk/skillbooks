@@ -436,8 +436,8 @@ proc ::spar::ses::send_one {opts} {
 #   today          optional ISO date for stamp; default = today
 #   note_cmd       optional cmdprefix, called with one line of text when
 #                  the probe finds something standing in this send's way
-#                  (a rate gate, an open breaker, an account not signed
-#                  in). The dispatcher passes the pool's phase verb, so
+#                  (a rate gate, a challenged or signed-out lane, an open
+#                  breaker, an account not signed in). The dispatcher passes the pool's phase verb, so
 #                  the row says what it is waiting on.
 #
 # Skill selection: an invitation with the text as its note by default;
@@ -512,16 +512,19 @@ proc ::spar::li::_fault_suffix {doc} {
 # phrase, or "" when the way is clear. The document is the one _health
 # already fetched, so this costs no extra round trip.
 #
-#   gates    host -> {opensIn_s, interval_s}: the seconds until that
-#            host's rate gate frees, beside the interval it counts from
-#   lanes    lane -> {since count detail}, an open circuit breaker; a
-#            send's lane is its skill ref
-#   holds    host -> identity -> {...}, an account declined until someone
-#            signs it in again
+#   gates      host -> {opensIn_s, interval_s}: the seconds until that
+#              host's rate gate frees, beside the interval it counts from
+#   siteLanes  host -> {lane signin accounts}: a lane.state of challenged
+#              parks every send to the site; a signin.state of signedOut
+#              makes /run refuse authenticated work at the door
+#   jobCodes   code -> {since count detail}, an open circuit breaker; a
+#              send's JobCode is its skill ref
+#   holds      host -> identity -> {...}, an account declined until
+#              someone signs it in again
 #
-# Every key is read by host or by lane, so a platform added later reads
-# out of the same document with no change here.
-proc ::spar::li::health_note {h host {lane ""}} {
+# Every key is read by host or by JobCode, so a platform added later
+# reads out of the same document with no change here.
+proc ::spar::li::health_note {h host {code ""}} {
     set parts {}
     # The gate names its unit in the key: take the countdown, not the
     # interval standing beside it. Guarded, so a document shaped another
@@ -531,10 +534,19 @@ proc ::spar::li::health_note {h host {lane ""}} {
     if {[string is integer -strict $secs] && $secs > 0} {
         lappend parts "$host gate ${secs}s"
     }
-    if {$lane ne ""} {
-        set trip [dict getdef $h lanes $lane ""]
+    set lane ""; set signin ""
+    catch {set lane [dict get $h siteLanes $host lane state]}
+    catch {set signin [dict get $h siteLanes $host signin state]}
+    if {$lane eq "challenged"} {
+        lappend parts "$host lane challenged"
+    }
+    if {$signin eq "signedOut"} {
+        lappend parts "$host signed out, /run will refuse"
+    }
+    if {$code ne ""} {
+        set trip [dict getdef $h jobCodes $code ""]
         if {$trip ne ""} {
-            lappend parts "lane tripped after [dict getdef $trip count "repeated"] failures"
+            lappend parts "$code tripped after [dict getdef $trip count "repeated"] failures"
         }
     }
     set held [dict keys [dict getdef $h holds $host ""]]
@@ -645,9 +657,9 @@ proc ::spar::li::send_one {opts} {
         return [list error "overseer not available at $overseer — start it before T6 linkedin sends ($err)"]
     }
 
-    # A /run parks server-side behind the rate gate, an open breaker or a
-    # held account, so the row would otherwise sit silent for as long as
-    # the wait lasts. The probe already knows why; report it through the
+    # A /run parks server-side behind the rate gate, a challenged lane, an
+    # open breaker or a held account, so the row would otherwise sit
+    # silent for as long as the wait lasts; a signed-out lane refuses it. The probe already knows why; report it through the
     # caller's note cmdprefix, and keep it for the failure text.
     set note [::spar::li::health_note $health \
         [lindex [split $skill_ref /] 0] $skill_ref]
