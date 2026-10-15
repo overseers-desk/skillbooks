@@ -13,11 +13,12 @@
 oo::class create ::spar::transitions::SweepTransition {
     superclass ::spar::transitions::Transition
 
-    # One task per source spar::sweep_source_due admits, the rule
-    # spar::s::_prepare_segment builds prompt dirs by. A segment with no sweep file is not seeded yet and contributes
-    # nothing; a sweep file that does not parse contributes one blocked
-    # row naming the defect, rather than vanishing. Both front ends drop
-    # blocked rows from dispatch and show them to the operator.
+    # One task per due source; S prep builds prompt dirs by the same rule
+    # (spar::sweep_source_due). A segment with no sweep file is not seeded
+    # yet and contributes nothing; a sweep file that does not parse
+    # contributes one blocked row naming the defect, rather than vanishing.
+    # Both front ends drop blocked rows from dispatch and show them to the
+    # operator.
     method campaign_tasks {cdata campaign_file segment_paths} {
         set out {}
         foreach item $segment_paths {

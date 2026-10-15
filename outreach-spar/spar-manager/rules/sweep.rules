@@ -34,9 +34,9 @@ rule vocab root -groups {sweep}
 rule predicate root scalars_as_written -needs raw -code misparsed_scalar \
     -groups {sweep}
 
-# A source's status, control or probe as a block scalar: the T0 harness
-# rewrites those lines in place and refuses a block value, after the run's
-# rows have landed. Prep skips such a source; this names it at validation.
+# A source's status, control or probe as a block scalar (see
+# spar::sweep_block_scalar_fields). Prep skips such a source; this names it
+# at validation.
 rule predicate root source_block_scalar -needs raw -code block_scalar_source_field \
     -groups {sweep}
 
