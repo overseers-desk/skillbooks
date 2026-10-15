@@ -149,27 +149,36 @@ proc spar::_approach_gate_error {approach_data approach_path roster_email contac
 # severity/code from the rule declaration and owns path/level; a predicate may
 # override severity/code/message per issue.
 
-# scalars_as_written -- a value tcllib yaml 0.4.2 parses without complaint
-# yet returns other than written, in two shapes a strict parser rejects:
-# text after a quoted scalar's closing quote, which is dropped, and ': ' in
-# an unquoted value, which becomes a nested map. The parsed dict no longer
-# shows either, so this scans the text (context `raw`), front matter only
-# between its fences, and reports each line carrying one.
+# scalars_as_written -- YAML tcllib yaml 0.4.2 parses without complaint
+# yet returns other than written, in three shapes a strict parser rejects:
+# text after a quoted scalar's closing quote, which is dropped; ': ' in an
+# unquoted value, which becomes a nested map; and a line that is none of a
+# key, a list item, a value's continuation or a comment (a leaked
+# `</content>`), which is dropped. The parsed dict no longer shows any of
+# them, so this scans the text (context `raw`), front matter only between
+# its fences, and reports each line carrying one.
 proc spar::_pred_scalars_as_written {node meta} {
     # tcllib's own plain-scalar pattern: a value ends before the first word
     # whose leading ':' or '#' is also its last character.
     set plain {^(?:[^:#\t \n]*(?::[^\t \n]+)*(?:#[^\t \n]+)* *)*[^:#\t \n]*}
-    array set close {\" {^(?:[^\\"]|\\.)*"} ' {^(?:[^']|'')*'}}
+    # A closing single quote is one not doubled: without the (?!'), a line
+    # whose value runs on past it closes at the first half of a ''.
+    array set close {\" {^(?:[^\\"]|\\.)*"} ' {^(?:[^']|'')*'(?!')}}
     set raw [dict getdef [dict get $meta context] raw ""]
     set lines [split [string map {\r\n \n} $raw] \n]
     set fence [expr {[string trim [lindex $lines 0]] eq "---"}]
     set out {}
-    set skip -1; set cont -1; set quote ""; set n 0
+    # open: the column of a key (or dash) whose value was left empty on its
+    # own line, so the next line deeper than it may be a bare scalar value.
+    set skip -1; set cont -1; set quote ""; set n 0; set open -1
+    set stray "the parser drops a line that is not a key, list item,\
+        continuation or comment"
     foreach line $lines {
         incr n
         if {$fence && $n == 1} continue
         if {$fence && [string trim $line] eq "---"} break
         set bad ""
+        set fix "put the whole value in single quotes, inner ones doubled"
         if {$quote ne ""} {
             if {![regexp $close($quote) $line m]} continue
             set s [string range $line [string length $m] end]
@@ -187,6 +196,9 @@ proc spar::_pred_scalars_as_written {node meta} {
                 set kind cont
             } else {
                 set cont -1; set owner -1; set kind key
+                set valued [expr {$open >= 0 && $col > $open}]
+                set open_at $open; set open -1
+                if {$col == 0 && $s in {--- ...}} continue
                 while {[regexp {^-( +|$)(.*)} $s -> sp s]} {
                     set owner $col
                     incr col [expr {1 + [string length $sp]}]
@@ -201,6 +213,11 @@ proc spar::_pred_scalars_as_written {node meta} {
             if {[string match tail-* $kind]} {
                 if {![regexp {^\s*(#|$)} $s]} {
                     set bad "the parser drops the text after the closing quote"
+                    # Deeper lines carry on that text: one report, not two.
+                    set cont $owner
+                } elseif {$kind eq "tail-key" && $owner < 0 && !$valued} {
+                    set bad $stray
+                    set fix "delete it, or indent it under the key it belongs to"
                 }
                 break
             }
@@ -216,7 +233,8 @@ proc spar::_pred_scalars_as_written {node meta} {
                     continue
                 }
                 if {[regexp {^[[\{|>]} $s]} { set skip $owner; break }
-                if {[regexp {^([&*!?%@`#]|$)} $s]} break
+                if {[regexp {^(#|$)} $s]} { set open $owner; break }
+                if {[regexp {^[&*!?%@`]} $s]} break
             }
             regexp $plain $s m
             set rest [string range $s [string length $m] end]
@@ -228,13 +246,22 @@ proc spar::_pred_scalars_as_written {node meta} {
                     continue
                 }
                 set bad "the parser splits an unquoted value at ': ' into a map"
+            } elseif {$kind eq "key" && $owner < 0} {
+                # A bare scalar where a key belongs: the value of the empty
+                # key above it, continued like any plain value, or stray.
+                if {$valued} {
+                    set owner $open_at
+                } else {
+                    set bad $stray
+                    set fix "delete it, or indent it under the key it belongs to"
+                }
             }
             if {$kind ne "cont"} { set cont $owner }
             break
         }
         if {$bad ne ""} {
             lappend out [dict create message "line $n, '[string trim $line]':\
-                $bad; put the whole value in single quotes, inner ones doubled"]
+                $bad; $fix"]
         }
     }
     return $out
