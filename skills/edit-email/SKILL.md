@@ -24,7 +24,7 @@ It is compose-time work, done by you the caller before you assemble the draft, b
 
 Two independent dimensions shape an outgoing email, and the flags select a cell in their matrix.
 
-- **Voice** (`--voice NAME`): who is writing. The author's enduring style, the same whoever they write to. Voice guides are descriptor-named, never personal names, so the repo carries no identity in its filenames: `voice-warm-proprietor.md`, `voice-precise-proprietor.md`. A voice guide is about its author, so it may name that person inside the file; the filename and flag stay a descriptor.
+- **Voice** (`--voice NAME`): who is writing. The author's enduring style, the same whoever they write to. Voice guides are descriptor-named, never personal names, so the repo carries no identity in its filenames: `voice-warm-proprietor.md`, `voice-precise-proprietor.md`. Inside the file too, a voice guide names its author by role, not by name: the repo is public, and a voice is described by how its author writes, which no name adds to.
 - **Register** (`--register NAME`): how the mail is pitched to its recipient. The formality, the sentence complexity, and the way decisions and asks land, set by the relationship: staff, lawyer, customer, supplier, peer. Register guides are `register-<name>.md`.
 
 The cell is the product: the author's voice rendered in the register the relationship calls for. The two compose, and where a voice guide states its own override for a relationship, the voice wins. Either axis is optional: voice alone impersonates with no relationship pitch, register alone applies relationship rules to a cold draft, neither is the plain cold-reader pass.
@@ -66,7 +66,7 @@ Only the staff register is authored so far (`register-staff.md`). Others are add
 - `email-rulebook.md` — the rules
 - `standing-rules.md` — the newspaper test, SDT, NSWP and densify, which the rulebook applies concurrently
 - `editor-prompt.md` — the subeditor prompt template
-- `voice-warm-proprietor.md` — the default voice guide, used when `--voice` is given; derived from Liansu Yu's sent mail corpus
+- `voice-warm-proprietor.md` — the default voice guide, used when `--voice` is given; derived from the proprietor's sent mail corpus
 - `voice-precise-proprietor.md` — the managing-director voice (scaffold; to be derived from his sent-mail corpus)
 - `register-staff.md` — the staff register: how mail is pitched writing down to staff
 

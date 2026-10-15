@@ -476,11 +476,11 @@ Committed in `e4fdd79` (2026-05-27).
 >
 > Three rides: I taught the first, Alice taught the two after.
 >
-> Take this from Renee and from Alice's own words only. Anything that reached us through Liansu, set aside. It came to us secondhand twice and one of those arrived changed. No criticism of Liansu in that.
+> Take this from Renee and from Alice's own words only. Anything that reached us through [the proprietor], set aside. It came to us secondhand twice and one of those arrived changed. No criticism of [the proprietor] in that.
 >
 > Nobody tells Alice any of this. She is a contractor, so there is nothing to announce. We simply stop offering lessons.
 
-The header's from line carried Liansu's address over a signature of "Weiwu".
+The header's from line carried the proprietor's address over a signature of "Weiwu".
 
 **User's objections** (from `03393d8a`, four user turns):
 
@@ -488,7 +488,7 @@ The header's from line carried Liansu's address over a signature of "Weiwu".
 
 > `03:12:41` "Three rides: I taught the first, Alice taught the two after" -> This is not how I remembered. I remembered I took Renée for a ride once, and Alice only did once.
 
-> `03:16:33` Diderot. I hate when it happens. I said, 'Make no mention of what Lian Su said, because it came to us second hand.' And you said, instead of deleting that, you wrote into the letter that we take nothing of what Lian Su said, because it came second hand.
+> `03:16:33` Diderot. I hate when it happens. I said, 'Make no mention of what [the proprietor] said, because it came to us second hand.' And you said, instead of deleting that, you wrote into the letter that we take nothing of what [the proprietor] said, because it came second hand.
 
 > `03:30:34` If this email is not about yoga, you don't have to write this email is not about yoga. And if you advise to do not talk to Alice, you don't have to write We don't talk to Alice.
 
@@ -496,6 +496,6 @@ The from address was found by the drafting agent itself at the send step (`03:32
 
 **Abstraction into rule** (this session, 8 September 2026):
 
-The subeditor's free-form QUERIES had run once on that draft, and its one substantive query went the other way (assistant turn at `01:25:57`: "the email never said what you had decided ... There is now a second paragraph stating it plainly"). The roster decisions came from the drafter's own strategy answer, which the user had asked for as advice. The claim about who taught which ride came from the capture's cleaned summary, not the transcript, which does not attribute the rides. The Liansu paragraph was a removal instruction answered by a sentence about the removal. Each objection is a sentence asserted on an authority the reader cannot see: whose decision, whose instruction, whose address. So the reader lists them, typed D, N, F, and the caller, who holds the brief, answers each; the sender sees the exceptions beside the draft. The cold reader is told not to ask for a decision the draft does not state, since that is the query that produced the roster.
+The subeditor's free-form QUERIES had run once on that draft, and its one substantive query went the other way (assistant turn at `01:25:57`: "the email never said what you had decided ... There is now a second paragraph stating it plainly"). The roster decisions came from the drafter's own strategy answer, which the user had asked for as advice. The claim about who taught which ride came from the capture's cleaned summary, not the transcript, which does not attribute the rides. The paragraph about the proprietor was a removal instruction answered by a sentence about the removal. Each objection is a sentence asserted on an authority the reader cannot see: whose decision, whose instruction, whose address. So the reader lists them, typed D, N, F, and the caller, who holds the brief, answers each; the sender sees the exceptions beside the draft. The cold reader is told not to ask for a decision the draft does not state, since that is the query that produced the roster.
 
 A fourth kind was tried and dropped. C, a claim about a named person's conduct or words with the question of its primary source, answered the `03:12` objection on paper. In a blind run on this draft (8 September 2026) it produced sixteen lines, every remark of Renee's and every quote of Alice's, and did not list the ride attribution it existed for. That is the profile of a feature that sends the email back for being overdone, so the block carries no C kind, and the `03:12` objection stands here as observed and not answered by the reader.
