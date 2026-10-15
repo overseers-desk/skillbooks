@@ -186,5 +186,48 @@ set issues_v10 [spar::validate_campaign $cv10]
 set oa_issues2 [issues_with_code $issues_v10 orphan_approach]
 assert_eq [llength $oa_issues2] 0 "orphan_approach: all .yaml files referenced → zero issues"
 
+# ════════════════════════════════════════════════════════════════════════
+# 12. validate_campaign_yaml: the closed campaign vocabulary (#40)
+# ════════════════════════════════════════════════════════════════════════
+section "12. validate_campaign_yaml"
+
+# The worked example in spar-campaign-yaml.md must validate clean, or
+# rules/campaign.rules has closed out a key the spec shows.
+set fd [open [file join $::spar::root .. spar-campaign-yaml.md] r]
+fconfigure $fd -encoding utf-8
+set doc [read $fd]
+close $fd
+regexp {## Example\s+```yaml\n(.*?)```} $doc -> example
+set cdir [make_temp_campaign]
+set cpath [write_campaign_yaml $cdir $example]
+set cdata [spar::load_campaign $cpath]
+assert_eq [spar::validate_campaign_yaml $cdata] {} \
+    "the spec's example campaign is clean"
+
+set invented [string map [list \
+    "language: en-gb\n" "language: en-gb\ndiscovery:\n  catchment: x\n" \
+    "  bcc: partnerships@example.com\n" "  bcc: partnerships@example.com\n  signature: x\n" \
+    "    message_goal: |\n      Agree" "    message_gaol: |\n      Agree" \
+    "    rests_on: |\n      Where this claim comes from, and where to read it.\n  u1:" \
+    "    rest_on: x\n  u1:" \
+    ] $example]
+write_campaign_yaml $cdir $invented
+set issues [spar::validate_campaign_yaml [spar::load_campaign $cpath]]
+set msgs [lmap i $issues {dict get $i message}]
+assert_eq [lsort [lmap i $issues {dict get $i code}]] \
+    {unknown_key_plan unknown_key_root unknown_key_sender unknown_key_usp_entry} \
+    "an invented key is reported at each level it was added to"
+assert_match [join $msgs |] "*unknown key 'discovery' at root*" "a root key names itself"
+assert_match [join $msgs |] "*sender: unknown key 'signature'*" "a sender key names its block"
+assert_match [join $msgs |] "*segments.segment-a: unknown key 'message_gaol'*" \
+    "a plan key names its segment"
+assert_match [join $msgs |] "*usps.U1: unknown key 'rest_on'*" "a USP key names its id"
+assert_eq [lsort -unique [lmap i $issues {dict get $i severity}]] error \
+    "an invented key is an error"
+
+# The short forms the spec allows beside a block are not walked as blocks.
+write_campaign_yaml $cdir "campaign: t\nprimary_channel: email\nsegments:\n  - seg-a\nusps:\n  own-claim: two words\n"
+assert_eq [spar::validate_campaign_yaml [spar::load_campaign $cpath]] {} \
+    "a bare channel, a list of segment names and a label-only USP are clean"
 
 finish_tests

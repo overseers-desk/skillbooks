@@ -8,6 +8,8 @@ One file per campaign, at `campaigns/{campaign}.yaml` in the instance root (`spa
 
 ## Fields
 
+The tables below are the whole vocabulary, at every level they describe: `spar-validate-cli.tcl` reports any other key as an error (`spar-manager/rules/campaign.rules`, which changes with this document). A plan block's `subsegments` entries are not checked.
+
 ### Required
 
 | Field | Type | Purpose |
@@ -57,6 +59,11 @@ Channel vocabulary: `email`, `phone`, and one channel per platform module (the m
 | `start_date` | date string | (none) | The campaign's planned first-approach date, `YYYY-MM-DD`, written bare (the parser types a bare date to epoch seconds and the loader renders it back to ISO; a quoted ISO string is also normalised, but bare is the convention). Absent means the campaign has not launched: outgoing transitions (send and follow-up T-ids) hold every dispatchable task as blocked. Present, it is a planned floor: sends before the date are blocked, so real sends land on or after it, and downstream consumers (the BI reply derivation) can key on it as the earliest possible send. The related epistemic rule: a message with no `actioned_date` has not been sent, and a campaign with no `start_date` has not launched. |
 | `sender.organisation` | string | (none) | Organisation name for prompt text (e.g. "Acme Corp"). When absent, prompts use the sender's name and role without an org name. |
 | `sender.bcc` | string | (none) | BCC address for outgoing emails |
+| `sender.smtp_host` | string | (none) | SMTP endpoint the email send leg connects to; required for sending (`spar-manager/README.md`) |
+| `sender.smtp_port` | integer | 587 | Port on `smtp_host` |
+| `sender.smtp_user` | string | (none) | SMTP username; with `smtp_host` it keys the password in the OS secret store; required for sending |
+| `sender.smtp_pass` | string | (none) | SMTP password in plain text, read only when the secret store holds none. Leave it out: the campaign file is not a secret store |
+| `worker_cost_cap_usd` | number | harness default | Cost at which a P or S worker session is killed, in US dollars |
 | `fact_sources` | list of paths | (none) | Documents the campaign's claims draw on: an organisation overview, a product or offer definition, a competitor register. A1 reads them before drafting, for the ground truth a message needs beyond the USPs themselves; the challenger opens one only where a `rests_on` names it. A source document that numbers its own USPs lends that numbering to the registry. No precedence holds between entries, so keeping them consistent is the campaign author's job. |
 | `antifacts` | path or `none` | inherited | Path to the anti-claim document A1 checks its draft against and the A2 challenger fact-checks from. A campaign that supplies no value inherits the instance's (`campaigns.yaml`, see Path resolution); a campaign that means to draft without a checklist writes `none`. With neither, A dispatch fails rather than drafting unchecked. Relative to the YAML file's directory. |
 | `campaign_principles` | path or `none` | inherited | Path to campaign-level principles document. When present, A1 reads it before drafting. A campaign that supplies no value inherits the instance's (`campaigns.yaml`); with neither, A1 relies on the method document and segment file alone. Relative to the YAML file's directory. |

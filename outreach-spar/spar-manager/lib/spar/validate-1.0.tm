@@ -971,6 +971,87 @@ proc spar::validate_sender_block {cdata} {
     return $issues
 }
 
+# ── yamlmuster rules-engine bootstrap (campaign) ───────────────────────────
+# The campaign YAML's closed vocabulary (rules/campaign.rules), its own
+# instance for the shared-root reason; vocab rules only, so no predicates.
+namespace eval spar { variable _yamlmuster_campaign_inst "" }
+proc spar::_yamlmuster_campaign {} {
+    variable _yamlmuster_campaign_inst
+    if {$_yamlmuster_campaign_inst ne ""} {
+        return $_yamlmuster_campaign_inst
+    }
+    package require yamlmuster
+    set inst [yamlmuster new]
+    spar::_yamlmuster_load $inst campaign.rules campaign
+    set _yamlmuster_campaign_inst $inst
+    return $inst
+}
+
+# validate_campaign_yaml -- report every key the loaded campaign dict carries
+# that spar-campaign-yaml.md does not document, at any level it documents.
+# Campaign-level issues in validate_sender_block's shape; each message leads
+# with the key's place in the file (segments.<name>, usps.<id>), which the
+# list view the engine walks would otherwise reduce to an index.
+proc spar::validate_campaign_yaml {cdata} {
+    set view [dict create]
+    dict for {k v} $cdata {
+        if {[string index $k 0] ne "_"} { dict set view $k $v }
+    }
+    # The name-keyed maps go to the engine as lists; names keeps each
+    # list's names in order, for the messages.
+    set names [dict create segments {} usps {}]
+    if {[dict exists $view segments]} {
+        set segs [dict get $view segments]
+        if {[spar::_segments_is_map $segs]} {
+            dict set names segments [dict keys $segs]
+            dict set view segments [dict values $segs]
+        } else {
+            dict set view segments {}
+        }
+    }
+    # A USP entry is a block or a bare label; only a block has keys to
+    # check, and a label of an even word count would read as one, so an
+    # entry counts as a block when it carries a documented key.
+    if {[dict exists $view usps]} {
+        set blocks {}
+        set ids {}
+        if {![catch {dict size [dict get $view usps]}]} {
+            dict for {id entry} [dict get $view usps] {
+                if {[catch {dict size $entry}]} continue
+                if {![dict exists $entry label] && ![dict exists $entry rests_on] \
+                        && ![dict exists $entry claim]} continue
+                lappend blocks $entry
+                lappend ids $id
+            }
+        }
+        dict set view usps $blocks
+        dict set names usps $ids
+    }
+    set issues {}
+    foreach ei [[spar::_yamlmuster_campaign] validate $view \
+            -groups campaign -badnode ignore] {
+        set path [dict get $ei path]
+        set where ""
+        if {[lindex $path 0] in {segments usps} && [llength $path] > 1} {
+            set where "[lindex $path 0].[lindex [dict get $names [lindex $path 0]] [lindex $path 1]]"
+            set path [lrange $path 2 end]
+        }
+        foreach p $path {
+            if {[string is integer -strict $p]} {
+                append where "\[$p\]"
+            } else {
+                append where [expr {$where eq "" ? $p : ".$p"}]
+            }
+        }
+        set i [spar::_xlate_engine_issue $ei ""]
+        set msg [dict get $i message]
+        if {$where ne ""} { set msg "$where: $msg" }
+        lappend issues [spar::_issue [dict get $i severity] [dict get $i code] "" \
+            "campaign YAML $msg" {segment ""}]
+    }
+    return $issues
+}
+
 # ---------------------------------------------------------------------------
 # Spec versioning
 #

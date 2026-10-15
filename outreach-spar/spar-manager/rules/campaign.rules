@@ -1,0 +1,70 @@
+# campaign.rules — yamlmuster ruleset for a campaign YAML
+# (campaigns/<campaign>.yaml): the closed vocabulary of every level
+# spar-campaign-yaml.md documents, so a key an author or agent invents is
+# reported instead of sitting unread. Loaded by spar::_yamlmuster_campaign and
+# driven by spar::validate_campaign_yaml.
+#
+# Call shape:
+#   validate <view> -groups {campaign} -badnode ignore
+# where <view> is the loaded campaign dict as validate_campaign_yaml reshapes
+# it: the loader's own `_`-prefixed keys dropped, and the two name-keyed maps
+# (segments, usps) handed over as lists of their values, since a child edge
+# walks one dict or a list of dicts. -badnode ignore skips the scalar forms
+# the document allows beside a block: a bare primary_channel name, a
+# list-form segments entry, a label-only USP.
+#
+# The loader lifts a 2.0 file's usp_document into fact_sources and drops it
+# before this runs, so it is not vocabulary here. Required keys are not
+# checked here: missing version is validate_versions', and the sender block
+# is validate_sender_block's (send readiness, not data integrity).
+
+# ── Levels ───────────────────────────────────────────────────────────────
+# Each -keys list mirrors a table in spar-campaign-yaml.md; change both
+# together.
+level root              -keys {version campaign start_date sender language \
+                               segments usps primary_channel secondary_channel \
+                               tertiary_channel filter fact_sources antifacts \
+                               campaign_principles ses_region a_max_passes \
+                               worker_cost_cap_usd reply_check prompt_appendices}
+level sender            -keys {name role email organisation bcc \
+                               smtp_host smtp_port smtp_user smtp_pass}
+level channel           -keys {channel wait_days wait_condition}
+level filter            -keys {skip_excluded min_star require_profile}
+level reply_check       -keys {mailbox folder}
+level prompt_appendices -keys {p_author a_author a_challenger a_assembly}
+level usp_entry         -keys {label rests_on claim}
+level plan              -keys {objective usps message_goal first_ask ask_stance \
+                               recipient_problem deciding_interest state_want \
+                               conversion_funnel approach_sequencing subsegments \
+                               stems}
+level plan_usp          -keys {id type framing}
+level funnel_step       -keys {step name description}
+level sequencing_step   -keys {step action}
+
+child root sender            dict sender
+child root primary_channel   dict channel
+child root secondary_channel dict channel
+child root tertiary_channel  dict channel
+child root filter            dict filter
+child root reply_check       dict reply_check
+child root prompt_appendices dict prompt_appendices
+child root usps              list usp_entry
+child root segments          list plan
+child plan usps                list plan_usp
+child plan conversion_funnel   list funnel_step
+child plan approach_sequencing list sequencing_step
+# subsegments stays un-levelled: the spec names the fields a subsegment may
+# override but not the key that names one.
+
+# ── Rules ────────────────────────────────────────────────────────────────
+rule vocab root              -groups {campaign}
+rule vocab sender            -groups {campaign}
+rule vocab channel           -groups {campaign}
+rule vocab filter            -groups {campaign}
+rule vocab reply_check       -groups {campaign}
+rule vocab prompt_appendices -groups {campaign}
+rule vocab usp_entry         -groups {campaign}
+rule vocab plan              -groups {campaign}
+rule vocab plan_usp          -groups {campaign}
+rule vocab funnel_step       -groups {campaign}
+rule vocab sequencing_step   -groups {campaign}

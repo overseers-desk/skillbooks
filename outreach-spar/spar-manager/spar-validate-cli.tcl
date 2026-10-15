@@ -147,6 +147,7 @@ foreach item $segment_paths {
 }
 if {[llength $cdata] > 0} {
     lappend issues {*}[spar::validate_versions $cdata $segment_paths]
+    lappend issues {*}[spar::validate_campaign_yaml $cdata]
     lappend issues {*}[spar::validate_campaign $all_contacts 1 1]
 } else {
     # Segment mode: no campaign exists to stamp, so only the segment
