@@ -133,11 +133,11 @@ A processes contacts in bands, ordered by response likelihood (from P's estimate
 
 2. After AR₉₀ completes and replies are logged: **manual review**, a human task, not an AI task:
    - **Response rate vs estimate:** Did ≥90% contacts actually respond at ≥90%? If not, the response-likelihood model needs recalibration.
-   - **Angle effectiveness:** Which angles generated engagement? Which fell flat? If the campaign assumed targets care about jurisdictional independence but respondents consistently engaged with cost-of-compliance framing instead, the angle table needs revision.
+   - **Angle effectiveness:** Which angles generated engagement? Which fell flat? If the campaign assumed targets care about jurisdictional independence but respondents consistently engaged with cost-of-compliance framing instead, the plan block's `usps` order and framings need revision.
    - **Unexpected themes:** Did respondents raise concerns not anticipated in the plan block? These may indicate a value proposition the campaign has not articulated.
    - **Network effects:** Did any respondent offer introductions or mention colleagues who should be contacted? These are warm leads that bypass the pipeline entirely and should be prioritised in the next band or handled outside SPAR through direct relationship channels.
 
-   The revision lands where the next band reads: angle priorities in the campaign's plan blocks, drafting guidance in `prompt_appendices`, and per-contact observations in each approach YAML's `r_note`.
+   The revision lands where the next band reads: the order and framings of the `usps` in the campaign's plan blocks, drafting guidance in `prompt_appendices`, and per-contact observations in each approach YAML's `r_note`.
 
 3. **AR₈₀** — contacts estimated ≥80% likely to respond. Messages are written using the revised strategy and can reference relationships established in AR₉₀ ("I've spoken to John at X, who shares your concern about...").
 
@@ -300,4 +300,4 @@ This methodology does not replace any existing document. It provides the concept
 - **R has no procedure document** — its execution is the dispatcher's reply check (`spar-manager/state-machine.md`); its start and end are defined here.
 - **Segment categorisation** (`spar-segment-categorisation.md`) — criteria for deciding when contacts belong in one segment versus two, when to merge or split segments, and how to handle sub-segments and cross-segment duplicates.
 
-Domain-specific content — target segments, angle tables, roster schemas, conversion benchmarks, funnel math — lives in each instance root (`spar-campaign-directory.md`): segment definitions and sweep files for the populations, campaign YAMLs for the asks. SPAR defines the method; the instance defines the targets.
+Domain-specific content — target segments, USP framings, roster schemas, conversion benchmarks, funnel math — lives in each instance root (`spar-campaign-directory.md`): segment definitions and sweep files for the populations, campaign YAMLs for the asks. SPAR defines the method; the instance defines the targets.
