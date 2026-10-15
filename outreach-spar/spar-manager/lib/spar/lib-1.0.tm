@@ -359,14 +359,15 @@ proc spar::resolve_campaign {campaign_file campaign_dir} {
     # segment_paths carries the rostered segments (what classification
     # can walk); all_segment_paths carries every named segment, rostered
     # or not, for the campaign-level task derivations (T0 sweeps a
-    # seeded segment before any roster exists).
+    # seeded segment before any roster exists). The roster is the
+    # sibling <seg>.tsv, so it alone decides: the profile folder
+    # <seg>/ appears at the segment's first P run.
     set segment_paths {}
     set all_segment_paths {}
     foreach seg $segments_list {
         set seg_dir [file join $campaign_dir segments $seg]
         lappend all_segment_paths [list $seg $seg_dir]
-        if {[file isdirectory $seg_dir] \
-                && [file exists [spar::roster_path_for_segment $seg_dir]]} {
+        if {[file exists [spar::roster_path_for_segment $seg_dir]]} {
             lappend segment_paths [list $seg $seg_dir]
         }
     }

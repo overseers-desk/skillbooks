@@ -235,8 +235,7 @@ oo::class create spar::ui::CampaignModel {
         foreach seg [spar::campaign_segment_names $Cdata] {
             set seg_dir [file join $CampaignDir segments $seg]
             lappend AllSegmentPaths [list $seg $seg_dir]
-            if {[file isdirectory $seg_dir] \
-                    && [file exists [spar::roster_path_for_segment $seg_dir]]} {
+            if {[file exists [spar::roster_path_for_segment $seg_dir]]} {
                 lappend SegmentOrder $seg
                 lappend SegmentPaths [list $seg $seg_dir]
             }
