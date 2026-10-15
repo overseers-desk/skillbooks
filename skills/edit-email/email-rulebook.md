@@ -1,6 +1,6 @@
 # email-rulebook
 
-Rules for drafting and polishing email on the user's behalf. CLAUDE.md applies concurrently (newspaper, SDT, NSWP, LHD, Densify) and is not restated.
+Rules for drafting and polishing email on the user's behalf. Five more rules apply concurrently and are not restated here: the newspaper test, SDT, NSWP and densify, defined in `standing-rules.md` beside this file, and LHD, defined in `like-human-do.md` beside this file. Read `standing-rules.md` before you start.
 
 ## R1. Identity and ask up front
 
@@ -32,7 +32,7 @@ Each fact in the draft should be there because the ask depends on it. Incidental
 
 ## R8. The mail acts; it does not narrate the act
 
-A sentence narrating what the email is doing, what it is not doing, what nobody will do, or hedging on the recipient's behalf, is doing the recipient's work out loud. Cut, and record the cut under ASSERTIONS so the caller cannot reinstate it unseen. (See CLAUDE.md SDT.)
+A sentence narrating what the email is doing, what it is not doing, what nobody will do, or hedging on the recipient's behalf, is doing the recipient's work out loud. Cut, and record the cut under ASSERTIONS so the caller cannot reinstate it unseen. (See SDT in `standing-rules.md`.)
 
 ## R9. Sender identity match
 

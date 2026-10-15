@@ -10,7 +10,7 @@ argument-hint: [--register NAME] [--voice [NAME]]
 
 AI-drafted email reads to its sender like an email and to its recipient like a project. The drafting agent has the brief in conversation; when it composes, it paraphrases liberally, defends inferences the reader has never drawn, anchors timestamps to its own session, and turns asks into numbered lists. It also writes the sender's open options as his decisions and narrates what the mail is not doing. The recipient sees something that will take effort to handle and defers it, or acts on a decision nobody made.
 
-A general newspaper maxim in CLAUDE.md is not enough on its own: the drafting agent cannot see the scaffolding it has carried in from its brief. The fix is a cold reader who has only the email, applies the rulebook, and returns a polished draft, the list of what the draft asserts on someone's authority, and queries. The drafting agent answers each assertion on the brief, and the sender sees the answers beside the draft, so a decision that was never his costs him one word to overturn rather than a rewrite.
+A general newspaper maxim is not enough on its own: the drafting agent cannot see the scaffolding it has carried in from its brief. The fix is a cold reader who has only the email, applies the rulebook, and returns a polished draft, the list of what the draft asserts on someone's authority, and queries. The drafting agent answers each assertion on the brief, and the sender sees the answers beside the draft, so a decision that was never his costs him one word to overturn rather than a rewrite.
 
 The rules the drafting agent and the subeditor both work to are in `email-rulebook.md` alongside this file.
 
@@ -64,6 +64,7 @@ Only the staff register is authored so far (`register-staff.md`). Others are add
 
 - `like-human-do.md` — the standing compose-time pass: give don't grab, real connection point, person's voice
 - `email-rulebook.md` — the rules
+- `standing-rules.md` — the newspaper test, SDT, NSWP and densify, which the rulebook applies concurrently
 - `editor-prompt.md` — the subeditor prompt template
 - `voice-warm-proprietor.md` — the default voice guide, used when `--voice` is given; derived from Liansu Yu's sent mail corpus
 - `voice-precise-proprietor.md` — the managing-director voice (scaffold; to be derived from his sent-mail corpus)
