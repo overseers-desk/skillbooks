@@ -36,7 +36,8 @@ proc make_cli_campaign {args} {
     file mkdir [file join $cdir campaigns camp]
     write_roster_tsv $seg $::std_headers [list \
         [make_base_row [list stem "alice" contact_name "Alice" star_rating "5" email $email]]]
-    write_profile $seg "alice"
+    write_profile $seg "alice" -contact_name Alice \
+        -organisation null -role null -date_excluded null
     if {$approach ne ""} { write_approach_yaml $seg "alice" $approach }
     write_segment_yaml $seg "title: Seg A\nversion: \"$sv\"\n"
     write_campaign_yaml $cdir "campaign: CLI Test\nversion: \"$cv\"\nsegments:\n  - seg-a\nfilter:\n  min_star: 3\n"
@@ -76,7 +77,8 @@ set seg [file join $cdir segments seg-a]
 file mkdir $seg; file mkdir [file join $cdir campaigns camp]
 write_roster_tsv $seg $::std_headers [list \
     [make_base_row {stem "alice" contact_name "Alice" star_rating "5" email "alice@test.com"}]]
-write_profile $seg "alice"
+write_profile $seg "alice" -contact_name Alice \
+    -organisation null -role null -date_excluded null
 write_campaign_yaml $cdir "campaign: CLI Test\nsegments:\n  - seg-a\nfilter:\n  min_star: 3\n"
 lassign [run_cli $cdir --json] rc out
 set parsed [::json::json2dict $out]

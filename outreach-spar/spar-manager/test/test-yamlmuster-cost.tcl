@@ -16,9 +16,9 @@ source [file join $script_dir test-helpers.tcl]
 package require spar::state
 
 # Error-tagged approach-rule count, pinned from rules/approach.rules. The
-# ruleset compiles to 25 rules; 5 are warning-declared, leaving 20 error rules:
+# ruleset compiles to 27 rules; 5 are warning-declared, leaving 22 error rules:
 #
-#   error   vocab root, decisions, round, message, parent,            (8)
+#   error   vocab root, decisions, sender, round, message, parent,    (9)
 #           fact_check_item, fact_provenance_item, script_item
 #   error   require decisions (missing_decisions)                     (1)
 #   error   predicate rounds_structural (missing_rounds/no_final)     (1)
@@ -30,16 +30,17 @@ package require spar::state
 #   error   require reply_missing_parent_message_id (parent level)    (1)
 #   error   predicate dates_bare (root, roster_patch, message)        (3)
 #   error   predicate scalars_as_written (-needs raw)                 (1)
-#   ------------------------------------------------------------------ 20
+#   error   require sender_missing_email (sender level)               (1)
+#   ------------------------------------------------------------------ 22
 #   warning require draft_missing_number, review_missing_number,      (3)
 #           require email_missing_content
 #   warning predicate unsent_final_requires, chosen_usps_presence     (2)
 #
 # The gate passes approach_path, so both -needs-gated hash predicates select;
 # it passes no file text, so scalars_as_written does not. rules_selected below
-# asserts the remaining 19 back from yamlmuster's stats, failing loudly if the
+# asserts the remaining 21 back from yamlmuster's stats, failing loudly if the
 # ruleset's error count ever drifts from this pin.
-set ERROR_RULES 19
+set ERROR_RULES 21
 
 # ════════════════════════════════════════════════════════════════════════
 # 1. Clean fixture: the gate returns no error and evaluates no warning rule.

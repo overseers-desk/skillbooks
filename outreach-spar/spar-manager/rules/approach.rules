@@ -41,6 +41,7 @@
 level root                 -keys {decisions rounds angle_rationale response_likelihood a_note r_note fact_provenance quality_checklist profile_hash roster_patch roster_patch_applied authored_model challenger_model}
 level roster_patch         -keys {contact_name organisation role phone email linkedin_url facebook_url date_excluded p_note star_rating}
 level decisions            -keys {channel language angle sender channel_detail subsegment}
+level sender               -keys {name email}
 level round                -keys {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check}
 level message              -keys {channel subject body to actioned_date message_id replied_date reply_summary script text bcc cc director_note to_note phone_note invitation_unavailable parent reply_all}
 level parent               -keys {account folder uid message_id references subject from to cc}
@@ -53,6 +54,7 @@ level script_item          -keys {point text}
 # the legacy sequence. NOTE: round.replies is deliberately NOT an edge.
 # Legacy never vocab-walks replies (it is a valid round key, no descent).
 child root    decisions       dict decisions
+child decisions sender        dict sender
 child root    rounds          list round
 child root    roster_patch    dict roster_patch
 child root    fact_provenance list fact_provenance_item
@@ -164,6 +166,16 @@ rule predicate root chosen_usps_presence -severity warning \
 
 # ── DECISIONS level ─────────────────────────────────────────────────────
 rule vocab decisions -groups {approach}
+
+# ── SENDER level ────────────────────────────────────────────────────────
+# decisions.sender overrides the campaign's sender for this contact
+# (SPAR-A §6); T6 reads its email at send time and ignores a block without
+# one, so a misspelt key or a missing email would send from the campaign
+# default without a word.
+rule vocab sender -groups {approach}
+rule require sender email -nonblank -code sender_missing_email \
+    -message {decisions.sender has no email; give the overriding sender's address or drop the block} \
+    -groups {approach}
 
 # ── ROUND level rules ───────────────────────────────────────────────────
 rule vocab round -groups {approach}
