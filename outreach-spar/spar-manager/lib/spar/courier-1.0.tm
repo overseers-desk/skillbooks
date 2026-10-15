@@ -3,6 +3,14 @@
 # header plus a per-contact cascade (pass 1 from/to the email, pass 2
 # subject-line for name and organisation), so the A worker neither
 # re-lists accounts nor invents a search command (courier #13).
+#
+# Each pass asks the local mail index first through `mu find`, the index
+# spar::dealings reads, which answers in about a tenth of a second. courier
+# runs only when the index has a hit, because its output carries the
+# account, folder and UID the worker needs to read a parent message
+# (spar-A-approach.md §4.1.1), while an empty courier search falls through
+# to a live IMAP round trip per account (#225). Where `mu` is absent or the
+# index cannot be read, courier answers as before.
 
 package require spar::lib
 
@@ -45,9 +53,9 @@ proc spar::courier::contact_blocks {name org email} {
     set pass1_hit 0
     if {$email ne ""} {
         set q1 "from:$email OR to:$email"
-        append out "# Pass 1 — email lookup\n\$ courier -A search '$q1' --format text --limit 10\n"
-        lassign [spar::courier::_run $q1] rc text
-        append out "$text\n"
+        append out "# Pass 1 — email lookup\n"
+        lassign [spar::courier::_lookup $q1] rc cmd text
+        append out "$cmd\n$text\n"
         if {$rc == 0} {
             set pass1_hit 1
             set prior "\n### Prior correspondence\n\n$text\n"
@@ -69,10 +77,36 @@ proc spar::courier::contact_blocks {name org email} {
     }
     set q2 [join $q2_parts " OR "]
     append out "\n# Pass 2 — subject-line search for name and organisation\n"
-    append out "\$ courier -A search '$q2' --format text --limit 10\n"
-    lassign [spar::courier::_run $q2] rc text
-    append out "$text\n"
+    lassign [spar::courier::_lookup $q2] rc cmd text
+    append out "$cmd\n$text\n"
     return [dict create author $out prior $prior]
+}
+
+# One pass, as {rc command output}: the command line shown to the worker
+# and what it printed. rc 0 means courier returned hits. A query the local
+# index answers with no messages shows that `mu find` and costs no
+# courier call.
+proc spar::courier::_lookup {query} {
+    if {[spar::courier::_indexed $query] eq "none"} {
+        return [list 1 "\$ mu find '$query'" \
+            "(no messages in the local mail index)"]
+    }
+    lassign [spar::courier::_run $query] rc text
+    return [list $rc \
+        "\$ courier -A search '$query' --format text --limit 10" $text]
+}
+
+# What the local index says of a query: hit, none, or unknown. mu exits
+# non-zero on an empty search, as courier does; its "no matches" message
+# tells that apart from a missing or unreadable index, which is unknown
+# and leaves the answer to courier.
+proc spar::courier::_indexed {query} {
+    set mu [auto_execok mu]
+    if {$mu eq ""} { return unknown }
+    if {[catch {spar::pool_exec {*}$mu find --fields "d s" -n 1 $query} out]} {
+        return [expr {[string match -nocase "*no matches*" $out] ? "none" : "unknown"}]
+    }
+    return [expr {[string trim $out] eq "" ? "none" : "hit"}]
 }
 
 proc spar::courier::_run {query} {
@@ -88,4 +122,3 @@ proc spar::courier::_run {query} {
         --limit 10 $query} out]
     return [list $rc [string trim $out]]
 }
-
