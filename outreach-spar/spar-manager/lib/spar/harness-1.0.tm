@@ -607,11 +607,24 @@ oo::class create spar::ProfileHarness {
         # same fix loop. Whether a declaration has landed is the harness's
         # own record (Applied), not the deliverable's stamp (#209).
         set errors [spar::apply_roster_patch $Outfile $RosterPath $Stem $SweepPath $Applied]
-        if {[llength $errors] == 0} {
+        set patched [expr {[llength $errors] == 0}]
+        if {$patched} {
             my _record_applied
             set row [my _roster_row $RosterPath $slug]
         }
-        lappend errors {*}[spar::validate_profile $Outfile $row $slug]
+        # Once the declarations are on the row, a dependent_data snapshot
+        # that still disagrees with it is this run's own defect, not
+        # drift: left as validate_profile's warning, the row would read
+        # PROFILE_STALE the moment it lands, and T3 would re-profile it
+        # (#192). Against a row the patch could not reach, the comparison
+        # proves nothing, so it stays a warning there.
+        foreach issue [spar::validate_profile $Outfile $row $slug] {
+            if {$patched && [string match stale_* [dict get $issue code]]} {
+                dict set issue severity error
+                dict append issue message " — the snapshot must equal the roster row this run leaves (SPAR-P §5.3): if the profile's value is right, declare it in roster_patch; if the roster's is, snapshot that"
+            }
+            lappend errors $issue
+        }
         # A gated row (SPAR-P §4.3) has no profile: the worker's file
         # carries only the front matter that excludes the row, and once
         # that is applied the roster row is the record.
