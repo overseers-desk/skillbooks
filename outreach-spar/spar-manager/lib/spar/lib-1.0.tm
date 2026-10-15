@@ -1686,6 +1686,48 @@ proc spar::sweep_source_open {status} {
     return [expr {[spar::sweep_status_token $status] ni {exhausted unreachable}}]
 }
 
+# sweep_latest_round — the highest round number a parsed sweep file
+# records under rounds:, 0 before the first round. A dispatch belongs to
+# the round one past it.
+proc spar::sweep_latest_round {sweep_data} {
+    set latest_n 0
+    foreach r [dict getdef $sweep_data rounds {}] {
+        if {[catch {dict size $r}]} continue
+        set n [string trim [dict getdef $r n 0]]
+        if {[string is integer -strict $n] && $n > $latest_n} {
+            set latest_n $n
+        }
+    }
+    return $latest_n
+}
+
+# sweep_source_due — whether one census source (a parsed sources: entry)
+# is T0 work after round latest_n, as {due reason}. This is the one
+# selection rule: T0's task list and the prompt dirs its prepare builds
+# both ask it, so a source reported as dispatchable is a source dispatched.
+#
+# An open source (spar::sweep_source_open) is due, its status the reason.
+# Unreachable closes a source for the round that probed it, not forever:
+# with no probe record it is due for the probe (nothing distinguishes a
+# closed gate from a wrong query until one is recorded), and with a probe
+# from an earlier round it is due for a varied re-probe. The harness
+# stamps the probe with its round; the stamp is what decides.
+proc spar::sweep_source_due {src latest_n} {
+    set status [string trim [dict getdef $src status ""]]
+    if {[spar::sweep_source_open $status]} { return [list 1 $status] }
+    if {[spar::sweep_status_token $status] ne "unreachable"} {
+        return [list 0 ""]
+    }
+    set probe [string trim [dict getdef $src probe ""]]
+    if {$probe eq ""} {
+        return [list 1 "unreachable, no probe recorded: probe it (vary the parameters, record what was tried)"]
+    }
+    if {![regexp {\(round (\d+)\)} $probe -> pn] || $pn < $latest_n} {
+        return [list 1 "unreachable, probe predates round $latest_n: re-probe with varied parameters"]
+    }
+    return [list 0 ""]
+}
+
 # sweep_task_stem — the pool key for one T0 task: one segment's one
 # census source. The pool keys a job by its stem and both front ends
 # filter selections by it, so a sweep task needs the same shape a contact
