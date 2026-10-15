@@ -493,7 +493,8 @@ oo::class create spar::ProfileHarness {
 
     variable State Outfile RosterPath SweepPath RequiredSkills Stem \
              ContactLinkedin ContactName ContactOrg ContactEmail \
-             OutfilePreexisted OutfileSnapshot CampaignFile Applied
+             OutfilePreexisted OutfileSnapshot CampaignFile Applied \
+             StaleAtPrepare
 
     # Profile workers run under an explicit allow-list instead of
     # skip-permissions, so a research delegation can only reach the
@@ -709,6 +710,10 @@ oo::class create spar::ProfileHarness {
     method run {} {
         try {
             my load_my_meta
+            # A re-profile row is queued on a stale snapshot, and the row
+            # can be corrected while it waits; a profile that agrees with
+            # its row by now has nothing to re-profile (#193).
+            if {[my _profile_current]} { return [my _done_current] }
             if {[my inject_prefetch]} { return 1 }
             # do_profile_call returns one of four codes:
             #   0 — turn closed cleanly
@@ -738,8 +743,10 @@ oo::class create spar::ProfileHarness {
             # the answer: a clean close and a cut-short one (2) are both
             # judged on what landed. A cost kill (3) is exempt, having
             # just resumed to finalise, and its own product is the
-            # verdict.
+            # verdict. A re-profile worker that judged the profile current
+            # and wrote nothing is right when the row now agrees (#193).
             if {$pc in {0 2} && [my _outfile_untouched]} {
+                if {[my _profile_current]} { return [my _done_current] }
                 return [my _request_requeue]
             }
             # DbC-Post: sanitise masked emails written to the roster, then
@@ -768,6 +775,7 @@ oo::class create spar::ProfileHarness {
         set ContactName  [dict getdef $meta CONTACT_NAME ""]
         set ContactOrg   [dict getdef $meta CONTACT_ORG ""]
         set ContactEmail [dict getdef $meta CONTACT_EMAIL ""]
+        set StaleAtPrepare [dict getdef $meta PROFILE_STALE 0]
         # Snapshot for the post-call truth-check (#181). Bytes, not
         # mtime: consecutive runs can land within mtime granularity (1s),
         # per the ApproachHarness constructor note.
@@ -802,11 +810,29 @@ oo::class create spar::ProfileHarness {
         }
     }
 
+    # 1 when the row was dispatched to re-profile a stale snapshot
+    # (PROFILE_STALE in meta.env) and the snapshot now agrees with the
+    # roster row. A re-author of a current profile carries no flag, so
+    # it is never cut short here.
+    method _profile_current {} {
+        if {![info exists StaleAtPrepare] || !$StaleAtPrepare} { return 0 }
+        if {![file exists $Outfile]} { return 0 }
+        set row [my _roster_row $RosterPath $Stem]
+        if {[dict size $row] == 0} { return 0 }
+        return [expr {![spar::_profile_is_stale $Outfile $row]}]
+    }
+
+    method _done_current {} {
+        ${::spar::harness_log}::info \
+            "DONE: [my slug] (profile agrees with the roster row; nothing to re-profile, cost=\$[my cost_total])"
+        return 0
+    }
+
     # A re-profile row's outfile already exists, so "the run closed
     # cleanly and a valid file sits at Outfile" does not prove the worker
     # wrote anything: a worker that ends its turn parked on a background
-    # fetch leaves the stale file to pass validation (staleness issues
-    # are warning-severity) and lands a false DONE (#181).
+    # fetch leaves the old file to pass validation and lands a false
+    # DONE (#181).
     method _outfile_untouched {} {
         if {!$OutfilePreexisted} { return 0 }
         if {![file exists $Outfile]} { return 0 }

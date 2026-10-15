@@ -1,7 +1,9 @@
 #!/usr/bin/env tclsh9.0
 # test-profile-snapshot.tcl — a profile's dependent_data snapshot against
 # the roster row. P: once the declarations are applied, a snapshot that
-# still disagrees with the row is a fix-loop error (#192).
+# still disagrees with the row is a fix-loop error (#192). T3: a row whose
+# snapshot agrees with the roster by the time it runs, before the worker's
+# call or after a turn that wrote nothing, finishes DONE (#193).
 
 package require logger
 set script_dir [file dirname [file normalize [info script]]]
@@ -112,5 +114,64 @@ assert_eq [dict getdef [issue_of $errs patch_masked_email] severity ""] error \
 assert_eq [dict getdef [issue_of $errs stale_contact_name] severity ""] warning \
     "against an unpatched row the snapshot comparison stays a warning"
 $h destroy
+
+# ════════════════════════════════════════════════════════════════════════
+section "2. T3: a profile current by the time it runs finishes DONE (#193)"
+# ════════════════════════════════════════════════════════════════════════
+
+# Dispatched stale; the operator filled the roster's name while it queued.
+write_profile $profile
+write_roster $roster "Jane Doe"
+set ph [spar::ProfileHarness new [make_prompt_dir t3a $stem $profile $roster 1] \
+    [file join $tmpdir logs]]
+oo::objdefine $ph {
+    method inject_prefetch {} { error "must not prefetch for a current profile" }
+    method do_profile_call {} { error "must not call the worker for a current profile" }
+}
+assert_eq [$ph run] 0 "a flagged row that is current before the call is DONE"
+$ph destroy
+
+# Still stale: the worker is called, and an untouched file still requeues.
+write_roster $roster ""
+set ::called 0
+set ph [spar::ProfileHarness new [make_prompt_dir t3b $stem $profile $roster 1] \
+    [file join $tmpdir logs]]
+oo::objdefine $ph {
+    method inject_prefetch {} { return 0 }
+    method do_profile_call {} { incr ::called; return 0 }
+    method validate_and_correct {o r s} { error "must not validate an untouched outfile" }
+}
+assert_eq [$ph run] 4 "a still-stale row whose worker wrote nothing requeues"
+assert_eq $::called 1 "the worker was called"
+$ph destroy
+
+# The roster is corrected during the turn and the worker, finding the
+# profile current, writes nothing: that is the right outcome.
+set ph [spar::ProfileHarness new [make_prompt_dir t3c $stem $profile $roster 1] \
+    [file join $tmpdir logs]]
+oo::objdefine $ph {
+    method inject_prefetch {} { return 0 }
+    method do_profile_call {} {
+        spar::update_roster_field $::roster stem jane-doe-acme contact_name "Jane Doe"
+        return 0
+    }
+    method validate_and_correct {o r s} { error "must not validate an untouched outfile" }
+}
+assert_eq [$ph run] 0 "an untouched profile that now agrees with its row is DONE"
+$ph destroy
+
+# A re-author of a current profile carries no flag: the worker runs, and
+# a turn that writes nothing still requeues (#181).
+set ::called 0
+set ph [spar::ProfileHarness new [make_prompt_dir t3d $stem $profile $roster] \
+    [file join $tmpdir logs]]
+oo::objdefine $ph {
+    method inject_prefetch {} { return 0 }
+    method do_profile_call {} { incr ::called; return 0 }
+    method validate_and_correct {o r s} { error "must not validate an untouched outfile" }
+}
+assert_eq [$ph run] 4 "an unflagged untouched re-author requeues"
+assert_eq $::called 1 "and its worker was called"
+$ph destroy
 
 finish_tests

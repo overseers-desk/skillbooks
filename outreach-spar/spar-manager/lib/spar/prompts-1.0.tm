@@ -409,6 +409,11 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
         puts $fd "CONTACT_ORG=\"$org\""
         puts $fd "CONTACT_EMAIL=\"$email\""
         puts $fd "CONTACT_LINKEDIN=\"$linkedin\""
+        # A re-profile row: the harness re-checks the snapshot before its
+        # call, since the row can be corrected while it queues (#193).
+        if {[file exists $outfile] && [spar::_profile_is_stale $outfile $row]} {
+            puts $fd "PROFILE_STALE=1"
+        }
         # Per-campaign cost-cap override (spar::harness reads
         # WORKER_COST_CAP_USD from meta.env). The profile path previously
         # never wrote it, so campaign.yaml could not tune the cap the
