@@ -1072,7 +1072,7 @@ assert_eq [dict get [lindex $lg_tasks 0] task_state] "dispatchable" \
 
 # Drafting transitions are not outgoing: T2 stays eligible with no start_date.
 set lg_t2_seg [make_temp_segment]
-write_profile $lg_t2_seg "lg-draft"
+write_profile $lg_t2_seg "lg-draft" -contact_name "LG D" -organisation "" -role "" -date_excluded ""
 write_roster_tsv $lg_t2_seg $::std_headers [list \
     [make_base_row {contact_name "LG D" stem "lg-draft" email "lgd@acme-venues.au" star_rating 4}]]
 set lg_t2_contacts [$State classify_segment $lg_t2_seg [approach_dir_of $lg_t2_seg]]

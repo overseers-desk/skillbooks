@@ -766,7 +766,7 @@ assert_eq [dict get [lindex $ip_t2 0] task_state] blocked "T2: malformed profile
 assert_match [dict get [lindex $ip_t2 0] reason] "invalid_profile: *front matter*" \
     "T2: reason names invalid_profile and the validator's message"
 file delete $ip_path
-write_profile $seg_ip "bad-prof"
+write_profile $seg_ip "bad-prof" -contact_name "Bad Prof" -organisation "" -role "" -date_excluded ""
 file mtime $ip_path [expr {[clock seconds] + 5}]
 set ip_t2b [$State transition_eligible $ip_ct "T2" email $t4_cdata 2026-04-15]
 assert_eq [dict get [lindex $ip_t2b 0] task_state] dispatchable \
