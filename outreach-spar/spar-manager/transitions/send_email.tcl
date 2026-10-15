@@ -109,7 +109,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # carry its own worker_proc from send_workers, which the enqueuers
     # honour over the batch default. The callers
     # (spar-transition's dispatch_ready, the GUI's pool setup)
-    # install set_kind_cap 1 for both send workers on the shared
+    # install set_kind_cap 1 for each send worker on the shared
     # Dispatcher so send rows run serially even when other transition
     # kinds parallelise.
     method prepare_for_pool {opts on_progress} {
@@ -174,7 +174,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
                 continue
             }
             if {![dict exists $workers $channel]} {
-                {*}$on_progress $stem skipped "no send actuator for channel '$channel'"
+                {*}$on_progress $stem skipped "no send worker for channel '$channel'"
                 continue
             }
             set row [dict create \
@@ -209,9 +209,9 @@ oo::class create ::spar::transitions::SendEmailTransition {
     # campaign channel, so an email-only contact in a linkedin-primary
     # campaign sends by email. email → SES rows (has_email, not yet
     # email_sent); linkedin → overseer /run rows (has_linkedin, not yet
-    # linkedin_sent). A primary touch on a channel send_workers does not
-    # serve is blocked until it is actioned by hand, so a campaign
-    # drafted for an unwired actuator never drops out of T6 unseen; a
+    # linkedin_sent). A primary touch on a channel no send worker serves
+    # is blocked until it is actioned by hand, so a campaign drafted for
+    # such a channel never drops out of T6 unseen; a
     # final round of manual touches only (phone) belongs to no T6 row.
     # Secondary/tertiary channels belong to T9/T10 with
     # wait_days/wait_condition (#174). Approach-YAML structural validity
@@ -250,7 +250,7 @@ oo::class create ::spar::transitions::SendEmailTransition {
                 if {$channel in [dict getdef $contact sent_channels {}]} { return {} }
                 if {![dict exists [::spar::transitions::send_workers] $channel]} {
                     return [list [spar::_task $contact blocked \
-                        "no send actuator for channel '$channel'" $channel]]
+                        "no send worker for channel '$channel'" $channel]]
                 }
             }
         }

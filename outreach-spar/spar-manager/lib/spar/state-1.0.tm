@@ -347,10 +347,6 @@ proc spar::analyse_final_round {data} {
 # main-thread work overlaps with worker parses. Further reduction
 # extends avoidance (e.g. front-matter caching for _profile_is_stale)
 # before adding more parallelism.
-#
-# ProfileCache is a dict profile_path → {mtime size error} holding the
-# first error-severity validate_profile message ("" when clean), which
-# profile_validation_error serves until the file's mtime or size moves.
 oo::class create spar::State {
     variable ApproachCache ProfileCache Pool PendingJobs
     constructor {} {

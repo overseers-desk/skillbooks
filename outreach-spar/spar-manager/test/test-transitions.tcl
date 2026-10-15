@@ -545,7 +545,7 @@ assert_eq [llength $t6d4_tasks] 0 \
     "T6: phone-only final → 0 tasks (not a T6 send channel)"
 
 # T6-d4b (#175): a final round led by a channel no send worker serves
-# is a blocked row naming the missing actuator, never a silent drop;
+# is a blocked row naming the missing send worker, never a silent drop;
 # once that touch is actioned by hand, T6 has nothing left for it.
 proc _t6_facebook_final {actioned} {
     return "decisions:
@@ -567,7 +567,7 @@ rounds:
 "
 }
 assert_eq [spar::final_auto_send_channel [spar::yaml_parse [_t6_facebook_final null]]] \
-    facebook "final_auto_send_channel: the lead touch, served or not"
+    facebook "final_auto_send_channel: the primary touch, served or not"
 assert_eq [spar::final_auto_send_channel [spar::yaml_parse [approach_yaml_final_phone_only]]] \
     "" "final_auto_send_channel: manual touches only → empty"
 assert_eq [::spar::transitions::send_channels] \
@@ -583,12 +583,12 @@ write_roster_tsv $t6fb_seg $::std_headers [list \
 ]
 set t6fb_c [$State refine_segment [$State classify_segment $t6fb_seg [approach_dir_of $t6fb_seg]]]
 set t6fb_tasks [$State transition_eligible $t6fb_c "T6" "email"]
-assert_eq [llength $t6fb_tasks] 1 "T6: unserved lead channel → 1 task"
+assert_eq [llength $t6fb_tasks] 1 "T6: primary touch on an unserved channel → 1 task"
 assert_eq [dict get [lindex $t6fb_tasks 0] task_state] blocked \
-    "T6: unserved lead channel → blocked"
+    "T6: primary touch on an unserved channel → blocked"
 assert_eq [dict get [lindex $t6fb_tasks 0] reason] \
-    "no send actuator for channel 'facebook'" \
-    "T6: reason names the channel with no actuator"
+    "no send worker for channel 'facebook'" \
+    "T6: reason names the channel with no send worker"
 assert_eq [dict get [lindex $t6fb_tasks 0] channel] facebook \
     "T6: the blocked row carries its channel"
 
@@ -601,7 +601,7 @@ write_roster_tsv $t6fb2_seg $::std_headers [list \
 ]
 set t6fb2_c [$State refine_segment [$State classify_segment $t6fb2_seg [approach_dir_of $t6fb2_seg]]]
 assert_eq [llength [$State transition_eligible $t6fb2_c "T6" "email"]] 0 \
-    "T6: unserved lead touch actioned by hand → 0 tasks"
+    "T6: unserved primary touch actioned by hand → 0 tasks"
 
 # T6-d5 (regression, the bug): an email-only contact in a
 # linkedin-primary campaign routes by its OWN channel (email) and
@@ -756,7 +756,7 @@ assert_eq [llength [dict get [[::spar::transitions::get T6] prepare_for_pool \
     "T6-g: a dry run does not probe the overseer"
 set ::spar::li::default_overseer $t6_real_overseer
 
-# T6-h (#175): a task whose lead channel has no worker builds no row
+# T6-h (#175): a task whose primary touch is on a channel with no send worker builds no row
 # and reports why, rather than falling to the batch default worker.
 write_approach_yaml $t6f_seg "fbonly" [_t6_facebook_final null]
 set ::t6g_events {}
@@ -765,8 +765,8 @@ set t6g_prep [[::spar::transitions::get T6] prepare_for_pool \
         [spar::_task [dict create stem "fbonly" _segment_dir $t6f_seg] dispatchable]]] \
     {apply {args {lappend ::t6g_events $args}}}]
 assert_eq [dict get $t6g_prep rows] {} "T6-h: no row for an unserved channel"
-assert_eq $::t6g_events [list [list fbonly skipped "no send actuator for channel 'facebook'"]] \
-    "T6-h: the skip names the missing actuator"
+assert_eq $::t6g_events [list [list fbonly skipped "no send worker for channel 'facebook'"]] \
+    "T6-h: the skip names the missing send worker"
 
 # ── T7 ──────────────────────────────────────────────────────────────────
 # T7 is the campaign's task, not a contact's: one search over the

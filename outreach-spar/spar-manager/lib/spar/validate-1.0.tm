@@ -870,7 +870,7 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
 # _profile_validation_error -- return first error-severity validation message for
 # the profile of a classified contact, or "" if none. Mirrors
 # _approach_validation_error. Used by DbC-Post handlers and by downstream
-# gatekeeping; the State's profile_validation_error caches it for T2/T4.
+# gatekeeping (T2/T4 reach it through the State's cached lookup).
 proc spar::_profile_validation_error {contact} {
     set pp [dict getdef $contact profile_path ""]
     if {$pp eq ""} { return "" }

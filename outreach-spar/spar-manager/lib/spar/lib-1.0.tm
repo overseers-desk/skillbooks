@@ -1261,7 +1261,7 @@ proc spar::lang_instruction {code} {
 # populated platform columns ({key}_url for each platform module key;
 # a platform with no roster column, instagram, has none to populate),
 # so a facebook-only contact reads as a connection channel with no
-# email, not as email only.
+# email.
 proc spar::channel_desc {row} {
     set titles {linkedin LinkedIn}
     set conn {}
