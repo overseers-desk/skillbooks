@@ -40,6 +40,18 @@ oo::class create spar::Dispatcher {
         set RequeuedOnce [dict create]
     }
 
+    # cancel - jobloop's cancel, plus an abort of the row's live harness.
+    # harness_run passes its one checkpoint before the harness starts, so
+    # the cancel flag alone would go unseen until the run ended on its
+    # own; the abort ends it now, and harness_run's checkpoint after the
+    # run reports the row cancelled. Every front-end cancels through here.
+    method cancel {row} {
+        next $row
+        if {[dict exists $::spar::live_harnesses $row]} {
+            catch {[dict get $::spar::live_harnesses $row] abort}
+        }
+    }
+
     # ─── spar's domain reports ───────────────────────────────────────
     # A generic pool carries lifecycle; these four are spar's own worker
     # signals. cost/retry/credit_warning are informational (they fire an
@@ -242,9 +254,10 @@ namespace path ::jobloop::worker
 #
 # The claude session inside the harness is driven through deadman with an
 # async completion (see spar::harness _invoke), so a long run yields the
-# loop rather than freezing it. Cancel-checked once before the harness
-# starts; a mid-run cancel reaches the harness through
-# spar::abort_live_harnesses, which the harness is published for below.
+# loop rather than freezing it. Cancel-checked before the harness starts
+# and again after a run that did not succeed; a mid-run cancel reaches the
+# harness through spar::Dispatcher's cancel or spar::abort_live_harnesses,
+# which the harness is published for below.
 proc harness_run {row opts} {
     checkpoint $row
 
@@ -281,9 +294,12 @@ proc harness_run {row opts} {
         catch {$inst destroy}
     } err]} {
         catch {dict unset ::spar::live_harnesses $row}
+        checkpoint $row
         failed $row "harness_run: $err"
         return
     }
+    # A run the row's cancel aborted ends cancelled, not failed.
+    if {$rc != 0} { checkpoint $row }
     if {$rc == 0} {
         done $row [list rc 0]
     } elseif {$rc == 4} {
