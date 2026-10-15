@@ -83,7 +83,6 @@ oo::class create ::spar::transitions::SweepTransition {
     method build_opts {tasks filter_segments filter_stems} {
         set stems {}
         foreach t $tasks { lappend stems [dict get $t stem] }
-        if {[llength $filter_stems] > 0} { set stems $filter_stems }
         set segs {}
         foreach t $tasks {
             set s [dict get $t segment]

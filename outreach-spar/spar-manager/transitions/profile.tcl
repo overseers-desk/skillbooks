@@ -11,7 +11,6 @@ oo::class create ::spar::transitions::ProfileTransition {
     method build_opts {tasks filter_segments filter_stems} {
         set stems {}
         foreach c $tasks { lappend stems [dict get $c stem] }
-        if {[llength $filter_stems] > 0} { set stems $filter_stems }
         set segs [dict create]
         foreach c $tasks {
             dict set segs [file tail [dict get $c _segment_dir]] 1
