@@ -353,10 +353,26 @@ section "validate_profile"
 
 # 12p-a. Valid front matter → no errors
 set seg_vp1 [make_temp_segment]
-set vp1_path [write_profile $seg_vp1 "vp-valid"]
+set vp1_path [write_profile $seg_vp1 "vp-valid" -contact_name "Test Contact" \
+    -organisation null -role null -date_excluded null]
 set vp1_row [make_base_row {stem "vp-valid"}]
 set vp1_issues [spar::validate_profile $vp1_path $vp1_row "VP Valid"]
 assert_eq [llength $vp1_issues] 0 "validate_profile: valid front matter → no issues"
+
+# 12p-a2. A snapshot short of a §5.1 field, once a roster row exists, is an
+# error per missing field (#158); with no roster row it is not checked.
+set vpdd_path [write_profile $seg_vp1 "vp-partial" -contact_name "Test Contact" -role null]
+set vpdd_issues [spar::validate_profile $vpdd_path $vp1_row "VP Partial"]
+set vpdd_msgs [lmap i $vpdd_issues {
+    if {[dict get $i code] ne "missing_dependent_data_field"} continue
+    dict get $i message
+}]
+assert_eq [llength $vpdd_msgs] 2 "validate_profile: two snapshot fields missing → two issues"
+assert_match [join $vpdd_msgs |] "*'organisation'*|*'date_excluded'*" \
+    "validate_profile: each names the missing field"
+assert_eq [has_issue [spar::validate_profile $vpdd_path {} "VP Partial"] \
+    missing_dependent_data_field] 0 \
+    "validate_profile: with no roster row the snapshot fields are not required"
 
 # 12p-b. Missing fences → invalid_front_matter error
 set seg_vp2 [make_temp_segment]
@@ -864,5 +880,29 @@ set iu2_path [write_approach_yaml $seg_iu2 "iu-mode" \
 set iu2_issues [spar::validate_approach $iu2_path "" "IU Mode"]
 assert_eq [has_issue $iu2_issues unknown_key_message] 1 \
     "the retired mode key now fails the vocabulary walk"
+
+# ════════════════════════════════════════════════════════════════════════
+# 30. decisions.sender is walked (#158)
+# ════════════════════════════════════════════════════════════════════════
+section "30. decisions.sender sub-keys"
+
+proc sender_approach {sender_lines} {
+    string map [list "decisions:\n  channel: email\n" \
+        "decisions:\n  channel: email\n  sender:\n$sender_lines"] \
+        [approach_yaml_final_unsent]
+}
+set seg_sd [make_temp_segment]
+set sd1_path [write_approach_yaml $seg_sd "sd-ok" \
+    [sender_approach "    name: Director\n    email: director@example.com\n"]]
+assert_eq [spar::validate_approach $sd1_path "test@acme-venues.au" "SD OK"] {} \
+    "a sender block with name and email is clean"
+
+set sd2_path [write_approach_yaml $seg_sd "sd-typo" \
+    [sender_approach "    name: Director\n    emial: director@example.com\n"]]
+set sd2_issues [spar::validate_approach $sd2_path "test@acme-venues.au" "SD Typo"]
+assert_eq [has_issue $sd2_issues unknown_key_sender] 1 \
+    "a misspelt sender key fails the vocabulary walk"
+assert_eq [has_issue $sd2_issues sender_missing_email] 1 \
+    "and the block, left with no email, is reported"
 
 finish_tests

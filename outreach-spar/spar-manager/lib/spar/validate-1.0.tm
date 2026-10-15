@@ -592,9 +592,31 @@ proc spar::_yamlmuster_profile {} {
     $inst predicate source_status_token ::spar::_pred_source_status_token
     $inst predicate profile_discovered_via ::spar::_pred_profile_discovered_via
     $inst predicate scalars_as_written ::spar::_pred_scalars_as_written
+    $inst predicate dependent_data_complete ::spar::_pred_dependent_data_complete
     spar::_yamlmuster_load $inst profile.rules profile
     set _yamlmuster_profile_inst $inst
     return $inst
+}
+
+# dependent_data_complete -- the snapshot carries every field spar-P-profile.md
+# §5.1 lists, once the contact has a roster row for validate_profile's
+# staleness checks to compare it with. A field left out makes its check a
+# silent no-op, which is the drift the snapshot exists to catch. An absent
+# dependent_data is missing_dependent_data's to report; a malformed one is
+# skipped, as the vocab walk skips it.
+proc spar::_pred_dependent_data_complete {node meta} {
+    if {![dict getdef [dict get $meta context] has_roster_row 0]} { return {} }
+    if {![dict exists $node dependent_data]} { return {} }
+    set dep [dict get $node dependent_data]
+    if {[catch {dict size $dep}]} { return {} }
+    set out {}
+    foreach field {contact_name organisation role date_excluded} {
+        if {![dict exists $dep $field]} {
+            lappend out [dict create message \
+                "Profile dependent_data missing required key '$field' — snapshot it from the roster row (null when empty), or its staleness check cannot run"]
+        }
+    }
+    return $out
 }
 
 # engagement_leak -- the I1 backstop (INVARIANTS.md): a reusable profile must
@@ -860,7 +882,9 @@ proc spar::validate_profile {profile_path roster_row contact_name} {
     set stem [file rootname [file tail $profile_path]]
     foreach ei [[spar::_yamlmuster_profile] validate $fm \
             -groups profile -badnode ignore \
-            -context [list raw $raw stem $stem] -extra [list contact_name $contact_name]] {
+            -context [list raw $raw stem $stem \
+                has_roster_row [expr {[dict size $roster_row] > 0}]] \
+            -extra [list contact_name $contact_name]] {
         lappend issues [spar::_xlate_engine_issue $ei $contact_name]
     }
 
