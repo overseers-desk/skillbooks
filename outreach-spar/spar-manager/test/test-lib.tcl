@@ -630,4 +630,24 @@ write_campaign_yaml $sd_root4 "campaign: SD Test\n"
 set sd_cdata4 [spar::load_campaign [file join $sd_root4 campaigns camp.yaml]]
 assert_eq [dict exists $sd_cdata4 start_date] 0 "absent start_date loads clean (not launched)"
 
+# ════════════════════════════════════════════════════════════════════════
+# resolve_campaign: the roster alone admits a segment (#194)
+# ════════════════════════════════════════════════════════════════════════
+section "resolve_campaign — roster without a profile folder"
+
+set rc_root [make_temp_campaign]
+write_campaign_yaml $rc_root "campaign: RC Test\nsegments:\n  fresh:\n    objective: test\n"
+file mkdir [file join $rc_root segments]
+set rc_seg [file join $rc_root segments fresh]
+write_roster_tsv $rc_seg $::std_headers [list \
+    [make_base_row {stem "ann-a" contact_name "Ann" star_rating 4 email a@x.test}]]
+assert_eq [file isdirectory $rc_seg] 0 "fixture: no profile folder yet"
+set rc [spar::resolve_campaign "" $rc_root]
+assert_eq [dict get $rc segment_paths] [list [list fresh $rc_seg]] \
+    "a rostered segment is walked before its first P creates the folder"
+set rc_contacts [$State classify_segment $rc_seg ""]
+assert_eq [llength $rc_contacts] 1 "classification reads the roster with no folder"
+assert_eq [dict get [lindex $rc_contacts 0] state] DISCOVERED \
+    "the contact awaits P"
+
 finish_tests
