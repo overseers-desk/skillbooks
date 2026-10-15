@@ -37,7 +37,11 @@
 # roster_patch / roster_patch_applied: harness-mediated roster writes
 # (spar::apply_approach_patch) — the worker declares, the harness applies
 # and stamps; a stamp the worker writes is not honoured (#209).
-level root                 -keys {decisions rounds angle_rationale response_likelihood a_note r_note fact_provenance quality_checklist profile_hash roster_patch roster_patch_applied}
+# authored_model / challenger_model: optional, harness-written (#154) —
+# the full model ids from the init events of the author's first call and
+# the first challenger pass; absent on an approach that predates the
+# record or was written by hand.
+level root                 -keys {decisions rounds angle_rationale response_likelihood a_note r_note fact_provenance quality_checklist profile_hash roster_patch roster_patch_applied authored_model challenger_model}
 level roster_patch         -keys {contact_name organisation role phone email linkedin_url facebook_url date_excluded p_note star_rating}
 level decisions            -keys {channel language angle sender channel_detail subsegment}
 level round                -keys {type number messages verdict fact_check in_character chosen_usps revision_note notes replies antifact_check}

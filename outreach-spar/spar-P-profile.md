@@ -257,7 +257,7 @@ This style applies at generation time. A separate densification pass over alread
 
 ### 5.1 Front matter
 
-Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pandoc convention. All listed fields are required; the validator rejects files with missing or unknown keys. Four further keys are optional: `roster_patch` (a dict of roster columns the worker declares for the harness to apply — contact_name, organisation, role, phone, email, the platform URL columns, date_excluded, p_note), `rows_new` and `sources_new` (the contacts and census sources the profiling surfaced, §4.15; every entry's `discovered_via` leads with `profile:{stem}`), and `roster_patch_applied` (the harness's stamp; the worker leaves it alone).
+Delimited by `---` fences at the very top of the file, standard Jekyll/Hugo/Pandoc convention. All listed fields are required; the validator rejects files with missing or unknown keys. Five further keys are optional: `roster_patch` (a dict of roster columns the worker declares for the harness to apply — contact_name, organisation, role, phone, email, the platform URL columns, date_excluded, p_note), `rows_new` and `sources_new` (the contacts and census sources the profiling surfaced, §4.15; every entry's `discovered_via` leads with `profile:{stem}`), `roster_patch_applied` (the harness's stamp; the worker leaves it alone), and `authored_model` (the full id of the model the profile call ran on, which the harness records; absent on a profile written before the record existed).
 
 ```yaml
 ---
