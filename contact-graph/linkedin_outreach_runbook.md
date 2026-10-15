@@ -34,7 +34,7 @@ Each candidate carries a `level` derived from M:
 
 The exact formula and its constants (half-life, group weight, band cutoffs) live
 in `pick_next_candidate.py` and nowhere else. Do not re-derive or second-guess
-them. `do_not_contact` remains a separate manual veto, set outside this loop.
+them. `do_not_contact` remains a separate manual veto, set outside this loop with `exclude_candidate.py`.
 
 ## Loop
 
