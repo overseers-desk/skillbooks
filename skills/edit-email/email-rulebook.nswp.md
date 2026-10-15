@@ -442,6 +442,28 @@ Committed in `e4fdd79` (2026-05-27).
 
 ---
 
+## R11, first person. "We" the email never resolves, and "I" mixed with "we"
+
+**Status**: real
+
+**Offending text** (from issue #165, a draft that passed edit-email unflagged): a thank-you to a neighbour for a repair, with an offer to pay in cash, signed by one person:
+
+> pass on a big thank you ... from us
+>
+> We're so grateful
+>
+> he's saved us a real headache
+>
+> I'll happily pay in cash
+
+**User's objection** (issue #165): the brief was first-person singular throughout ("express my gratitude", "I can pay cash"), so "we/us" introduced a collective the brief never contained, and the recipient cannot tell who "we" includes. R6 was the nearest rule, but it is framed around paraphrase that adds ownership, status, specificity or detail, and grammatical number drift slipped past it. The issue asked for two checks: a mix of "I" and "we" within a body, and a first-person-plural referent the draft never establishes, each answered by asking whether the message is from an individual or a household or group and making the voice consistent either way.
+
+**Abstraction into rule**: an unresolved "we" is a referent the recipient was never given, which is R11's defect, so the check sits in R11 rather than R6. The subeditor cannot see the brief, so it lists each unresolved "we" and any mix of "I" and "we"; the caller answers on the brief, as R11 already has it answer every `nowhere`. The warm-proprietor voice guide already carried the voice-level form ("We" where you mean yourself); the rulebook clause makes it hold with no voice guide loaded.
+
+**Rule as it stands now**: the first-person paragraph of R11 in `email-rulebook.md`.
+
+---
+
 ## ASSERTIONS. What the draft states on someone's authority
 
 **Status**: real

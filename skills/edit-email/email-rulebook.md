@@ -66,6 +66,8 @@ The subeditor cannot know what the recipient was told, and does not need to. Its
 
 The check runs again on the polished text. An edit that moves a sentence can strand a reference that resolved before it moved, and no reading of the draft can catch damage that did not exist when it was read.
 
+First person is one of these surfaces, and the one a reader of the draft most easily passes. "We", "us" and "our" assert a group whose members the recipient can name. A "we" the email never resolves, under one person's signature, leaves him unable to tell whether it means the sender's household, the business, or the sender alone. A body that mixes "I" with "we" tells him two things at once. The subeditor cannot know whether the sender writes alone or for others; the brief does. So it lists each "we" the email has not resolved, as `nowhere`, and queries any mix of "I" and "we" in the body; the caller answers both on the brief: the sender alone, and the voice is "I" throughout; or a named group, and the email says who at first use and keeps "we" for what the group does.
+
 Example: a supplier email says "the revised figure covers freight". Nothing earlier names a figure or a revision. The sender's agent knows which quote was revised and when; the supplier has two open quotes and cannot tell. The fixed line names the quote and its date at first mention.
 
 ## Relationship registers
