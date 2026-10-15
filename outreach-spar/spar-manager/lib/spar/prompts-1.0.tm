@@ -88,55 +88,27 @@ proc spar::no_profile_without_guidance {field} {
 # build across a dispatcher run reuses the same answer instead of asking the
 # worker to re-detect (issue #96).
 #
-# Resolution prefers the serialised-browsing arbiter (#141). browser-
-# serialiser is the project's single-browser arbiter: it holds its own lock
-# and, when an overseer is present on localhost:11402, delegates to the one
-# process that owns the logged-in Chromium profile. The linkedin/facebook
-# site skills already drive the browser through it. Routing the worker's
-# ad-hoc page fetch through `browser-serialiser --dump` (the curl/WebFetch
-# fallback the skill documents, which renders the DOM to stdout) makes
-# workers and site skills serialise on one arbiter, instead of two
-# uncoordinated locks (the old `/tmp/chromium.lock` vs the serialiser's own
-# lock) colliding on the shared user-data-dir. Sibling of #125 (worker path
-# bypasses the managed browser); option 1 of #141 subsumes both.
-#
-# Fallback is a raw headless chromium under /tmp/chromium.lock, used only
-# when no serialiser is installed — in which case no site skill runs through
-# one either, so there is no cross-regime collision to coordinate, and the
-# /tmp/chromium.lock still serialises workers among themselves (#116). The
-# command name stays bare (resolved on the worker's PATH at run time) and
-# $HOME stays unexpanded, which keeps the written prompt portable across
-# users.
+# The command is `browser-serialiser --dump` (#141), the curl/WebFetch
+# fallback the serialised-browsing skill documents, which renders the DOM to
+# stdout. browser-serialiser is the single-browser arbiter: it holds its own
+# lock, reaps the browser it launches on every exit path, and, when an
+# overseer is present on localhost:11402, delegates to the one process that
+# owns the logged-in Chromium profile. Workers and site skills therefore
+# serialise on one arbiter. spar never launches a browser itself, so a host
+# without the serialiser gets an error here rather than a raw chromium
+# (#125). The command name stays bare, resolved on the worker's PATH at run
+# time, which keeps the written prompt portable across users.
 proc spar::detect_browser_cmd {} {
     variable _browser_cmd_cache
     if {[info exists _browser_cmd_cache]} { return $_browser_cmd_cache }
 
     # browser-serialiser ships with the serialised-browsing skill, usually on
     # PATH (its bin/ dir). Resolve it robustly rather than hard-coding a path.
-    if {[auto_execok browser-serialiser] ne ""} {
-        set _browser_cmd_cache "browser-serialiser --dump -t 20"
-        return $_browser_cmd_cache
+    if {[auto_execok browser-serialiser] eq ""} {
+        error "spar::detect_browser_cmd: browser-serialiser not on PATH; install the serialised-browsing skill, since spar never launches a browser itself"
     }
-
-    set ua "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
-    set lock_wrap "flock /tmp/chromium.lock timeout 10"
-    set flags "--headless=new --dump-dom --user-agent=\"$ua\""
-
-    set chromium [auto_execok chromium]
-    if {$chromium ne ""} {
-        if {[catch {exec readlink -f $chromium} resolved]} {
-            set resolved $chromium
-        }
-        if {$resolved eq "/usr/bin/snap"} {
-            set userdir "\$HOME/snap/chromium/common/chromium"
-        } else {
-            set userdir "\$HOME/.config/chromium"
-        }
-        set _browser_cmd_cache "$lock_wrap chromium $flags --user-data-dir=\"$userdir\""
-        return $_browser_cmd_cache
-    }
-
-    error "spar::detect_browser_cmd: neither browser-serialiser nor chromium on PATH"
+    set _browser_cmd_cache "browser-serialiser --dump -t 20"
+    return $_browser_cmd_cache
 }
 
 package require spar::dispatcher
