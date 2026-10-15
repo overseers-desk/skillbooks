@@ -3,8 +3,8 @@
 # spar::ui::Inspector — per-contact detail pane with four tabs labelled
 # S, P, A, R (the pipeline's own vocabulary: Roster, Profile, Approach,
 # Reply). A PaneViewer: fills its sub-frame of .pw.right below the
-# header strip with a ttk::notebook. Each tab's enabled/disabled state reflects
-# which data exists for the contact; render selects the latest-reached
+# header strip with a ttk::notebook. Each tab's enabled/disabled state
+# reflects which data exists for the contact; render selects the latest-reached
 # tab so arrow-keying down the tree lands on whichever surface carries
 # the newest information for each contact. Read-only. Opens on leaf
 # double-click; closes via the ✕ button. Selection changes update the

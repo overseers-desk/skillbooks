@@ -868,7 +868,7 @@ assert_eq [spar::li::health_note $hn_all linkedin.com linkedin.com/send-message]
     "linkedin.com gate 40s; account not signed in: jo@example.com" \
     "health_note: another JobCode's trip is not this send's"
 
-# The pre-0.7.0 name for the breakers is not read: a document carrying
+# The retired `lanes` key is not read: a document carrying
 # only `lanes` reports no trip.
 assert_eq [spar::li::health_note \
     {ok true lanes {linkedin.com/send-invite {count 2}}} \

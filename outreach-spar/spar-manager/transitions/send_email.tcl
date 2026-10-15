@@ -457,8 +457,9 @@ proc ::spar::ses::send_one {opts} {
 #   note_cmd       optional cmdprefix, called with one line of text when
 #                  the probe finds something standing in this send's way
 #                  (a rate gate, a challenged or signed-out lane, an open
-#                  breaker, an account not signed in). The dispatcher passes the pool's phase verb, so
-#                  the row says what it is waiting on.
+#                  breaker, an account not signed in). The dispatcher
+#                  passes the pool's phase verb, so the row says what it
+#                  is waiting on.
 #
 # Skill selection: an invitation with the text as its note by default;
 # invitation_unavailable: true routes to a direct Message
@@ -679,8 +680,9 @@ proc ::spar::li::send_one {opts} {
 
     # A /run parks server-side behind the rate gate, a challenged lane, an
     # open breaker or a held account, so the row would otherwise sit
-    # silent for as long as the wait lasts; a signed-out lane refuses it. The probe already knows why; report it through the
-    # caller's note cmdprefix, and keep it for the failure text.
+    # silent for as long as the wait lasts; a signed-out lane refuses it.
+    # The probe already knows why; report it through the caller's note
+    # cmdprefix, and keep it for the failure text.
     set note [::spar::li::health_note $health \
         [lindex [split $skill_ref /] 0] $skill_ref]
     if {$note ne "" && $note_cmd ne ""} {

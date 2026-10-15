@@ -10,7 +10,7 @@
 # account, folder and UID the worker needs to read a parent message
 # (spar-A-approach.md §4.1.1), while an empty courier search falls through
 # to a live IMAP round trip per account (#225). Where `mu` is absent or the
-# index cannot be read, courier answers as before.
+# index cannot be read, courier answers.
 
 package require spar::lib
 
@@ -83,9 +83,9 @@ proc spar::courier::contact_blocks {name org email} {
 }
 
 # One pass, as {rc command output}: the command line shown to the worker
-# and what it printed. rc 0 means courier returned hits. A query the local
-# index answers with no messages shows that `mu find` and costs no
-# courier call.
+# and what it printed. rc 0 means courier returned hits. An empty answer
+# from the local index is shown as the `mu find` that gave it, and courier
+# is not called.
 proc spar::courier::_lookup {query} {
     if {[spar::courier::_indexed $query] eq "none"} {
         return [list 1 "\$ mu find '$query'" \
