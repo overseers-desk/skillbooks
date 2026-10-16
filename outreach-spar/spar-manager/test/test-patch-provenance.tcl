@@ -352,4 +352,46 @@ spar::apply_approach_patch $approach $roster $stem \
 assert_eq [roster_field $roster email] "found@send.example" \
     "harness record holding the value: the blank email is refilled"
 
+# ════════════════════════════════════════════════════════════════════════
+section "10. A null stamp is no stamp"
+# ════════════════════════════════════════════════════════════════════════
+
+# Workers copy `roster_patch_applied: null` from a template; the parser
+# reads it as an empty value, and only a non-blank date is a stamp.
+foreach nul {null ~ ""} {
+    write_roster $roster
+    spar::update_roster_field $roster stem $stem role "Chair"
+    write_profile $profile [list "roster_patch_applied: $nul"]
+    assert_eq [spar::apply_roster_patch $profile $roster $stem] {} \
+        "startup reconcile, stamp '$nul': clean"
+    assert_eq [roster_field $roster contact_name] "Jane Doe" \
+        "stamp '$nul': the whole patch lands, blank cell filled"
+    assert_eq [roster_field $roster role] "Director" \
+        "stamp '$nul': a cell holding a different value takes the patch"
+}
+
+# ProfileHarness record: a null stamp before the turn records nothing.
+write_roster $roster
+write_profile $profile {"roster_patch_applied: null"}
+set h [make_harness $seg_dir $roster $stem $profile]
+spar::update_roster_field $roster stem $stem role "Chair"
+write_profile $profile {"roster_patch_applied: null"}
+$h validate_profile_errors 1
+assert_eq [roster_field $roster role] "Director" \
+    "ProfileHarness: a null stamp before the turn is not a record"
+$h destroy
+
+# ApproachHarness record, same rule.
+write_roster $roster
+set fd [open $approach w]
+puts $fd "decisions:\n  channel: email\nroster_patch:\n  email: found@send.example\nroster_patch_applied: null"
+close $fd
+spar::update_roster_field $roster stem $stem email human@corrected.example
+set ah [spar::ApproachHarness new $apdir [file join $tmpdir logs]]
+$ah load_my_meta
+$ah apply_declarations
+assert_eq [roster_field $roster email] "found@send.example" \
+    "ApproachHarness: a null stamp before the run is not a record"
+$ah destroy
+
 finish_tests

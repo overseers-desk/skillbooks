@@ -281,7 +281,7 @@ oo::class create spar::ApproachHarness {
         set AppliedPatch [dict create roster_patch {}]
         if {[file exists $Outfile] \
                 && ![catch {spar::read_approach_yaml $Outfile} prior] \
-                && $prior ne "" && [dict exists $prior roster_patch_applied]} {
+                && [spar::stamp_present $prior roster_patch_applied]} {
             dict set AppliedPatch roster_patch [dict getdef $prior roster_patch {}]
         }
     }
@@ -832,7 +832,7 @@ oo::class create spar::ProfileHarness {
         set Applied [dict create roster_patch {} appended 0]
         if {$OutfilePreexisted} {
             set fm [spar::read_profile_front_matter $Outfile]
-            if {$fm ne "" && [dict exists $fm roster_patch_applied]} {
+            if {[spar::stamp_present $fm roster_patch_applied]} {
                 set appended [expr {[llength [dict getdef $fm rows_new {}]] > 0
                     || [llength [dict getdef $fm sources_new {}]] > 0}]
                 set Applied [dict create \

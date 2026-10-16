@@ -843,7 +843,7 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {ap
 
     set declared [dict getdef $fm roster_patch {}]
     if {$applied eq ""} {
-        set stamped [dict exists $fm roster_patch_applied]
+        set stamped [spar::stamp_present $fm roster_patch_applied]
         set appended $stamped
         set record [expr {$stamped ? $declared : {}}]
     } else {
@@ -988,7 +988,7 @@ proc spar::apply_approach_patch {approach_path roster_path stem {applied ""}} {
     if {$adata eq "" || ![dict exists $adata roster_patch]} { return {} }
     set declared [dict get $adata roster_patch]
     if {$applied eq ""} {
-        set stamped [dict exists $adata roster_patch_applied]
+        set stamped [spar::stamp_present $adata roster_patch_applied]
         set record [expr {$stamped ? $declared : {}}]
     } else {
         set stamped 0
@@ -1071,7 +1071,7 @@ proc spar::apply_sweep_batch {deliverable_path roster_path segment} {
     }
     set warnings $issues
     set fm [spar::read_profile_front_matter $deliverable_path]
-    if {[dict exists $fm sweep_batch_applied]} { return $warnings }
+    if {[spar::stamp_present $fm sweep_batch_applied]} { return $warnings }
 
     set rows_new [dict getdef $fm rows_new {}]
     if {[llength $rows_new] == 0} {
