@@ -762,7 +762,11 @@ proc spar::update_roster_field {tsv_path key_col key_val field_col new_val} {
 #                          human corrected the roster afterwards"; the
 #                          roster_patch_applied stamp written back into
 #                          the deliverable makes a replay inert and
-#                          protects the human's edit.
+#                          protects the human's edit. A blank cell is
+#                          the exception: an applied value whose cell
+#                          has since gone blank is written again
+#                          (_patch_unapplied), since a blank cell holds
+#                          no edit to protect.
 #   rows_new             — roster rows for contacts the profiling
 #                          surfaced (an unswept peer, a named successor),
 #                          in the row shape the sweep worker declares and
@@ -788,19 +792,25 @@ proc spar::update_roster_field {tsv_path key_col key_val field_col new_val} {
 # when applied clean; issues feed the caller's fix loop.
 #
 # applied says what has already landed. Empty, the deliverable's own
-# stamp decides: the startup reconcile has no record of its own. The
+# stamp decides: the startup reconcile has no record of its own, so a
+# stamped file's own roster_patch is the record, and only its keys whose
+# cell is now blank are written. The
 # profile harness passes its record instead (#209), because the worker
 # holds Write on the deliverable and copies the stamp line from a
 # finished sibling it reads as an example; a stamp the harness did not
 # write would otherwise skip the patch with no issue raised. The record
 # is a dict of
 #   roster_patch  the column writes already made from this deliverable;
-#                 a declared key holding the same value is not rewritten,
-#                 so a fix turn's new or corrected key lands and a
-#                 human's later edit of an untouched key stands
+#                 a declared key holding the same value is not rewritten
+#                 unless its cell is blank, so a fix turn's new or
+#                 corrected key lands and a human's later edit of an
+#                 untouched key stands
 #   appended      1 once rows_new and sources_new have landed, which a
 #                 second append would reject as already held
-# and with it the file's stamp is not read, only rewritten.
+# and with it the file's stamp is not read, only rewritten. With a record
+# the whole declared patch is checked, as a live declaration; without
+# one, a stamped file's refill set alone is, so an old declaration that
+# would fail today's check blocks only what it would write.
 proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {applied ""}} {
     set fm [spar::read_profile_front_matter $profile_path]
     if {$fm eq ""} { return {} }
@@ -831,37 +841,21 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {ap
         }
     }
 
+    set declared [dict getdef $fm roster_patch {}]
     if {$applied eq ""} {
         set stamped [dict exists $fm roster_patch_applied]
         set appended $stamped
-        set declared_patch [dict getdef $fm roster_patch {}]
+        set record [expr {$stamped ? $declared : {}}]
     } else {
         set stamped 0
         set appended [dict getdef $applied appended 0]
-        set declared_patch [spar::_patch_unapplied \
-            [dict getdef $fm roster_patch {}] [dict getdef $applied roster_patch {}]]
+        set record [dict getdef $applied roster_patch {}]
     }
-    # star_rating is admitted for the A-phase exclusion write (star 0 with
-    # date_excluded); P declares its star through the front matter itself.
-    set allowed {contact_name organisation role phone email \
-                 linkedin_url facebook_url date_excluded p_note star_rating}
-
-    if {!$stamped} {
-        dict for {k v} $declared_patch {
-            if {$k ni $allowed} {
-                lappend issues [dict create severity error \
-                    code patch_unknown_column \
-                    message "roster_patch key '$k' is not an applyable roster column (allowed: $allowed)"]
-                continue
-            }
-            if {$k eq "email" && [string match {*\**} $v]} {
-                lappend issues [dict create severity error \
-                    code patch_masked_email \
-                    message "roster_patch email '$v' is masked; find the unmasked address or omit the key"]
-                continue
-            }
-            dict set pending $k $v
-        }
+    set patch [spar::_patch_unapplied $declared $record $row]
+    set patch_issues [spar::_check_patch [expr {$stamped ? $patch : $declared}]]
+    lappend issues {*}$patch_issues
+    if {[llength $patch_issues] == 0} {
+        set pending [dict merge $pending $patch]
     }
 
     # rows_new and sources_new: checked here, written below, so a
@@ -938,75 +932,94 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {ap
     return {}
 }
 
-# _patch_unapplied — the entries of a declared roster_patch that the
-# applied record does not already hold at the same value.
-proc spar::_patch_unapplied {declared applied} {
+# _patch_unapplied — the entries of a declared roster_patch still to
+# write to row: those the applied record does not hold at the same value,
+# and those it does whose value is non-blank and whose cell is blank. A
+# non-blank cell that differs from the record is a human's edit and
+# stands; a blank one holds nothing to protect, so the value is refilled.
+proc spar::_patch_unapplied {declared applied row} {
     set out [dict create]
     dict for {k v} $declared {
-        if {[dict exists $applied $k] && [dict get $applied $k] eq $v} continue
+        if {[dict exists $applied $k] && [dict get $applied $k] eq $v
+                && ([string trim [dict getdef $row $k ""]] ne ""
+                    || [string trim $v] eq "")} continue
         dict set out $k $v
     }
     return $out
+}
+
+# _check_patch — the issues a roster_patch dict raises before any of it
+# is written. star_rating is admitted for the A-phase exclusion write
+# (star 0 with date_excluded); P declares its star through the front
+# matter itself. A blank contact_name is rejected rather than written:
+# it would erase the name the row is matched and addressed by.
+proc spar::_check_patch {patch} {
+    set allowed {contact_name organisation role phone email \
+                 linkedin_url facebook_url date_excluded p_note star_rating}
+    set issues {}
+    dict for {k v} $patch {
+        if {$k ni $allowed} {
+            lappend issues [dict create severity error \
+                code patch_unknown_column \
+                message "roster_patch key '$k' is not an applyable roster column (allowed: $allowed)"]
+        } elseif {$k eq "email" && [string match {*\**} $v]} {
+            lappend issues [dict create severity error \
+                code patch_masked_email \
+                message "roster_patch email '$v' is masked; find the unmasked address or omit the key"]
+        } elseif {$k eq "contact_name" && [string trim $v] eq ""} {
+            lappend issues [dict create severity error \
+                code patch_blank_contact_name \
+                message "roster_patch contact_name is blank; declare the contact's name or omit the key"]
+        }
+    }
+    return $issues
 }
 
 # apply_approach_patch — the A-phase twin of apply_roster_patch. Approach
 # files are whole-file YAML rather than front-matter documents, so the
 # declaration is a root roster_patch key; the stamp is a root line. No
 # star sync: the approach is not star_rating's home. Same one-shot
-# semantics and issue-list return, and the same applied argument: the
-# harness passes the roster_patch it knows landed (none, for an approach
-# that carried no stamp before the run), so a stamp the author copied
-# from a sibling approach is not honoured.
+# semantics, blank-cell refill and issue-list return, and the same
+# applied argument: the harness passes the roster_patch it knows landed
+# (none, for an approach that carried no stamp before the run), so a
+# stamp the author copied from a sibling approach is not honoured.
 proc spar::apply_approach_patch {approach_path roster_path stem {applied ""}} {
     if {[catch {spar::read_approach_yaml $approach_path} adata]} { return {} }
     if {$adata eq "" || ![dict exists $adata roster_patch]} { return {} }
+    set declared [dict get $adata roster_patch]
     if {$applied eq ""} {
-        if {[dict exists $adata roster_patch_applied]} { return {} }
-        set patch [dict get $adata roster_patch]
+        set stamped [dict exists $adata roster_patch_applied]
+        set record [expr {$stamped ? $declared : {}}]
     } else {
-        set patch [spar::_patch_unapplied [dict get $adata roster_patch] \
-            [dict getdef $applied roster_patch {}]]
+        set stamped 0
+        set record [dict getdef $applied roster_patch {}]
     }
-    set issues [spar::_apply_patch_only [dict create roster_patch $patch] \
+    set issues [spar::_apply_patch_only $declared $record $stamped \
         $roster_path $stem]
-    if {[llength $issues] == 0} {
+    if {[llength $issues] == 0 && !$stamped} {
         spar::_stamp_yaml_root $approach_path roster_patch_applied \
             [clock format [clock seconds] -format %Y-%m-%d]
     }
     return $issues
 }
 
-# _apply_patch_only — shared core: validate a roster_patch dict and write
-# the pending columns onto the stem's roster row in one atomic rewrite.
-proc spar::_apply_patch_only {fm roster_path stem} {
-    set issues {}
+# _apply_patch_only — the approach applier's core: check a declared
+# roster_patch and write what _patch_unapplied leaves of it against the
+# applied record onto the stem's roster row in one atomic rewrite. With
+# stamped set (a stamp and no harness record) only the refill set is
+# checked, as apply_roster_patch does.
+proc spar::_apply_patch_only {declared record stamped roster_path stem} {
     set rows [spar::load_roster $roster_path]
-    set found 0
+    set row ""
     foreach r $rows {
-        if {[dict getdef $r stem ""] eq $stem} { set found 1; break }
+        if {[dict getdef $r stem ""] eq $stem} { set row $r; break }
     }
-    if {!$found} {
+    if {$row eq ""} {
         return [list [dict create severity error code patch_stem_unknown \
             message "roster_patch: stem '$stem' has no roster row in $roster_path"]]
     }
-    set allowed {contact_name organisation role phone email \
-                 linkedin_url facebook_url date_excluded p_note star_rating}
-    set pending {}
-    dict for {k v} [dict get $fm roster_patch] {
-        if {$k ni $allowed} {
-            lappend issues [dict create severity error \
-                code patch_unknown_column \
-                message "roster_patch key '$k' is not an applyable roster column (allowed: $allowed)"]
-            continue
-        }
-        if {$k eq "email" && [string match {*\**} $v]} {
-            lappend issues [dict create severity error \
-                code patch_masked_email \
-                message "roster_patch email '$v' is masked; find the unmasked address or omit the key"]
-            continue
-        }
-        dict set pending $k $v
-    }
+    set pending [spar::_patch_unapplied $declared $record $row]
+    set issues [spar::_check_patch [expr {$stamped ? $pending : $declared}]]
     if {[llength $issues]} { return $issues }
     if {[dict size $pending] == 0} { return {} }
     set fd [open $roster_path r]
