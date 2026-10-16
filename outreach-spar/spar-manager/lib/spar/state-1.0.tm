@@ -1722,7 +1722,10 @@ proc spar::stamp_present {data key} {
     return [expr {[string trim [dict get $data $key]] ne ""}]
 }
 
-# missing fences, YAML parse error).
+# read_profile_front_matter -- return the parsed YAML front-matter dict of a
+# profile file (the block between the opening and closing `---` fences).
+# Returns "" for a missing or unreadable file, a first line that is not a
+# fence, a missing closing fence, or a YAML parse error.
 proc spar::read_profile_front_matter {path} {
     if {![file exists $path]} { return "" }
     set fd ""
