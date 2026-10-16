@@ -1712,6 +1712,16 @@ proc spar::roster_counts {segment_dir {cdata {}}} {
         has_phone_only $has_phone_only]
 }
 
+# stamp_present — whether a deliverable's front matter or root carries a
+# harness stamp (roster_patch_applied, sweep_batch_applied). The key
+# existing is not enough: a worker copies `roster_patch_applied: null`
+# from a template or sibling, and the parser reads null, ~ and an empty
+# value alike as the empty string. Only a non-blank value is a stamp.
+proc spar::stamp_present {data key} {
+    if {$data eq "" || ![dict exists $data $key]} { return 0 }
+    return [expr {[string trim [dict get $data $key]] ne ""}]
+}
+
 # missing fences, YAML parse error).
 proc spar::read_profile_front_matter {path} {
     if {![file exists $path]} { return "" }
