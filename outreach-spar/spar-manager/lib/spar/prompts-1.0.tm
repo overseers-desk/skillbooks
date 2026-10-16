@@ -294,9 +294,10 @@ proc spar::p::_prepare_segment {segment_dir cdata opts datestamp on_progress cam
 
     # Startup reconcile: replay any declaration a dead dispatcher left
     # unapplied. apply_roster_patch is idempotent (star sync compares,
-    # roster_patch is stamp-gated), so replaying every existing profile
-    # is safe; rejections surface as warnings, since fixing belongs to
-    # the row's own next harness run.
+    # a stamped roster_patch writes only into cells gone blank), so
+    # replaying every existing profile is safe and refills what an
+    # unknown writer cleared; rejections surface as warnings, since
+    # fixing belongs to the row's own next harness run.
     if {![info exists ::spar::dispatch_log]} {
         set ::spar::dispatch_log [logger::init spar::dispatch]
     }

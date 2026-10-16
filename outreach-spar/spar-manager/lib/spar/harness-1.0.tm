@@ -826,13 +826,18 @@ oo::class create spar::ProfileHarness {
         # What of the deliverable's declarations has landed (#209). A
         # stamp the file carries before the worker's turn was written by
         # an earlier run's harness; one that appears during the turn is
-        # the worker's copy of a sibling's, and counts for nothing.
+        # the worker's copy of a sibling's, and counts for nothing. The
+        # stamp covers only what that file declared: a prior profile with
+        # no rows_new or sources_new leaves this run's free to land.
         set Applied [dict create roster_patch {} appended 0]
         if {$OutfilePreexisted} {
             set fm [spar::read_profile_front_matter $Outfile]
             if {$fm ne "" && [dict exists $fm roster_patch_applied]} {
+                set appended [expr {[llength [dict getdef $fm rows_new {}]] > 0
+                    || [llength [dict getdef $fm sources_new {}]] > 0}]
                 set Applied [dict create \
-                    roster_patch [dict getdef $fm roster_patch {}] appended 1]
+                    roster_patch [dict getdef $fm roster_patch {}] \
+                    appended $appended]
             }
         }
     }
