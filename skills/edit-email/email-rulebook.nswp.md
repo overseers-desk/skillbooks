@@ -464,6 +464,36 @@ Committed in `e4fdd79` (2026-05-27).
 
 ---
 
+## R11, pronouns and comparisons. A pronoun with two candidates, and a comparison with one side
+
+**Status**: real
+
+**Offending text** (a staff email from the managing director to the marketing manager, 19 October 2026, reporting a fall in searches for the business's name against ten comparable businesses; it passed the subeditor and the verifier and was rejected by the user; the business figures stay out of this record):
+
+> What this does not tell us is why. A review of the website on 13 September ruled it out as the cause.
+
+> Whatever cost us those searches did not hit the market as a whole.
+
+The draft had read "ruled the website out as the cause", after the figures. The subeditor moved the paragraph up to follow the headline paragraph and replaced the repeated noun with "it". Its GIVENS-AFTER pointed "ruled it out" at "A review of the website on 13 September", the grammatical antecedent. The verifier listed nine expressions and not this one. In the headline paragraph the comparison set the other businesses' falls, as Google Trends percentages, beside the business's own fall given only as "about a third" with no source; its own Google Trends figure came two paragraphs later.
+
+**User's objections** (relayed verbatim by the drafting session, which ran in the business's repository):
+
+> what is it????
+
+> you didn't give the search down of us this is textbook skipping /sorry-im-late or it is a bug why it was not found by reader
+
+> this is so badly written with sleep talk that I refuse continue reading it
+
+> What [the recipient] knows before the email is irrelevant for one of the issue I pointed out. Within the email itself, it already uses it without reference. 'It' is a local reference. what reader was used?
+
+**Abstraction into rule**: R11 already named the pronoun and the comparative as surfaces, but the pass tested whether a referent existed, and a pronoun next to a grammatical antecedent has one. The recipient does not resolve by grammar; he reaches the pronoun holding the subject of the sentence before and that sentence's point, so those are candidates, and an antecedent inside a modifier is the weakest of them. A pronoun with more than one candidate is listed `ambiguous` and answered by putting the noun back. The subeditor created this one by swapping a repeated noun for a pronoun, so the prompt has it keep the noun. A comparison's referent is its missing side, and a side given from another source or unit does not answer it.
+
+**Test** (19 October 2026, the email as the user read it, verifier on Sonnet, no agent told the fault): the template before this change flagged neither fault in one run. The first wording of the change caught the pronoun in one run of two. The wording that names the subject and modifier test caught it in two of two, with the candidates the user was choosing between. On the comparison, the Opus subeditor, run on a reconstruction of the draft, named the business's own Google Trends figure as the missing side; the verifier flagged the same sentence's "the market as a whole" as unresolved but did not name that side. The subeditor kept "ruled the website out" and repeated the noun where it split a sentence. Cost: the verifier returned fourteen to sixteen lines against two before, a few of them pronouns with a second candidate no reader would take.
+
+**Rule as it stands now**: the pronoun and comparison paragraphs of R11 in `email-rulebook.md`, and the matching paragraph of the pointing pass in `editor-prompt.md` and `verifier-prompt.md`.
+
+---
+
 ## ASSERTIONS. What the draft states on someone's authority
 
 **Status**: real

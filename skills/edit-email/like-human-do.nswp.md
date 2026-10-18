@@ -49,3 +49,9 @@ All rules PASS the gate on the three cases tested with Opus: Dan (warm peer, no 
 - **No-action guard (R2).** Trigger: the goal step, applied to a no-action relationship email (the distiller), manufactured a soft reciprocal-referral goal and the reader sensed "a referral dressed as neighbourly." Fix: when the email needs no action, say so and lead with warmth; reaching for a business angle is what makes a warm note read as a quiet pitch.
 - **Does it still do its job (R2).** A self-check against the original: the reader must be at least as likely to act. Guards against warmth or brevity dropping what earned the action.
 - **Carnegie perspective-taking — tested, not adopted.** A variant that speculated why the recipient acted and framed the offer to their motive tied the goal-aware version on goal-power and softened a payload fact; matching is not beating, so it was left out. Recorded so it is not re-proposed as obvious.
+
+## What the recipient holds — the objection from what he was told
+
+- **Trigger** (19 October 2026, the staff email recorded under R11's pronoun and comparison entry in `email-rulebook.nswp.md`): the recipient had been told that the website analytics tag was misconfigured until early September, so any traffic figure from the sender invited "is this the broken analytics again?". The figures came from sources the tag does not touch, and the email never said so. The user, on the opening figure: "this data is not affected by misconfiguration of Google analytics becuase ... if true, compelte it."
+- **Fix**: the section, renamed from "What the recipient has not seen", covers the gap in both directions. Where a claim meets something the recipient was told, the sentence making the claim says where the figure comes from and why the known fault does not touch it. Compose-time, since the subeditor holds only the email. Not tested by a run; the change records the case.
+

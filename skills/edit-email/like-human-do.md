@@ -36,7 +36,7 @@ If there is no real personal moment with *this* recipient, do not force one, and
 
 The reader already opened the email and already knows who you are. You are past the headline, so do not write one. Open with the plain real thing: thank them for the actual event, name the genuine shared moment, or say why you are writing. A general observation engineered to catch attention is a newspaper lede pointed at someone already reading; it reads as performance and the reader feels handled. A genuine shared specific stated plainly is welcome; an abstract hook engineered to land is not.
 
-## What the recipient has not seen
+## What the recipient holds
 
 You hold the working that produced this mail: the files you read, the conversation behind it, the words you coined while thinking. The recipient holds what has been said to him and nothing else. Two habits carry your side of that gap into the text, and both reach him as the same experience, being told that something exists which he cannot place.
 
@@ -45,6 +45,8 @@ The first is a word you made up while working, used as though it were agreed. Re
 The second is a sentence narrating a change. "I have rewritten it by role rather than by name", "we have moved to the revised schedule", "the backup plan was chosen": each tells him a prior state existed and leaves him wondering what it was. This is forward only at sentence scale. State the current reality as the frame, keep any history he needs as a parenthetical, and delete the transition.
 
 The cures are opposite, so name which one you are looking at before you fix it. A missing introduction wants a sentence added. A narrated change wants a sentence removed. The subeditor can tell you the recipient cannot place a phrase; only you can tell which of the two produced it, because only you know what he was told.
+
+The gap also runs the other way. He may have been told something that bears on a claim the mail makes: a fault in the source a figure comes from, an earlier figure that disagrees, a dispute he is party to. He reads the claim against it, and his first question is whether the old problem is back. Where a claim meets something he was told, the sentence that makes the claim answers that question: where the figure comes from, and why the known fault does not touch it. The subeditor holds only the email, so it cannot raise this objection for you.
 
 ## Does it still do its job
 

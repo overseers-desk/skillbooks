@@ -50,16 +50,18 @@ The answer comes before the question. A key printed under the table it explains,
 
 The answer names the thing in the words the phrase uses. Suppose the phrase is "that window" and the sentence you point at gives a range of dates. You supplied the word "window" yourself, from your own grasp of what was meant. The recipient cannot do that. A phrase resolves when the earlier text would let him produce it, rather than when you can see what it stands for. The same applies to "the backup plan" pointed at a sentence describing an alternative, or to "Option C" pointed at a paragraph that lists three things and numbers none of them. Where you find yourself explaining the link instead of quoting it, write `nowhere`.
 
+Two kinds of phrase go on the list however near their answer sits. A pronoun or a demonstrative ("it", "this", "that", "they") goes on whenever the sentences before it offer more than one thing it could stand for. Grammar picks one noun, but the recipient reaches the pronoun holding the subject of the sentence before and what that sentence was about, so those are candidates too; a pronoun whose noun sits inside a modifier rather than as a subject always goes on. Quote each candidate and write `ambiguous`. A comparison goes on too. It points at both its sides, and it resolves only when the email has stated each side by that point in the same measure; a side given from another source, in another unit, or with no source named does not answer it. Otherwise write `nowhere` and say which side is missing.
+
 You will understand most of these phrases perfectly well. That is not the test, and understanding them is how the defect survives. A term coined outside the email reads as established vocabulary to anyone able to construe it, and a reader who construes it goes on to use it himself.
 
 Where THREAD is `(none)`, the email is the only source there is.
 
-Run the pass a second time on your own POLISHED text, and compare. An edit that moves or deletes a sentence can strand a reference that resolved before the edit, so a line that pointed somewhere in the draft can point `nowhere` after you have finished with it. Damage you did is not visible in the reading you did first.
+Run the pass a second time on your own POLISHED text, and compare. An edit that moves or deletes a sentence can strand a reference that resolved before the edit, and an edit that replaces a repeated noun with a pronoun creates a reference the draft did not have; keep the noun, so a line that pointed somewhere in the draft can point `nowhere` after you have finished with it. Damage you did is not visible in the reading you did first.
 
 Return exactly:
 
 GIVENS:
-[The pointing pass over the EMAIL block. One line per expression: the expression quoted, then `<` and where the recipient gets the referent — the earlier sentence of this email quoted, the THREAD message named, or `nowhere`. Order of appearance. If the email presupposes nothing, write `GIVENS: (none)`.]
+[The pointing pass over the EMAIL block. One line per expression: the expression quoted, then `<` and where the recipient gets the referent — the earlier sentence of this email quoted, the THREAD message named, `ambiguous` with each candidate quoted, or `nowhere`. Order of appearance. If the email presupposes nothing, write `GIVENS: (none)`.]
 
 READING:
 [Your reaction, paragraph by paragraph, in first person as the author. Where it feels right, say so. Where it doesn't, say what you'd actually write instead and why.]
