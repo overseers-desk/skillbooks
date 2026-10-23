@@ -102,35 +102,25 @@ def main():
     cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
     value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
 
-    sheet = ["| card | your part | the question | recommended | margin, or the counts it stands at | rests on | what is held | market-only reading | ruled |", "|---|---|---|---|---|---|---|---|---|"]
+    sheet = ["| card | your part | the question | recommended | what the counts say | rests on | what is held | market-only reading | ruled |", "|---|---|---|---|---|---|---|---|---|"]
     open_cards, ruled_cards, joints, landings = [], [], [], {}
     for c in cards:
         k = checked.get(cid_of(c), {"match": False, "stance": "", "third": False, "rests": "", "chosen": "", "runner": ""})
         rec, ruled = value(c, "Recommended"), value(c, "Ruled")
         is_ruled = bool(ruled) and ruled.lower() != "open" and not ruled.startswith("<")
-        mm = re.search(r"margin:\s*([^;]+?)\s+over\s", rec)
         parts = [x.strip() for x in rec.split(";")]
         # a withheld row names the two readings it stands between, so the sheet says what is undecided
         recommended = ", ".join(parts[:2]) if parts[0].lower() == "withheld" and len(parts) > 1 and parts[1].lower().startswith("between") else parts[0]
         landings[name(c)] = landing(c, k["third"])
         held = {"matches": "keeps it", "leaves": "leaves it", "withheld held": "held; neither kept nor left", "withheld": "nothing held", "none held": "nothing held"}.get(k["stance"], "")
-        title = c["head"].split("·", 1)[1].strip() if "·" in c["head"] else ""
-        standing = re.search(r"standing at:\s*([^;]+)", rec, re.I)
-        margin = mm.group(1) if mm else standing.group(1).strip() if standing else ""
-        # beside a margin, the two figures it was taken between, so a lead of 6 to 1 and one of 27 to 26 do not read alike
-        derived = re.search(r"derived on:\s*([^;]+)", rec, re.I)
-        if mm and derived:
-            words = derived.group(1).split()
-            margin += " (derived on " + " ".join(words[:25]) + (" …; the card has the rest" if len(words) > 25 else "") + ")"
-        elif mm and k["chosen"] in c["rows"] and k["runner"] in c["rows"]:
-            margin += f" ({c['rows'][k['chosen']][1]} against {c['rows'][k['runner']][1]})"
         ruled_cell = ("ruled; the card leaves the ruling" if k["stance"] == "leaves" else "ruled") if is_ruled else "open"
         withheld_row = k["stance"].startswith("withheld")
         if is_ruled:
             part = "rule again, or let your ruling stand" if k["stance"] == "leaves" else "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling"
         else:
             part = "commission the observation, or rule between the two" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
-        sheet.append(f"| {cid_of(c)} | {part} | {title} | {recommended} | {margin} | {k['rests']} | {held} | {landings[name(c)]} | {ruled_cell} |")
+        # the owner reads the question and the counts in the card's plain sentences; the margin and its working stay on the card
+        sheet.append(f"| {cid_of(c)} | {part} | {value(c, 'Question')} | {recommended} | {value(c, 'What the counts say')} | {k['rests']} | {held} | {landings[name(c)]} | {ruled_cell} |")
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
         if is_ruled:
