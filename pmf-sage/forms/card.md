@@ -4,7 +4,7 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
 
 ## Card N · <the parameter, in the words a buyer meets it>
 
-**Question:** <the decision put to the owner, addressed to him as you in his own and his customers' words, none of the study's working words, leaning to no option; a second sentence only where the choice needs one>
+**Question:** <the decision put to the owner, addressed as you, in the words the owner and the customers use, none of the study's working words, leaning to no option; a second sentence only where the choice needs one>
 
 **Options**
 
