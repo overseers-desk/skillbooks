@@ -18,7 +18,7 @@ For deeper internals: `state-machine.md` covers the TIDs, validation gates, warn
 
 - `tclsh9.0` (CLI tools, tests) — scripts use `#!/usr/bin/env tclsh9.0` shebang
 - `wish9.0` (GUI)
-- tcllib packages: `yaml`, `json`, `json::write` — typically installed via `apt install tcllib` or equivalent
+- tcllib packages: `yaml`, `json`, `json::write` — typically installed via `apt install tcllib` or equivalent; `Markdown` (same package) formats profile bodies in the Inspector, which shows them as written without it
 - TclTLS: `tls` package for STARTTLS (email sending) — `apt install tcl-tls` on Ubuntu, `brew install tcl-tls` on macOS
 
 ### External CLI tools
