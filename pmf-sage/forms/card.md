@@ -24,7 +24,7 @@ Options exclude one another; where two of them can be done together, doing both 
 
 **Chip:** <inherited | anchored | derived | radical, compound allowed>
 
-**Measured in:** <stratum, cell(s), numerator/denominator; the shape note's dimensions each marked shared or differs; or the enquiry count's condition line>
+**Measured in:** <stratum, cell(s), numerator/denominator; the shape note's dimensions each marked shared, differs, or not stated where the population's pages are silent, the silent counted and not inferred; or the enquiry count's condition line>
 
 **Cost lines:** <existence facts from the capability record that bear on this card, one per line, named>
 
