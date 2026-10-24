@@ -672,8 +672,8 @@ wait_for_terminal $d h_hang 3000
 assert_eq [$d state h_hang] cancelled "cancel of a running harness row ends it cancelled"
 assert_eq [spar::live_harness_count] 0 "the aborted harness is unpublished"
 
-# An abort with no cancel behind it (the toolbar's abort-all) still
-# reports the row failed.
+# An abort with no cancel behind it (spar-ui's quit, which exits next)
+# reports the row failed; the toolbar's stop-all cancels instead (#239).
 lassign [make_harness_dirs hang2 ""] p_h2 l_h2
 set ::hang_started 0
 $d enqueue h_hang2 harness_run [dict create \
