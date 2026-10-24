@@ -59,7 +59,7 @@ def parse(text):
     card = {"options": []}
     m = re.search(r"^## Card\s+(\S+)", text, re.M)
     card["id"] = m.group(1).rstrip("·").strip() if m else "?"
-    in_table = in_corrections = False
+    in_table, block = False, None
     for line in text.splitlines():
         s = line.strip()
         if s.startswith("**Options**"):
@@ -74,15 +74,15 @@ def parse(text):
             continue
         if in_table and s and not s.startswith("|"):
             in_table = False
-        # corrections are often a list under the label; they run to the next field or heading
-        if in_corrections and s and not re.match(r"\*\*[A-Za-z ]+:\*\*|#", s):
-            card["Corrections"] = (card["Corrections"] + " " + s).strip()
+        # priors and corrections are often a list under the label; they run to the next field or heading
+        if block and s and not re.match(r"\*\*[A-Za-z ]+:\*\*|#", s):
+            card[block] = (card[block] + " " + s).strip()
             continue
-        in_corrections = in_corrections and not re.match(r"\*\*[A-Za-z ]+:\*\*|#", s)
+        block = block if not re.match(r"\*\*[A-Za-z ]+:\*\*|#", s) else None
         for key in ("Written", "Recommended", "What the counts say", "Held", "Priors", "Measured in", "Ruled", "Third derivation", "Corrections"):
             if s.startswith(f"**{key}:**"):
                 card[key] = s.split("**", 2)[2].strip()
-                in_corrections = key == "Corrections"
+                block = key if key in ("Priors", "Corrections") else None
     return card
 
 
