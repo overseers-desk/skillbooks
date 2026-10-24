@@ -233,8 +233,8 @@ oo::class create spar::ui::Inspector {
         } else {
             dict for {k v} $fm { my render_profile_value $body $k $v }
         }
-        # A profile body is markdown, shown formatted. Message and reply bodies below stay as written:
-        # they travel as text/plain, so that is what the recipient sees.
+        # A profile body is markdown, shown formatted. Message and reply
+        # bodies below stay as written: they travel as text/plain.
         set text [string trim [spar::read_profile_body $path]]
         if {$text ne ""} {
             ::spar::ui::inspector_widgets::wrapped_text_block \

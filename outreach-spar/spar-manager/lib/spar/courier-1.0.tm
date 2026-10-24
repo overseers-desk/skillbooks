@@ -50,8 +50,7 @@ proc spar::courier::not_run_reason {} {
 # not run, in the shape of a run's: `author` under the courier heading of
 # the author's brief, `prior` in the persona's Prior correspondence slot.
 # Each says so in words, because an empty section reads as a contact with
-# no history, and a host without courier was once drafted as cold on that
-# reading (#102).
+# no history (#102).
 proc spar::courier::not_run_blocks {reason} {
     set author "## Courier — prefetched by dispatcher\n\n"
     append author "The mailbox prefetch did not run: $reason. No mailbox was searched for this contact, so prior correspondence is unknown, not absent. Draft as spar-A-approach.md §4.1 says for a contact whose mail check did not run.\n"

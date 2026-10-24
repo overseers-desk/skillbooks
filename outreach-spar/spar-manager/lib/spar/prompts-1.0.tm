@@ -631,9 +631,7 @@ proc spar::a::_build_prompts {opts on_progress} {
             set stem [string trim [dict getdef $row stem ""]]
 
             # A repeated header row is not a contact. A nameless row is
-            # one too, but the gate below says so (#197): dropping it
-            # here left the eligibility count holding rows no dispatch
-            # ever started or reported.
+            # skipped by the gate below, which reports it (#197).
             if {$org eq "organisation"} continue
             if {$org eq ""} continue
 
