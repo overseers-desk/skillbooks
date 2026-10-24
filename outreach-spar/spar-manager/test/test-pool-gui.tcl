@@ -476,5 +476,43 @@ assert_eq [$pool6 state p3] "" "empty selection enqueues nothing"
 dict set ::spar::transitions::registry $stub_tid $real_transition
 $pool6 destroy
 
+# ════════════════════════════════════════════════════════════════════
+# 7. The toolbar's stop-all ends an in-flight harness row cancelled,
+#    as a per-row cancel does, not failed (#239).
+# ════════════════════════════════════════════════════════════════════
+section "7. Stop-all cancels in-flight harness rows"
+
+# A harness that runs until aborted: run parks its coroutine, abort
+# resumes it and run returns non-zero, as a coachman abort does.
+oo::class create HangingHarness {
+    variable Co
+    constructor {prompt_dir log_dir} {}
+    method run {} {
+        set Co [info coroutine]
+        set ::hang_started 1
+        yield
+        return 1
+    }
+    method abort {} { after 0 $Co; return 1 }
+    method fail_cause {} { return aborted }
+}
+
+set ::hang_started 0
+$pool enqueue h_stop harness_run [dict create \
+    prompt_dir /nonexistent log_dir /nonexistent harness_class HangingHarness]
+wait_for {expr {$::hang_started}} 3000
+assert_eq [$pool state h_stop] running "the hanging harness row is running"
+
+# The operator answers yes to "also stop the in-flight runs?".
+rename tk_messageBox _real_tk_messageBox
+proc tk_messageBox {args} { return yes }
+$dc cancel
+rename tk_messageBox {}
+rename _real_tk_messageBox tk_messageBox
+
+assert_eq [wait_for_terminal $pool h_stop 3000] 1 "the stopped row reached a terminal state"
+assert_eq [$pool state h_stop] cancelled "stop-all ends the in-flight row cancelled"
+assert_eq [spar::live_harness_count] 0 "the stopped harness is unpublished"
+
 $pool destroy
 finish_tests

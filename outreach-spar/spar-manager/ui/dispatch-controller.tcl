@@ -436,8 +436,12 @@ oo::class create spar::ui::DispatchController {
             $Log log "$live in-flight run(s) left to finish."
             return
         }
-        set n [spar::abort_live_harnesses]
-        $Log log "Aborted $n in-flight run(s)."
+        # Through the Dispatcher's cancel, as a per-row cancel goes, so
+        # the row ends cancelled; a bare harness abort sets no cancel
+        # flag and the row ended failed (#239).
+        set rows [dict keys $::spar::live_harnesses]
+        foreach r $rows { $Dispatcher cancel $r }
+        $Log log "Cancelled [llength $rows] in-flight run(s)."
     }
 
     # auto_dispatch — headless / self-debug entry point. Called from the
