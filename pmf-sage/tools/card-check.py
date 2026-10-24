@@ -100,7 +100,7 @@ def main():
             named = [o for o in c["options"] if o["name"] in rec]
             standing = re.search(r"standing at:\s*(.+?)(?=;\s*carried by:|$)", rec, re.I)
             if standing and len(standing.group(1).split()) > 20:
-                refusals.append(f"card {c['id']}: the standing-at clause runs to {len(standing.group(1).split())} words; the form asks for twenty or fewer, the rest belongs in the corrections")
+                refusals.append(f"card {c['id']}: the standing-at clause runs to {len(standing.group(1).split())} words; the form asks for twenty or fewer, the rest belongs on the Measured in line")
             if len(named) < 2 or not standing or not re.search(r"carried by:\s*\S", rec, re.I):
                 refusals.append(f"card {c['id']}: a withheld recommendation names two options, the counts after 'standing at:', and after 'carried by:' the observation that would carry either")
         elif not chosen:

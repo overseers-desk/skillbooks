@@ -34,6 +34,6 @@ Options exclude one another; where two of them can be done together, doing both 
 
 **Third derivation:** <its file in backticks; agrees, differs or declines; where it landed and by what count; where it lands on an option the capability record cannot deliver, that cost line>
 
-**Corrections:** <dated ruled-lines; a correction that withdraws the leg under the recommendation rewrites the Recommended line in the same act and says here what stood before>
+**Corrections:** <none, until the card is ruled and the work that follows the ruling has begun; before then a change rewrites the card forward only. After it, dated lines: a correction that withdraws the leg under the recommendation rewrites the Recommended line in the same act and says here what stood before>
 
 A third derivation is a separate file headed `## Third derivation of Card N`, which the tools do not count as a card; the review shows the original card and its Third derivation line points at the file.
