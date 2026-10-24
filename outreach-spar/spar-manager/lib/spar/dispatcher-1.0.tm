@@ -243,19 +243,11 @@ namespace path ::jobloop::worker
 # on every normal path.
 
 # tether_harness - make the claude sessions a harness launches die with
-# this process however it ends (#202). deadman starts each session in a
-# process group of its own, which a graceful stop reaches through
-# abort_live_harnesses but a SIGKILL, an OOM kill or a Tk crash does not;
-# the session would run on unharnessed, its spend unledgered and its
-# deliverable unvalidated. So the harness's claude_bin is pointed at
-# tools/claude-tether, which execs the real claude with a watcher in the
-# session's group that ends the group once this process is gone, and
-# records that in the session's .stderr log. The real binary and this
-# pid travel in the environment, set just before coachman's _invoke
-# spawns (nothing yields between its claude_bin call and the spawn). An
-# instance without a claude_bin (a test stub) is left alone; so is one
-# whose own claude_bin finds no claude, so coachman's not-found failure
-# still fires.
+# this process however it ends (#202). A SIGKILL, OOM kill or Tk crash
+# skips abort_live_harnesses and would leave the session running
+# unledgered, so claude_bin points at tools/claude-tether. The real
+# binary and this pid travel in the environment, set just before _invoke
+# spawns (nothing yields between). Left alone: no claude_bin, or none found.
 namespace eval spar {
     variable tether_bin [file join \
         [file dirname [file dirname [file dirname [file normalize [info script]]]]] \

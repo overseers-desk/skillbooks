@@ -34,9 +34,7 @@
 #
 # --yes skips the up-front [y/N] confirmation that fires before any
 # transition with requires_send_confirmation=1 (T6 SES). Cron uses --yes:
-# without it a run whose stdin is not a terminal cannot be asked, and
-# exits EXIT_UNCONFIRMED (2) having sent nothing, distinct from the exit
-# 1 of a run whose work failed (#203).
+# without it a run with no terminal on stdin exits 2, having sent nothing (#203).
 
 set script_dir [file dirname [file normalize [info script]]]
 set EXIT_UNCONFIRMED 2
@@ -858,15 +856,10 @@ if {$dispatching} {
     # whose class declares requires_send_confirmation=1 gates here.
     # Skipped under --dry-run, --yes, or --jobs=0 (stepping supplies
     # its own per-item gate).
-    #
-    # The question needs someone to answer it. With no terminal on
-    # stdin (cron, nohup, a closed pipe) `gets` returns an empty string
-    # at once, which the [y/N] test would read as N and abort with only
-    # "Aborted." in the log (#203). So the run declines to ask: it names
-    # --yes and exits with its own status,
-    # EXIT_UNCONFIRMED, so an unattended runner can tell a run nobody
-    # could answer from a run whose work failed. `chan configure
-    # -inputmode` is accepted only by a terminal channel.
+    # With no terminal on stdin (cron, nohup, a closed pipe) `gets` returns
+    # "" at once, which the [y/N] test would read as N (#203). Exit
+    # EXIT_UNCONFIRMED instead, distinct from a failed run's 1.
+    # `chan configure -inputmode` is accepted only by a terminal channel.
     if {!$dry_run && !$assume_yes && !$stepping} {
         set attended [expr {![catch {chan configure stdin -inputmode}]}]
         foreach tid $active_tids {

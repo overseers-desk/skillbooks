@@ -1188,15 +1188,10 @@ proc spar::_evaluate_slot_readiness {preceding_msg own_msg wait_days wait_cond o
 # dicts expose star_rating, date_excluded, email, linkedin_url, etc.
 #
 # Gates (resolves #56):
-#   - contact_name:    the row names a person (campaign-independent; the
-#                      prompt builder applies the same gate, #197)
+#   - contact_name:    the row names a person (#197)
 #   - skip_excluded:   filter.skip_excluded (default true) + date_excluded
 #   - in_scope_channel: roster_row_has_in_scope_channel against campaign slots
 #   - min_star:        filter.min_star (default 3) vs parsed star_rating
-#
-# Whether a row naming only an organisation should ever be approached is
-# #59's question; this gate keeps the prompt builder's answer (no) and
-# only makes it visible.
 #
 # When cdata is empty (tests, legacy callers), falls back to the pre-#56
 # T2 hardcode — star >= 3 + skip excluded — so existing T2 test assertions
