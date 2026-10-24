@@ -230,4 +230,31 @@ write_campaign_yaml $cdir "campaign: t\nprimary_channel: email\nsegments:\n  - s
 assert_eq [spar::validate_campaign_yaml [spar::load_campaign $cpath]] {} \
     "a bare channel, a list of segment names and a label-only USP are clean"
 
+# ════════════════════════════════════════════════════════════════════════
+# 13. validate_plan_usps: a plan's USP ids resolve in the registry (#102)
+# ════════════════════════════════════════════════════════════════════════
+section "13. validate_plan_usps"
+
+write_campaign_yaml $cdir $example
+assert_eq [spar::validate_plan_usps [spar::load_campaign $cpath]] {} \
+    "the spec's example cites only registry ids"
+
+write_campaign_yaml $cdir [string map [list "      - id: u1\n" "      - id: U7\n"] $example]
+set issues [spar::validate_plan_usps [spar::load_campaign $cpath]]
+assert_eq [lmap i $issues {dict get $i code}] unknown_usp_id \
+    "a plan id the registry lacks is reported once"
+assert_eq [dict get [lindex $issues 0] severity] error "an unresolved id is an error"
+assert_eq [dict get [lindex $issues 0] message] \
+    "campaign YAML segments.segment-a.usps\[1\]: id 'U7' is not in the usps registry (registry: U1, u1, example-offer)" \
+    "the message names the segment, the entry's place and the registry's ids"
+
+write_campaign_yaml $cdir "campaign: t\nsegments:\n  seg-a:\n    usps:\n      - id: U1\n"
+assert_match [dict get [lindex [spar::validate_plan_usps [spar::load_campaign $cpath]] 0] message] \
+    "*id 'U1' is not in the usps registry (the registry is empty)" \
+    "a plan citing an id with no registry says the registry is empty"
+
+write_campaign_yaml $cdir "campaign: t\nsegments:\n  - seg-a\nusps:\n  U1: a label\n"
+assert_eq [spar::validate_plan_usps [spar::load_campaign $cpath]] {} \
+    "a list of segment names carries no plan and nothing to check"
+
 finish_tests
