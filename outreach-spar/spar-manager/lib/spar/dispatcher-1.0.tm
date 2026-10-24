@@ -242,6 +242,36 @@ namespace path ::jobloop::worker
 # RunJob and reported failed. Each body still names its own terminal verb
 # on every normal path.
 
+# tether_harness - make the claude sessions a harness launches die with
+# this process however it ends (#202). deadman starts each session in a
+# process group of its own, which a graceful stop reaches through
+# abort_live_harnesses but a SIGKILL, an OOM kill or a Tk crash does not;
+# the session would run on unharnessed, its spend unledgered and its
+# deliverable unvalidated. So the harness's claude_bin is pointed at
+# tools/claude-tether, which execs the real claude with a watcher in the
+# session's group that ends the group once this process is gone, and
+# records that in the session's .stderr log. The real binary and this
+# pid travel in the environment, set just before coachman's _invoke
+# spawns (nothing yields between its claude_bin call and the spawn). An
+# instance without a claude_bin (a test stub) is left alone; so is one
+# whose own claude_bin finds no claude, so coachman's not-found failure
+# still fires.
+namespace eval spar {
+    variable tether_bin [file join \
+        [file dirname [file dirname [file dirname [file normalize [info script]]]]] \
+        tools claude-tether]
+}
+proc spar::tether_harness {inst} {
+    if {"claude_bin" ni [info object methods $inst -all]} return
+    oo::objdefine $inst method claude_bin {} {
+        set real [next]
+        if {$real eq ""} { return "" }
+        set ::env(SPAR_TETHER_CLAUDE) $real
+        set ::env(SPAR_TETHER_PID) [pid]
+        return $::spar::tether_bin
+    }
+}
+
 # harness_run - drive a Profile or Approach harness end-to-end for one
 # row. opts must carry:
 #   prompt_dir    - directory the harness reads (prompt.txt, meta.env,
@@ -280,6 +310,7 @@ proc harness_run {row opts} {
     set cause ""
     if {[catch {
         set inst [$harness_class new $prompt_dir $log_dir]
+        spar::tether_harness $inst
         # Publish the live harness so a front-end's cancel can abort it
         # mid-run (spar::abort_live_harnesses). Registered only for the
         # span of run(); a short send worker (ses/linkedin/imap) has no
