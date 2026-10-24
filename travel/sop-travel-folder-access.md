@@ -14,9 +14,9 @@ Each journey folder follows the naming convention:
 
 Examples:
 
-- `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Sam, Alex, A-Z`
-- `2025-11-29 Venice - Sam, Alex, A-Z`
-- `2025-04-04 Lima - Sam, Alex, A-Z`
+- `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Partner, Alex, A-Z`
+- `2025-11-29 Venice - Partner, Alex, A-Z`
+- `2025-04-04 Lima - Partner, Alex, A-Z`
 
 ## Access Method: rclone
 
@@ -37,7 +37,7 @@ rclone lsd "Dropbox:0. Travel Admin" | grep -i "keyword"
 ### Listing Contents of a Journey Folder
 
 ```bash
-rclone ls "Dropbox:0. Travel Admin/2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Sam, Alex, A-Z"
+rclone ls "Dropbox:0. Travel Admin/2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Partner, Alex, A-Z"
 ```
 
 `rclone ls` lists all files recursively with sizes. For subfolders only, use `rclone lsd`.

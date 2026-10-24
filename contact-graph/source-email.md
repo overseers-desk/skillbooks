@@ -73,7 +73,7 @@ Alex's addresses:
 - alexchen@example.org
 - alexchen@example.cn (historical)
 
-`partner@example.com` is a separate mailbox (Sam, human_id=2) indexed in the same mu store. Messages in that account where partner@example.com appears as recipient are inbound to Sam. The plugin must handle per-account identity: for the `partner-example-com` account, partner@example.com is the account owner.
+The partner's personal mailbox is a separate account (human_id=2) indexed in the same mu store. Messages in that account where the partner's address appears as recipient are inbound to the partner. The plugin must handle per-account identity: for the partner's account, the partner's address is the account owner.
 
 Loaded from a single config location read by this plugin. Other plugins carry their own identity config keyed to the account being processed.
 
