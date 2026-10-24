@@ -117,12 +117,20 @@ def main():
             part = "rule again, or let your ruling stand" if k["stance"] == "leaves" else "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling"
         else:
             part = "commission the observation, or rule between the two" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
+        # a ruling older than the evidence under it is given again; a ruling newer than the one the game played on sends the game round again
+        dated = lambda d: d not in ("none", "undated")
+        moved = is_ruled and dated(k["written"]) and dated(k["ruled_on"]) and k["written"] > k["ruled_on"]
+        if moved:
+            part = f"the evidence under your ruling moved on {k['written']}: rule again, or confirm"
+            ruled_cell = "ruled; the evidence moved since"
+        if is_ruled and dated(k["ruled_on"]) and dated(k["game"]) and k["ruled_on"] > k["game"]:
+            ruled_cell += f"; ruled again after the game played on your ruling of {k['game']}, so the game runs again"
         # the owner reads the question and the counts in the card's plain sentences; the margin and its working stay on the card
         sheet.append(f"| {cid_of(c)} | {part} | {value(c, 'Question')} | {recommended} | {value(c, 'What the counts say')} | {k['rests']} | {held} | {landings[name(c)]} | {ruled_cell} |")
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
         if is_ruled:
-            keep = [c["head"]] + with_prose(c, "Question")[:1] + with_prose(c, "Recommended")[:1]
+            keep = [c["head"]] + with_prose(c, "Question")[:1] + with_prose(c, "Recommended")[:1] + ([c["fields"]["What the counts say"]] if moved and "What the counts say" in c["fields"] else [])
         else:
             # the two contenders in full; a withheld card's two readings are the options its line names
             full = [n for n in (k["chosen"], k["runner"]) if n in c["rows"]]
