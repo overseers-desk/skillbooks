@@ -3,7 +3,8 @@
 # declaration-and-apply roster mediation. Covers: patch applies, re-apply
 # is inert (stamp), a stamped patch leaves a later human roster edit
 # standing, masked email rejected pre-apply, star sync fires on drift and
-# leaves excluded rows alone.
+# leaves excluded rows alone, a resolved name that would duplicate a live
+# person excludes the nameless row instead of naming it (#201).
 
 package require logger
 set script_dir [file dirname [file normalize [info script]]]
@@ -292,6 +293,154 @@ assert_eq [roster_field $roster email] "found@send.example" "approach patch appl
 spar::update_roster_field $roster stem jane-doe-acme email human2@corrected.example
 spar::apply_approach_patch $approach $roster jane-doe-acme
 assert_eq [roster_field $roster email] "human2@corrected.example" "stamped approach patch inert"
+
+# 10. A resolved name that would make a nameless row a same-person
+# duplicate (#201): the name is not written, the nameless row is excluded
+# as the duplicate with the canonical stem in p_note, and the error tells
+# the worker to rewrite its deliverable as the exclusion profile.
+proc write_dup_roster {path {canon_excluded ""} {nameless_p_note ""}} {
+    set fd [open $path w]
+    puts $fd [join {stem contact_name organisation role phone email linkedin_url facebook_url sweep_iteration discovered_via date_excluded s_note p_note star_rating postcode} \t]
+    puts $fd [join [list jo-mackenzie-amare-ceramics "Jo Mackenzie" "Amare Ceramics" Owner "" jo@amare.example "" "" 1 test $canon_excluded "" "" 4 4211] \t]
+    puts $fd [join [list amare-ceramics "" "Amare Ceramics" "" "" "" "" "" 2 test "" "" $nameless_p_note 3 4211] \t]
+    close $fd
+}
+proc row_of {path stem} {
+    foreach r [spar::load_roster $path] {
+        if {[dict get $r stem] eq $stem} { return $r }
+    }
+    return {}
+}
+set dup_profile [file join $tmpdir amare-ceramics.md]
+set named_fm {
+    "profile_date: 2026-08-10"
+    "star_rating: 4"
+    "yield: 3"
+    "dependent_data:"
+    "  contact_name: Jo Mackenzie"
+    "  organisation: Amare Ceramics"
+    "  role: Owner"
+    "  date_excluded: \"\""
+    "roster_patch:"
+    "  contact_name: Jo Mackenzie"
+    "  role: Owner"
+    "  email: jo@amare.example"
+    "rows_new:"
+    "  - stem: sam-lee-kiln-works"
+    "    contact_name: Sam Lee"
+    "    organisation: Kiln Works"
+    "    discovered_via: \"profile:amare-ceramics · named as Jo's kiln partner\""
+    "sources_new:"
+    "  - name: Ceramics guild list"
+    "    type: registry"
+    "    status: unharvested"
+    "    discovered_via: profile:amare-ceramics"
+}
+set today [clock format [clock seconds] -format %Y-%m-%d]
+write_dup_roster $roster
+write_test_sweep $sweep
+write_test_profile $dup_profile $named_fm
+set issues [spar::apply_roster_patch $dup_profile $roster amare-ceramics $sweep {roster_patch {} appended 0}]
+assert_eq [lmap i $issues {dict get $i code}] patch_duplicate_person "the collision is one patch_duplicate_person issue"
+assert_eq [dict get [lindex $issues 0] severity] error "and it is an error, so the fix turn rewrites the deliverable"
+assert_match [dict get [lindex $issues 0] message] "*jo-mackenzie-amare-ceramics*exclusion profile*" "the message names the canonical row and the rewrite asked for"
+set nr [row_of $roster amare-ceramics]
+assert_eq [dict get $nr contact_name] "" "the resolved name is not written"
+assert_eq [dict get $nr role] "" "nor the role"
+assert_eq [dict get $nr email] "" "nor the channel"
+assert_eq [dict get $nr date_excluded] $today "the nameless row is excluded"
+assert_eq [dict get $nr star_rating] 0 "at star 0"
+assert_eq [dict get $nr p_note] "duplicate of jo-mackenzie-amare-ceramics: resolved to Jo Mackenzie at Amare Ceramics" "p_note names the canonical row"
+set cr [row_of $roster jo-mackenzie-amare-ceramics]
+assert_eq [list [dict get $cr contact_name] [dict get $cr star_rating] [dict get $cr date_excluded]] {{Jo Mackenzie} 4 {}} "the canonical row is untouched"
+assert_eq [llength [spar::load_roster $roster]] 2 "rows_new waits for a clean turn"
+assert_eq [llength [dict get [spar::read_sweep_yaml $sweep] sources]] 2 "sources_new waits for a clean turn"
+set fd [open $dup_profile r]; set ptext [read $fd]; close $fd
+assert_eq [string match "*roster_patch_applied*" $ptext] 0 "no stamp while the deliverable still names the person"
+set live_pairs [lmap r [spar::load_roster $roster] {
+    expr {[dict get $r date_excluded] eq "" && [dict get $r contact_name] ne ""
+          ? "[string tolower [dict get $r contact_name]]|[string tolower [dict get $r organisation]]" : [continue]}}]
+assert_eq [llength $live_pairs] [llength [lsort -unique $live_pairs]] "no live (contact_name, organisation) pair repeats"
+
+# A fix turn that still declares the name: the same error, the
+# exclusion's date and note as they were, the note not doubled.
+spar::update_roster_field $roster stem amare-ceramics date_excluded 2026-08-10
+set issues [spar::apply_roster_patch $dup_profile $roster amare-ceramics $sweep {roster_patch {} appended 0}]
+assert_eq [lmap i $issues {dict get $i code}] patch_duplicate_person "a turn still naming the person is refused again"
+set nr [row_of $roster amare-ceramics]
+assert_eq [dict get $nr date_excluded] 2026-08-10 "the exclusion keeps its date"
+assert_eq [dict get $nr p_note] "duplicate of jo-mackenzie-amare-ceramics: resolved to Jo Mackenzie at Amare Ceramics" "the note is not appended twice"
+assert_eq [dict get $nr contact_name] "" "the name is still not written"
+
+# The fix turn that does as asked: an exclusion profile with no name in
+# its patch applies clean, and the deferred rows_new and sources_new land.
+write_test_profile $dup_profile {
+    "profile_date: 2026-08-10"
+    "star_rating: 0"
+    "yield: 0"
+    "dependent_data:"
+    "  contact_name: null"
+    "  organisation: Amare Ceramics"
+    "  role: null"
+    "  date_excluded: 2026-08-10"
+    "rows_new:"
+    "  - stem: sam-lee-kiln-works"
+    "    contact_name: Sam Lee"
+    "    organisation: Kiln Works"
+    "    discovered_via: \"profile:amare-ceramics · named as Jo's kiln partner\""
+    "sources_new:"
+    "  - name: Ceramics guild list"
+    "    type: registry"
+    "    status: unharvested"
+    "    discovered_via: profile:amare-ceramics"
+}
+set issues [spar::apply_roster_patch $dup_profile $roster amare-ceramics $sweep {roster_patch {} appended 0}]
+assert_eq $issues {} "the rewritten exclusion profile applies clean"
+assert_eq [llength [spar::load_roster $roster]] 3 "its rows_new lands"
+assert_eq [llength [dict get [spar::read_sweep_yaml $sweep] sources]] 3 "its sources_new lands"
+set nr [row_of $roster amare-ceramics]
+assert_eq [list [dict get $nr contact_name] [dict get $nr date_excluded] [dict get $nr star_rating]] {{} 2026-08-10 0} "the row stays nameless and excluded"
+
+# The pair is compared as validate_roster compares it: trimmed and case
+# folded, so a differently cased resolution collides too, with no record
+# given (the reconcile path) as with one.
+write_dup_roster $roster
+write_test_profile $dup_profile {
+    "profile_date: 2026-08-10"
+    "star_rating: 4"
+    "roster_patch:"
+    "  contact_name: \" jo mackenzie \""
+    "  organisation: AMARE CERAMICS"
+}
+set issues [spar::apply_roster_patch $dup_profile $roster amare-ceramics]
+assert_eq [lmap i $issues {dict get $i code}] patch_duplicate_person "case and spacing do not hide the collision"
+assert_eq [dict get [row_of $roster amare-ceramics] contact_name] "" "and the name is not written"
+
+# An excluded canonical row is no live person: validate_roster leaves it
+# out, so the name is written and nothing is excluded.
+write_dup_roster $roster 2026-01-01
+write_test_profile $dup_profile {
+    "profile_date: 2026-08-10"
+    "star_rating: 4"
+    "roster_patch:"
+    "  contact_name: Jo Mackenzie"
+}
+set issues [spar::apply_roster_patch $dup_profile $roster amare-ceramics "" {roster_patch {} appended 0}]
+assert_eq $issues {} "against an excluded row the resolution applies clean"
+set nr [row_of $roster amare-ceramics]
+assert_eq [list [dict get $nr contact_name] [dict get $nr date_excluded] [dict get $nr star_rating]] {{Jo Mackenzie} {} 4} "the name lands and the row stays live"
+
+# A different person at the same organisation is no duplicate.
+write_dup_roster $roster
+write_test_profile $dup_profile {
+    "profile_date: 2026-08-10"
+    "star_rating: 3"
+    "roster_patch:"
+    "  contact_name: Ana Ruiz"
+}
+set issues [spar::apply_roster_patch $dup_profile $roster amare-ceramics "" {roster_patch {} appended 0}]
+assert_eq $issues {} "a second person at the organisation applies clean"
+assert_eq [dict get [row_of $roster amare-ceramics] contact_name] "Ana Ruiz" "and is named"
 
 file delete -force $tmpdir
 puts "test-roster-patch: all assertions passed"
