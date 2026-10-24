@@ -307,7 +307,11 @@ T6 tasks carry the send channel that routed them (the `channel` key on the task 
        for every sent contact, and a reply may come from an address no contact carries.
 
   T8 — LinkedIn→Email cross-message transition within APPROACHED/SENT (same primary state).
-  T9, T10 — secondary/tertiary follow-ups (documented but not wired in transition_eligible).
+  T9, T10 — secondary/tertiary follow-ups within APPROACHED/SENT. Readiness is wired:
+       their transition class reports each contact dispatchable, awaiting or blocked
+       from channel_readiness, and spar-transition's report lists them. Dispatch
+       status is manual and ui_tree_row is 0, so neither front end runs them: the send
+       path, and the render-script and mark-actioned surface in the inspector, are #174.
 ```
 
 ---
@@ -332,8 +336,8 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T6  | APPROACHED ∨ SENT    | channel = `final_auto_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel not in `send_workers` and its message unactioned: blocked, "no send worker for channel '<channel>'". No channel (final round of manual touches only, e.g. phone-only, or no final message): row is omitted entirely | lib/spar/state-1.0.tm |
 | T7  | campaign-level       | ∃ sent approach with no reply on file                    | One task under the `reply-check` stem; no per-contact row. An approach that fails validation is left unwritten by append_reply_to_yaml and named on stderr | transitions/check_replies.tcl |
 | T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | ¬A: blocked, "invalid_approach_yaml: …". Otherwise always awaiting, "LinkedIn sent, awaiting acceptance before email follow-up" | transitions/linkedin_followup.tcl |
-| T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | lib/spar/state-1.0.tm (T9 branch) |
-| T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | lib/spar/state-1.0.tm (T10 branch) |
+| T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | ¬A: blocked, "invalid_approach_yaml: …". Awaiting carries the `secondary_reason` from `channel_readiness`: "waiting until day N (currently day M since preceding send)", "preceding channel received a reply (no_reply condition failed)", "no '<ch>' message drafted in final round", "own '<ch>' message already sent", "preceding actioned_date unparseable". Primary unsent, no final round, no secondary slot, or no campaign dict → row omitted | transitions/manual_followup.tcl (readiness: `channel_readiness`, lib/spar/state-1.0.tm) |
+| T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9 on `tertiary_reason`, gated on the secondary message's actioned_date | transitions/manual_followup.tcl |
 
 [†] T6 sends each contact's own primary touch: `final_auto_send_channel` reads the contact's final round and returns the channel of its first message that is not a manual touch (`spar::manual_touch_channels`: phone), so routing is per contact, not per campaign — an email-only contact in a linkedin-primary campaign dispatches by email (ses_send), a linkedin contact by linkedin_send. The channel → worker pairs are one map, `::spar::transitions::send_workers` (transitions/send_email.tcl), read by T6's eligibility and its row builder; a primary touch on a channel the map lacks blocks the contact rather than dropping it. The contact's secondary and tertiary channels belong to T9/T10 with wait_days/wait_condition (issue #174); T6 sends only the first.
 
