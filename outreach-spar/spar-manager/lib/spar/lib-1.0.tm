@@ -895,6 +895,43 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {ap
 
     if {[llength $issues]} { return $issues }
 
+    # A resolved name that lands this row on a person the roster already
+    # holds (#201): the row was dispatched nameless (organisation known,
+    # no person yet), and the name the worker resolved makes, with its
+    # organisation, the (contact_name, organisation) pair of a live row.
+    # Named, the row would be the true duplicate validate_roster refuses
+    # to ship (roster_duplicate_name_org), and no fix turn could clear it.
+    # So the name is never written: the row is excluded as the duplicate
+    # it is, the canonical stem in p_note, and the one exception to the
+    # all-or-nothing rule above is this exclusion, written so the row
+    # stays excluded whatever the fix loop makes of the deliverable. The
+    # rows_new and sources_new wait with the rest for a clean turn. The
+    # deliverable still describes a named, rated contact, so the error
+    # says to rewrite it as the exclusion profile of the row this leaves.
+    set canonical [spar::_resolved_name_collision $rows $row $pending]
+    if {$canonical ne ""} {
+        # A fix turn that still declares the name lands here again; the
+        # exclusion already on the row keeps its date and its note.
+        set today [spar::_roster_field_current $row date_excluded]
+        if {$today eq ""} {
+            set today [clock format [clock seconds] -format %Y-%m-%d]
+        }
+        set name  [string trim [dict get $pending contact_name]]
+        set org   [string trim [dict getdef $pending organisation \
+                       [dict getdef $row organisation ""]]]
+        set note  "duplicate of $canonical: resolved to $name at $org"
+        set prior [spar::_roster_field_current $row p_note]
+        if {[string first $note $prior] < 0} {
+            set prior [expr {$prior eq "" ? $note : "$prior; $note"}]
+        }
+        set pending [dict create date_excluded $today star_rating 0 \
+            p_note $prior]
+        set accepted {}
+        set sources_new {}
+        set issues [list [dict create severity error code patch_duplicate_person \
+            message "roster_patch contact_name '$name' at '$org' is the person row '$canonical' already holds; this row ($stem) has been excluded as its duplicate (date_excluded $today, star_rating 0, p_note names the canonical row) and the name was not written. Rewrite the deliverable as this row's exclusion profile (SPAR-P §5.4): star_rating 0, dependent_data as the row now stands (contact_name null, date_excluded $today), no contact_name, role or channel keys in roster_patch, and a brief body saying the person is profiled under '$canonical'"]]
+    }
+
     if {[dict size $pending] || [llength $accepted]} {
         set fd [open $roster_path r]
         fconfigure $fd -translation binary
@@ -920,6 +957,8 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {ap
         }
     }
 
+    if {[llength $issues]} { return $issues }
+
     if {[llength $sources_new] > 0} {
         spar::append_sweep_sources $sweep_path $sources_new
     }
@@ -930,6 +969,31 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {ap
         spar::_stamp_patch_applied $profile_path
     }
     return {}
+}
+
+# _resolved_name_collision — the stem of the live roster row, other than
+# row itself, that already holds the (contact_name, organisation) pair
+# the pending patch would give a nameless row; "" when the patch names
+# no contact_name, the row already has one, or no such row exists. The
+# pair is compared as validate_roster compares it (trimmed, case folded,
+# excluded rows left out), so a "" here means the write cannot raise
+# roster_duplicate_name_org.
+proc spar::_resolved_name_collision {rows row pending} {
+    if {![dict exists $pending contact_name]} { return "" }
+    if {[spar::_roster_field_current $row contact_name] ne ""} { return "" }
+    set name [string tolower [string trim [dict get $pending contact_name]]]
+    if {$name eq ""} { return "" }
+    set org [string tolower [string trim [dict getdef $pending organisation \
+                 [dict getdef $row organisation ""]]]]
+    set stem [dict getdef $row stem ""]
+    foreach r $rows {
+        if {[dict getdef $r stem ""] eq $stem} continue
+        if {[spar::_roster_field_current $r date_excluded] ne ""} continue
+        if {[string tolower [spar::_roster_field_current $r contact_name]] ne $name} continue
+        if {[string tolower [spar::_roster_field_current $r organisation]] ne $org} continue
+        return [dict getdef $r stem ""]
+    }
+    return ""
 }
 
 # _patch_unapplied — the entries of a declared roster_patch still to
