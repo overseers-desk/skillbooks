@@ -6,11 +6,15 @@ Reads <run-dir>/3-decisions/**/*.md cards, <run-dir>/3-decisions/integrator-fiel
 ## Unlock and ## Collisions) and <run-dir>/3-decisions/joint-ledger.md if present.
 Writes <run-dir>/3-decisions/review.md from forms/review.md beside this script: the ruling sheet (one row a card), the order of
 ruling, the counts from the card check, the open cards with the recommended option and its runner-up in full, the ruled cards in short, and each card's Joint line.
+Every card paragraph the review does not print is reported on stderr as DROPPED, so nothing leaves a card silently.
 """
 import re, subprocess, sys
 from pathlib import Path
 
 FACE = ("Question", "Options", "Recommended")  # the line under the options table counts the silent operators once
+# the form's field labels; a bold label the form does not declare opens a paragraph, not a field
+FORM_FIELDS = set(re.findall(r"\*\*([A-Za-z ]+):?\*\*", (Path(__file__).resolve().parent.parent / "forms" / "card.md").read_text()))
+LISTED = ("Cost lines", "Priors", "Corrections")  # the form asks for these one entry to a line, so a list under them is the form kept
 
 
 def section(text, title):
@@ -22,11 +26,10 @@ def read_card(path):
     """The card's face by field: the line under each label, the option rows, and the Joint line."""
     card = {"file": path.name, "head": "", "fields": {}, "prose": {}, "table": [], "rows": {}, "joint": ""}
     field, in_table = None, False
+    dropped = lambda s, under: print(f"DROPPED {path.name}: paragraph under {under}: {s[:70]}", file=sys.stderr)
     for line in path.read_text(errors="replace").splitlines():
         s = line.strip()
         fm = re.match(r"\*\*([A-Za-z ]+):?\*\*", s)
-        if fm:
-            field = fm.group(1)
         if s.startswith("## Card"):
             card["head"] = s
         elif s.startswith("**Options**"):
@@ -38,16 +41,27 @@ def read_card(path):
             else:
                 card["rows"][cells[0]] = (s, cells[1] if len(cells) > 1 else "")
         elif fm:
-            card["fields"].setdefault(field, s)
+            # a label the form declares, met once, is a field; a label it does not declare, or a field written a second time, is a paragraph the review has no place for
+            if fm.group(1) in FORM_FIELDS and fm.group(1) not in card["fields"]:
+                card["fields"][fm.group(1)] = s
+            else:
+                dropped(s, field)
             in_table = False
-        elif s and not fm and not s.startswith(("#", "|", "-")) and card["head"]:
+        elif s and s.startswith(("#", "|", "-")) and card["head"]:
+            in_table = False
+            # a list, a second table or a heading under a field has no place in the review; a table's rule line is not a paragraph
+            if field not in LISTED and not re.fullmatch(r"[|\-: ]+", s):
+                dropped(s, field)
+        elif s and card["head"]:
             in_table = False
             # the face is the question, the options and the recommendation with what the clerk wrote beside them; prose under another field is not in the review
             if field in FACE:
                 card["prose"].setdefault(field, []).append(s)
             elif field != "Cost lines":
                 # the form asks for cost lines one to a line, so plain lines there are the form kept, not a paragraph lost
-                print(f"DROPPED {path.name}: paragraph under {field}: {s[:70]}", file=sys.stderr)
+                dropped(s, field)
+        if fm:
+            field = fm.group(1)
         # the Joint line runs to the next field label or the line's end; a bullet after the label and emphasis inside the text are both the clerk's
         jm = re.search(r"\*\*Joint:\*\*\s*(?:·\s*)?(.*?)(?=\s*(?:·\s*)?\*\*[A-Za-z ]+:\*\*|$)", s)
         if jm and jm.group(1).strip():
@@ -131,6 +145,10 @@ def main():
             joints.append(f"{name(c)}: {c['joint']}")
         if is_ruled:
             keep = [c["head"]] + with_prose(c, "Question")[:1] + with_prose(c, "Recommended")[:1] + ([c["fields"]["What the counts say"]] if moved and "What the counts say" in c["fields"] else [])
+            # a ruled card prints its question and its recommendation in one line each; what the clerk wrote under them is reported, not lost
+            for f in FACE:
+                for s in c["prose"].get(f, []):
+                    print(f"DROPPED {c['file']}: paragraph under {f} on a ruled card: {s[:70]}", file=sys.stderr)
         else:
             # the two contenders in full; a withheld card's two readings are the options its line names
             full = [n for n in (k["chosen"], k["runner"]) if n in c["rows"]]
