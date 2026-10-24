@@ -273,7 +273,7 @@ T6 tasks carry the send channel that routed them (the `channel` key on the task 
 - T2/T4: the profile A would draft from fails `validate_profile` with an error → "invalid_profile: …"
 
 `awaiting` reasons name the dependency that will clear itself:
-- T8: LinkedIn message sent N days ago, waiting for acceptance → "LinkedIn request sent N days ago, waiting until day 5"
+- T8: LinkedIn message sent, email not yet sent → "LinkedIn sent, awaiting acceptance before email follow-up". The reason carries no day count and nothing times the wait: every T8 row is awaiting until the email goes out, or blocked when its approach YAML fails validation
 
 ---
 
@@ -331,7 +331,7 @@ Each T has a state predicate plus zero or more secondary predicates that must al
 | T4  | APPROACH_STALE       | approach-dispatch gate (min_star, in_scope_channel, skip_excluded — SSOT with T2) ∧ P(profile_path) | same as T2 | transitions/approach.tcl |
 | T6  | APPROACHED ∨ SENT    | channel = `final_auto_send_channel`(contact): email → has_email ∧ ¬email_sent ∧ A(approach_path); linkedin → has_linkedin ∧ ¬linkedin_sent ∧ A(approach_path) [†] | ¬has_email: "No email address". ¬has_linkedin: "No linkedin_url". ¬A: "invalid_approach_yaml". channel not in `send_workers` and its message unactioned: blocked, "no send worker for channel '<channel>'". No channel (final round of manual touches only, e.g. phone-only, or no final message): row is omitted entirely | lib/spar/state-1.0.tm |
 | T7  | campaign-level       | ∃ sent approach with no reply on file                    | One task under the `reply-check` stem; no per-contact row. An approach that fails validation is left unwritten by append_reply_to_yaml and named on stderr | transitions/check_replies.tcl |
-| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | always awaiting: awaiting acceptance                           | lib/spar/state-1.0.tm |
+| T8  | any ≠ EXCLUDED       | linkedin_sent ∧ ¬email_sent ∧ A(approach_path)          | ¬A: blocked, "invalid_approach_yaml: …". Otherwise always awaiting, "LinkedIn sent, awaiting acceptance before email follow-up" | transitions/linkedin_followup.tcl |
 | T9  | APPROACHED ∨ SENT    | `secondary_ready` ∧ A(approach_path)                    | A invalid → "invalid_approach_yaml". Waiting → "waiting until day N (currently day M since preceding send)". Primary unsent / no secondary slot → row omitted | lib/spar/state-1.0.tm (T9 branch) |
 | T10 | APPROACHED ∨ SENT    | `tertiary_ready` ∧ A(approach_path)                     | same shape as T9, gated on secondary's actioned_date           | lib/spar/state-1.0.tm (T10 branch) |
 
