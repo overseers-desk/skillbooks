@@ -89,12 +89,21 @@ oo::class create spar::Harness {
     # template. Runs in the harness so the slow `courier -A search` exec
     # parallelises across contacts instead of serialising in the dispatcher's
     # prepare loop, and so the lookup is as fresh as the draft it feeds.
-    # Empty sections when courier isn't installed. This is spar's own concern
-    # and stays out of coachman.
+    # When courier cannot run, both sections say so instead of standing
+    # empty, since an empty section reads as a contact with no history
+    # (#102). This is spar's own concern and stays out of coachman.
     method inject_courier {prompt_path challenger_path name org email} {
-        set hdr    [spar::courier::accounts_block]
-        set blocks [spar::courier::contact_blocks $name $org $email]
-        set section [expr {$hdr eq "" ? "" : "\n\n${hdr}[dict get $blocks author]"}]
+        set hdr [spar::courier::accounts_block]
+        if {$hdr eq ""} {
+            set reason [spar::courier::not_run_reason]
+            set blocks [spar::courier::not_run_blocks $reason]
+            set section "\n\n[dict get $blocks author]"
+            ${::spar::harness_log}::warn \
+                "\[[my slug]\] \[phase: courier\] prefetch did not run: $reason"
+        } else {
+            set blocks [spar::courier::contact_blocks $name $org $email]
+            set section "\n\n${hdr}[dict get $blocks author]"
+        }
         set prompt [spar::read_file $prompt_path]
         set prompt [string map [list __COURIER_SECTION__ $section] $prompt]
         spar::write_file $prompt_path $prompt

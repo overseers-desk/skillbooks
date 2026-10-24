@@ -35,6 +35,8 @@ This gate exists because A is the first point where profile content and campaign
 
 Warmth is engagement state, not profile content (INVARIANTS.md I1; SPAR-P §4.7): it changes between campaigns and the first message sent falsifies it, so A determines it fresh at contact time. Assess it from the contact's approach file (prior rounds and replies, if any) and a current IMAP check for prior correspondence with the sender's accounts. The dispatcher prefetch (§4.1.1) supplies the IMAP evidence.
 
+When the brief's prefetch section says it did not run (courier absent on the host, or its account list failing), the IMAP evidence is missing, not empty: no mailbox was searched. Assess warmth from the approach file alone; where that shows no prior round or reply, draft cold, the one opener that presumes no relationship, and say in `a_note` that the mail check did not run, so the operator reads the warmth as unestablished rather than settled and can run A again once it does.
+
 | Level | Opener style |
 |---|---|
 | Existing relationship | Reference the specific prior interaction: date, topic, what was discussed. |
