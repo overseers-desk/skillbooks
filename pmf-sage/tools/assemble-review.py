@@ -55,7 +55,7 @@ def read_card(path):
     return card
 
 
-def landing(card, has_third):
+def landing(card):
     """Where the third derivation landed against the recommendation, in the card's own word."""
     # the verdict is the clause after the file; a landing split across two halves of a question keeps both words
     clauses = card["fields"].get("Third derivation", "").split(";")
@@ -68,9 +68,7 @@ def landing(card, has_third):
     if "Third derivation" in card["fields"]:
         print(f"UNSTATED {card['file']}: the Third derivation line says neither agrees, differs nor declines", file=sys.stderr)
         return "not stated"
-    if not has_third:
-        return "none"
-    return "differs" if re.search(r"\b(diverg|did not reach|landed on a different)", card["fields"].get("Corrections", ""), re.I) else "agrees"
+    return "none"
 
 
 def with_prose(card, field):
@@ -95,9 +93,9 @@ def main():
     raw = subprocess.run([sys.executable, str(here / "card-check.py"), str(run)], capture_output=True, text=True).stdout.strip()
     (decisions / "card-check.txt").write_text(raw + "\n")
     checked = {}
-    for cid, match, stance, third, rests, chosen, runner in re.findall(
+    for cid, match, stance, _, rests, chosen, runner in re.findall(
             r"^card (\S+):.*?prior match: (True|False); held value: ([a-z ]+); third derivation: (True|False); rests on: ([a-z ]*); chosen: (.*?) \| runner-up: (.*)$", raw, re.M):
-        checked[cid] = {"match": match == "True", "stance": stance, "third": third == "True", "rests": rests, "chosen": chosen, "runner": runner}
+        checked[cid] = {"match": match == "True", "stance": stance, "rests": rests, "chosen": chosen, "runner": runner}
     name = lambda c: c["head"].split(" ·")[0].replace("## ", "")
     cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
     value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
@@ -105,13 +103,13 @@ def main():
     sheet = ["| card | your part | the question | recommended | what the counts say | rests on | what is held | market-only reading | ruled |", "|---|---|---|---|---|---|---|---|---|"]
     open_cards, ruled_cards, joints, landings = [], [], [], {}
     for c in cards:
-        k = checked.get(cid_of(c), {"match": False, "stance": "", "third": False, "rests": "", "chosen": "", "runner": ""})
+        k = checked.get(cid_of(c), {"match": False, "stance": "", "rests": "", "chosen": "", "runner": ""})
         rec, ruled = value(c, "Recommended"), value(c, "Ruled")
         is_ruled = bool(ruled) and ruled.lower() != "open" and not ruled.startswith("<")
         parts = [x.strip() for x in rec.split(";")]
         # a withheld row names the two readings it stands between, so the sheet says what is undecided
         recommended = ", ".join(parts[:2]) if parts[0].lower() == "withheld" and len(parts) > 1 and parts[1].lower().startswith("between") else parts[0]
-        landings[name(c)] = landing(c, k["third"])
+        landings[name(c)] = landing(c)
         held = {"matches": "keeps it", "leaves": "leaves it", "withheld held": "held; neither kept nor left", "withheld": "nothing held", "none held": "nothing held"}.get(k["stance"], "")
         ruled_cell = ("ruled; the card leaves the ruling" if k["stance"] == "leaves" else "ruled") if is_ruled else "open"
         withheld_row = k["stance"].startswith("withheld")
@@ -164,7 +162,7 @@ def main():
         k = checked.get(cid_of(c))
         if not k:
             continue
-        audit = c["fields"].get("Chip", "") + " " + c["fields"].get("Corrections", "")
+        audit = c["fields"].get("Chip", "")
         if k["match"] and re.search(r"\b(did|does) not match a prior|re-derived for another reason", audit):
             print(f"MISMATCH: {name(c)} says it did not match a prior; the check counts it as matched", file=sys.stderr)
         if not k["match"] and re.search(r"\bmatched a prior on the check", audit):

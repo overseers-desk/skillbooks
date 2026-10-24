@@ -18,7 +18,7 @@ One row a card. *Your part* says what the row asks of you: confirm, rule, commis
 
 ## Open cards
 
-The recommended option and its runner-up in full; the other options by name and figure. The card file holds every option's source, capability and seller's sentence, and the corrections.
+The recommended option and its runner-up in full; the other options by name and figure. The card file holds every option's source, capability and seller's sentence.
 
 {{cards}}
 

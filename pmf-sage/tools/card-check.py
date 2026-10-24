@@ -5,7 +5,7 @@ Usage: card-check.py <run-dir>
 Reads every card under <run-dir>/3-decisions/ written on forms/card.md.
 Refuses: fewer than two options carrying a figure; a recommendation naming no option or stating its
 margin in a unit other than the runner-up's, or not the difference of the two figures unless the line states its derivation, or stated against an option weaker than the strongest other; a withheld recommendation that does not name
-two options, the counts it stands at and the observation that would carry either; a recommending line that does not say what it rests on; a card with no What the counts say sentence, or one over thirty words; a held value (the Held stamp, or without one a Priors line citing a file) with no third derivation recorded (a backticked third-derivation file, on the Third derivation line or the Corrections line, that exists).
+two options, the counts it stands at and the observation that would carry either; a recommending line that does not say what it rests on; a card with no What the counts say sentence, or one over thirty words; a held value (the Held stamp, or without one a Priors line citing a file) with no third derivation recorded (a backticked third-derivation file on the Third derivation line that exists).
 Reports: figured options per card; recommendations that match a held value, leave one, or are withheld, as counts and no more; mismatched margin units; legs marked differs.
 """
 import re, sys
@@ -172,7 +172,7 @@ def main():
         # leaving a held value rests on an instrument that could have shown the held value winning, and the line names it
         if is_held and not is_withheld and chosen and not re.search(r"seen by:\s*\S", rec, re.I):
             refusals.append(f"card {c['id']}: the line does not name, after 'seen by:', the instrument that could see both options it ranks; keeping a held value and leaving it are asked alike")
-        third = [f for f in re.findall(r"`([^`]+)`", c.get("Third derivation", "") + " " + c.get("Corrections", "")) if "third-" in Path(f).name and ((run / "3-decisions" / f).exists() or (run / f).exists())]
+        third = [f for f in re.findall(r"`([^`]+)`", c.get("Third derivation", "")) if "third-" in Path(f).name and ((run / "3-decisions" / f).exists() or (run / f).exists())]
         withheld += is_withheld
         matches += matched
         leaves += is_held and not matched and not is_withheld
