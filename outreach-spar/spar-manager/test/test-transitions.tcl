@@ -65,6 +65,32 @@ assert_error {_dp_run_count $dp_yaml {}} "*opts.stems is required*" \
 assert_error {spar::a::prepare_for_pool \
         [dict create campaign_file $dp_yaml] {apply {args {}}}} \
     "*opts.stems is required*" "A prepare_for_pool: no stems → error"
+
+# A nameless row the caller names is skipped with the gate's reason, as
+# a row with no in-scope channel is, instead of vanishing from the pass
+# with no row and no report (#197). The eligibility walk applies the
+# same gate (test-state.tcl, T2), so the two sides count alike.
+set nn_base [make_temp_campaign]
+set nn_seg [file join $nn_base segments seg-noname]
+file mkdir $nn_seg
+write_segment_yaml $nn_seg "title: seg-noname\nversion: \"2.0\"\n"
+set nn_facts [file join $nn_base facts.md]
+set fd [open $nn_facts w]; puts $fd "# facts"; close $fd
+write_campaign_yaml $nn_base "campaign: Nameless\nversion: \"$spar::CURRENT_SPEC_VERSION\"\nprimary_channel: email\nlanguage: en\nsender:\n  name: S\n  role: R\n  email: s@acme-venues.au\nfact_sources:\n  - $nn_facts\nantifacts: none\nsegments:\n  - seg-noname\n"
+write_profile $nn_seg named
+write_profile $nn_seg noname
+write_roster_tsv $nn_seg {stem contact_name organisation email star_rating date_excluded} [list \
+    [dict create stem named  contact_name "Named One" organisation "Org N" email n@acme-venues.au star_rating 4] \
+    [dict create stem noname contact_name ""          organisation "Org O" email info@acme-venues.au star_rating 4]]
+set ::nn_events {}
+set nn_prep [spar::a::prepare_for_pool \
+    [dict create campaign_file [file join $nn_base campaigns camp.yaml] stems {named noname}] \
+    {apply {args {lappend ::nn_events $args}}}]
+assert_eq [lmap r [dict get $nn_prep rows] {lindex $r 0}] named \
+    "A prepare_for_pool: the named row is the one prepared"
+assert_eq [llength $::nn_events] 1 "A prepare_for_pool: the nameless row is reported once"
+assert_match [lindex $::nn_events 0] "noname skipped *no contact name*" \
+    "A prepare_for_pool: as a skip carrying the gate's reason"
 assert_eq [_dp_run_count $dp_yaml {stems {alpha beta gamma}}] 3 \
     "prepare_for_pool: three stems → 3 queued"
 
