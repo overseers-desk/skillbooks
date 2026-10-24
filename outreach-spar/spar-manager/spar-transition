@@ -33,9 +33,13 @@
 # stdin [y/N] gate fires before each item.
 #
 # --yes skips the up-front [y/N] confirmation that fires before any
-# transition with requires_send_confirmation=1 (T6 SES). Cron uses --yes.
+# transition with requires_send_confirmation=1 (T6 SES). Cron uses --yes:
+# without it a run whose stdin is not a terminal cannot be asked, and
+# exits EXIT_UNCONFIRMED (2) having sent nothing, distinct from the exit
+# 1 of a run whose work failed (#203).
 
 set script_dir [file dirname [file normalize [info script]]]
+set EXIT_UNCONFIRMED 2
 ::tcl::tm::path add [file join $script_dir lib] [file join $script_dir vendor]
 package require spar::state
 package require spar::prompts
@@ -110,7 +114,9 @@ OPTIONS
                       same NAME=VALUE form on this command line sets
                       the at-launch default.
     --yes             skip the up-front [y/N] prompt for transitions
-                      that require it (T6 SES). Use in cron.
+                      that require it (T6 SES). Use in cron: with no
+                      terminal on stdin the prompt cannot be answered,
+                      and the run exits 2 having sent nothing.
     -v, --verbose     in report mode, list each contact (default: counts only)
     -h, --help        show this help
 
@@ -852,16 +858,35 @@ if {$dispatching} {
     # whose class declares requires_send_confirmation=1 gates here.
     # Skipped under --dry-run, --yes, or --jobs=0 (stepping supplies
     # its own per-item gate).
+    #
+    # The question needs someone to answer it. With no terminal on
+    # stdin (cron, nohup, a closed pipe) `gets` returns an empty string
+    # at once, which the [y/N] test reads as N, so an unattended run
+    # aborted and the log said only "Aborted." (#203). Now the run
+    # declines to ask: it names --yes and exits with its own status,
+    # EXIT_UNCONFIRMED, so an unattended runner can tell a run nobody
+    # could answer from a run whose work failed. `chan configure
+    # -inputmode` is accepted only by a terminal channel.
     if {!$dry_run && !$assume_yes && !$stepping} {
+        set attended [expr {![catch {chan configure stdin -inputmode}]}]
         foreach tid $active_tids {
             if {![dict exists $ready_by_tid $tid]} continue
             set t [::spar::transitions::get $tid]
             if {![$t requires_send_confirmation]} continue
             set n [llength [dict get $ready_by_tid $tid]]
+            if {!$attended} {
+                ${::spar::transitions_log}::error \
+                    "$tid ([$t label]): $n live action(s) need confirmation and stdin is not a terminal; pass --yes to run unattended."
+                exit $EXIT_UNCONFIRMED
+            }
             puts -nonewline "$tid ([$t label]): proceed with $n live action(s)? \[y/N\] "
             flush stdout
-            set reply [string trim [gets stdin]]
-            if {[string tolower $reply] ni {y yes}} {
+            if {[gets stdin reply] < 0} {
+                ${::spar::transitions_log}::error \
+                    "$tid ([$t label]): stdin closed before the confirmation was answered; pass --yes to run unattended."
+                exit $EXIT_UNCONFIRMED
+            }
+            if {[string tolower [string trim $reply]] ni {y yes}} {
                 ${::spar::transitions_log}::warn "Aborted."
                 exit 1
             }
