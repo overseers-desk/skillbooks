@@ -5,8 +5,8 @@ Usage: card-check.py <run-dir>
 Reads every card under <run-dir>/3-decisions/ written on forms/card.md.
 Refuses: fewer than two options carrying a figure; a recommendation naming no option or stating its
 margin in a unit other than the runner-up's, or not the difference of the two figures unless the line states its derivation, or stated against an option weaker than the strongest other; a withheld recommendation that does not name
-two options, the counts it stands at and the observation that would carry either; a recommending line that does not say what it rests on; a card with no What the counts say sentence, or one over thirty words; a held value (the Held stamp, or without one a Priors line citing a file) with no third derivation recorded (a backticked third-derivation file on the Third derivation line that exists).
-Reports: figured options per card; recommendations that match a held value, leave one, or are withheld, as counts and no more; mismatched margin units; legs marked differs.
+two options, the counts it stands at and the observation that would carry either; a recommending line that does not say what it rests on; a card with no What the counts say sentence, or one over thirty words; a held value (the Held stamp, or without one a Priors line citing a file) with no third derivation recorded (a backticked third-derivation file on the Third derivation line that exists); a card with no Written date; a card carrying corrections that no game brief under <run-dir>/briefs/ cites as RULED.
+Reports: figured options per card; recommendations that match a held value, leave one, or are withheld, as counts and no more; mismatched margin units; legs marked differs; a RULED mark in a brief that carries no date. Each card's line ends with the date it was written, the date it was ruled, and the date a game brief gives its ruling, which the review compares.
 """
 import re, sys
 from pathlib import Path
@@ -17,6 +17,33 @@ NUM = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?")
 def num(tok):
     return float(tok.replace(",", ""))
 STOP = {"the", "and", "with", "from", "that", "this", "over", "into", "than", "each", "about"}
+MONTHS = {m: i for i, m in enumerate("january february march april may june july august september october november december".split(), 1)}
+
+
+def date_of(text):
+    """The latest date a line states, as YYYY-MM-DD; runs write 2026-09-27 or 27 September 2026."""
+    found = [f"{y}-{m}-{d}" for y, m, d in re.findall(r"\b(\d{4})-(\d{2})-(\d{2})\b", text)]
+    found += [f"{y}-{MONTHS[m.lower()]:02d}-{int(d):02d}" for d, m, y in re.findall(r"\b(\d{1,2}) (" + "|".join(MONTHS) + r") (\d{4})\b", text, re.I)]
+    return max(found, default="")
+
+
+def card_key(cid):
+    """Card 01 and Card 1 are one card."""
+    return (cid.lstrip("0") or "0") if cid.isdigit() else cid.lower()
+
+
+def game_marks(run, keys):
+    """Per card, the dates the game's briefs give its ruling on their RULED lines; a line with no date gives "". A word after RULED that names no card is prose."""
+    marks = {}
+    for brief in sorted((run / "briefs").glob("**/*.md")):
+        for line in brief.read_text(errors="replace").splitlines():
+            for m in re.finditer(r"\bRULED\b\W{0,3}(?:Card\s+)?([A-Za-z0-9]+)", line):
+                if card_key(m.group(1)) not in keys:
+                    continue
+                marks.setdefault(card_key(m.group(1)), []).append(date_of(line))
+                if not date_of(line):
+                    print(f"NOTE {brief.relative_to(run)}: RULED card {m.group(1)} carries no date, so the review cannot tell whether the game played on that card's current ruling")
+    return marks
 
 
 def unit(figure):
@@ -32,7 +59,7 @@ def parse(text):
     card = {"options": []}
     m = re.search(r"^## Card\s+(\S+)", text, re.M)
     card["id"] = m.group(1).rstrip("·").strip() if m else "?"
-    in_table = False
+    in_table = in_corrections = False
     for line in text.splitlines():
         s = line.strip()
         if s.startswith("**Options**"):
@@ -47,9 +74,15 @@ def parse(text):
             continue
         if in_table and s and not s.startswith("|"):
             in_table = False
-        for key in ("Recommended", "What the counts say", "Held", "Priors", "Measured in", "Ruled", "Third derivation", "Corrections"):
+        # corrections are often a list under the label; they run to the next field or heading
+        if in_corrections and s and not re.match(r"\*\*[A-Za-z ]+:\*\*|#", s):
+            card["Corrections"] = (card["Corrections"] + " " + s).strip()
+            continue
+        in_corrections = in_corrections and not re.match(r"\*\*[A-Za-z ]+:\*\*|#", s)
+        for key in ("Written", "Recommended", "What the counts say", "Held", "Priors", "Measured in", "Ruled", "Third derivation", "Corrections"):
             if s.startswith(f"**{key}:**"):
                 card[key] = s.split("**", 2)[2].strip()
+                in_corrections = key == "Corrections"
     return card
 
 
@@ -87,6 +120,7 @@ def main():
     if not cards:
         print("REFUSED no card on forms/card.md found under 3-decisions/ (a `## Card N` heading per card)")
         sys.exit(1)
+    marks = game_marks(run, {card_key(c["id"]) for c in cards})
     for c in cards:
         figured = [o for o in c["options"] if NUM.search(o["figure"])]
         if len(figured) < 2:
@@ -186,7 +220,15 @@ def main():
         differs += len(re.findall(r"(?<!marked )(?<!no )(?<!none )\bdiffers\b(?! is marked)", re.sub(r"\b(nothing|none|no \w+)( \w+){0,3} marked differs\b|\bnot marked differs\b", "", c.get("Measured in", "").lower())))
         stance = ("withheld held" if is_held else "withheld") if is_withheld else "matches" if matched else "leaves" if is_held else "none held"
         runner_name = runner["name"] if chosen and mm and runner else ""
-        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}; held value: {stance}; third derivation: {bool(third)}; rests on: {rests.group(1).lower() if rests else ''}; chosen: {chosen['name'] if chosen else ''} | runner-up: {runner_name}")
+        # a card is rewritten in place until a game brief cites its ruling; only then does a change leave a dated line
+        written, cited = date_of(c.get("Written", "")), marks.get(card_key(c["id"]))
+        if not written:
+            refusals.append(f"card {c['id']}: no Written date, the date its evidence or recommendation was last rewritten")
+        corrections = c.get("Corrections", "")
+        if corrections and not corrections.startswith("<") and corrections.lower().rstrip(". ") != "none" and not cited:
+            refusals.append(f"card {c['id']}: carries corrections, and no game brief cites its ruling; until one does, a change rewrites the card in place and the round's movements go to the run record")
+        game = "none" if not cited else max(cited) or "undated"
+        print(f"card {c['id']}: {len(figured)} figured options; prior match: {matched}; held value: {stance}; third derivation: {bool(third)}; rests on: {rests.group(1).lower() if rests else ''}; chosen: {chosen['name'] if chosen else ''} | runner-up: {runner_name} | written: {written or 'none'} | ruled on: {date_of(c.get('Ruled', '')) or 'none'} | game cites: {game}")
     outstanding = held - returned
     print(f"{len(cards)} cards; {held} hold a value; {matches} match it; {leaves} leave it; {withheld} withheld; {returned} third derivations; {outstanding} outstanding; {mismatched} mismatched margin units; {differs} legs marked differs")
     for r in refusals:
