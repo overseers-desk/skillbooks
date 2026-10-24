@@ -278,12 +278,19 @@ namespace eval ::spar::ui::inspector_widgets {
     # collapsible) by re-measuring inside a <Configure> handler, with a
     # guard against the loop that setting -height itself would create.
     # max_lines clamps the height; use 0 to disable the cap, as the
-    # Inspector does for full-message bodies. Returns the widget path.
-    proc wrapped_text_block {parent text {pack_args {-fill x -padx 6 -pady {2 2}}} {max_lines 20}} {
+    # Inspector does for full-message bodies. fill, when given, is a
+    # command prefix called with the widget and $text to insert it (the
+    # Inspector passes the markdown view for a profile body); without it
+    # the text goes in as written. Returns the widget path.
+    proc wrapped_text_block {parent text {pack_args {-fill x -padx 6 -pady {2 2}}} {max_lines 20} {fill ""}} {
         set tw ${parent}.[_uniq wtb]
         text $tw -wrap word -relief flat -borderwidth 0 -takefocus 0 \
             -height 1 -background [. cget -background]
-        $tw insert end $text
+        if {$fill eq ""} {
+            $tw insert end $text
+        } else {
+            {*}$fill $tw $text
+        }
         $tw configure -state disabled
         pack $tw {*}$pack_args
         update idletasks
