@@ -86,10 +86,8 @@ if {[auto_execok mu] eq ""} {
         "no mu on PATH: courier answers both passes"
 }
 
-# A prefetch that could not run says so in both prompts (#102): an empty
-# section would read as a contact with no history. The harness's
-# inject_courier is the one caller, exercised on a prompt pair with the
-# two placeholders.
+# A prefetch that could not run says so in both prompts (#102), not an
+# empty section that reads as no history.
 section "prefetch that could not run"
 package require spar::state
 package require spar::harness

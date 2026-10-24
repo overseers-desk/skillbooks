@@ -895,23 +895,15 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {ap
 
     if {[llength $issues]} { return $issues }
 
-    # A resolved name that lands this row on a person the roster already
-    # holds (#201): the row was dispatched nameless (organisation known,
-    # no person yet), and the name the worker resolved makes, with its
-    # organisation, the (contact_name, organisation) pair of a live row.
-    # Named, the row would be the true duplicate validate_roster refuses
-    # to ship (roster_duplicate_name_org), and no fix turn could clear it.
-    # So the name is never written: the row is excluded as the duplicate
-    # it is, the canonical stem in p_note, and the one exception to the
-    # all-or-nothing rule above is this exclusion, written so the row
-    # stays excluded whatever the fix loop makes of the deliverable. The
-    # rows_new and sources_new wait with the rest for a clean turn. The
-    # deliverable still describes a named, rated contact, so the error
-    # says to rewrite it as the exclusion profile of the row this leaves.
+    # A name resolved for a row dispatched nameless can land it on a person
+    # another live row holds (#201); written, it would be a
+    # roster_duplicate_name_org no fix turn can clear. So the name is not
+    # written: the row is excluded as the duplicate, canonical stem in
+    # p_note, the one write exempt from the all-or-nothing rule above so it
+    # holds whatever the fix loop does. rows_new and sources_new still wait.
     set canonical [spar::_resolved_name_collision $rows $row $pending]
     if {$canonical ne ""} {
-        # A fix turn that still declares the name lands here again; the
-        # exclusion already on the row keeps its date and its note.
+        # A repeat turn keeps the exclusion's date and note.
         set today [spar::_roster_field_current $row date_excluded]
         if {$today eq ""} {
             set today [clock format [clock seconds] -format %Y-%m-%d]
@@ -971,13 +963,10 @@ proc spar::apply_roster_patch {profile_path roster_path stem {sweep_path ""} {ap
     return {}
 }
 
-# _resolved_name_collision — the stem of the live roster row, other than
-# row itself, that already holds the (contact_name, organisation) pair
-# the pending patch would give a nameless row; "" when the patch names
-# no contact_name, the row already has one, or no such row exists. The
-# pair is compared as validate_roster compares it (trimmed, case folded,
-# excluded rows left out), so a "" here means the write cannot raise
-# roster_duplicate_name_org.
+# _resolved_name_collision — stem of the live row, other than row, holding
+# the (contact_name, organisation) pair the patch would give a nameless
+# row; "" if none. Compared as validate_roster does (trimmed, case folded,
+# excluded rows left out).
 proc spar::_resolved_name_collision {rows row pending} {
     if {![dict exists $pending contact_name]} { return "" }
     if {[spar::_roster_field_current $row contact_name] ne ""} { return "" }
@@ -1122,14 +1111,10 @@ proc spar::_apply_patch_only {declared record stamped roster_path stem} {
 # rather than leaving half of it applied and half described. Returns issue
 # dicts; empty when the batch landed (or when it already had).
 #
-# Whether it already had is the harness's record where one is given, as
-# apply_roster_patch takes its applied argument (#209): applied is 1 when
-# the deliverable carried a sweep_batch_applied stamp before the worker's
-# turn, 0 when it did not, and with it the file's stamp is not read, only
-# rewritten. A T0 worker holds Write on its deliverable and copies the
-# stamp line from a finished sibling; read from the file, that copy would
-# skip the whole batch with no issue raised (#228). Without the argument
-# (a reconcile with no record) the file's stamp decides.
+# applied, when given, is the harness's record (#209) of whether the batch
+# landed before the worker's turn; the file's stamp is then only
+# rewritten, since a T0 worker can copy a finished sibling's stamp line and
+# skip the whole batch silently (#228). Without it the file's stamp decides.
 #
 # The roster is created when absent, with the core header, since the
 # first sweep of a segment is what creates it. Where one exists, its header is

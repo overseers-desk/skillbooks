@@ -89,9 +89,8 @@ oo::class create spar::Harness {
     # template. Runs in the harness so the slow `courier -A search` exec
     # parallelises across contacts instead of serialising in the dispatcher's
     # prepare loop, and so the lookup is as fresh as the draft it feeds.
-    # When courier cannot run, both sections say so instead of standing
-    # empty, since an empty section reads as a contact with no history
-    # (#102). This is spar's own concern and stays out of coachman.
+    # When courier cannot run, both sections say so; an empty one reads as
+    # no history (#102). This is spar's own concern and stays out of coachman.
     method inject_courier {prompt_path challenger_path name org email} {
         set hdr [spar::courier::accounts_block]
         if {$hdr eq ""} {
@@ -1117,11 +1116,8 @@ oo::class create spar::SweepHarness {
         # meta.env written without MODEL keeps that tier rather than
         # promoting the sweep to a dearer one.
         set Model      [dict getdef $meta MODEL sonnet]
-        # Whether this deliverable's batch has landed, read before the
-        # worker's turn (#228, as the P and A harnesses read theirs,
-        # #209). A stamp the file carries now was written by an earlier
-        # run's harness; one that appears during the turn is the
-        # worker's copy of a sibling's, and counts for nothing.
+        # Read before the worker's turn (#228, as #209): a stamp that
+        # appears during the turn is the worker's copy of a sibling's.
         set Applied 0
         if {[file exists $Outfile]} {
             set Applied [spar::stamp_present \
@@ -1143,8 +1139,6 @@ oo::class create spar::SweepHarness {
         return [my run_fix_loop validate_sweep_errors build_sweep_fix_prompt]
     }
 
-    # Whether the batch has landed is the harness's own record (Applied),
-    # not the deliverable's stamp; a clean return means it has.
     method validate_sweep_errors {attempt} {
         set issues [spar::apply_sweep_batch $Outfile $RosterPath $SegmentKey $Applied]
         if {[llength [my hard_errors_from $issues]] == 0} { set Applied 1 }

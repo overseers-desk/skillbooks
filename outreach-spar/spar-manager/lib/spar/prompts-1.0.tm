@@ -630,8 +630,7 @@ proc spar::a::_build_prompts {opts on_progress} {
             set date_invalid [string trim [dict getdef $row date_excluded ""]]
             set stem [string trim [dict getdef $row stem ""]]
 
-            # A repeated header row is not a contact. A nameless row is
-            # skipped by the gate below, which reports it (#197).
+            # A nameless row is skipped by the gate below, which reports it (#197).
             if {$org eq "organisation"} continue
             if {$org eq ""} continue
 

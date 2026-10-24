@@ -477,13 +477,10 @@ dict set ::spar::transitions::registry $stub_tid $real_transition
 $pool6 destroy
 
 # ════════════════════════════════════════════════════════════════════
-# 7. The toolbar's stop-all ends an in-flight harness row cancelled,
-#    as a per-row cancel does, not failed (#239).
+# 7. Stop-all ends an in-flight harness row cancelled, not failed (#239).
 # ════════════════════════════════════════════════════════════════════
 section "7. Stop-all cancels in-flight harness rows"
 
-# A harness that runs until aborted: run parks its coroutine, abort
-# resumes it and run returns non-zero, as a coachman abort does.
 oo::class create HangingHarness {
     variable Co
     constructor {prompt_dir log_dir} {}
