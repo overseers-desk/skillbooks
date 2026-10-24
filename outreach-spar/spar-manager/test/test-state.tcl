@@ -473,6 +473,21 @@ set t2_names [lmap c $t2 {dict get $c contact_name}]
 assert_eq [expr {"Prof Hi" in $t2_names}] 1 "T2: PROFILED star≥3 is eligible"
 assert_eq [expr {"Prof Lo" in $t2_names}] 0 "T2: PROFILED star<3 not eligible"
 
+# T2 and the A prompt builder share one gate (#56), and the builder
+# dropped a nameless row before reaching it, so the report counted a
+# row the dispatch never started (#197). The gate names the reason now.
+set nn_seg [make_temp_segment]
+write_profile $nn_seg "t-profiled-noname"
+write_roster_tsv $nn_seg $headers [list \
+    [make_base_row {contact_name "" stem "t-profiled-noname" star_rating "4" email "info@acme-venues.au"}]]
+set nn_contacts [$State classify_segment $nn_seg [approach_dir_of $nn_seg]]
+assert_eq [dict get [lindex $nn_contacts 0] state] PROFILED \
+    "T2: a nameless row with a profile is PROFILED"
+assert_eq [llength [$State transition_eligible $nn_contacts "T2"]] 0 \
+    "T2: a PROFILED row with no contact_name is not counted dispatchable"
+assert_match [spar::_approach_dispatch_gate [lindex $nn_contacts 0] {}] "*no contact name*" \
+    "approach gate: the reason names the missing contact_name"
+
 # T6: Approach → Send routes by each contact's own final-round channel
 # (all three fixtures lead with email), not the campaign channel.
 proc t6_split {tasks} {

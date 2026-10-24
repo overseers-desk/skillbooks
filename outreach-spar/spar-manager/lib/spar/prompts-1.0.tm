@@ -630,7 +630,11 @@ proc spar::a::_build_prompts {opts on_progress} {
             set date_invalid [string trim [dict getdef $row date_excluded ""]]
             set stem [string trim [dict getdef $row stem ""]]
 
-            if {$org eq "organisation" || $name eq ""} continue
+            # A repeated header row is not a contact. A nameless row is
+            # one too, but the gate below says so (#197): dropping it
+            # here left the eligibility count holding rows no dispatch
+            # ever started or reported.
+            if {$org eq "organisation"} continue
             if {$org eq ""} continue
 
             # A row without a stem is a sweep artefact no caller can
