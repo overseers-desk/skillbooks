@@ -1052,6 +1052,35 @@ proc spar::validate_campaign_yaml {cdata} {
     return $issues
 }
 
+# validate_plan_usps -- every `id` a segment plan's usps list cites names
+# an entry of the campaign's usps registry (spar-campaign-yaml.md, "Plan
+# block"). The vocabulary pass above checks the keys of a plan_usp, not
+# that its id resolves, so a plan citing U7 against a registry of U1-U6
+# was read clean and failed only when the A author looked U7 up (#102).
+# Campaign-level issues in validate_campaign_yaml's shape; a list-form
+# segments entry carries no plan and nothing to check.
+proc spar::validate_plan_usps {cdata} {
+    set issues {}
+    set segs [dict getdef $cdata segments {}]
+    if {$segs eq "" || ![spar::_segments_is_map $segs]} { return $issues }
+    set registry [dict getdef $cdata usps {}]
+    set ids [expr {[catch {dict keys $registry} ids] ? {} : $ids}]
+    set known [expr {[llength $ids] == 0 ? "the registry is empty" : "registry: [join $ids {, }]"}]
+    dict for {name plan} $segs {
+        if {$plan eq "" || [catch {dict getdef $plan usps {}} cited]} continue
+        set i -1
+        foreach entry $cited {
+            incr i
+            if {[catch {dict getdef $entry id ""} id] || $id eq ""} continue
+            if {$id in $ids} continue
+            lappend issues [spar::_issue error unknown_usp_id "" \
+                "campaign YAML segments.$name.usps\[$i\]: id '$id' is not in the usps registry ($known)" \
+                {segment ""}]
+        }
+    }
+    return $issues
+}
+
 # ---------------------------------------------------------------------------
 # Spec versioning
 #
