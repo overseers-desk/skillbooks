@@ -1056,7 +1056,7 @@ proc spar::validate_campaign_yaml {cdata} {
 # an entry of the campaign's usps registry (spar-campaign-yaml.md, "Plan
 # block"). The vocabulary pass above checks the keys of a plan_usp, not
 # that its id resolves, so a plan citing U7 against a registry of U1-U6
-# was read clean and failed only when the A author looked U7 up (#102).
+# would read clean and fail only when the A author looked U7 up (#102).
 # Campaign-level issues in validate_campaign_yaml's shape; a list-form
 # segments entry carries no plan and nothing to check.
 proc spar::validate_plan_usps {cdata} {

@@ -1129,7 +1129,7 @@ proc spar::_apply_patch_only {declared record stamped roster_path stem} {
 # rewritten. A T0 worker holds Write on its deliverable and copies the
 # stamp line from a finished sibling; read from the file, that copy would
 # skip the whole batch with no issue raised (#228). Without the argument
-# (a reconcile with no record) the file's stamp decides, as before.
+# (a reconcile with no record) the file's stamp decides.
 #
 # The roster is created when absent, with the core header, since the
 # first sweep of a segment is what creates it. Where one exists, its header is

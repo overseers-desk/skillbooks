@@ -438,7 +438,7 @@ oo::class create spar::ui::DispatchController {
         }
         # Through the Dispatcher's cancel, as a per-row cancel goes, so
         # the row ends cancelled; a bare harness abort sets no cancel
-        # flag and the row ended failed (#239).
+        # flag and the row would end failed (#239).
         set rows [dict keys $::spar::live_harnesses]
         foreach r $rows { $Dispatcher cancel $r }
         $Log log "Cancelled [llength $rows] in-flight run(s)."

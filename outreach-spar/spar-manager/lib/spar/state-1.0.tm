@@ -1189,8 +1189,7 @@ proc spar::_evaluate_slot_readiness {preceding_msg own_msg wait_days wait_cond o
 #
 # Gates (resolves #56):
 #   - contact_name:    the row names a person (campaign-independent; the
-#                      prompt builder applied it alone until #197, so the
-#                      report counted rows the dispatch never started)
+#                      prompt builder applies the same gate, #197)
 #   - skip_excluded:   filter.skip_excluded (default true) + date_excluded
 #   - in_scope_channel: roster_row_has_in_scope_channel against campaign slots
 #   - min_star:        filter.min_star (default 3) vs parsed star_rating

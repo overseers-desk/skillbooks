@@ -473,9 +473,8 @@ set t2_names [lmap c $t2 {dict get $c contact_name}]
 assert_eq [expr {"Prof Hi" in $t2_names}] 1 "T2: PROFILED star≥3 is eligible"
 assert_eq [expr {"Prof Lo" in $t2_names}] 0 "T2: PROFILED star<3 not eligible"
 
-# T2 and the A prompt builder share one gate (#56), and the builder
-# dropped a nameless row before reaching it, so the report counted a
-# row the dispatch never started (#197). The gate names the reason now.
+# T2 and the A prompt builder share one gate (#56), so a nameless row
+# is neither counted dispatchable nor started (#197).
 set nn_seg [make_temp_segment]
 write_profile $nn_seg "t-profiled-noname"
 write_roster_tsv $nn_seg $headers [list \

@@ -2,11 +2,10 @@
 # The up-front send confirmation needs a terminal to ask (#203).
 #
 # spar-transition asks [y/N] on stdin before a transition that requires
-# send confirmation. An unattended run (cron, nohup, a closed pipe) used
-# to read the empty answer as N, log "Aborted." and exit 1, the same
-# status as a run whose work failed; nothing sent and the log did not
-# say why. Now a run with no terminal on stdin names --yes and exits
-# 2, its own status, before any row is prepared.
+# send confirmation. A run with no terminal on stdin (cron, nohup, a
+# closed pipe) cannot be asked: it names --yes and exits 2, its own
+# status, distinct from the exit 1 of a run whose work failed, before
+# any row is prepared.
 #
 # Strategy: a launched campaign with one T6-ready row, run through the
 # CLI under a wall-clock bound with stdin from /dev/null or a pipe, so
@@ -71,7 +70,7 @@ assert_eq $st 2 "stdin from /dev/null exits with the unconfirmed status, not the
 assert_match $out "*pass --yes*" "the message names the flag"
 assert_match $out "*T6 (Approach → Send): 1 live action(s)*" "and the transition and count it could not confirm"
 assert_eq [string match {*\[START\]*} $out] 0 "no row was started"
-assert_eq [string match "*Aborted.*" $out] 0 "the old one-word abort is gone"
+assert_eq [string match "*Aborted.*" $out] 0 "the run does not abort as if answered N"
 
 section "a pipe is not a terminal either"
 

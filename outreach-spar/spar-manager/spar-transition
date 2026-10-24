@@ -861,9 +861,9 @@ if {$dispatching} {
     #
     # The question needs someone to answer it. With no terminal on
     # stdin (cron, nohup, a closed pipe) `gets` returns an empty string
-    # at once, which the [y/N] test reads as N, so an unattended run
-    # aborted and the log said only "Aborted." (#203). Now the run
-    # declines to ask: it names --yes and exits with its own status,
+    # at once, which the [y/N] test would read as N and abort with only
+    # "Aborted." in the log (#203). So the run declines to ask: it names
+    # --yes and exits with its own status,
     # EXIT_UNCONFIRMED, so an unattended runner can tell a run nobody
     # could answer from a run whose work failed. `chan configure
     # -inputmode` is accepted only by a terminal channel.
