@@ -86,7 +86,7 @@ inbound_transport:
   carrier: "Ryanair"
   flight_number: "FR1234"
   booking_ref: "ABC123"
-  passengers: ["Weiwu", "Liansu", "Alice", "Zoe"]
+  passengers: ["Weiwu", "Partner", "Alice", "Zoe"]
 
 outbound_transport:
   type: "train"
@@ -95,7 +95,7 @@ outbound_transport:
   arrival_time: "13:45"
   carrier: "DB"
   booking_ref: "XYZ789"
-  passengers: ["Weiwu", "Liansu", "Alice", "Zoe"]
+  passengers: ["Weiwu", "Partner", "Alice", "Zoe"]
 
 accommodation:
   hotel_name: "Hotel Indigo Berlin - Alexanderplatz"
@@ -144,7 +144,7 @@ travellers:
   adults:
     - name: "Weiwu"
       notes: "IHG Platinum member"
-    - name: "Liansu"
+    - name: "Partner"
   children:
     - name: "Alice"
       age_approx: 8
@@ -153,9 +153,9 @@ travellers:
 
 segments:
   - cities: ["Edinburgh", "Berlin", "Munich"]
-    travellers: ["Weiwu", "Liansu", "Alice", "Zoe"]
+    travellers: ["Weiwu", "Partner", "Alice", "Zoe"]
   - cities: ["Vienna", "Warsaw"]
-    travellers: ["Weiwu", "Liansu"]
+    travellers: ["Weiwu", "Partner"]
     notes: "Children return home after Munich"
 ```
 
@@ -424,7 +424,7 @@ RUN: Travel Management
 
 **Full RUN**:
 ```bash
-claude -p "Follow travel/sop-travel-master.md for journey '2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z'"
+claude -p "Follow travel/sop-travel-master.md for journey '2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Partner, Weiwu, A-Z'"
 ```
 
 **Research only for one city**:
@@ -453,8 +453,8 @@ Journey folder naming convention: `YYYY-MM-DD [Destination(s)] - [Travellers]`
 
 Examples:
 
-- `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Liansu, Weiwu, A-Z`
-- `2025-11-29 Venice - Liansu, Weiwu, A-Z`
+- `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Partner, Weiwu, A-Z`
+- `2025-11-29 Venice - Partner, Weiwu, A-Z`
 
 ---
 

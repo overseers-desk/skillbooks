@@ -139,7 +139,7 @@ title: Emergency board meeting — animal welfare media response
 participants:
   - name: Weizhu Zhang
     title: director
-  - name: Liansu Yu
+  - name: <co-director>
     title: co-director
   - name: Michal Janalik
     title: board member

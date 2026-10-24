@@ -80,7 +80,7 @@ The folder management SOP (`sop-travel-folder-management.md`) must be completed 
 
 ## Journey Folders
 
-A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organised with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Weiwu, Liansu, A-Z") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally Reimbursement folders.
+A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organised with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Weiwu, Partner, A-Z") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally Reimbursement folders.
 
 **Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access method (rclone) and is the single source of truth for folder location.
 
@@ -104,7 +104,7 @@ This SOP assumes the folder management SOP has already been executed and the jou
 2. **Locate the journey folder**:
    - Extract journey name from user request (format: "YYYY-MM-DD [Destination] - [Travelers]")
    - Use the access method established in step 1 to find the journey folder within `0. Travel Admin/`
-   - Example journey folder: `2025-11-29 Venice - Liansu, Weiwu, A-Z`
+   - Example journey folder: `2025-11-29 Venice - Partner, Weiwu, A-Z`
 
 3. **Verify folder exists and contains booking documents:**
    - Using the established access method, list the journey folder contents

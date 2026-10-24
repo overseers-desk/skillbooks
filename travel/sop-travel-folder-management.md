@@ -31,7 +31,7 @@ The execution can be performed on:
 
 ### Journey Folders
 
-A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organised with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Weiwu, Liansu, A-Z") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally a Reimbursement folder (created when reimbursable invoices exist).
+A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organised with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Weiwu, Partner, A-Z") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally a Reimbursement folder (created when reimbursable invoices exist).
 
 Files may originate from various sources: email confirmations, WhatsApp messages, photographs of physical documents (boarding passes, receipts), or forwarded from other travelers' mailboxes. The source doesn't affect how files are processed—all files in the folder are organised and named according to the same conventions regardless of origin.
 
@@ -142,14 +142,14 @@ For cancelled bookings: `(Cancelled) YYYY-MM-DD [Airline/Transport] Origin-Desti
 
 - **Cancellation prefix**: `(Cancelled) ` at the start if the booking was cancelled (note the space after the closing parenthesis)
 - **Frequent Flyer points**: In parentheses, e.g., `(Qantas +3500)` for claimed points, `(Qantas!)` for unclaimed but eligible
-- **Passengers**: Comma-separated, no spaces, e.g., `Liansu,Weiwu,Alice,Zoe` or abbreviated `A-Z` when appropriate
+- **Passengers**: Comma-separated, no spaces, e.g., `Partner,Weiwu,Alice,Zoe` or abbreviated `A-Z` when appropriate
 
 **Multi-segment and Round-trip Bookings:**
 
 When a single booking confirmation contains multiple flight segments (connecting flights or round-trip journeys), keep as a single file using these conventions:
 
 - **Connecting flights (one-way)**: Use first flight number only: `2025-06-15 [Qantas] Singapore-Melbourne-Sydney QF52 ABCDEF.pdf` (connecting via Melbourne)
-- **Round-trip bookings**: Use "Return" with primary outbound/inbound flight numbers separated by slash: `2025-03-20 [Lufthansa] London-Tokyo Return LH920/LH456 XYZ123 Liansu.pdf` (outbound: LH920 to Frankfurt, LH456 to Tokyo; return similar pattern)
+- **Round-trip bookings**: Use "Return" with primary outbound/inbound flight numbers separated by slash: `2025-03-20 [Lufthansa] London-Tokyo Return LH920/LH456 XYZ123 Partner.pdf` (outbound: LH920 to Frankfurt, LH456 to Tokyo; return similar pattern)
 - **Complex multi-segment**: If booking contains 4+ flights, use first outbound and first inbound flight numbers: `2025-08-10 [Emirates] Paris-Dubai-Paris EK073/EK076 PQR789 Weiwu.pdf`
 
 The date used should always be the departure date of the first outbound flight.
@@ -157,14 +157,14 @@ The date used should always be the departure date of the first outbound flight.
 **Examples:**
 
 **Flights and trains:**
-- `2025-11-15 [Ryanair] Seville-Porto FR2323 DTF7HZ Liansu,Weiwu,Alice,Zoe.pdf`
+- `2025-11-15 [Ryanair] Seville-Porto FR2323 DTF7HZ Partner,Weiwu,Alice,Zoe.pdf`
 - `2025-11-17 [CP] Vila Nova de Gaia-Devesas-Lisbon Santa Apolonia IC130 3835-13392495 Weiwu.pdf`
 - `(Cancelled) 2025-11-20 [Ryanair] Porto-Seville FR5544 ABC123.pdf`
 
 **Car rentals** (no flight/train number, use location names):
-- `2025-06-15 [Sixt] Lisbon Airport 9729023889 Liansu.pdf` (same-location rental)
+- `2025-06-15 [Sixt] Lisbon Airport 9729023889 Partner.pdf` (same-location rental)
 - `2025-11-22 [Enterprise] Lisbon-Porto ABC123 Weiwu.pdf` (multi-city rental)
-- `2025-07-15 [Hertz] Frankfurt Airport-Paris CDG 30586488 Liansu,Weiwu.pdf` (different pickup/return locations)
+- `2025-07-15 [Hertz] Frankfurt Airport-Paris CDG 30586488 Partner,Weiwu.pdf` (different pickup/return locations)
 
 ### Accommodation Files (in Accommodations folder)
 
@@ -359,7 +359,7 @@ Ensure all files within a journey folder follow established naming conventions a
 
 ### Input
 
-Journey folder (e.g., "2025-01-01 Gold Coast - Liansu; Amsterdam - Liansu, Weiwu, A-Z"). Access via `sop-travel-folder-access.md`.
+Journey folder (e.g., "2025-01-01 Gold Coast - Partner; Amsterdam - Partner, Weiwu, A-Z"). Access via `sop-travel-folder-access.md`.
 
 ### Output
 
@@ -398,7 +398,7 @@ Fully organized journey folder with all files compliant to naming conventions
 4. **Email Account Verification** (if visible in documents)
    - Extract email address from booking confirmations where visible
    - Verify email matches handbook rules:
-     - me@weiwu.id.au for Weiwu's family travel (or when requested by Weiwu for Liansu traveling alone)
+     - me@weiwu.id.au for Weiwu's family travel (or when requested by Weiwu for the partner traveling alone)
      - Traveller's email for non-family members
    - Flag any bookings made with incorrect email accounts
 
@@ -665,7 +665,7 @@ Actions to execute (proceed without confirmation):
      - **Example duplicate detection**:
        - Email has: Sixt booking #9729023889, pickup 2025-06-15, Lisbon Airport
        - Fares folder has: `2025-06-15 Sixt Car Rental.pdf` (incomplete name)
-       - Result: Match found via date+company → Flag for renaming to `2025-06-15 [Sixt] Lisbon Airport 9729023889 Liansu.pdf`
+       - Result: Match found via date+company → Flag for renaming to `2025-06-15 [Sixt] Lisbon Airport 9729023889 Partner.pdf`
    
    - **Prepayment Invoice**:
      - Subject typically: "Prepayment invoice", "Invoice for booking"
@@ -693,9 +693,9 @@ Actions to execute (proceed without confirmation):
    - Omit flight/train number component (car rentals don't have these)
    
    **Examples**:
-   - `2025-06-15 [Sixt] Lisbon Airport 9729023889 Liansu.pdf` (same-location rental)
+   - `2025-06-15 [Sixt] Lisbon Airport 9729023889 Partner.pdf` (same-location rental)
    - `2025-06-18 [Enterprise] Porto-Faro 26LGYL Weiwu.pdf` (multi-city rental)
-   - `2025-07-15 [Hertz] Frankfurt Airport-Paris CDG 30586488 Liansu,Weiwu.pdf` (airport-to-airport)
+   - `2025-07-15 [Hertz] Frankfurt Airport-Paris CDG 30586488 Partner,Weiwu.pdf` (airport-to-airport)
    
    **For Accommodation Bookings:**
    - **Hotel Booking Confirmation**:
@@ -1134,7 +1134,7 @@ Properly named file following convention:
 - FF notation with claimed points
 - Booking reference included
 
-✅ `2025-04-04 [Plus Ultra] Madrid-Lima Return PU900 VYOXWI Liansu,Alice.pdf`
+✅ `2025-04-04 [Plus Ultra] Madrid-Lima Return PU900 VYOXWI Partner,Alice.pdf`
 - Return flight indicated
 - Flight number included
 - Multiple passengers included
@@ -1176,9 +1176,9 @@ Properly named file following convention:
 - Incorrect cancellation format (missing parentheses)
 - Should be: `(Cancelled) 2025-11-20 [Ryanair] Porto-Seville FR5544 ABC123.pdf`
 
-❌ `2025-11-15 [Ryanair] Seville-Porto DTF7HZ Liansu,Weiwu,Alice,Zoe.pdf`
+❌ `2025-11-15 [Ryanair] Seville-Porto DTF7HZ Partner,Weiwu,Alice,Zoe.pdf`
 - Missing flight number between route and booking reference
-- Should be: `2025-11-15 [Ryanair] Seville-Porto FR2323 DTF7HZ Liansu,Weiwu,Alice,Zoe.pdf`
+- Should be: `2025-11-15 [Ryanair] Seville-Porto FR2323 DTF7HZ Partner,Weiwu,Alice,Zoe.pdf`
 
 ## Next Steps: Journey Evaluation and Itinerary Generation
 
