@@ -16,19 +16,47 @@ package require spar::lib
 
 namespace eval spar::courier {
     variable accounts_block_cache ""
+    # Why the last accounts_block call could not run, "" when it ran.
+    variable not_run ""
 }
 
 proc spar::courier::accounts_block {} {
     variable accounts_block_cache
+    variable not_run
     if {$accounts_block_cache ne ""} { return $accounts_block_cache }
     set courier [auto_execok courier]
-    if {$courier eq ""} { return "" }
-    if {[catch {set out [spar::pool_exec {*}$courier list]}]} { return "" }
+    if {$courier eq ""} {
+        set not_run "courier is not installed on this host"
+        return ""
+    }
+    if {[catch {set out [spar::pool_exec {*}$courier list]} err]} {
+        set not_run "`courier list` failed: [string trim $err]"
+        return ""
+    }
+    set not_run ""
     set hdr "## Courier — prefetched by dispatcher\n\n"
     append hdr "The commands and outputs below were already run for you. **Do not re-run `courier list` and do not search for this contact's email / name / organisation** — the results are below. If you need a different search, use the account names shown and invoke `courier -A search '<query>' --format text` directly.\n\n"
     append hdr "\$ courier list\n[string trim $out]\n"
     set accounts_block_cache $hdr
     return $hdr
+}
+
+proc spar::courier::not_run_reason {} {
+    variable not_run
+    return $not_run
+}
+
+# The two sections inject_courier substitutes when accounts_block could
+# not run, in the shape of a run's: `author` under the courier heading of
+# the author's brief, `prior` in the persona's Prior correspondence slot.
+# Each says so in words, because an empty section reads as a contact with
+# no history, and a host without courier was once drafted as cold on that
+# reading (#102).
+proc spar::courier::not_run_blocks {reason} {
+    set author "## Courier — prefetched by dispatcher\n\n"
+    append author "The mailbox prefetch did not run: $reason. No mailbox was searched for this contact, so prior correspondence is unknown, not absent. Draft as spar-A-approach.md §4.1 says for a contact whose mail check did not run.\n"
+    set prior "\n### Prior correspondence\n\nNot established: the sender's mailbox could not be searched ($reason), so whether you two have written before is not known here.\n"
+    return [dict create author $author prior $prior]
 }
 
 # One courier cascade per contact, serving both prompts: `author` is the
