@@ -1,0 +1,57 @@
+#!/bin/sh
+# claude-tether - run claude so that it dies with the dispatcher (#202).
+#
+#   SPAR_TETHER_PID=<dispatcher pid> SPAR_TETHER_CLAUDE=<claude path> \
+#       claude-tether <claude args...>
+#
+# harness_run (lib/spar/dispatcher-1.0.tm) points a harness's claude_bin
+# here. deadman launches it under setsid, so this shell is the lead of the
+# session's own process group and the dispatcher is its parent. It forks a
+# watcher into that group and execs claude in place, keeping the lead pid.
+# A dispatcher that ends however it ends (SIGKILL, OOM, a Tk crash) leaves
+# claude reparented; the watcher sees the lead's parent change, writes one
+# line to stderr (the session's .stderr log) recording that the session
+# was in flight when the dispatcher died, and TERMs the group, KILL after
+# a grace. A session that ends on its own is reaped by the dispatcher and
+# the watcher exits silently.
+#
+# The watcher sits in the session's group, so the group id cannot be
+# reused while it polls, and its group kill reaches only this session.
+# Without setsid (deadman finds none, as on a stock macOS) there is no
+# group of our own and the kill falls back to the claude pid alone, the
+# same reach deadman's own kills have there.
+
+lead=$$
+if [ -z "$SPAR_TETHER_PID" ] || [ -z "$SPAR_TETHER_CLAUDE" ]; then
+    echo "claude-tether: SPAR_TETHER_PID and SPAR_TETHER_CLAUDE must be set" >&2
+    exit 127
+fi
+# The watcher reads a changed parent as the dispatcher's death, so a
+# launch where the dispatcher is not the parent to begin with runs
+# untethered, and says so, rather than ending at the first poll.
+parent=$(ps -o ppid= -p "$lead" 2>/dev/null | tr -d ' ')
+if [ "$parent" != "$SPAR_TETHER_PID" ]; then
+    echo "claude-tether: parent is pid $parent, not dispatcher pid $SPAR_TETHER_PID; running untethered" >&2
+    exec "$SPAR_TETHER_CLAUDE" "$@"
+fi
+
+(
+    # Off the session's stdout pipe: holding it would keep the dispatcher
+    # from seeing EOF, and so from reaping claude when it exits.
+    exec >/dev/null </dev/null
+    while :; do
+        sleep 2
+        parent=$(ps -o ppid= -p "$lead" 2>/dev/null | tr -d ' ')
+        [ -z "$parent" ] && exit 0
+        [ "$parent" = "$SPAR_TETHER_PID" ] || break
+    done
+    # The group TERM below reaches this shell too; it has to outlive it
+    # to escalate.
+    trap '' TERM
+    echo "spar tether: $(date '+%Y-%m-%dT%H:%M:%S%z') dispatcher pid $SPAR_TETHER_PID ended with this session in flight; terminating claude pid $lead" >&2
+    kill -s TERM -- "-$lead" 2>/dev/null || kill -s TERM "$lead" 2>/dev/null
+    sleep 10
+    kill -s KILL -- "-$lead" 2>/dev/null || kill -s KILL "$lead" 2>/dev/null
+) &
+
+exec "$SPAR_TETHER_CLAUDE" "$@"
