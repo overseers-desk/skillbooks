@@ -394,4 +394,104 @@ assert_eq [roster_field $roster email] "found@send.example" \
     "ApproachHarness: a null stamp before the run is not a record"
 $ah destroy
 
+# ════════════════════════════════════════════════════════════════════════
+section "11. SweepHarness: whose sweep_batch_applied stamp counts (#228)"
+# ════════════════════════════════════════════════════════════════════════
+
+# A T0 deliverable declaring one new row, with an optional stamp line.
+set sweep_out [file join $tmpdir return-register.md]
+proc write_return {path {extra {}}} {
+    set fd [open $path w]
+    puts $fd "---"
+    foreach l [list \
+        "source_status: exhausted — all 40 entries read" \
+        "reconciliation: 40 listed; 40 read; 1 in scope; 1 row returned." \
+        "rows_new:" \
+        "  - stem: bob-roe-beta" \
+        "    contact_name: Bob Roe" \
+        "    organisation: Beta" \
+        "    sweep_iteration: 1" \
+        "    discovered_via: State register entry 12" \
+        "    star_rating: 3" \
+        {*}$extra] {
+        puts $fd $l
+    }
+    puts $fd "---"
+    puts $fd ""
+    puts $fd "Worked the register A-Z; 40 entries listed."
+    close $fd
+}
+proc sweep_stamp_lines {path} {
+    set fd [open $path r]; set t [read $fd]; close $fd
+    return [llength [regexp -all -inline -line {^sweep_batch_applied:.*$} $t]]
+}
+proc make_sweep_harness {roster outfile} {
+    set pdir [file join $::tmpdir prompts sweep-register]
+    file mkdir $pdir
+    set fd [open [file join $pdir meta.env] w]
+    puts $fd "OUTFILE=\"$outfile\""
+    puts $fd "ROSTER_PATH=\"$roster\""
+    puts $fd "SWEEP_PATH=\"[file join $::tmpdir seg.sweep.yaml]\""
+    puts $fd "SEGMENT_DIR=\"[file dirname $roster]\""
+    puts $fd "SEGMENT_KEY=\"seg\""
+    puts $fd "SOURCE_NAME=\"State register\""
+    close $fd
+    set h [spar::SweepHarness new $pdir [file join $::tmpdir logs]]
+    $h load_my_meta
+    return $h
+}
+
+# The applier: a record of 0 lands the batch over a copied stamp; a
+# record of 1 appends nothing and no stem is rejected as already held.
+write_roster $roster
+write_return $sweep_out {"sweep_batch_applied: 2026-09-15"}
+assert_eq [spar::apply_sweep_batch $sweep_out $roster seg] {} \
+    "no record: the file's stamp decides, as the startup reconcile reads it"
+assert_eq [row_count $roster] 1 "no record, stamped file: nothing appended"
+assert_eq [spar::apply_sweep_batch $sweep_out $roster seg 0] {} \
+    "a record of not applied: the batch applies clean"
+assert_eq [row_count $roster] 2 "the declared row reached the roster"
+assert_eq [sweep_stamp_lines $sweep_out] 1 \
+    "the harness's stamp replaced the copied line"
+assert_eq [spar::apply_sweep_batch $sweep_out $roster seg 1] {} \
+    "a record of applied: no duplicate_stem for the rows now held"
+assert_eq [row_count $roster] 2 "a record of applied appends nothing"
+
+# The harness: the deliverable did not exist before the turn, so the
+# stamp the worker copies into it during the turn counts for nothing.
+write_roster $roster
+file delete $sweep_out
+set sh [make_sweep_harness $roster $sweep_out]
+write_return $sweep_out {"sweep_batch_applied: 2026-09-15"}
+set errs [$sh validate_sweep_errors 1]
+assert_eq [lmap e $errs {expr {[dict get $e severity] eq "error" ? $e : [continue]}}] {} \
+    "the return validates with no errors"
+assert_eq [row_count $roster] 2 "the batch landed despite the copied stamp"
+assert_eq [sweep_stamp_lines $sweep_out] 1 "one stamp line in the front matter"
+# A re-validate within the run (the fix loop's final pass) does not
+# re-declare the rows the roster now holds.
+assert_eq [lmap e [$sh validate_sweep_errors 2] {dict get $e code}] {} \
+    "a second validate in the run rejects no stem as already held"
+assert_eq [row_count $roster] 2 "and appends nothing"
+$sh destroy
+
+# A stamp present before the turn is an earlier run's: the batch landed
+# then, and a worker that keeps the declaration does not re-append it.
+write_roster $roster
+write_return $sweep_out {"sweep_batch_applied: 2026-09-15"}
+set sh [make_sweep_harness $roster $sweep_out]
+write_return $sweep_out {"sweep_batch_applied: 2026-09-15"}
+assert_eq [lmap e [$sh validate_sweep_errors 1] {dict get $e code}] {} \
+    "a stamp present before the turn stands: no error"
+assert_eq [row_count $roster] 1 "and the batch is not applied again"
+$sh destroy
+
+# A null stamp before the turn is no record (fa45750).
+write_roster $roster
+write_return $sweep_out {"sweep_batch_applied: null"}
+set sh [make_sweep_harness $roster $sweep_out]
+$sh validate_sweep_errors 1
+assert_eq [row_count $roster] 2 "SweepHarness: a null stamp before the turn is not a record"
+$sh destroy
+
 finish_tests
