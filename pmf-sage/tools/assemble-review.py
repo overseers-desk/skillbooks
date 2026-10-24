@@ -93,9 +93,9 @@ def main():
     raw = subprocess.run([sys.executable, str(here / "card-check.py"), str(run)], capture_output=True, text=True).stdout.strip()
     (decisions / "card-check.txt").write_text(raw + "\n")
     checked = {}
-    for cid, match, stance, _, rests, chosen, runner in re.findall(
-            r"^card (\S+):.*?prior match: (True|False); held value: ([a-z ]+); third derivation: (True|False); rests on: ([a-z ]*); chosen: (.*?) \| runner-up: (.*)$", raw, re.M):
-        checked[cid] = {"match": match == "True", "stance": stance, "rests": rests, "chosen": chosen, "runner": runner}
+    for cid, match, stance, _, rests, chosen, runner, written, ruled_on, game in re.findall(
+            r"^card (\S+):.*?prior match: (True|False); held value: ([a-z ]+); third derivation: (True|False); rests on: ([a-z ]*); chosen: (.*?) \| runner-up: (.*?) \| written: (\S+) \| ruled on: (\S+) \| game cites: (\S+)$", raw, re.M):
+        checked[cid] = {"match": match == "True", "stance": stance, "rests": rests, "chosen": chosen, "runner": runner, "written": written, "ruled_on": ruled_on, "game": game}
     name = lambda c: c["head"].split(" ·")[0].replace("## ", "")
     cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
     value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
@@ -103,7 +103,7 @@ def main():
     sheet = ["| card | your part | the question | recommended | what the counts say | rests on | what is held | market-only reading | ruled |", "|---|---|---|---|---|---|---|---|---|"]
     open_cards, ruled_cards, joints, landings = [], [], [], {}
     for c in cards:
-        k = checked.get(cid_of(c), {"match": False, "stance": "", "rests": "", "chosen": "", "runner": ""})
+        k = checked.get(cid_of(c), {"match": False, "stance": "", "rests": "", "chosen": "", "runner": "", "written": "none", "ruled_on": "none", "game": "none"})
         rec, ruled = value(c, "Recommended"), value(c, "Ruled")
         is_ruled = bool(ruled) and ruled.lower() != "open" and not ruled.startswith("<")
         parts = [x.strip() for x in rec.split(";")]

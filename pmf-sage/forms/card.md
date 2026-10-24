@@ -4,6 +4,8 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
 
 ## Card N · <the parameter, in the words a buyer meets it>
 
+**Written:** <the date the clerks last rewrote this card's evidence or recommendation; a ruling leaves it as it stands>
+
 **Question:** <the decision put to the owner, addressed as you, in the words the owner and the customers use, none of the study's working words, leaning to no option; a second sentence only where the choice needs one>
 
 **Options**
@@ -18,7 +20,7 @@ Options exclude one another; where two of them can be done together, doing both 
 
 **What the counts say:** <one sentence of thirty words or fewer, which the ruling sheet shows the owner: what the market or the operator's buyers do that the recommendation stands on, each fact in plain words with its count beside it; on a withheld card, what the counts leave undecided>
 
-**Ruled:** <the owner's decision, dated; or open>
+**Ruled:** <the owner's latest decision and its date, or open; ruling again overwrites it>
 
 **Chip:** <inherited | anchored | derived | radical, compound allowed>
 
@@ -34,6 +36,6 @@ Options exclude one another; where two of them can be done together, doing both 
 
 **Third derivation:** <its file in backticks; agrees, differs or declines; where it landed and by what count; where it lands on an option the capability record cannot deliver, that cost line>
 
-**Corrections:** <none, until the card is ruled and the work that follows the ruling has begun; before then a change rewrites the card forward only. After it, dated lines: a correction that withdraws the leg under the recommendation rewrites the Recommended line in the same act and says here what stood before>
+**Corrections:** <none, until a game brief cites this card's ruling; before then every change, to the evidence, the question or the ruling, rewrites the card in place. After it, dated lines: a correction that withdraws the leg under the recommendation rewrites the Recommended line in the same act and says here what stood before>
 
 A third derivation is a separate file headed `## Third derivation of Card N`, which the tools do not count as a card; the review shows the original card and its Third derivation line points at the file.
