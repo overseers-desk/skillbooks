@@ -1054,7 +1054,7 @@ oo::class create spar::SweepHarness {
     superclass spar::Harness
 
     variable Outfile RosterPath SweepPath SegmentDir SegmentKey \
-             SourceName Round Model
+             SourceName Round Model Applied
 
     # Same allow-list as the profile worker, for the same reason: a
     # discovery session that could spawn full-tool agents turns one
@@ -1117,6 +1117,16 @@ oo::class create spar::SweepHarness {
         # meta.env written without MODEL keeps that tier rather than
         # promoting the sweep to a dearer one.
         set Model      [dict getdef $meta MODEL sonnet]
+        # Whether this deliverable's batch has landed, read before the
+        # worker's turn (#228, as the P and A harnesses read theirs,
+        # #209). A stamp the file carries now was written by an earlier
+        # run's harness; one that appears during the turn is the
+        # worker's copy of a sibling's, and counts for nothing.
+        set Applied 0
+        if {[file exists $Outfile]} {
+            set Applied [spar::stamp_present \
+                [spar::read_profile_front_matter $Outfile] sweep_batch_applied]
+        }
     }
 
     method do_sweep_call {} {
@@ -1133,8 +1143,12 @@ oo::class create spar::SweepHarness {
         return [my run_fix_loop validate_sweep_errors build_sweep_fix_prompt]
     }
 
+    # Whether the batch has landed is the harness's own record (Applied),
+    # not the deliverable's stamp; a clean return means it has.
     method validate_sweep_errors {attempt} {
-        return [spar::apply_sweep_batch $Outfile $RosterPath $SegmentKey]
+        set issues [spar::apply_sweep_batch $Outfile $RosterPath $SegmentKey $Applied]
+        if {[llength [my hard_errors_from $issues]] == 0} { set Applied 1 }
+        return $issues
     }
 
     method build_sweep_fix_prompt {attempt hard error_text} {

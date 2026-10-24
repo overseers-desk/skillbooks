@@ -1056,22 +1056,36 @@ proc spar::_apply_patch_only {declared record stamped roster_path stem} {
 # All-or-nothing, like _apply_patch_only: any issue and the roster is
 # untouched, so the fix loop bounces a whole batch back to the worker
 # rather than leaving half of it applied and half described. Returns issue
-# dicts; empty when the batch landed (or when the stamp says it already
-# has).
+# dicts; empty when the batch landed (or when it already had).
+#
+# Whether it already had is the harness's record where one is given, as
+# apply_roster_patch takes its applied argument (#209): applied is 1 when
+# the deliverable carried a sweep_batch_applied stamp before the worker's
+# turn, 0 when it did not, and with it the file's stamp is not read, only
+# rewritten. A T0 worker holds Write on its deliverable and copies the
+# stamp line from a finished sibling; read from the file, that copy would
+# skip the whole batch with no issue raised (#228). Without the argument
+# (a reconcile with no record) the file's stamp decides, as before.
 #
 # The roster is created when absent, with the core header, since the
 # first sweep of a segment is what creates it. Where one exists, its header is
 # authoritative: campaign-specific columns are real, and a declared column
 # the header does not carry is a defect in the declaration, not a reason
 # to widen the roster.
-proc spar::apply_sweep_batch {deliverable_path roster_path segment} {
+proc spar::apply_sweep_batch {deliverable_path roster_path segment {applied ""}} {
     set issues [spar::validate_sweep_return $deliverable_path]
     foreach i $issues {
         if {[dict get $i severity] eq "error"} { return $issues }
     }
     set warnings $issues
     set fm [spar::read_profile_front_matter $deliverable_path]
-    if {[spar::stamp_present $fm sweep_batch_applied]} { return $warnings }
+    if {$applied eq ""} {
+        set applied [spar::stamp_present $fm sweep_batch_applied]
+        if {$applied} { return $warnings }
+    } elseif {$applied} {
+        spar::_stamp_patch_applied $deliverable_path sweep_batch_applied
+        return $warnings
+    }
 
     set rows_new [dict getdef $fm rows_new {}]
     if {[llength $rows_new] == 0} {
