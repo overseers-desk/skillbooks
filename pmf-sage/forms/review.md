@@ -16,7 +16,7 @@ One row a card. *Your part* says what the row asks of you: confirm, rule, or not
 
 {{order}}
 
-The parameters the type card settled, one line each with the default taken and the finding behind it, are the settled list in `card-set.md`; say the word and any of them comes back as a card.
+Everything your choice of kind settles on its own (what is included, how it is booked, the terms) is written out one line each in `card-set.md`, with what was taken and why; say the word and any line comes back as a question for you.
 
 ## What the cards add up to
 
