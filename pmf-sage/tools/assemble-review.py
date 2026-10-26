@@ -157,7 +157,7 @@ def main():
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
         if is_ruled:
-            keep = [c["head"]] + with_prose(c, "Question")[:1] + with_prose(c, "Recommended")[:1] + ([c["fields"]["What the counts say"]] if moved and "What the counts say" in c["fields"] else [])
+            keep = [c["head"]] + with_prose(c, "Question")[:1] + ["**Recommended:** " + rec.split(";")[0].strip()] + ([c["fields"]["What the counts say"]] if moved and "What the counts say" in c["fields"] else [])
             # a ruled card prints its question and its recommendation in one line each; what the clerk wrote under them is reported, not lost
             for f in FACE:
                 for s in c["prose"].get(f, []):
@@ -191,12 +191,12 @@ def main():
                   + "." + (f" On {n - held} of the {n} the business held nothing, whatever the line reads." if n - held else "")
                   + " Keeping and leaving were asked for the same proof, a market-only reading by a fresh clerk who saw neither the business's records nor the first clerk's work. "
                   + f"Of {len(read)} such readings, {len(by('agrees'))} agree with the card"
-                  + (f", {len(by('differs'))} differ ({', '.join(by('differs'))})" if by("differs") else "")
+                  + (f", {len(by('differs'))} differ{'s' if len(by('differs')) == 1 else ''} ({', '.join(by('differs'))})" if by("differs") else "")
                   + (f", {len(by('declines'))} found nothing in the market to recommend on ({', '.join(by('declines'))})" if by("declines") else "")
                   + (f", {len(part)} split across the two halves of the question ({'; '.join(k + ': ' + landings[k] for k in part)})" if part else "") + "."
                   + (f" {outstanding} held values have no market-only reading yet." if outstanding else "")
                   + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else "")
-                  + (f" The measured-in lines mark a counted population as differing from this business's shape {differs} times; where a card's figure comes from such a population, its card says what that leaves the figure worth." if differs else ""))
+                  + (f" The the populations counted differ from this business on the dimension the card rules from this business's shape {differs} times; where a card's figure comes from such a population, its card says what that leaves the figure worth." if differs else ""))
     else:
         counts = raw
     # a card's own words about its match must agree with the check's count of it
