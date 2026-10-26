@@ -103,6 +103,13 @@ def main():
         t = p.read_text(errors="replace")
         if re.search(r"^## Card\s", t, re.M) and not re.search(r"^## Third derivation", t, re.M):
             cards.append(read_card(p))
+    # the sheet follows the order of ruling where the integrator names one (## Order: card ids, comma-separated); unnamed cards keep file order after it
+    ifile = decisions / "integrator-fields.md"
+    named_order = [s.strip() for s in re.split(r"[,\s]+", section(ifile.read_text(errors="replace"), "Order")) if s.strip()] if ifile.exists() else []
+    if named_order:
+        rank = {cid: i for i, cid in enumerate(named_order)}
+        cid_tmp = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
+        cards.sort(key=lambda c: (rank.get(cid_tmp(c), len(rank)), 0))
 
     raw = subprocess.run([sys.executable, str(here / "card-check.py"), str(run)], capture_output=True, text=True).stdout.strip()
     (decisions / "card-check.txt").write_text(raw + "\n")
