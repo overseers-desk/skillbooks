@@ -163,9 +163,11 @@ def main():
             table = c["table"] + [c["rows"][n][0] for n in (full if len(full) >= 2 else c["rows"])]
             rest = [f"{n} ({fig})" for n, (row, fig) in c["rows"].items() if n not in full] if len(full) >= 2 else []
             keep = ([c["head"]] + with_prose(c, "Question") + (with_prose(c, "In plain words") if "In plain words" in c["fields"] else []) + ["**Options**", "\n".join(table)]
-                    + (["Other options, each with its figure: " + "; ".join(rest) + "."] if rest else []) + c["prose"].get("Options", [])
+                    + (["Other options, each with its figure: " + "; ".join(rest) + "."] if rest else [])
+                    + ([] if "In plain words" in c["fields"] else c["prose"].get("Options", []))
                     + (["**Recommended:** " + rec.split(";")[0].strip()] if "In plain words" in c["fields"] else with_prose(c, "Recommended")))
-        keep += [c["fields"][f] for f in ("Third derivation", "Ruled") if f in c["fields"]]
+        # where the plain words carry the card, the silent count and the market-only landing stay in the card file
+        keep += [c["fields"][f] for f in (("Ruled",) if "In plain words" in c["fields"] else ("Third derivation", "Ruled")) if f in c["fields"]]
         (ruled_cards if is_ruled else open_cards).append("\n\n".join(keep))
 
     # the owner reads facts in words; the check's own lines stay in the run record
