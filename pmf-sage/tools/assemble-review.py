@@ -3,7 +3,7 @@
 
 Usage: assemble-review.py <run-dir>
 Reads <run-dir>/3-decisions/**/*.md cards, <run-dir>/3-decisions/integrator-fields.md (on forms/integrator-fields.md, sections
-## Unlock and ## Collisions) and <run-dir>/3-decisions/joint-ledger.md if present.
+## Wrong today, ## Unlock and ## Collisions) and <run-dir>/3-decisions/joint-ledger.md if present.
 Writes <run-dir>/3-decisions/review.md from forms/review.md beside this script: the ruling sheet (one row a card), the order of
 ruling, the counts from the card check, the open cards with the recommended option and its runner-up in full, the ruled cards in short, and each card's Joint line.
 Every card paragraph the review does not print is reported on stderr as DROPPED, so nothing leaves a card silently.
@@ -125,10 +125,13 @@ def main():
         recommended = ", ".join(parts[:2]) if parts[0].lower() == "withheld" and len(parts) > 1 and parts[1].lower().startswith("between") else parts[0]
         landings[name(c)] = landing(c)
         held = {"matches": "keeps it", "leaves": "leaves it", "withheld held": "held; neither kept nor left", "withheld": "nothing held", "none held": "nothing held"}.get(k["stance"], "")
-        ruled_cell = ("ruled; the card leaves the ruling" if k["stance"] == "leaves" else "ruled") if is_ruled else "open"
         withheld_row = k["stance"].startswith("withheld")
+        # a ruled row is judged against the ruling itself, not against the held value the priors clerk stamped: the two differ once he has ruled away from what was held
+        named = {n for n in c["rows"] if n.strip().lower() in ruled.lower()}
+        agrees = is_ruled and not withheld_row and named == {parts[0].strip()}
+        ruled_cell = ("ruled" if agrees or withheld_row else "ruled; the card leaves the ruling") if is_ruled else "open"
         if is_ruled:
-            part = "rule again, or let your ruling stand" if k["stance"] == "leaves" else "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling"
+            part = "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling" if agrees else "rule again, or let your ruling stand"
         else:
             part = "for research: the clerks make the observation the card names; nothing from you" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
         # a ruling older than the evidence under it is given again; a ruling newer than the one the game played on sends the game round again
@@ -196,6 +199,7 @@ def main():
 
     fields = (decisions / "integrator-fields.md").read_text(errors="replace") if (decisions / "integrator-fields.md").exists() else ""
     order = [section(fields, title) for title in ("Unlock", "Collisions")]
+    wrong = section(fields, "Wrong today")
     order = "\n\n".join(b for b in order if b and not b.lstrip("(").lower().startswith("none"))
     # a run's joint ledger, where it keeps one, follows the order of ruling; the Joint lines stay in the card files and are read here only to check quotations
     ledger = decisions / "joint-ledger.md"
@@ -207,7 +211,8 @@ def main():
         for card_ref, quoted in re.findall(r"(Card \d+)'s (?:own )?Joint line states[^\"]*\"([^\"]+)\"", line):
             if card_ref in joint_by_card and quoted not in joint_by_card[card_ref]:
                 print(f"MISQUOTE: {card_ref} does not say \"{quoted[:60]}\"", file=sys.stderr)
-    out = (template.replace("{{sheet}}", "\n".join(sheet) if cards else "(no cards)")
+    out = (template.replace("{{wrong}}", wrong or "(nothing the capability record shows broken today bears on these cards)")
+           .replace("{{sheet}}", "\n".join(sheet) if cards else "(no cards)")
            .replace("{{order}}", order or "(the integrator named no order)")
            .replace("{{counts}}", counts or "(no cards)")
            .replace("{{cards}}", "\n\n".join(open_cards) or "(no open cards)")
