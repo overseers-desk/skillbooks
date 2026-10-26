@@ -18,10 +18,6 @@ One row a card. *Your part* says what the row asks of you: confirm, rule, or not
 
 Everything your choice of kind settles on its own (what is included, how it is booked, the terms) is written out one line each in `card-set.md`, with what was taken and why; say the word and any line comes back as a question for you.
 
-## What the cards add up to
-
-{{counts}}
-
 ## Open cards
 
 The recommended option and its runner-up in full; the other options by name and figure. The card file holds every option's source, capability and seller's sentence.
@@ -31,3 +27,7 @@ The recommended option and its runner-up in full; the other options by name and 
 ## Ruled cards
 
 {{ruled}}
+
+## What the cards add up to
+
+{{counts}}
