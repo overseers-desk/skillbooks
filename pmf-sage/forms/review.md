@@ -12,6 +12,8 @@ One row a card. *Your part* says what the row asks of you: confirm, rule, or not
 
 {{order}}
 
+The parameters the type card settled, one line each with the default taken and the finding behind it, are the settled list in `card-set.md`; say the word and any of them comes back as a card.
+
 ## What the cards add up to
 
 {{counts}}
