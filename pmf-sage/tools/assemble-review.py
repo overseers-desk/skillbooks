@@ -11,7 +11,7 @@ Every card paragraph the review does not print is reported on stderr as DROPPED,
 import re, subprocess, sys
 from pathlib import Path
 
-FACE = ("Question", "Options", "Recommended")  # the line under the options table counts the silent operators once
+FACE = ("Question", "In plain words", "Options", "Recommended")  # the line under the options table counts the silent operators once
 # the form's field labels; a bold label the form does not declare opens a paragraph, not a field
 FORM_FIELDS = set(re.findall(r"\*\*([A-Za-z ]+):?\*\*", (Path(__file__).resolve().parent.parent / "forms" / "card.md").read_text()))
 LISTED = ("Cost lines", "Priors", "Corrections")  # the form asks for these one entry to a line, so a list under them is the form kept
@@ -156,7 +156,7 @@ def main():
                 full = [n for n in c["rows"] if n in rec]
             table = c["table"] + [c["rows"][n][0] for n in (full if len(full) >= 2 else c["rows"])]
             rest = [f"{n} ({fig})" for n, (row, fig) in c["rows"].items() if n not in full] if len(full) >= 2 else []
-            keep = ([c["head"]] + with_prose(c, "Question") + ["**Options**", "\n".join(table)]
+            keep = ([c["head"]] + with_prose(c, "Question") + (with_prose(c, "In plain words") if "In plain words" in c["fields"] else []) + ["**Options**", "\n".join(table)]
                     + (["Other options, each with its figure: " + "; ".join(rest) + "."] if rest else []) + c["prose"].get("Options", []) + with_prose(c, "Recommended"))
         keep += [c["fields"][f] for f in ("Third derivation", "Ruled") if f in c["fields"]]
         (ruled_cards if is_ruled else open_cards).append("\n\n".join(keep))
