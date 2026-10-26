@@ -141,7 +141,7 @@ def main():
             # a ruling stands until the evidence under it moves (handled below); a card that recommends otherwise says so and asks nothing
             part = "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling" if agrees else f"nothing: your ruling stands; the card recommends {parts[0].strip()}"
         else:
-            part = "for research: the clerks make the observation the card names; nothing from you" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
+            part = "for research: the study makes the observation the card names; nothing from you" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
         # a ruling older than the evidence under it is given again; a ruling newer than the one the game played on sends the game round again
         dated = lambda d: d not in ("none", "undated")
         moved = is_ruled and dated(k["written"]) and dated(k["ruled_on"]) and k["written"] > k["ruled_on"]
@@ -189,7 +189,7 @@ def main():
                   f"{matches} recommendation{'s' if matches != 1 else ''} keep{'' if matches != 1 else 's'} a value the business already holds, {leaves} leave{'' if leaves != 1 else 's'} one"
                   + (f", {withheld} {'are' if withheld != 1 else 'is'} withheld because no option leads" if withheld else "")
                   + "." + (f" On {n - held} of the {n} the business held nothing, whatever the line reads." if n - held else "")
-                  + " Keeping and leaving were asked for the same proof, a market-only reading by a fresh clerk who saw neither the business's records nor the first clerk's work. "
+                  + " Keeping and leaving were asked for the same proof, a second reading of rivals' pages alone, made without the business's records or the first reading in hand. "
                   + f"Of {len(read)} such readings, {len(by('agrees'))} agree with the card"
                   + (f", {len(by('differs'))} differ{'s' if len(by('differs')) == 1 else ''} ({', '.join(by('differs'))})" if by("differs") else "")
                   + (f", {len(by('declines'))} found nothing in the market to recommend on ({', '.join(by('declines'))})" if by("declines") else "")
