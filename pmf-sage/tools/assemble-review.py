@@ -173,8 +173,8 @@ def main():
         by = lambda w: [k for k, v in landings.items() if v == w]
         read = [k for k, v in landings.items() if v not in ("none", "not stated")]
         counts = (f"{n} cards. Every card offers at least two ways the market sells this, each with a figure. "
-                  f"{matches} recommendations keep a value the business already holds, {leaves} leave one"
-                  + (f", {withheld} are withheld because no option leads" if withheld else "")
+                  f"{matches} recommendation{'s' if matches != 1 else ''} keep{'' if matches != 1 else 's'} a value the business already holds, {leaves} leave{'' if leaves != 1 else 's'} one"
+                  + (f", {withheld} {'are' if withheld != 1 else 'is'} withheld because no option leads" if withheld else "")
                   + "." + (f" On {n - held} of the {n} the business held nothing, whatever the line reads." if n - held else "")
                   + " Keeping and leaving were asked for the same proof, a market-only reading by a fresh clerk who saw neither the business's records nor the first clerk's work. "
                   + f"Of {len(read)} such readings, {len(by('agrees'))} agree with the card"
