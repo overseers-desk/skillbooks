@@ -130,7 +130,7 @@ def main():
         if is_ruled:
             part = "rule again, or let your ruling stand" if k["stance"] == "leaves" else "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling"
         else:
-            part = "commission the observation, or rule between the two" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
+            part = "for research: the clerks make the observation the card names; nothing from you" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
         # a ruling older than the evidence under it is given again; a ruling newer than the one the game played on sends the game round again
         dated = lambda d: d not in ("none", "undated")
         moved = is_ruled and dated(k["written"]) and dated(k["ruled_on"]) and k["written"] > k["ruled_on"]
