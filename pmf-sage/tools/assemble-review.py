@@ -114,7 +114,7 @@ def main():
     cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
     value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
 
-    sheet = ["| card | your part | the question | recommended | what the counts say | rests on | what is held | market-only reading | ruled |", "|---|---|---|---|---|---|---|---|---|"]
+    sheet = ["| card | your part | the question | the recommendation | ruled |", "|---|---|---|---|---|"]
     open_cards, ruled_cards, joints, landings = [], [], [], {}
     for c in cards:
         k = checked.get(cid_of(c), {"match": False, "stance": "", "rests": "", "chosen": "", "runner": "", "written": "none", "ruled_on": "none", "game": "none"})
@@ -142,8 +142,10 @@ def main():
             ruled_cell = "ruled; the evidence moved since"
         if is_ruled and dated(k["ruled_on"]) and dated(k["game"]) and k["ruled_on"] > k["game"]:
             ruled_cell += f"; ruled again after the game played on your ruling of {k['game']}, so the game runs again"
-        # the owner reads the question and the counts in the card's plain sentences; the margin and its working stay on the card
-        sheet.append(f"| {cid_of(c)} | {part} | {value(c, 'Question')} | {recommended} | {value(c, 'What the counts say')} | {k['rests']} | {held} | {landings[name(c)]} | {ruled_cell} |")
+        # the owner reads the recommendation as the plain words open it; the counts, the held value and the market-only landing stay on the card
+        plain = value(c, "In plain words")
+        said = re.split(r"(?<=[.!?])\s+(?=[A-Z])", plain, maxsplit=1)[0] if plain else recommended
+        sheet.append(f"| {cid_of(c)} | {part} | {value(c, 'Question')} | {said} | {ruled_cell} |")
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
         if is_ruled:
