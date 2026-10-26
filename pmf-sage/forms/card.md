@@ -8,7 +8,7 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
 
 **Question:** <the decision put to the owner, addressed as you, in the words the owner and the customers use, none of the study's working words, leaning to no option; a second sentence only where the choice needs one>
 
-**In plain words:** <three to five sentences in the owner's words, the only part of the card the ruling surface shows him before the options: what to do, the one or two figures that carry it with the competitors they come from, what the venue's own buyers did, what delivering it needs at the venue and what that costs, and how thin the evidence is. No study code, no field grammar, no margin arithmetic; a figure is a number in words with its population. Where a trial at the venue is the right next step, it is proposed here as a step with its cost, never asked of the owner as the condition of ruling>
+**In plain words:** <three to five sentences in the owner's words, the only part of the card the ruling surface shows him before the options: what to do, the one or two figures that carry it with the competitors they come from, what the venue's own buyers did, what delivering it needs at the venue and what that costs, what one sale would then earn the venue where the capability record gives the cost, and how thin the evidence is. No study code, no field grammar, no margin arithmetic; a figure is a number in words with its population. Where a trial at the venue is the right next step, it is proposed here as a step with its cost, never asked of the owner as the condition of ruling>
 
 **Options**
 
