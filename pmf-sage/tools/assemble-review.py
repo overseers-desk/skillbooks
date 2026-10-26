@@ -129,9 +129,10 @@ def main():
         # a ruled row is judged against the ruling itself, not against the held value the priors clerk stamped: the two differ once he has ruled away from what was held
         named = {n for n in c["rows"] if n.strip().lower() in ruled.lower()}
         agrees = is_ruled and not withheld_row and named == {parts[0].strip()}
-        ruled_cell = ("ruled" if agrees or withheld_row else "ruled; the card leaves the ruling") if is_ruled else "open"
+        ruled_cell = ("ruled" if agrees or withheld_row else "ruled; the card recommends otherwise") if is_ruled else "open"
         if is_ruled:
-            part = "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling" if agrees else "rule again, or let your ruling stand"
+            # a ruling stands until the evidence under it moves (handled below); a card that recommends otherwise says so and asks nothing
+            part = "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling" if agrees else f"nothing: your ruling stands; the card recommends {parts[0].strip()}"
         else:
             part = "for research: the clerks make the observation the card names; nothing from you" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
         # a ruling older than the evidence under it is given again; a ruling newer than the one the game played on sends the game round again
