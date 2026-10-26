@@ -20,7 +20,7 @@ Everything your choice of kind settles on its own (what is included, how it is b
 
 ## Open cards
 
-The recommended option and its runner-up in full; the other options by name and figure. The card file holds every option's source, capability and seller's sentence.
+The recommended option and its runner-up in full; the other options by name and figure. The card file holds, for every option, where its figure comes from, what delivering it needs, and what we would say to the buyer.
 
 {{cards}}
 
