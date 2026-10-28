@@ -8,13 +8,13 @@ One file per card under the run's `3-decisions/`, named by number. Field names a
 
 **Question:** <the decision put to the owner, addressed as you, in the words the owner and the customers use, none of the study's working words, leaning to no option; a second sentence only where the choice needs one>
 
-**In plain words:** <three to five sentences in the owner's words, the only part of the card the ruling surface shows him before the options: what to do, the one or two figures that carry it with the competitors they come from, what the venue's own buyers did, what delivering it needs at the venue and what that costs, what one sale would then earn the venue where the capability record gives the cost, for an offering already sold what the last season or period took against its capacity, and how thin the evidence is. No study code, no field grammar, no margin arithmetic; a figure is a number in words with its population. Where a trial at the venue is the right next step, it is proposed here as a step with its cost, never asked of the owner as the condition of ruling>
+**In plain words:** <three to five sentences in the owner's words, the only part of the card the ruling surface shows him before the options: what to do, the one or two figures that carry it with the competitors they come from, what the venue's own buyers did, what delivering it needs at the venue and what that costs, what one sale would then earn the venue where the operator's records give the cost, for an offering already sold what the last season or period took against its capacity, and how thin the evidence is. No study code, no field grammar, no margin arithmetic; a figure is a number in words with its population. Where a trial at the venue is the right next step, it is proposed here as a step with its cost, never asked of the owner as the condition of ruling>
 
 **Options**
 
-| option | figure | source | capability | sentence |
+| option | figure | source | cost | sentence |
 |---|---|---|---|---|
-| <value the market shows> | <number with its unit, and in words the population it was counted in (12 of the 40 comparables that state a price), since the review copies it to the owner; a cell name or variable code goes in the source column, never here alone> | <finding, taxonomy row, search finding, register section or enquiry count> | <mechanism or resource, or the cost line of building it> | <what the seller says to a named roster profile where the sale (or, for an offering given away, the take-up) is made, and that buyer's likely answer; where the roster holds no profile for this buyer, said to the buyer as the comparables' own pages address them, marked "no profile"> |
+| <value the market shows> | <number with its unit, and in words the population it was counted in (12 of the 40 comparables that state a price), since the review copies it to the owner; a cell name or variable code goes in the source column, never here alone> | <finding, taxonomy row, search finding, register section or enquiry count> | <what delivering this option costs the operator: what exists is named, what does not is priced or estimated and marked so; never a bar on the option> | <what the seller says to a named roster profile where the sale (or, for an offering given away, the take-up) is made, and that buyer's likely answer; where the roster holds no profile for this buyer, said to the buyer as the comparables' own pages address them, marked "no profile"> |
 
 Options exclude one another; where two of them can be done together, doing both is an option of its own with its own figure. Operators silent on the parameter are counted once, in a line under the table, and sit in no option's figure. Where saying nothing is itself an option, its figure is that silent count, and the Recommended line gives the margin both ways: among operators that state a posture, and with the silent counted in.
 
@@ -28,7 +28,7 @@ Options exclude one another; where two of them can be done together, doing both 
 
 **Measured in:** <stratum, cell(s), numerator/denominator; the shape note's dimensions each marked shared, differs, or not stated where the population's pages are silent, the silent counted and not inferred; or the enquiry count's condition line>
 
-**Cost lines:** <existence facts from the capability record that bear on this card, one per line, named>
+**Cost lines:** <what delivering each option would cost the operator beyond what it has, one per line, priced or estimated and marked so; information for his choice, never a condition of it>
 
 **Opposite:** · **Further:** · **Joint:** · **Buyer:** <argued between the options>
 
@@ -36,7 +36,7 @@ Options exclude one another; where two of them can be done together, doing both 
 
 **Priors:** <appended by the priors clerk only, values and nothing else: one entry per source, the file in backticks, its date, and the value it held as a number, a range written `a–b`, or the word it used. No sentence about the recommendation belongs here; a line that discusses the card echoes the card's own words and the match rule fires on the echo. Discussion goes to the priors pass note beside the cards.>
 
-**Third derivation:** <its file in backticks; agrees, differs or declines; where it landed and by what count; where it lands on an option the capability record cannot deliver, that cost line>
+**Third derivation:** <its file in backticks; agrees, differs or declines; where it landed and by what count; where it lands on an option the operator would have to build for, that cost line>
 
 **Corrections:** <none, until a game brief cites this card's ruling; before then every change, to the evidence, the question or the ruling, rewrites the card in place. After it, dated lines: a correction that withdraws the leg under the recommendation rewrites the Recommended line in the same act and says here what stood before>
 
