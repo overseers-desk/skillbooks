@@ -231,8 +231,9 @@ def main():
                     continue
                 t = re.sub(r"^\s*[-*] ", "", ln)
                 t = re.sub(r"^\**(DEFAULT|RULED)[^:.]*[:.]\**\s*", "", t, flags=re.I)
-                t = re.sub(r"\(card [^)]*\),?\s*", "", t)
-                t = re.sub(r",?\s*DEFAULT for Game:?\s*", " ", t)
+                t = re.sub(r"\s*\(card [^)]*\),?\s*DEFAULT for Game:?\s*", ": ", t)
+                t = re.sub(r"\s*\(card [^)]*\),?\s*", " ", t)
+                t = re.sub(r",?\s*DEFAULT for Game:?\s*", ": ", t)
                 t = re.sub(r"\s{2,}", " ", t).strip()
                 if t:
                     items.append("- " + t)
