@@ -230,7 +230,7 @@ def main():
                 if not re.match(r"\s*[-*] ", ln):
                     continue
                 t = re.sub(r"^\s*[-*] ", "", ln)
-                t = re.sub(r"^\**(DEFAULT|RULED)\**(?:\s+for Game)?\s*[:.]?\s*", "", t, flags=re.I)
+                t = re.sub(r"^\**(DEFAULT|RULED)(?:\s+for Game)?\s*[:.]?\**\s*", "", t, flags=re.I)
                 t = re.sub(r"\s*\(card [^)]*\),?\s*DEFAULT for Game:?\s*", ": ", t)
                 t = re.sub(r"\s*\(card [^)]*\),?\s*", " ", t)
                 t = re.sub(r",?\s*DEFAULT for Game:?\s*", ": ", t)
