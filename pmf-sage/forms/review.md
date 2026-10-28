@@ -14,7 +14,7 @@ One row a card. *Your part* says what the row asks of you: confirm, rule, or not
 
 ## What your choice of kind settles on its own
 
-One line each: what was taken and why. Say the word and any line comes back as a question for you.
+From the study's card set, one line each: what was taken and why. Say the word and any line comes back as a question for you.
 
 {{settled}}
 
