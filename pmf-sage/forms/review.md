@@ -12,7 +12,11 @@ One row a card. *Your part* says what the row asks of you: confirm, rule, or not
 
 {{order}}
 
-Everything your choice of kind settles on its own (what is included, how it is booked, the terms) is written out one line each in `card-set.md`, with what was taken and why; say the word and any line comes back as a question for you.
+## What your choice of kind settles on its own
+
+One line each: what was taken and why. Say the word and any line comes back as a question for you.
+
+{{settled}}
 
 ## Open cards
 
