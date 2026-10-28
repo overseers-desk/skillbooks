@@ -158,6 +158,9 @@ def main():
         sheet.append(f"| {cid_of(c)} | {part} | {value(c, 'Question')} | {said} | {ruled_cell} |")
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
+        # a card held for research keeps its sheet row, which names what is being found out, and prints no full card: nothing is asked of him
+        if withheld_row and not is_ruled:
+            continue
         # a ruled card whose evidence moved after the ruling is put to him again, so it prints in full like an open card
         if is_ruled and not moved:
             keep = [c["head"]] + with_prose(c, "Question")[:1] + ["**Recommended:** " + rec.split(";")[0].strip()] + ([c["fields"]["What the counts say"]] if moved and "What the counts say" in c["fields"] else [])
