@@ -3,7 +3,7 @@
 
 Usage: assemble-review.py <run-dir>
 Reads <run-dir>/3-decisions/**/*.md cards, <run-dir>/3-decisions/integrator-fields.md (on forms/integrator-fields.md, sections
-## Wrong today, ## Unlock and ## Collisions) and <run-dir>/3-decisions/joint-ledger.md if present.
+## Order, ## Unlock and ## Collisions) and <run-dir>/3-decisions/joint-ledger.md if present.
 Writes <run-dir>/3-decisions/review.md from forms/review.md beside this script: the ruling sheet (one row a card), the order of
 ruling, the counts from the card check, the open cards with the recommended option and its runner-up in full, the ruled cards in short, and each card's Joint line.
 Every card paragraph the review does not print is reported on stderr as DROPPED, so nothing leaves a card silently.
@@ -212,7 +212,6 @@ def main():
 
     fields = (decisions / "integrator-fields.md").read_text(errors="replace") if (decisions / "integrator-fields.md").exists() else ""
     order = [section(fields, title) for title in ("Unlock", "Collisions")]
-    wrong = section(fields, "Wrong today")
     order = "\n\n".join(b for b in order if b and not b.lstrip("(").lower().startswith("none"))
     # a run's joint ledger, where it keeps one, follows the order of ruling; the Joint lines stay in the card files and are read here only to check quotations
     ledger = decisions / "joint-ledger.md"
@@ -224,8 +223,7 @@ def main():
         for card_ref, quoted in re.findall(r"(Card \d+)'s (?:own )?Joint line states[^\"]*\"([^\"]+)\"", line):
             if card_ref in joint_by_card and quoted not in joint_by_card[card_ref]:
                 print(f"MISQUOTE: {card_ref} does not say \"{quoted[:60]}\"", file=sys.stderr)
-    out = (template.replace("{{wrong}}", wrong or "(nothing the capability record shows broken today bears on these cards)")
-           .replace("{{sheet}}", "\n".join(sheet) if cards else "(no cards)")
+    out = (template.replace("{{sheet}}", "\n".join(sheet) if cards else "(no cards)")
            .replace("{{order}}", order or "(the integrator named no order)")
            .replace("{{counts}}", counts or "(no cards)")
            .replace("{{cards}}", "\n\n".join(open_cards) or "(no open cards)")
