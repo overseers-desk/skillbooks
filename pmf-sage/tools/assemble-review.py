@@ -215,7 +215,14 @@ def main():
 
     fields = (decisions / "integrator-fields.md").read_text(errors="replace") if (decisions / "integrator-fields.md").exists() else ""
     order = [section(fields, title) for title in ("Unlock", "Collisions")]
-    settled = section(fields, "Settled")
+    # the settled lines have one home, card-set.md: its "The settled list" section, or any section whose heading says settled or follows from the type
+    cs = decisions / "card-set.md"
+    settled = ""
+    if cs.exists():
+        cst = cs.read_text(errors="replace")
+        parts = [m.group(0) for m in re.finditer(r"^(#{2,3}) ([^\n]*)\n(.*?)(?=^#{2,3} |\Z)", cst, re.M | re.S)
+                 if re.search(r"settled|follows from the type", m.group(2), re.I)]
+        settled = "\n\n".join(p.strip() for p in parts)
     order = "\n\n".join(b for b in order if b and not b.lstrip("(").lower().startswith("none"))
     # a run's joint ledger, where it keeps one, follows the order of ruling; the Joint lines stay in the card files and are read here only to check quotations
     ledger = decisions / "joint-ledger.md"
@@ -227,7 +234,7 @@ def main():
         for card_ref, quoted in re.findall(r"(Card \d+)'s (?:own )?Joint line states[^\"]*\"([^\"]+)\"", line):
             if card_ref in joint_by_card and quoted not in joint_by_card[card_ref]:
                 print(f"MISQUOTE: {card_ref} does not say \"{quoted[:60]}\"", file=sys.stderr)
-    out = (template.replace("{{settled}}", settled or "(the integrator listed no settled parameters)")
+    out = (template.replace("{{settled}}", settled or "(card-set.md carries no settled list yet)")
            .replace("{{sheet}}", "\n".join(sheet) if cards else "(no cards)")
            .replace("{{order}}", order or "(the integrator named no order)")
            .replace("{{counts}}", counts or "(no cards)")
