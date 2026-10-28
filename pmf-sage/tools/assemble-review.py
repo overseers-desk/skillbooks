@@ -156,7 +156,8 @@ def main():
         sheet.append(f"| {cid_of(c)} | {part} | {value(c, 'Question')} | {said} | {ruled_cell} |")
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
-        if is_ruled:
+        # a ruled card whose evidence moved after the ruling is put to him again, so it prints in full like an open card
+        if is_ruled and not moved:
             keep = [c["head"]] + with_prose(c, "Question")[:1] + ["**Recommended:** " + rec.split(";")[0].strip()] + ([c["fields"]["What the counts say"]] if moved and "What the counts say" in c["fields"] else [])
             # a ruled card prints its question and its recommendation in one line each; what the clerk wrote under them is reported, not lost
             for f in FACE:
@@ -175,7 +176,7 @@ def main():
                     + (["**Recommended:** " + rec.split(";")[0].strip()] if "In plain words" in c["fields"] else with_prose(c, "Recommended")))
         # where the plain words carry the card, the silent count and the market-only landing stay in the card file
         keep += [c["fields"][f] for f in (("Ruled",) if "In plain words" in c["fields"] else ("Third derivation", "Ruled")) if f in c["fields"]]
-        (ruled_cards if is_ruled else open_cards).append("\n\n".join(keep))
+        (ruled_cards if is_ruled and not moved else open_cards).append("\n\n".join(keep))
 
     # the owner reads facts in words; the check's own lines stay in the run record
     m = re.search(r"(\d+) cards; (\d+) hold a value; (\d+) match it; (\d+) leave it; (\d+) withheld; (\d+) third derivations; (\d+) outstanding; (\d+) mismatched margin units; (\d+) legs marked differs", raw)
