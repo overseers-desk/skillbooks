@@ -141,7 +141,9 @@ def main():
             # a ruling stands until the evidence under it moves (handled below); a card that recommends otherwise says so and asks nothing
             part = "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling" if agrees else f"nothing: your ruling stands; the card recommends {parts[0].strip()}"
         else:
-            part = "for research: the study makes the observation the card names; nothing from you" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
+            cb = re.search(r"carried by:\s*(.*?)(?:;\s+[a-z]+(?: [a-z]+){0,3}:|\.\s+[A-Z]|$)", rec, re.S)
+            pending = (cb.group(1).strip().rstrip(".") if cb else "the observation the card names")
+            part = f"for research: the study is finding out {pending}; nothing from you" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
         # a ruling older than the evidence under it is given again; a ruling newer than the one the game played on sends the game round again
         dated = lambda d: d not in ("none", "undated")
         moved = is_ruled and dated(k["written"]) and dated(k["ruled_on"]) and k["written"] > k["ruled_on"]
@@ -213,6 +215,7 @@ def main():
 
     fields = (decisions / "integrator-fields.md").read_text(errors="replace") if (decisions / "integrator-fields.md").exists() else ""
     order = [section(fields, title) for title in ("Unlock", "Collisions")]
+    settled = section(fields, "Settled")
     order = "\n\n".join(b for b in order if b and not b.lstrip("(").lower().startswith("none"))
     # a run's joint ledger, where it keeps one, follows the order of ruling; the Joint lines stay in the card files and are read here only to check quotations
     ledger = decisions / "joint-ledger.md"
@@ -224,7 +227,8 @@ def main():
         for card_ref, quoted in re.findall(r"(Card \d+)'s (?:own )?Joint line states[^\"]*\"([^\"]+)\"", line):
             if card_ref in joint_by_card and quoted not in joint_by_card[card_ref]:
                 print(f"MISQUOTE: {card_ref} does not say \"{quoted[:60]}\"", file=sys.stderr)
-    out = (template.replace("{{sheet}}", "\n".join(sheet) if cards else "(no cards)")
+    out = (template.replace("{{settled}}", settled or "(the integrator listed no settled parameters)")
+           .replace("{{sheet}}", "\n".join(sheet) if cards else "(no cards)")
            .replace("{{order}}", order or "(the integrator named no order)")
            .replace("{{counts}}", counts or "(no cards)")
            .replace("{{cards}}", "\n\n".join(open_cards) or "(no open cards)")

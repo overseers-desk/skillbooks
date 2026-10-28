@@ -6,6 +6,10 @@ The only prose the integrator writes, read by `tools/assemble-review.py` under t
 
 <the card ids in the order of ruling, comma-separated; the sheet follows it>
 
+## Settled
+
+<one line per parameter the ruled or recommended kind settles on its own, or the study settles as the marketing manager's call: the parameter, what was taken, and why, copied from card-set.md's settled list>
+
 ## Unlock
 
 <which cards unlock which, quoting cards by number>
