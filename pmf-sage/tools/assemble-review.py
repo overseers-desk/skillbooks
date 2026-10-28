@@ -196,7 +196,7 @@ def main():
                   + (f", {len(part)} split across the two halves of the question ({'; '.join(k + ': ' + landings[k] for k in part)})" if part else "") + "."
                   + (f" {outstanding} held values have no market-only reading yet." if outstanding else "")
                   + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else "")
-                  + (f" The the populations counted differ from this business on the dimension the card rules from this business's shape {differs} times; where a card's figure comes from such a population, its card says what that leaves the figure worth." if differs else ""))
+                  + (f" The populations counted differ from this business on the dimension the card rules {differs} times; where a card's figure comes from such a population, its card says what that leaves the figure worth." if differs else ""))
     else:
         counts = raw
     # a card's own words about its match must agree with the check's count of it
