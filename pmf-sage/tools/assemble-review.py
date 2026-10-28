@@ -222,7 +222,21 @@ def main():
         cst = cs.read_text(errors="replace")
         parts = [m.group(0) for m in re.finditer(r"^(#{2,3}) ([^\n]*)\n(.*?)(?=^#{2,3} |\Z)", cst, re.M | re.S)
                  if re.search(r"settled|follows from the type", m.group(2), re.I)]
-        settled = "\n\n".join(p.strip() for p in parts)
+        # the owner reads the list items only: headings and lead sentences stay in the card set, and the Game markers
+        # ("DEFAULT for Game", "(card N)", a leading DEFAULT or RULED word) are stripped from each line, since Game reads them there
+        items = []
+        for p in parts:
+            for ln in p.split("\n"):
+                if not re.match(r"\s*[-*] ", ln):
+                    continue
+                t = re.sub(r"^\s*[-*] ", "", ln)
+                t = re.sub(r"^\**(DEFAULT|RULED)[^:.]*[:.]\**\s*", "", t, flags=re.I)
+                t = re.sub(r"\(card [^)]*\),?\s*", "", t)
+                t = re.sub(r",?\s*DEFAULT for Game:?\s*", " ", t)
+                t = re.sub(r"\s{2,}", " ", t).strip()
+                if t:
+                    items.append("- " + t)
+        settled = "\n".join(items)
     order = "\n\n".join(b for b in order if b and not b.lstrip("(").lower().startswith("none"))
     # a run's joint ledger, where it keeps one, follows the order of ruling; the Joint lines stay in the card files and are read here only to check quotations
     ledger = decisions / "joint-ledger.md"
