@@ -46,7 +46,7 @@ Judges find defects authors cannot see in their own work; an arithmetic slip in 
 
 ## Absorption and the crown
 
-One sheet absorbs the winners: for each element where winners differ, the verdict-rewarded choice, recorded element by element in a provenance redline auditable as a diff. Gaps the judges hit are answered only within already-ruled format; a gap whose answer needs an unruled format decision goes on a fold list for the owner, because an absorbed sheet that invents format to answer gaps voids its own game. The absorbed sheet passes the reviewer gate like any other.
+One sheet absorbs the winners: for each element where winners differ, the verdict-rewarded choice, recorded element by element in a provenance redline auditable as a diff. Gaps the judges hit are answered only within already-ruled format; a gap whose answer needs an unruled format decision goes on a fold list for the owner, and a gap about what the operator has today stays beside the design as a cost, because an absorbed sheet that invents format to answer gaps voids its own game. The absorbed sheet passes the reviewer gate like any other.
 
 The same judges then re-run until the absorbed sheet scores no fewer points and no fewer wins than any parent. Then a fresh panel of profiled buyers who sat in no earlier round tests whether the crown generalises; that held-out check is the only proof the design beats its parents rather than its examiners. Results split into floor fixes (clearly correct, applied) and forks (price or scope changes, the owner rules).
 
