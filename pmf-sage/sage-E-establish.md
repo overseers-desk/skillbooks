@@ -1,6 +1,6 @@
 # SAGE Establish — the definition the owner picks from
 
-Establish turns the crowned design into a definition the owner picks from: claims with numbers behind them and one definition folded by stated rules. The study ends there. Migration and the displacement offer happen only after the owner chooses an offering, and the study presumes no such choice; the definition stands without them, and nothing in it waits on them. What launching it would need may stand beside the definition, in the conditional, never as a plan or as steps.
+Establish turns the crowned design into a definition the owner picks from: claims with numbers behind them and one definition folded by stated rules. The study ends there. Migration and the displacement offer happen only after the owner chooses an offering, and the study presumes no such choice; the definition stands without them, and nothing in it waits on them. Its launch dependencies, what launching it would depend on if he chooses it, may stand beside the definition, in the conditional, never as a plan or as steps.
 
 ## The numbered claims
 
