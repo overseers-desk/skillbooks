@@ -144,9 +144,10 @@ def main():
             cb = re.search(r"carried by:\s*(.*?)(?:;\s+[a-z]+(?: [a-z]+){0,3}:|\.\s+[A-Z]|$)", rec, re.S)
             pending = (cb.group(1).strip().rstrip(".") if cb else "the observation the card names")
             part = f"for research: the study is finding out {pending}; nothing from you" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
-        # a ruling older than the evidence under it is given again; a ruling newer than the one the game played on sends the game round again
+        # a ruling older than the evidence under it is given again where the card no longer recommends what he ruled; a ruling newer than the one the game played on sends the game round again
         dated = lambda d: d not in ("none", "undated")
-        moved = is_ruled and dated(k["written"]) and dated(k["ruled_on"]) and k["written"] > k["ruled_on"]
+        backed = agrees or (withheld_row and len(parts) > 1 and any(n.strip().lower() in parts[1].lower() for n in named))
+        moved = is_ruled and not backed and dated(k["written"]) and dated(k["ruled_on"]) and k["written"] > k["ruled_on"]
         if moved:
             part = f"the evidence under your ruling moved on {k['written']}: rule again, or confirm"
             ruled_cell = "ruled; the evidence moved since"
