@@ -264,6 +264,10 @@ def main():
            .replace("{{counts}}", counts or "(no cards)")
            .replace("{{cards}}", "\n\n".join(open_cards) or "(no open cards)")
            .replace("{{ruled}}", "\n\n".join(ruled_cards) or "(no card is ruled yet)"))
+    # with nothing left to rule, the page says nothing about the order of ruling
+    if not open_cards:
+        out = re.sub(r" Rulings are made from the sheet below[^.]*\.", "", out)
+        out = re.sub(r"## The order of ruling\n.*?(?=\n## )", "", out, flags=re.S)
     (decisions / "review.md").write_text(out)
     print(f"wrote {decisions / 'review.md'} from {len(cards)} cards")
 
