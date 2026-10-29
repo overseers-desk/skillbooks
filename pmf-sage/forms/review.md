@@ -1,10 +1,10 @@
 # Decision review
 
-The run's decision cards. Each card is a question, the ways the market answers it with a figure for each, the study's recommendation, and a line for the ruling. Rule from the sheet below, in the order set out under "The order of ruling" and not from the top of the table down, and open a card where a row raises a doubt. Where a card names another card, it names it by number.
+The run's decision cards. Each card is a question, the ways the market answers it with a figure for each, the study's recommendation, and a line for the ruling. Rulings are made from the sheet below, in the order set out under "The order of ruling" and not from the top of the table down, and a card is opened where a row raises a doubt. Where a card names another card, it names it by number.
 
 ## The ruling sheet
 
-One row a card. *Your part* says what the row asks of you: confirm, rule, or nothing; a row reading *for research* owes you nothing, since the study makes the observation it names before it comes back. *The recommendation* is the first sentence of the card's plain words. *Ruled* says whether you have already ruled the question; where a card's recommendation departs from your ruling, your ruling stands until you rule again, and where the card's evidence was rewritten after you ruled, the row asks you to rule again or confirm. The card itself holds the counts, what the business already held, and whether a second reading of rivals' pages alone reached the same answer.
+One row a card. *Asked* is what the row needs: confirm, rule, or nothing. A row reading *no lead* shows which way the counts lean and the check that would settle it; it may be ruled, sent to the study for that check, or left to the game. *The recommendation* is the first sentence of the card's plain words. *Ruled* says whether the question has been ruled. A ruling stands against a card that recommends otherwise until it is given again. Where a card no longer recommends what was ruled after its evidence was rewritten, the row asks for the ruling again or a confirmation. The card itself holds the counts, what the business already held, and whether a second reading of rivals' pages alone reached the same answer.
 
 {{sheet}}
 
@@ -12,15 +12,15 @@ One row a card. *Your part* says what the row asks of you: confirm, rule, or not
 
 {{order}}
 
-## What your choice of kind settles on its own
+## What the choice of kind settles on its own
 
-From the study's card set, one line each: what was taken and why. A line that records your own ruling stands; say the word and any default comes back as a question for you.
+From the study's card set, one line each: what was taken and why. A line that records a ruling stands; any default comes back as a question on the word.
 
 {{settled}}
 
 ## Open cards
 
-The recommended option and its runner-up in full; the other options by name and figure. The card file holds, for every option, where its figure comes from, what delivering it needs, and what we would say to the buyer.
+The recommended option and its runner-up in full; the other options by name and figure. The card file holds, for every option, where its figure comes from, what delivering it needs, and what the seller would say to the buyer.
 
 {{cards}}
 

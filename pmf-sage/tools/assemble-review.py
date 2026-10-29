@@ -121,7 +121,7 @@ def main():
     cid_of = lambda c: re.search(r"^## Card\s+(\S+)", c["head"]).group(1).rstrip("·").strip()
     value = lambda c, f: c["fields"].get(f, "").split("**", 2)[-1].strip()
 
-    sheet = ["| card | your part | the question | the recommendation | ruled |", "|---|---|---|---|---|"]
+    sheet = ["| card | asked | the question | the recommendation | ruled |", "|---|---|---|---|---|"]
     open_cards, ruled_cards, joints, landings = [], [], [], {}
     for c in cards:
         k = checked.get(cid_of(c), {"match": False, "stance": "", "rests": "", "chosen": "", "runner": "", "written": "none", "ruled_on": "none", "game": "none"})
@@ -139,29 +139,26 @@ def main():
         ruled_cell = ("ruled" if agrees or withheld_row else "ruled; the card recommends otherwise") if is_ruled else "open"
         if is_ruled:
             # a ruling stands until the evidence under it moves (handled below); a card that recommends otherwise says so and asks nothing
-            part = "your ruling stands; read the counts in this row against it" if withheld_row else "nothing: the card agrees with your ruling" if agrees else f"nothing: your ruling stands; the card recommends {parts[0].strip()}"
+            part = "the ruling stands; the counts in this row read against it" if withheld_row else "nothing: the card agrees with the ruling" if agrees else f"nothing: the ruling stands; the card recommends {parts[0].strip()}"
         else:
             cb = re.search(r"carried by:\s*(.*?)(?:;\s+[a-z]+(?: [a-z]+){0,3}:|\.\s+[A-Z]|$)", rec, re.S)
             pending = (cb.group(1).strip().rstrip(".") if cb else "the observation the card names")
-            part = f"for research: the study is finding out {pending}; nothing from you" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
+            part = f"no lead: rule, send to the study to find out {pending}, or leave to the game" if withheld_row else "confirm" if k["stance"] == "matches" else "rule"
         # a ruling older than the evidence under it is given again where the card no longer recommends what he ruled; a ruling newer than the one the game played on sends the game round again
         dated = lambda d: d not in ("none", "undated")
         backed = agrees or (withheld_row and len(parts) > 1 and any(n.strip().lower() in parts[1].lower() for n in named))
         moved = is_ruled and not backed and dated(k["written"]) and dated(k["ruled_on"]) and k["written"] > k["ruled_on"]
         if moved:
-            part = f"the evidence under your ruling moved on {k['written']}: rule again, or confirm"
+            part = f"the evidence under the ruling moved on {k['written']}: rule again, or confirm"
             ruled_cell = "ruled; the evidence moved since"
         if is_ruled and dated(k["ruled_on"]) and dated(k["game"]) and k["ruled_on"] > k["game"]:
-            ruled_cell += f"; ruled again after the game played on your ruling of {k['game']}, so the game runs again"
+            ruled_cell += f"; ruled again after the game played on the ruling of {k['game']}, so the game runs again"
         # the owner reads the recommendation as the plain words open it; the counts, the held value and the market-only landing stay on the card
         plain = value(c, "In plain words")
         said = re.split(r"(?<=[.!?])\s+(?=[A-Z])", plain, maxsplit=1)[0] if plain else recommended
         sheet.append(f"| {cid_of(c)} | {part} | {value(c, 'Question')} | {said} | {ruled_cell} |")
         if c["joint"]:
             joints.append(f"{name(c)}: {c['joint']}")
-        # a card held for research keeps its sheet row, which names what is being found out, and prints no full card: nothing is asked of him
-        if withheld_row and not is_ruled:
-            continue
         # a ruled card whose evidence moved after the ruling is put to him again, so it prints in full like an open card
         if is_ruled and not moved:
             keep = [c["head"]] + with_prose(c, "Question")[:1] + ["**Recommended:** " + rec.split(";")[0].strip()] + ([c["fields"]["What the counts say"]] if moved and "What the counts say" in c["fields"] else [])
