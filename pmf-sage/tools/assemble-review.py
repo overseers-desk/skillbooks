@@ -174,6 +174,14 @@ def main():
             if len(full) < 2:
                 full = [n for n in c["rows"] if n in rec]
             table = c["table"] + [c["rows"][n][0] for n in (full if len(full) >= 2 else c["rows"])]
+            if "In plain words" in c["fields"]:
+                # the owner reads the option, its figure, its cost and the seller's sentence; the source column's finding codes stay in the card file
+                def drop_source(line):
+                    cells = re.split(r"(?<!\\)\|", line.strip().strip("|"))
+                    return "| " + " | ".join(x.strip() for i, x in enumerate(cells) if i != 2) + " |"
+                hdr = re.split(r"(?<!\\)\|", c["table"][0].strip().strip("|"))
+                if len(hdr) > 2 and hdr[2].strip().lower() == "source":
+                    table = [drop_source(l) for l in table]
             rest = [f"{n} ({fig})" for n, (row, fig) in c["rows"].items() if n not in full] if len(full) >= 2 else []
             keep = ([c["head"]] + with_prose(c, "Question") + (with_prose(c, "In plain words") if "In plain words" in c["fields"] else []) + ["**Options**", "\n".join(table)]
                     + (["Other options, each with its figure: " + "; ".join(rest) + "."] if rest else [])
@@ -202,7 +210,7 @@ def main():
                   + (f", {len(part)} split across the two halves of the question ({'; '.join(k + ': ' + landings[k] for k in part)})" if part else "") + "."
                   + (f" {outstanding} held values have no market-only reading yet." if outstanding else "")
                   + (f" {mism} margins are stated in a unit other than their runner-up's." if mism else "")
-                  + (f" The populations counted differ from this business on the dimension the card rules {differs} times; where a card's figure comes from such a population, its card says what that leaves the figure worth." if differs else ""))
+                  )
     else:
         counts = raw
     # a card's own words about its match must agree with the check's count of it
