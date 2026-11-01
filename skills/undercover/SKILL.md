@@ -38,7 +38,7 @@ The answers land in the run directory itself: `<model>-answer.md` for each model
 
 4. **Read the debrief before the paper.** The debrief is the second test of the room. An agent that saw nothing pointing elsewhere produced a genuine paper. An agent that says it is an AI playing the role has named no one of ours, and its paper stands. An agent that names us, our folder, our email domain or our director, or says the brief read as the other side's, produced a paper shaped by that doubt; discard it, find the leak, and rerun. A doubt about the party's own public record (a revenue figure that does not match the press) is the agent doing its job, not a leak.
 
-5. **Deliver** `<model>-answer.md` and `debriefs.md` together, with your verdict on each debrief. The run is reported as genuine only when the probe said none and the debrief named nothing of ours.
+5. **Deliver** `<model>-answer.md` and `debriefs.md` together, with your verdict on each debrief. The run is reported as genuine only when the probe said none and the debrief named nothing of ours. Genuine is a verdict on the room, not on the answer: the agent errs as the party's own people would, so read each factual claim in the answer against what we hold before using it, and report the ones that do not match.
 
 ## Pitfalls
 
