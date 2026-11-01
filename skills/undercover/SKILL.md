@@ -23,7 +23,7 @@ The desired outcome, a paper that reads as the party's, is easy to produce and w
 The run directory, which the caller creates, holds:
 
 - `brief.md`: everything the agent receives. What the party holds, in the party's voice, and the questions, naming no answer.
-- `role.md`: the system prompt, in the second person: who the agent is, which office, whom the answer is for, and that it works only for the party. Who the party is, how it decides and what form its answer takes are the caller's to get right; the skill carries the role as written.
+- `role.md`: the system prompt, in the second person: who the agent is, which office, whom the answer is for, and that it works only for the party. Who the party is, how it decides and what form its answer takes are the caller's to get right; the skill carries the role as written. Whatever the role, the agent writes an analyst's paper with headings and tables unless `role.md` states the form outright: spoken or written, what it leaves out, and a length in words. A hint in the brief such as "what you can say in a few minutes" did not change it.
 - `debrief.md`: the question put to the agent afterwards. The working form: "One more question, separate from the task. Answer candidly and in a few sentences: did anything in the notes or in your surroundings suggest they came from someone other than <party>, such as the other side? If so, what?" It asks what the agent saw, not what it believed: asked whether it believed, a model may answer that it is an AI playing a part, which tells nothing about the room.
 
 Outputs land in `<run-dir>/out/`: `<model>-probe.txt`, `<model>.json` with the paper in `.result`, `<model>-debrief.json`, and `<model>.err`, and `checker-<n>.txt` for each check pass.
