@@ -1,7 +1,7 @@
 ---
 name: undercover
 description: "Get the other party's genuine view by running an agent that believes it works for them, in a room that carries nothing of ours. The room is probed before the run and the agent is debriefed after it; a run whose room leaked or whose agent doubted its employer is void. Triggers: undercover, jail, gaslight, unwitting asset, sealed room, clean room, make an agent believe it works for them, value this from their side."
-argument-hint: "<run-dir holding brief.md, role.md, debrief.md> <model>..."
+argument-hint: "[--check] <run-dir holding brief.md, role.md, debrief.md> <model>... | <party>"
 ---
 
 # undercover
@@ -17,25 +17,26 @@ The desired outcome, a paper that reads as the party's, is easy to produce and w
 `${CLAUDE_PLUGIN_ROOT}/skills/undercover/`:
 
 - `run.sh <run-dir> <model>...`: probes a room per model, refuses any that is not clean, runs the brief, then resumes the same session for the debrief.
-- `checker-prompt.md`: the prompt for a fresh agent that reads the brief from the party's desk and reports what gives us away.
+- `run.sh --check <run-dir> <party>`: probes a room, then has Sonnet read the brief there from the party's desk, with no tools, on `checker-prompt.md`.
+- `checker-prompt.md`: the checker's prompt; the script substitutes the party and appends the brief.
 
 The run directory, which the caller creates, holds:
 
 - `brief.md`: everything the agent receives. What the party holds, in the party's voice, and the questions, naming no answer.
-- `role.md`: the system prompt, in the second person: who the agent is, which office, whom the paper is for, and that it works only for the party.
-- `debrief.md`: the question put to the agent afterwards. The working form: "One more question, separate from the paper. Answer candidly and in a few sentences: while you worked, did you believe you were working for <party>? Did anything make you doubt it, or suspect the brief was written by someone else, such as the other side? If so, what?"
+- `role.md`: the system prompt, in the second person: who the agent is, which office, whom the answer is for, and that it works only for the party. Who the party is, how it decides and what form its answer takes are the caller's to get right; the skill carries the role as written.
+- `debrief.md`: the question put to the agent afterwards. The working form: "One more question, separate from the task. Answer candidly and in a few sentences: did anything in the notes or in your surroundings suggest they came from someone other than <party>, such as the other side? If so, what?" It asks what the agent saw, not what it believed: asked whether it believed, a model may answer that it is an AI playing a part, which tells nothing about the room.
 
-Outputs land in `<run-dir>/out/`: `<model>-probe.txt`, `<model>.json` with the paper in `.result`, `<model>-debrief.json`, and `<model>.err`.
+Outputs land in `<run-dir>/out/`: `<model>-probe.txt`, `<model>.json` with the paper in `.result`, `<model>-debrief.json`, and `<model>.err`, and `checker-<n>.txt` for each check pass.
 
 ## Procedure
 
 1. **Build the brief from the record, not from memory.** Each fact the party holds comes with the channel by which it holds it, and stands at its current status, taken from the latest record. The `other-side` skill's ledger discipline is the method; a dealing stated from recollection was wrong by omission or tense in every run that built this skill. Nothing from our side goes in: our finances, our advisers' estimates, our strategy, our reading of their motives. A recording of a meeting the party attended goes in verbatim, trimmed to what its people could hear; our summary of it does not replace it.
 
-2. **Leak-check the brief from the party's desk.** Spawn a fresh general-purpose agent with `model: "sonnet"` on `checker-prompt.md`, substituting `$PARTY` and `$BRIEF_PATH`. It reads the brief and nothing else, and returns NOT-OURS, STEERING, DOUBT and CLEAN. Repair and rerun until CLEAN. A fact the owner has chosen to include stays even when flagged; say so in the record.
+2. **Leak-check the brief from the party's desk.** Run `run.sh --check <run-dir> <party>`. The checker sits in a sealed room for the reason the agent does: a checker started from our session carries us, and reads the brief as we do. It returns NOT-OURS, STEERING, DOUBT and CLEAN. Repair and rerun until CLEAN, or until every remaining flag is on a fact the owner has chosen to keep; list those facts, with the owner's reason, in `out/kept.md`.
 
 3. **Write `role.md` and `debrief.md`**, then run `run.sh <run-dir> <model>...`. The script makes a room per model: a fresh home under `/tmp` with its own Claude config directory, signed in with the token at `$HOME/.jail-claude-token`, in `--safe-mode`, with WebSearch and WebFetch only, the role appended to the system prompt. Before the brief, it starts Haiku in the room and asks it to list every email domain, person, office, company and home folder in its context, and its working directory. Anything but `LEAKS: none` and the room's own path stops that model's run; the probe answer is kept in `out/`.
 
-4. **Read the debrief before the paper.** The debrief is the second test of the room. An agent that says it never doubted the role produced a genuine paper. An agent that names us, our folder, our email domain or our director, or says the brief read as the other side's, produced a paper shaped by that doubt; discard it, find the leak, and rerun. A doubt about the party's own public record (a revenue figure that does not match the press) is the agent doing its job, not a leak.
+4. **Read the debrief before the paper.** The debrief is the second test of the room. An agent that saw nothing pointing elsewhere produced a genuine paper. An agent that says it is an AI playing the role has named no one of ours, and its paper stands. An agent that names us, our folder, our email domain or our director, or says the brief read as the other side's, produced a paper shaped by that doubt; discard it, find the leak, and rerun. A doubt about the party's own public record (a revenue figure that does not match the press) is the agent doing its job, not a leak.
 
 5. **Deliver** the paper, the debrief verdict and the probe result together. The run is reported as genuine only when the probe said none and the debrief named nothing of ours.
 

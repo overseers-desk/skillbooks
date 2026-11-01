@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
-# Usage: run.sh <run-dir> <model>...
-# <run-dir> holds brief.md, role.md and debrief.md. Each model gets its own room: a fresh home
-# with its own Claude config, signed in with the token, in safe mode, with web tools only.
-# The room is probed before the run; a room that shows anything of ours is not used.
-# Outputs land in <run-dir>/out: <model>.json (paper in .result), <model>-debrief.json, <model>.err, <model>-probe.txt.
+# Usage: run.sh <run-dir> <model>...        run the brief, one sealed room per model
+#        run.sh --check <run-dir> <party>   leak-check the brief from the party's desk, in a sealed room
+# <run-dir> holds brief.md, role.md and debrief.md. Each room is a fresh home with its own Claude config,
+# signed in with the token, in safe mode. The room is probed before use; a room that shows anything of ours is not used.
+# Outputs land in <run-dir>/out: <model>.json (paper in .result), <model>-debrief.json, <model>.err, <model>-probe.txt,
+# and checker-<n>.txt for each --check pass.
 set -u
+CHECK=; [ "${1:-}" = --check ] && { CHECK=1; shift; }
 RUN=$(cd "$1" && pwd); shift
+HERE=$(cd "$(dirname "$0")" && pwd)
 TOKEN_FILE=$HOME/.jail-claude-token
-for f in brief.md role.md debrief.md; do [ -s "$RUN/$f" ] || { echo "missing $RUN/$f" >&2; exit 2; }; done
+if [ -n "$CHECK" ]; then need=brief.md; else need="brief.md role.md debrief.md"; fi
+for f in $need; do [ -s "$RUN/$f" ] || { echo "missing $RUN/$f" >&2; exit 2; }; done
 [ -s "$TOKEN_FILE" ] || { echo "no token at $TOKEN_FILE; create it with: claude setup-token, then save the token as the file's one line" >&2; exit 2; }
-ROLE=$(cat "$RUN/role.md")
 PROBE='Without opening any file or calling any tool, list every email address (domain only), person'"'"'s name, office, company and home folder path you can see anywhere in your context outside the tool definitions. Answer on two lines and nothing else: "LEAKS: none" or "LEAKS: <the list>", then "CWD: <your working directory>".'
 OUT=$RUN/out; mkdir -p "$OUT"
 
@@ -17,21 +20,36 @@ room() {  # room <seconds> <home> <claude args...>; the brief or question arrive
   local secs=$1 h=$2; shift 2
   ( cd "$h/work" && env -i PATH="$PATH" HOME="$h" CLAUDE_CONFIG_DIR="$h/.claude" \
       CLAUDE_CODE_OAUTH_TOKEN="$(cat "$TOKEN_FILE")" \
-      timeout "$secs" claude -p --safe-mode --tools WebSearch WebFetch --allowedTools WebSearch WebFetch \
-      --output-format json "$@" )
+      timeout "$secs" claude -p --safe-mode --output-format json "$@" )
+}
+WEB=(--tools WebSearch WebFetch --allowedTools WebSearch WebFetch)
+
+newroom() {  # newroom <label>: print a probed, clean room's home, or fail
+  local label=$1 h
+  h=$(mktemp -d /tmp/office-XXXX); mkdir -p "$h/work"
+  echo "$PROBE" | room 180 "$h" --model haiku --tools "" 2>>"$OUT/$label.err" | jq -r .result > "$OUT/$label-probe.txt"
+  if ! grep -qi '^LEAKS: *none' "$OUT/$label-probe.txt" || ! grep -q "^CWD: *$h/work" "$OUT/$label-probe.txt"; then
+    echo "$label: room $h is not clean, refused. Probe said:" >&2; cat "$OUT/$label-probe.txt" >&2; return 1
+  fi
+  echo "$h"
 }
 
+if [ -n "$CHECK" ]; then
+  PARTY=$1; n=1; while [ -e "$OUT/checker-$n.txt" ]; do n=$((n+1)); done
+  h=$(newroom "checker-$n") || exit 1
+  prompt=$(cat "$HERE/checker-prompt.md")
+  { printf '%s\n\n---\n\n' "${prompt//\$PARTY/$PARTY}"; cat "$RUN/brief.md"; } |
+    room 600 "$h" --model sonnet --tools "" 2>>"$OUT/checker-$n.err" | jq -r .result > "$OUT/checker-$n.txt"
+  cat "$OUT/checker-$n.txt"; exit 0
+fi
+ROLE=$(cat "$RUN/role.md")
+
 run() {
-  local m=$1 h sid probe
-  h=$(mktemp -d /tmp/office-XXXX); mkdir -p "$h/work"
-  probe=$(echo "$PROBE" | room 180 "$h" --model haiku 2>"$OUT/$m.err" | jq -r .result)
-  printf '%s\n' "$probe" > "$OUT/$m-probe.txt"
-  if ! grep -qi '^LEAKS: *none' "$OUT/$m-probe.txt" || ! grep -q "^CWD: *$h/work" "$OUT/$m-probe.txt"; then
-    echo "$m: room $h is not clean, run refused. Probe said:" >&2; cat "$OUT/$m-probe.txt" >&2; return 1
-  fi
-  room 2400 "$h" --model "$m" --append-system-prompt "$ROLE" < "$RUN/brief.md" > "$OUT/$m.json" 2>>"$OUT/$m.err"
+  local m=$1 h sid
+  h=$(newroom "$m") || return 1
+  room 2400 "$h" --model "$m" "${WEB[@]}" --append-system-prompt "$ROLE" < "$RUN/brief.md" > "$OUT/$m.json" 2>>"$OUT/$m.err"
   sid=$(jq -r .session_id "$OUT/$m.json")
-  room 600 "$h" --model "$m" --append-system-prompt "$ROLE" --resume "$sid" < "$RUN/debrief.md" > "$OUT/$m-debrief.json" 2>>"$OUT/$m.err"
+  room 600 "$h" --model "$m" "${WEB[@]}" --append-system-prompt "$ROLE" --resume "$sid" < "$RUN/debrief.md" > "$OUT/$m-debrief.json" 2>>"$OUT/$m.err"
   echo "$m done: session $sid room $h"
 }
 for m in "$@"; do run "$m" & done
