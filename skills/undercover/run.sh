@@ -3,8 +3,9 @@
 #        run.sh --check <run-dir> <party>   leak-check the brief from the party's desk, in a sealed room
 # <run-dir> holds brief.md, role.md and debrief.md. Each room is a fresh home with its own Claude config,
 # signed in with the token, in safe mode. The room is probed before use; a room that shows anything of ours is not used.
-# Outputs land in <run-dir>/out: <model>.json (paper in .result), <model>-debrief.json, <model>.err, <model>-probe.txt,
-# and checker-<n>.txt for each --check pass.
+# The readable results go in <run-dir> itself: <model>-answer.md for each model, and debriefs.md for all models.
+# <run-dir>/out keeps the rest: <model>.json and <model>-debrief.json (session id, cost, timing; their text moves
+# into the .md files), <model>.err, <model>-probe.txt, and checker-<n>.txt for each --check pass.
 set -u
 CHECK=; [ "${1:-}" = --check ] && { CHECK=1; shift; }
 RUN=$(cd "$1" && pwd); shift
@@ -43,6 +44,7 @@ if [ -n "$CHECK" ]; then
   cat "$OUT/checker-$n.txt"; exit 0
 fi
 ROLE=$(cat "$RUN/role.md")
+strip() { jq 'del(.result)' "$1" > "$1.tmp" && mv "$1.tmp" "$1"; }  # the text lives in the .md files only
 
 run() {
   local m=$1 h sid
@@ -50,7 +52,13 @@ run() {
   room 2400 "$h" --model "$m" "${WEB[@]}" --append-system-prompt "$ROLE" < "$RUN/brief.md" > "$OUT/$m.json" 2>>"$OUT/$m.err"
   sid=$(jq -r .session_id "$OUT/$m.json")
   room 600 "$h" --model "$m" "${WEB[@]}" --append-system-prompt "$ROLE" --resume "$sid" < "$RUN/debrief.md" > "$OUT/$m-debrief.json" 2>>"$OUT/$m.err"
+  jq -r .result "$OUT/$m.json" > "$RUN/$m-answer.md" && strip "$OUT/$m.json"
   echo "$m done: session $sid room $h"
 }
 for m in "$@"; do run "$m" & done
 wait
+{ echo "# Debriefs"; for m in "$@"; do
+    [ -s "$OUT/$m-debrief.json" ] || continue
+    printf '\n## %s\n\n%s\n' "$m" "$(jq -r .result "$OUT/$m-debrief.json")"
+  done; } > "$RUN/debriefs.md"
+for m in "$@"; do [ -s "$OUT/$m-debrief.json" ] && strip "$OUT/$m-debrief.json"; done
