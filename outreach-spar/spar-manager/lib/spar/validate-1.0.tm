@@ -2110,6 +2110,7 @@ proc spar::_yamlmuster_sweep_return {} {
     package require yamlmuster
     set inst [yamlmuster new]
     $inst predicate return_status_token   ::spar::_pred_return_status_token
+    $inst predicate return_control_backing ::spar::_pred_return_control_backing
     $inst predicate rows_new_shape        ::spar::_pred_rows_new_shape
     $inst predicate return_feedback_shape ::spar::_pred_return_feedback_shape
     $inst predicate return_escape_shape   ::spar::_pred_return_escape_shape
@@ -2129,6 +2130,31 @@ proc spar::_pred_return_status_token {node meta} {
     if {[spar::sweep_status_token $status] ni $allowed} {
         return [list [dict create message \
             "source_status '$status' — lead with a base token ([join $allowed { | }]); your reason follows it"]]
+    }
+    return {}
+}
+
+# return_control_backing -- the evidence a negative return rests on.
+# An unreachable source carries source_probe (what was tried, at
+# parameter level), since a wrong parameter and a closed gate look the
+# same from outside. Any other return with no rows carries
+# source_control (a member the source is known to hold, found through
+# the same query shape as the misses), since a zero yield is a claim
+# about the instrument until a control backs it.
+proc spar::_pred_return_control_backing {node meta} {
+    set status [string trim [dict getdef $node source_status ""]]
+    set token [spar::sweep_status_token $status]
+    if {$token eq "unreachable"} {
+        if {[string trim [dict getdef $node source_probe ""]] eq ""} {
+            return [list [dict create message \
+                "source_status is unreachable with no source_probe; record what was tried at parameter level, so the next round varies the attempt instead of repeating it"]]
+        }
+        return {}
+    }
+    if {[llength [dict getdef $node rows_new {}]] == 0 \
+            && [string trim [dict getdef $node source_control ""]] eq ""} {
+        return [list [dict create message \
+            "rows_new is empty with no source_control; name a member the source is known to hold and the query shape that found it, so the zero reads on the market rather than on the query"]]
     }
     return {}
 }

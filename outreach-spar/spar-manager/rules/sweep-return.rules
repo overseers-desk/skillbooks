@@ -42,6 +42,13 @@ rule require root reconciliation -nonblank -code missing_reconciliation \
 rule predicate root return_status_token -code invalid_source_status \
     -groups {sweep_return}
 
+# A zero yield is a claim about the instrument until a control backs it,
+# and unreachable is indistinguishable from a wrong parameter without the
+# probe record (the prompt states both requirements; this makes them
+# build failures rather than style notes).
+rule predicate root return_control_backing -code missing_control \
+    -groups {sweep_return}
+
 # Per-row shape: identity, star, date, and the TSV's own limits (no tab,
 # no newline, since the roster has no quoting to survive either).
 rule predicate root rows_new_shape -code invalid_row -groups {sweep_return}
