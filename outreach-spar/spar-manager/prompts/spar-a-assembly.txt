@@ -26,6 +26,8 @@ Follow §6 structure exactly. Include contact header, angle rationale, A1 Draft 
 
 `a_note` is your one-line summary for R: angle used, channel, warmth, language. `response_likelihood` is the whole-number percentage you estimate below, written as an integer root key (e.g. `response_likelihood: 75`). Both are root keys in the approach file, not roster columns.
 
+A contact detail verified during this work (an email from the contact-info lookup, a corrected or newly found platform URL) is population-tier: declare it as a root `roster_patch:` block per §4.8, under its gates (no masked value, name-mismatch and shared-inbox checks), and the harness applies it to the roster. When nothing was verified, omit the key.
+
 Do not write a profile_hash line — the harness prepends it after this step (issue #63). The validator does not require it from you.
 
 Run §7 quality checklist before writing. Fix any failures in the final draft.
