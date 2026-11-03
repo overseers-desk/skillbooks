@@ -583,7 +583,32 @@ set issues [row_issues {
     "reconciliation: 0 rows returned."
     "rows_new: \[\]"
 }]
-assert_eq [llength $issues] 0 "a source that yielded nothing still validates"
+assert_eq [has_issue $issues missing_control] 1 \
+    "a zero yield with no source_control is caught"
+
+set issues [row_issues {
+    "source_status: exhausted — all read"
+    "reconciliation: 0 rows returned."
+    "rows_new: \[\]"
+    "source_control: Dinky D's Events surfaces via the same query shape"
+}]
+assert_eq [llength $issues] 0 "a zero yield backed by a control validates"
+
+set issues [row_issues {
+    "source_status: unreachable (login wall)"
+    "reconciliation: not read."
+    "rows_new: \[\]"
+}]
+assert_eq [has_issue $issues missing_control] 1 \
+    "unreachable with no source_probe is caught"
+
+set issues [row_issues {
+    "source_status: unreachable (login wall)"
+    "reconciliation: not read."
+    "rows_new: \[\]"
+    "source_probe: tried the public URL and the AU mirror, both 403; no login parameters varied yet"
+}]
+assert_eq [llength $issues] 0 "unreachable backed by a probe validates"
 
 # ── 9. SweepHarness ────────────────────────────────────────────────────
 #
