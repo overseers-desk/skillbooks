@@ -4,7 +4,7 @@ writing: email
 
 **Scenario.** At a state tourism conference, Sam (owner of Hillside Farm) spoke with Toni, a state tourism support officer, at several stands during the day. Toni's last act was introducing Sam to Shane, cultural consultant at a regional First Nations museum, who offered to connect Sam with Corey at the museum about a cultural partnership. Sam asked for a follow-up email to Toni about that conversation, sent from Sam's address with two staff copied, every name of place and person spelt correctly. Sam is overseas from the day after next for a month; John, the estate and guest experience manager, is to carry it meanwhile.
 
-The case exists because the email took seven rounds with Sam to reach a sendable version, and edit-email never ran: the authoring agent drafted directly while Sam read every line. A change to the skill is tested by whether it would have caught, unaided, what Sam had to catch.
+The case exists because the email took five drafts, and four corrections from Sam, to reach a sendable version, and edit-email never ran: the authoring agent drafted directly while Sam read every line. A change to the skill is tested by whether it would have caught, unaided, what Sam had to catch.
 
 ## Non-skilled (round 1)
 
