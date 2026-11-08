@@ -33,8 +33,6 @@ The execution can be performed on:
 
 A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organised with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Alex, Partner, A-Z") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally a Reimbursement folder (created when reimbursable invoices exist).
 
-A journey folder belongs to one travelling party, from the day it leaves home until it is home again. When the party splits partway, its folder closes at the split, and each smaller party opens its own folder dated from the split. That folder runs until the party is home, so its way home is filed there rather than in a folder of its own. A side trip that some members of the party take within that time goes into the party's folder too. A booking shared by two parties is filed once, in one of their folders.
-
 Files may originate from various sources: email confirmations, WhatsApp messages, photographs of physical documents (boarding passes, receipts), or forwarded from other travelers' mailboxes. The source doesn't affect how files are processed—all files in the folder are organised and named according to the same conventions regardless of origin.
 
 **Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access method (rclone) and is the single source of truth for folder location. When processing a journey, if only the folder name is provided, the system assumes it is located within the Travel Admin parent directory.
@@ -51,7 +49,7 @@ A booking can arrive before any journey folder exists ("archive the ticket we ju
 
 2. **Extract the booking facts**: travellers, route, travel dates, provider, booking reference.
 
-3. **Check for an existing journey folder** covering those dates for the same travelling party (list folders per `sop-travel-folder-access.md`). If one exists, file into it rather than creating a sibling.
+3. **Check for an existing journey folder** covering those dates and destinations (list folders per `sop-travel-folder-access.md`). If one exists, file into it rather than creating a sibling.
 
 4. **Create the journey folder** using the naming convention in `sop-travel-folder-access.md`, plus the standard subfolders. Mirror the traveller naming that existing folders use for the same travellers (initials or names, as sibling folders show).
 
