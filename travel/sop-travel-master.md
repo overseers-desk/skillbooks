@@ -424,7 +424,7 @@ RUN: Travel Management
 
 **Full RUN**:
 ```bash
-claude -p "Follow travel/sop-travel-master.md for journey '2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Partner, Alex, A-Z'"
+claude -p "Follow travel/sop-travel-master.md for journey '2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw'"
 ```
 
 **Research only for one city**:
@@ -449,12 +449,12 @@ See `sop-travel-folder-access.md` for how to access travel folders. That SOP def
 - Folder location within cloud storage
 - Error handling when access fails
 
-Journey folder naming convention: `YYYY-MM-DD [Destination(s)] - [Travellers]`
+Journey folders are named per `sop-travel-folder-access.md`.
 
 Examples:
 
-- `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Partner, Alex, A-Z`
-- `2025-11-29 Venice - Partner, Alex, A-Z`
+- `2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw`
+- `2025-11-29 to 12-01 Partner, Alex, A-Z - Venice`
 
 ---
 
