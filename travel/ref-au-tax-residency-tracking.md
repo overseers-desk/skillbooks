@@ -2,10 +2,10 @@
 
 ## Superscript Notation in Travel Folders
 
-Journey folders in `0. Travel Admin/` use Unicode superscript numbers on Australian destination names to indicate **the number of days spent in Australia that fall within the current financial year (July 1 – June 30)**. This is not the total trip length — trips straddling a FY boundary only count the days in the relevant FY.
+Journey folders in `0. Travel Admin/` use Unicode superscript numbers on a traveller's name to indicate **the number of days that traveller spent in Australia within the current financial year (July 1 – June 30)**, the count that traveller's tax residence and visa turn on. This is not the total trip length — trips straddling a FY boundary only count the days in the relevant FY.
 
-- A single number (e.g. `²⁶`) means that many days in Australia during the FY.
-- A sum (e.g. `⁴⁵⁺⁹`) means the trip had a period outside Australia mid-trip, splitting the Australian days into separate blocks that together total the sum.
+- A single number (e.g. `Alex²⁶`) means that many days in Australia during the FY.
+- A sum (e.g. `Alex⁴⁵⁺⁹`) means the trip had a period outside Australia mid-trip, splitting the Australian days into separate blocks that together total the sum.
 - Folders without superscripts have not yet been annotated; days must be calculated from fare and boarding pass dates in the folder.
 
 Both arrival and departure days count as days in Australia (any part-day presence counts).
