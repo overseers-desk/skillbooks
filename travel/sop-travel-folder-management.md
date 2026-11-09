@@ -31,7 +31,9 @@ The execution can be performed on:
 
 ### Journey Folders
 
-A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are organised with a date-prefixed naming structure (e.g., "2025-11-15 Lisbon - Alex, Partner, A-Z") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally a Reimbursement folder (created when reimbursable invoices exist).
+A journey folder contains all documentation for one travelling party's trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are named per `sop-travel-folder-access.md` (e.g., "2025-11-08 to 11-18 Partner, Alex, A-Z - Porto, Lisbon") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally a Reimbursement folder (created when reimbursable invoices exist).
+
+The way home goes in the folder of the travellers who make it. When a party splits partway, the members who go straight home stay in its folder, and the members who travel on start a new folder dated from the split. A booking is filed once: one shared by two parties goes in one of their folders.
 
 Files may originate from various sources: email confirmations, WhatsApp messages, photographs of physical documents (boarding passes, receipts), or forwarded from other travelers' mailboxes. The source doesn't affect how files are processed—all files in the folder are organised and named according to the same conventions regardless of origin.
 
@@ -49,7 +51,7 @@ A booking can arrive before any journey folder exists ("archive the ticket we ju
 
 2. **Extract the booking facts**: travellers, route, travel dates, provider, booking reference.
 
-3. **Check for an existing journey folder** covering those dates and destinations (list folders per `sop-travel-folder-access.md`). If one exists, file into it rather than creating a sibling.
+3. **Check for an existing journey folder** holding the same travellers' trip over those dates (list folders per `sop-travel-folder-access.md`). If one exists, file into it rather than creating a sibling.
 
 4. **Create the journey folder** using the naming convention in `sop-travel-folder-access.md`, plus the standard subfolders. Mirror the traveller naming that existing folders use for the same travellers (initials or names, as sibling folders show).
 
@@ -359,7 +361,7 @@ Ensure all files within a journey folder follow established naming conventions a
 
 ### Input
 
-Journey folder (e.g., "2025-01-01 Gold Coast - Partner; Amsterdam - Partner, Alex, A-Z"). Access via `sop-travel-folder-access.md`.
+Journey folder (e.g., "2025-01-01 to 02-18 Partner - Gold Coast; Partner, Alex, A-Z - Amsterdam"). Access via `sop-travel-folder-access.md`.
 
 ### Output
 
@@ -483,6 +485,7 @@ Fully organized journey folder with all files compliant to naming conventions
    - Apply fare file naming correction as described in Step 5
    - For reimbursement files requiring naming correction, apply Helper Procedure A
    - **Clean up messy subfolders**: If you found any sub-subfolders in Step 1, move everything out of them into the main category folder (like `Passes`). Once the subfolders are empty, delete them so the category folder stays flat.
+   - **Remove duplicates across journeys**: a booking (same booking reference) also filed in another journey folder is kept in the folder of the trip it belongs to and deleted from the other. Its boarding passes go with it.
 
 7. **Checkpoint: Organization and Naming Complete**
    - All files are in correct subfolders based on content type
@@ -490,6 +493,7 @@ Fully organized journey folder with all files compliant to naming conventions
    - All fare files include airline name in square brackets
    - All fare files include booking reference
    - No orphaned files remain
+   - No booking is filed in a second journey folder
    - Email account usage (where visible) matches handbook rules
    - All files are correctly named and readable
 
@@ -738,7 +742,7 @@ Actions to execute (proceed without confirmation):
    
 6. **Cross-Reference Emails and Files (Bidirectional)**
 
-   This step performs THREE checks. Check A discovers NEW bookings not yet saved. Check B tracks file origins. Check C finds misplaced files.
+   This step performs four checks. Check A discovers NEW bookings not yet saved. Check B tracks file origins. Check C finds misplaced files. Check D finds the way home.
 
    **Check A: Emails → Files (find missing files)** — this is the primary check
 
@@ -773,6 +777,10 @@ Actions to execute (proceed without confirmation):
    - Image files (*.png, *.jpg) of tickets/passes → should be in Passes/
    - PDF booking confirmations → should be in Fares/, Accommodations/, or Passes/
    - Flag misplaced files for moving to correct subfolder
+
+   **Check D: The way home**
+
+   When no file shows the travellers arriving home, search email for their return (in every traveller's mailbox, since a return is often booked from the traveller's own) and flag it for saving. A return found makes the folder name a date range per `sop-travel-folder-access.md`; a return filed in another journey folder, or not found, leaves the single date.
 
    **Note on Cancellations:**
 
@@ -904,6 +912,7 @@ Actions to execute (proceed without confirmation):
 - Taxi/ride-hailing invoices identified within journey date range
 - Cancellation emails identified and corresponding files flagged for renaming
 - Files without email match noted for informational tracking
+- The way home found and filed, or the folder left with its single date
 - **Reimbursable vs non-reimbursable distinction applied** (travel/business vs entertainment)
 - **Reimbursement completeness verified**: Every reimbursable invoice exists in exactly one reimbursement folder
 - Hotel invoices identified for reimbursement (if reimbursable)
