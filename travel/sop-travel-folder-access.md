@@ -8,15 +8,20 @@ This SOP is the single source of truth for accessing travel folders. All other t
 
 Travel folders reside in `0. Travel Admin/` within Dropbox, accessed via rclone. **Travel data is never in the local git repository.** The git repo contains only SOPs and test artifacts — do not search the current working directory for travel files.
 
-Each journey folder follows the naming convention:
+Each journey folder is named by its dates, its travellers and its destinations:
 
-`YYYY-MM-DD [Destination(s)] - [Travellers]`
+- `YYYY-MM-DD to MM-DD [Travellers] - [Destination(s)]` when the folder holds the travellers' arrival home. The end date carries its year when that differs from the start.
+- `YYYY-MM-DD [Travellers] - [Destination(s)]` when it does not: the way home is filed in another folder, or was never found in email.
+- `YYYY-MM-DD ✖ [Travellers] - [Destination(s)]` for a trip bought but not taken.
+
+The start date is the day the travellers leave, by any means of transport, a train to the departure airport included. The end date is the day they arrive home; a flight landing after midnight counts on its landing day.
 
 Examples:
 
-- `2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Partner, Alex, A-Z`
-- `2025-11-29 Venice - Partner, Alex, A-Z`
-- `2025-04-04 Lima - Partner, Alex, A-Z`
+- `2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw`
+- `2025-11-29 to 12-01 Partner, Alex, A-Z - Venice`
+- `2026-06-10 Partner, Alex, A-Z - London`
+- `2025-11-08 ✖ Partner, Alex, A-Z - Marrakesh`
 
 ## Access Method: rclone
 
@@ -37,7 +42,7 @@ rclone lsd "Dropbox:0. Travel Admin" | grep -i "keyword"
 ### Listing Contents of a Journey Folder
 
 ```bash
-rclone ls "Dropbox:0. Travel Admin/2025-12-23 Edinburgh, Berlin, Munich, Vienna, Warsaw - Partner, Alex, A-Z"
+rclone ls "Dropbox:0. Travel Admin/2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw"
 ```
 
 `rclone ls` lists all files recursively with sizes. For subfolders only, use `rclone lsd`.
