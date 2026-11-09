@@ -104,7 +104,7 @@ Each document contains:
 
 **1.3 Identify Traveller Composition**
 
-Extract from journey folder name (format: `YYYY-MM-DD [Destinations] - [Travellers]`):
+Extract from journey folder name (travellers come after the dates, before " - "; naming per `sop-travel-folder-access.md`):
 
 - **Adults**: Names other than known children
 - **Children**: Look for "Ivy", "Mia", "A-Z" or child indicators in tickets
