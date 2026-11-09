@@ -106,7 +106,7 @@ Before executing procedures (individually or as a complete RUN), ensure:
    - Permission to create or update Itinerary.md documents
 
 2. **Knowledge Requirements:**
-   - Familiarity with the Travel Handbook (naming conventions, folder structure, email account rules)
+   - Familiarity with folder naming and structure (`sop-travel-folder-access.md`) and the email account rules (Email Account Verification, Procedure 1)
    - Understanding of the Travel Preferences document
    - Basic understanding of travel terminology (PNR, airport codes, layovers)
 

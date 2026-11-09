@@ -729,7 +729,7 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
       - **If departure day**: Apply departure day strategy from Phase 3
       - **If conference day**: Minimal additional activities (conference attendees may be busy all day; non-attendees can have separate plans)
       - Assign activity clusters to specific days
-      - **Match activities to days when they're open**: Use day-of-week activity matrix from Phase 4
+      - **Match activities to days when they're open**: Use Day-of-Week Clustering from Phase 5
         - "Monday: Aquarium closed → playground day"
         - "Tuesday: Aquarium open → aquarium + nearby activities"
       - Consider day of week (museum closures, weekend crowds, market days)
@@ -1171,7 +1171,7 @@ For flights, trains, and booked events with fixed times:
 - Note if transport needs booking in advance vs. available on-demand
 
 **Airport/Station to Hotel Transport (Arrival Days):**
-- Include the transport evaluation and reasoning from Procedure 2, Section 5 (Airport-to-Hotel Transport Evaluation)
+- Include the transport evaluation and reasoning
 - Present multiple options with costs and a recommended option based on family logistics
 - Include explicit reasoning for the recommendation (hotel location, luggage handling, cost comparison, traveller composition)
 - This demonstrates that practical travel logistics were considered, not just default assumptions
