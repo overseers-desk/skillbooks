@@ -399,7 +399,7 @@ Fully organized journey folder with all files compliant to naming conventions
 
 4. **Email Account Verification** (if visible in documents)
    - Extract email address from booking confirmations where visible
-   - Verify email matches handbook rules:
+   - Verify email matches the email account rules:
      - booking@example.com for Alex's family travel (or when requested by Alex for the partner traveling alone)
      - Traveller's email for non-family members
    - Flag any bookings made with incorrect email accounts
@@ -494,7 +494,7 @@ Fully organized journey folder with all files compliant to naming conventions
    - All fare files include booking reference
    - No orphaned files remain
    - No booking is filed in a second journey folder
-   - Email account usage (where visible) matches handbook rules
+   - Email account usage (where visible) matches the email account rules
    - All files are correctly named and readable
 
 ## Procedure 2: Checking Email and Ensuring Records Are Saved
