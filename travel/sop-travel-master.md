@@ -8,7 +8,6 @@ This is the master orchestrator for travel planning. It defines interfaces betwe
 
 | SOP | Purpose | Input | Output |
 |-----|---------|-------|--------|
-| `sop-booking-extraction.md` | Parse PDFs from Fares/Accommodations/Passes | Journey folder path | `build/extraction/*.yaml` |
 | `sop-cluster-research.md` | Research geographic cluster, attractions, suitability | City name, dates, traveller composition | `build/research/{city}-cluster.md` |
 | `sop-twinyo.md` | Date-specific constraint analysis and opportunity discovery | Journey folder + cluster research | `build/research/{journey}-twinyo.md` |
 | `sop-itinerary-management.md` | Assemble research into a destination-level itinerary | All build/ artifacts | `[Itinerary-File].md` |
@@ -25,7 +24,7 @@ All generated intermediate files reside in `build/` within the journey folder:
 ├── Passes/                          # Source: event tickets, passes
 │
 ├── build/
-│   ├── extraction/                  # From sop-booking-extraction
+│   ├── extraction/                  # From RUN step 2
 │   │   ├── transport-segments.yaml  # All inter-city transport
 │   │   ├── traveller-composition.yaml
 │   │   ├── 1.Edinburgh.yaml         # Per-city booking details
@@ -324,25 +323,7 @@ Sub-SOPs should only re-run when source data has changed.
 
 #### Extraction Phase Caching
 
-Before running `sop-booking-extraction.md`, check if extraction is current:
-
-```bash
-# Get newest source file modification time
-NEWEST_SOURCE=$(find Fares/ Accommodations/ Passes/ -type f -name "*.pdf" -printf '%T@\n' 2>/dev/null | sort -n | tail -1)
-
-# Get oldest extraction output modification time
-OLDEST_EXTRACTION=$(find build/extraction/ -type f -printf '%T@\n' 2>/dev/null | sort -n | head -1)
-
-# If no extraction exists, or source is newer than extraction, re-run
-if [ -z "$OLDEST_EXTRACTION" ] || [ "$NEWEST_SOURCE" -gt "$OLDEST_EXTRACTION" ]; then
-    # Run extraction
-fi
-```
-
-**Decision logic**:
-- If `build/extraction/` does not exist → run extraction
-- If any PDF in Fares/Accommodations/Passes is newer than oldest file in `build/extraction/` → re-run extraction
-- Otherwise → skip extraction, use cached results
+The extraction files are rewritten when a PDF in Fares/Accommodations/Passes is newer than the oldest of them, or when they are missing.
 
 #### Research Phase Caching
 
@@ -371,12 +352,8 @@ RUN: Travel Management
    - Follow `sop-travel-folder-access.md` for access instructions.
    - Verify journey folder exists within `0. Travel Admin/` in the "online" storage.
 
-2. CHECK extraction freshness
-   - Compare source PDF timestamps vs build/extraction/ timestamps
-   - If stale or missing:
-     → Run: sop-booking-extraction.md
-     → Creates: build/extraction/*.yaml
-   - Else: Skip, use existing extraction
+2. EXTRACT bookings (when stale or missing, per Extraction Phase Caching)
+   - From the booking PDFs, write build/extraction/*.yaml as the Booking Extraction interfaces define
 
 3. IDENTIFY city sequence
    - Read build/extraction/transport-segments.yaml
@@ -431,12 +408,6 @@ claude -p "Follow travel/sop-travel-master.md for journey '2025-12-23 to 2026-01
 ```bash
 claude -p "Follow travel/sop-cluster-research.md for Berlin, Dec 26-29 2025, family with 2 children. Save to build/research/berlin-cluster.md" \
   --allowedTools "WebSearch,WebFetch,Read,Write"
-```
-
-**Extraction only**:
-```bash
-claude -p "Follow travel/sop-booking-extraction.md for journey folder '2025-12-23 Edinburgh...'" \
-  --allowedTools "Bash,Read,Write,Glob"
 ```
 
 ---

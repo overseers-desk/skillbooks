@@ -4,7 +4,7 @@
 
 **Relationship to other SOPs**:
 - Orchestrated by: `sop-travel-master.md`
-- Depends on: `build/extraction/*.yaml` (from `sop-booking-extraction.md`)
+- Depends on: `build/extraction/*.yaml` (written in step 2 of the `sop-travel-master.md` RUN)
 - Depends on: `build/research/[destination]-cluster.md` (from `sop-cluster-research.md`)
 - Depends on: `build/research/[journey]-twinyo.md` (from `sop-twinyo.md`) - constraint analysis and recommended strategy
 - Validated by: `sop-mental-journey-simulation.md`
