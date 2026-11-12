@@ -101,7 +101,7 @@ Frame the day after the enumeration, not before. A day framed in advance as mere
 The story is written forward, scene by scene, the planner's path through the day. The traveller reading it already holds the constraints and wants the day itself. The final step re-renders the deliverable in the reader's order:
 
 - **Act now**: the few items with a deadline before the day begins (a booking that closes tonight, a check-in window, an alarm), one line each.
-- **The day**: the lived hour-by-hour, what happens, in plain language. The main body, with the issue markers folded into the prose where they bite.
+- **The day**: the lived hour-by-hour, what happens, in plain language. The main body, with the issue markers folded into the prose where they bite. A hotel, car or ticket not yet booked is lived as the proposal it is, with its status as `sop-itinerary-management.md` defines it in the Bookings Table, since the plan is read later as the record of what exists.
 - **Carry with you**: the decision points as plain triggers ("if not on a Gatwick train by 15:00, take the taxi").
 - **Planning notes** (appendix): the candidate table with sourced verdicts, the grounding, the backward-chain arithmetic. Kept so the reasoning can be audited, not needed to use the plan.
 

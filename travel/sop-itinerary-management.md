@@ -1030,16 +1030,18 @@ For each item, include brief contextual reasoning:
 
 ---
 
-#### Component 2: Key Transportation Segments Table
+#### Component 2: Bookings Table
 
-This table provides a high-level overview of all intercity travel, enabling quick reference to major movements between locations.
+This table lists what the journey needs booked, in date order: all intercity travel, each night's lodging, and timed tickets.
 
-**Purpose**: Show the journey's transportation backbone without day-by-day detail.
+**Purpose**: Show the journey's backbone without day-by-day detail, and show which parts of it exist. The itinerary sits in the travel folder, where people and agents read it later as the record of the trip, so a proposal has to read as one.
 
 **Format**:
 
-| Date | Departure Time | Origin (Location) | Arrival Time | Destination (Location) | Transport Type | Booking Reference | Notes |
-|------|----------------|-------------------|--------------|------------------------|----------------|-------------------|-------|
+| Date | Departure Time | Origin (Location) | Arrival Time | Destination (Location) | Type | Status | Notes |
+|------|----------------|-------------------|--------------|------------------------|------|--------|-------|
+
+**Status** is "Booked [date booked], [reference]" for a booking with a confirmation, or "Proposed, checked [date and time], [price seen]" for one not yet bought, with what lapses and when (a free-cancellation deadline, the last room). The rest of the document follows the table: a proposed hotel, car or ride appears in the header and the day-by-day as proposed, not as where the travellers are staying or what they will collect.
 
 **Content guidelines:**
 
