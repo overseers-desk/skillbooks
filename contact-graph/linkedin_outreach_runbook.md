@@ -42,7 +42,7 @@ Repeat until the stop condition fires:
 
 1. **Pick.** Run:
    ```bash
-   python3 ~/code/aesop/contact-graph/pick_next_candidate.py
+   python3 contact-graph/pick_next_candidate.py
    ```
    Output is a JSON list, ordered by `m` descending, each row:
    `{human_id, display_name, m, level, email_addresses, org_hints}`.
@@ -73,7 +73,7 @@ Repeat until the stop condition fires:
 5. **Branch.**
    - **Confident Google hit** →
      ```bash
-     python3 ~/code/aesop/contact-graph/record_verify.py \
+     python3 contact-graph/record_verify.py \
        --human-id <id> --state verified --vanity <url> --level <level> \
        --evidence '{"source":"google","query":"<query>","m":<m>}'
      ```
@@ -81,7 +81,7 @@ Repeat until the stop condition fires:
      Then go to **Drafting**.
    - **Ambiguous Google result** with disambiguator already applied →
      ```bash
-     python3 ~/code/aesop/contact-graph/record_verify.py \
+     python3 contact-graph/record_verify.py \
        --human-id <id> --state ambiguous \
        --evidence '{"source":"google","candidates":["url1","url2"]}'
      ```
@@ -91,7 +91,7 @@ Repeat until the stop condition fires:
 6. **LinkedIn fallback.** Only if Google found nothing. First check the
    budget:
    ```bash
-   python3 ~/code/aesop/contact-graph/count_today.py | grep linkedin_searches_used
+   python3 contact-graph/count_today.py | grep linkedin_searches_used
    ```
    If the count is `>= 30`, stop the entire loop. Otherwise use the LinkedIn
    skill's keyword search for `DisplayName Disambiguator`.
@@ -107,7 +107,7 @@ Repeat until the stop condition fires:
 6.5. **Check connection status** — only for `verified` candidates. This step is CHEAP (no CUL, ~3 seconds, direct profile-page fetch). It MUST come before any courier or drafting work, because half the candidates may already be first-degree connections and there is no point burning tokens drafting notes for invites that will never go out.
 
    ```bash
-   python3 ~/code/aesop/contact-graph/check_connection_status.py --vanity <vanity-or-url>
+   python3 contact-graph/check_connection_status.py --vanity <vanity-or-url>
    ```
 
    Output is one of `not_connected`, `invite_pending`, `already_connected`, `fetch_failed`, `parse_failed`.
@@ -128,7 +128,7 @@ Repeat until the stop condition fires:
    **Level 3 (bare connect).** They plainly remember us, so a note adds
    nothing. No courier or USP work. Save with:
    ```bash
-   python3 ~/code/aesop/contact-graph/record_draft.py --human-id <id> --no-note
+   python3 contact-graph/record_draft.py --human-id <id> --no-note
    ```
    Next candidate.
 
@@ -157,7 +157,7 @@ Repeat until the stop condition fires:
      `human.display_name`.
    - **Save the draft**:
      ```bash
-     python3 ~/code/aesop/contact-graph/record_draft.py \
+     python3 contact-graph/record_draft.py \
        --human-id <id> --note "<the draft>"
      ```
 
@@ -198,16 +198,16 @@ operator reviews `linkedin.connection_queue` and decides what to send manually.
 
 ## Smoke check before the loop
 
-Run these three commands once at session start to confirm the environment:
+Run these three commands once at session start, from the repository root, to confirm the environment:
 
 ```bash
 psql "$DATABASE_URL" -tA -c "SELECT COUNT(*) FROM linkedin.connection_queue;" 2>&1
-python3 ~/code/aesop/contact-graph/pick_next_candidate.py
-python3 ~/code/aesop/contact-graph/count_today.py
+python3 contact-graph/pick_next_candidate.py
+python3 contact-graph/count_today.py
 ```
 
-Set `DATABASE_URL` from `~/code/aesop/contact-graph/.env` if not already in
-the environment (`set -a; . ~/code/aesop/contact-graph/.env; set +a`). The
+Set `DATABASE_URL` from `contact-graph/.env` if not already in
+the environment (`set -a; . contact-graph/.env; set +a`). The
 helper scripts load it themselves via `python-dotenv`; the psql sanity
 check needs it in the shell env.
 

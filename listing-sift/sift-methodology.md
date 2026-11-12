@@ -113,7 +113,7 @@ scored_by: {model that scored, if applicable}
 
 ## Listing description
 
-(Full posting converted from HTML to markdown via pandoc.
+(Full posting converted from HTML to markdown.
  If fetch failed entirely, state "Fetch failed: [reason]"
  and reproduce whatever is known from sweep notes.)
 
@@ -192,7 +192,7 @@ Investigate is Sonnet-tier work: structured fetch, conversion, and factual resea
 For each row in the registry that lacks a dossier file:
 
 1. **Fetch the listing.** Try WebFetch first. If it returns 403, Cloudflare challenge, or empty content, fall back to headless browser with flock serialisation to avoid concurrent user-data-dir collisions. Detect the available browser binary at runtime; do not hardcode a specific browser path.
-2. **Convert HTML to markdown.** Pipe through `pandoc -f html -t markdown --wrap=none`. Strip navigation, footers, cookie banners, and other boilerplate if identifiable.
+2. **Convert HTML to markdown.** Strip navigation, footers, cookie banners, and other boilerplate if identifiable.
 3. **Research the source.** For publishers that are not household names, do a brief web search to establish: what the organisation does, approximate size, funding stage, regulatory status, and any recent news relevant to the listing. Write findings into the "Source background" sections.
 4. **Write the dossier file** to `dossiers/{id}.md` using the format above. Leave the Fit section empty — Fit fills it in SOP 3.
 5. **Update `alive` in the registry** if the fetch reveals the listing is dead (404, "this position has been filled", "this call is closed", etc.).
