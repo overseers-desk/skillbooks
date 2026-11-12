@@ -360,6 +360,7 @@ RUN: Travel Management
 2. EXTRACT bookings (when stale or missing, per Extraction Phase Caching)
    - From the booking PDFs, write build/extraction/*.yaml as the Booking Extraction interfaces define
    - Into traveller-composition.yaml put every traveller fact the session holds, from whatever reference data it has or from the conversation; with none, the travellers named on the bookings. The later phases read the travellers from this file
+   - Carry each preference and constraint in its source's own words, quoted rather than paraphrased. The degree it is stated with is the degree it has: a passing preference stays one, and a deal breaker stays one. It tends to get hardened at each hand-off, here, in a brief to a subagent, and when acted on, so quote it again at each of those rather than restating it
 
 3. IDENTIFY city sequence
    - Read build/extraction/transport-segments.yaml
