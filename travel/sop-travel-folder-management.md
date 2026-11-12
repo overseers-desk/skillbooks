@@ -948,17 +948,9 @@ Properly named file following convention:
 
 **Steps**
 
-1. **Extract Document Text**
-   - Use `pdftotext` to extract text from PDF: `pdftotext "filename.pdf" -`
-   - If text extraction yields no results or very limited text (image-based PDF), proceed to OCR
-   - For JPG/PNG files, proceed directly to OCR
+1. **Read the document**: its text, through OCR for scans and images.
 
-2. **OCR for Image-Based Documents**
-   - Convert PDF to image if needed: `pdftoppm "filename.pdf" temp -png -f 1 -l 1`
-   - Run OCR: `tesseract temp-1.png -` (or directly on JPG/PNG files)
-   - Clean up temporary files: `rm -f temp-*.png`
-
-3. **Determine Document Type: Invoice vs Receipt**
+2. **Determine Document Type: Invoice vs Receipt**
    
    **Invoice criteria**: Document shows tax amount breakdown with any of these indicators:
    - VAT (Value Added Tax)
@@ -980,7 +972,7 @@ Properly named file following convention:
    - If a document is an invoice (has tax breakdown), name it with `(VAT=€X.XX)` or `(GST=€X.XX)` suffix
    - Do not change `(Receipt)` to `(VAT=€0.00)` or vice versa
 
-4. **Manual Tax Amount Extraction**
+3. **Manual Tax Amount Extraction**
 
    **DO NOT WRITE A SCRIPT TO EXTRACT TAX AMOUNTS. DO NOT.**
    
@@ -1034,7 +1026,7 @@ Properly named file following convention:
    
    These are examples. Your invoice might look completely different. Tables might be sideways. Numbers might use commas instead of periods. Tax might be called something else. Column headers might be in another language. The layout might be nonsensical. Read it anyway. Figure it out.
 
-5. **Extract Invoice/Receipt Details**
+4. **Extract Invoice/Receipt Details**
    
    From document text/OCR, extract:
    - **Vendor name**: Business name at top of document or in header
@@ -1045,7 +1037,7 @@ Properly named file following convention:
    - **Tax amount** (if invoice): Extracted using methods above
    - **Document type**: Invoice (if tax breakdown exists) or Receipt (if no tax breakdown)
 
-6. **Determine Accounting Category**
+5. **Determine Accounting Category**
    
    Based on vendor type and document content, categorise as:
 
@@ -1057,14 +1049,14 @@ Properly named file following convention:
    
    **Important**: This categorisation applies only to reimbursable items. Entertainment expenses (museums, amusement parks, castles, tourist attractions) do not belong in reimbursement folders and should not be processed by this helper procedure. If an invoice is for a non-reimbursable entertainment item, do not save it to the Reimbursement folder—it remains associated with its booking in the Passes folder only.
 
-7. **Tax Type Normalisation**
+6. **Tax Type Normalisation**
    
    - If document shows "IVA" (Spanish/Portuguese VAT), use **VAT** in filename
    - If document shows "GST", use **GST** in filename
    - If document shows "VAT", use **VAT** in filename
    - If document shows "Sales Tax", use **GST** in filename (normalise to GST)
 
-8. **Filename Construction**
+7. **Filename Construction**
 
    **For Invoices** (with tax breakdown):
    ```
@@ -1084,7 +1076,7 @@ Properly named file following convention:
    - `Meal - Quick Lunch Cafe 2025-11-12 €8.50 (Receipt).jpg`
    - `Other - Metro Ticket 2025-11-13 €2.50 (Receipt).pdf`
 
-9. **Special Cases**
+8. **Special Cases**
 
    **Zero-rated/Exempt Items** (flights, international services):
    - If document shows tax line but amount is €0.00, still use invoice format
@@ -1099,7 +1091,7 @@ Properly named file following convention:
    - Always sum all tax amounts
    - Example: Food IVA €2.34 + Beverage IVA €1.15 = Total VAT €3.49
 
-10. **Format Validation**
+9. **Format Validation**
     - Verify filename follows exact convention
     - Check proper spacing: `Type - Vendor Date €Amount (Suffix)`
     - Verify date is YYYY-MM-DD format
@@ -1107,7 +1099,7 @@ Properly named file following convention:
     - Verify tax suffix format: `(VAT=€XX.XX)` or `(GST=€XX.XX)` or `(Receipt)`
     - Verify no forbidden characters for Windows: no `:` `/` `\` `*` `?` `"` `<` `>` `|`
 
-11. **Rename Action**
+10. **Rename Action**
     - Rename file to constructed filename
     - Verify file is readable after rename
 
@@ -1188,90 +1180,6 @@ Properly named file following convention:
 ❌ `2025-11-15 [Ryanair] Seville-Porto DTF7HZ Partner,Alex,Ivy,Mia.pdf`
 - Missing flight number between route and booking reference
 - Should be: `2025-11-15 [Ryanair] Seville-Porto FR2323 DTF7HZ Partner,Alex,Ivy,Mia.pdf`
-
-## Next Steps: Journey Evaluation and Itinerary Generation
-
-After completing folder management RUN, you may proceed to journey completeness evaluation and itinerary generation:
-
-**Travel Itinerary Management SOP** (`sop-itinerary-management.md`)
-
-This separate SOP handles:
-
-- **Mental journey simulation**: Step through the journey to identify gaps in transport connections, accommodation continuity, and timing issues
-- **Completeness evaluation**: Categorise gaps by severity (genuine gaps, acceptable gaps, verification needed) using contextual reasoning
-- **Itinerary document generation**: Create or update Itinerary.md with integrated completeness checklist, transportation table, and day-by-day timeline with estimated timestamps
-- **Booking recommendations**: Provide guidance on options and considerations for identified gaps
-
-**When to use itinerary management:**
-
-- After folder management completes and files are organised
-- When journey evaluation is needed before departure
-- When itinerary updates are required due to booking changes
-- When user requests completeness assessment
-
-**Why separate?**
-
-The separation allows:
-
-- Folder management can run automatically without user interaction (pure file operations)
-- Itinerary management may require user confirmation for booking decisions
-- Independent invocation: run folder management first, then optionally run itinerary management
-- Automated systems can trigger folder management independently
-
-## RUN Re-runnability Checklist
-
-This checklist verifies that RUN execution is properly idempotent, enabling multiple passes through the same journey folder without duplication or unnecessary work. Use this checklist to confirm re-runnability is maintained as the SOP evolves.
-
-### Re-runnability Verification Points
-
-**1. File Saving Operations (Procedure 2)**
-- ✓ Before flagging a file for saving, check if file already exists at target location
-- ✓ If file exists with correct name, skip saving (no action needed)
-- ✓ If file exists with incorrect name, flag for renaming (not re-saving)
-- ✓ Multiple RUN executions do not create duplicate files
-
-**2. File Renaming Operations (Procedure 1, Helper Procedure A)**
-- ✓ Only files with incorrect names are flagged for renaming
-- ✓ Files already correctly named are not renamed again
-- ✓ Renaming operations are applied once per file
-
-**3. Email Operations (Procedure 2)**
-- ✓ Email searches are filtered by date range to avoid processing unrelated emails
-- ✓ Promotional email deletions only occur for past journeys
-- ✓ Booking confirmations are retained (never deleted)
-- ✓ Email processing does not re-download already-saved attachments
-
-**4. Consistency Across Multiple Runs**
-- ✓ Running RUN once produces the same result as running it twice consecutively
-- ✓ No error messages about duplicate files or conflicting operations
-- ✓ Action lists shrink with each subsequent RUN (as issues are resolved)
-- ✓ Final RUN with no new bookings produces minimal or no actions
-
-**5. State Preservation**
-- ✓ Previous work is not overwritten or lost
-- ✓ Completed tasks remain completed
-- ✓ Files do not revert to incorrect naming
-
-### Expected Behaviour Across Multiple RUNs
-
-**First RUN (new journey folder)**:
-- Organize all files
-- Rename incorrectly named files
-- Save all booking confirmations from email
-- Action list includes all identified file operations
-
-**Second RUN (after new booking added)**:
-- Detect new booking file
-- Save corresponding email confirmation (if exists)
-- Rename new file if needed
-- Action list only includes operations for new booking
-
-**Third RUN (no changes)**:
-- No file operations needed (all files correctly organized)
-- No email saves needed (all confirmations already saved)
-- Action list is empty or minimal
-
-This re-runnable design ensures that each RUN builds on previous work, incorporating new information while preserving completed tasks, enabling the journey folder to evolve naturally as bookings are made, cancelled, or modified.
 
 ---
 

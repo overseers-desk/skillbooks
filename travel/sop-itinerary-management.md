@@ -1668,10 +1668,6 @@ Even when transport method is reasonable, always verify dates align:
 - Date misalignments that create accommodation gaps
 - Timing incompatibilities that prevent successful travel
 
-## RUN Re-runnability Checklist
-
-Verify RUN is properly idempotent: existing itinerary read before updates, valid plans preserved, only needed changes proposed, resolved gaps removed, new gaps added, cancelled bookings excluded, state preserved across runs. First RUN creates complete plan; subsequent RUNs incrementally refine based on new bookings without duplication.
-
 ---
 
 **End of Standard Operating Procedure**
