@@ -651,6 +651,10 @@ Review the cluster research (`build/research/[destination]-cluster.md`) and Phas
    
    With no loyalty programme known for the travellers, choose on location alone.
 
+   d. **Holiday rentals**, searched alongside hotels when the party needs more than one hotel room's beds: an apartment often costs a fraction of a family suite. Where the travellers' reference data says when they use them, that applies.
+
+   When no programme hotel lies within reach of the plan, find the programme's nearest property with a room for the whole party, its price, and the journey to it, before setting the programme aside. A base the travellers must travel to reach from the arrival point (a ferry, a long drive) costs that journey on the way in and again on the way out; on a stay of a few nights it can take much of the waking time and hang a fixed departure on one connection. Weigh those hours and the price against the bases near the arrival point.
+
 2. **Multi-Location Stays**
    
    When cities have geographically separated clusters:
