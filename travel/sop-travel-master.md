@@ -355,7 +355,7 @@ RUN: Travel Management
 1. **Access Data: Examine Online Travel Folder**
    - Parse journey name from user request.
    - Follow `sop-travel-folder-access.md` for access instructions.
-   - Verify journey folder exists within `0. Travel Admin/` in the "online" storage.
+   - Verify journey folder exists within `0 Travel Admin/` in the "online" storage.
 
 2. EXTRACT bookings (when stale or missing, per Extraction Phase Caching)
    - From the booking PDFs, write build/extraction/*.yaml as the Booking Extraction interfaces define

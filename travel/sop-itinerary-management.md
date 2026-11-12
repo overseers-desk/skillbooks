@@ -103,7 +103,7 @@ This SOP assumes the folder management SOP has already been executed and the jou
 
 2. **Locate the journey folder**:
    - Extract journey name from user request (naming per `sop-travel-folder-access.md`)
-   - Use the access method established in step 1 to find the journey folder within `0. Travel Admin/`
+   - Use the access method established in step 1 to find the journey folder within `0 Travel Admin/`
    - Example journey folder: `2025-11-29 to 12-01 Partner, Alex, A-Z - Venice`
 
 3. **Verify folder exists and contains booking documents:**

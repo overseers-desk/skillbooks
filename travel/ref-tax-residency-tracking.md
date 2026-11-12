@@ -2,7 +2,7 @@
 
 ## Superscript Notation in Travel Folders
 
-Journey folders in `0. Travel Admin/` and `Travel Admin Archive/` use Unicode superscript numbers on a traveller's name to record **that trip's days in a country whose tax authority would treat 183 days in its tax year as residence**, such as Australia or Singapore. Each country's tax year is its own (Australia's runs July 1 – June 30), and every day in the country counts toward that year's total, however short the trip. The superscript is the trip's share of that total, not the total itself, and not the trip's length: the yearly total is calculated separately, from these numbers.
+Journey folders in `0 Travel Admin/` and `Travel Admin Archive/` use Unicode superscript numbers on a traveller's name to record **that trip's days in a country whose tax authority would treat 183 days in its tax year as residence**, such as Australia or Singapore. Each country's tax year is its own (Australia's runs July 1 – June 30), and every day in the country counts toward that year's total, however short the trip. The superscript is the trip's share of that total, not the total itself, and not the trip's length: the yearly total is calculated separately, from these numbers.
 
 - A single number (e.g. `Alex²⁶`) means that many days in the country on this trip.
 - A sum (e.g. `Alex⁴⁵⁺⁹`) means the trip had a period outside the country mid-trip, splitting the days into separate blocks that together total the sum.

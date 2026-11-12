@@ -97,10 +97,10 @@ The separation allows automated systems to run folder management independently, 
 
 Before executing procedures (individually or as a complete RUN), ensure:
 
-1. **Access to Travel Admin folder ("0. Travel Admin"):**
+1. **Access to Travel Admin folder ("0 Travel Admin"):**
    - Follow `sop-travel-folder-access.md` to access travel folders (rclone)
-   - Do not use `find(1)` command in any folder other than `0. Travel Admin` (10k+ files exist in cloud storage; broad searches take excessive time)
-   - Do not use `find(1)` to locate `0. Travel Admin` itself—the folder location is defined in the access SOP and is guaranteed to exist
+   - Do not use `find(1)` command in any folder other than `0 Travel Admin` (10k+ files exist in cloud storage; broad searches take excessive time)
+   - Do not use `find(1)` to locate `0 Travel Admin` itself—the folder location is defined in the access SOP and is guaranteed to exist
    - If access fails via both methods, the whole process should fail
    - Ability to read and modify files within journey folders
    - Permission to create or update Itinerary.md documents
@@ -839,12 +839,12 @@ Actions to execute (proceed without confirmation):
    **Action record format**:
    - UID: [number] and Folder: [folder name] (to locate the email)
    - Source: [attachment name] OR [HTML export] (specify what is being saved)
-   - Target: `/0. Travel Admin/[journey-folder]/[subfolder]/[filename]`
+   - Target: `/0 Travel Admin/[journey-folder]/[subfolder]/[filename]`
    - Special notes: [if needed, e.g., "Create Reimbursement folder", "Rename existing file [current name]", "Requires human placement - multiple reimbursement folders exist"]
    
    **For Renaming Files**:
-   - Current: `/0. Travel Admin/[journey-folder]/[subfolder]/[current filename]`
-   - New: `/0. Travel Admin/[journey-folder]/[subfolder]/[new filename]`
+   - Current: `/0 Travel Admin/[journey-folder]/[subfolder]/[current filename]`
+   - New: `/0 Travel Admin/[journey-folder]/[subfolder]/[new filename]`
    
    **For Deleting Emails**:
    - UID: [number] and Folder: [folder name]
@@ -875,7 +875,7 @@ Actions to execute (proceed without confirmation):
    courier --imap me-example-com save -f INBOX -u UID --attachment attachment.pdf -o /tmp/attachment.pdf
 
    # Upload to Dropbox
-   rclone copyto /tmp/attachment.pdf "Dropbox:0. Travel Admin/[journey]/[subfolder]/[filename].pdf"
+   rclone copyto /tmp/attachment.pdf "Dropbox:0 Travel Admin/[journey]/[subfolder]/[filename].pdf"
    ```
 
    If no PDF attachment exists, export the email body and convert (see `sop-travel-folder-access.md`).
@@ -884,8 +884,8 @@ Actions to execute (proceed without confirmation):
 
    ```bash
    rclone moveto \
-     "Dropbox:0. Travel Admin/[journey]/[subfolder]/old_name.pdf" \
-     "Dropbox:0. Travel Admin/[journey]/[subfolder]/new_name.pdf"
+     "Dropbox:0 Travel Admin/[journey]/[subfolder]/old_name.pdf" \
+     "Dropbox:0 Travel Admin/[journey]/[subfolder]/new_name.pdf"
    ```
 
    **Deleting Emails:**

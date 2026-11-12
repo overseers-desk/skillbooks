@@ -6,7 +6,7 @@ This SOP is the single source of truth for accessing travel folders. All other t
 
 ## Travel Folder Location
 
-Travel folders reside in `0. Travel Admin/` within Dropbox, accessed via rclone. **Travel data is never in the local git repository.** The git repo contains only SOPs and test artifacts — do not search the current working directory for travel files.
+Travel folders reside in `0 Travel Admin/` within Dropbox, accessed via rclone. **Travel data is never in the local git repository.** The git repo contains only SOPs and test artifacts — do not search the current working directory for travel files.
 
 Each journey folder is named by its dates, its travellers and its destinations:
 
@@ -30,19 +30,19 @@ All travel folder operations use rclone with the `Dropbox:` remote.
 ### Listing Journey Folders
 
 ```bash
-rclone lsd "Dropbox:0. Travel Admin"
+rclone lsd "Dropbox:0 Travel Admin"
 ```
 
 ### Finding a Specific Journey Folder
 
 ```bash
-rclone lsd "Dropbox:0. Travel Admin" | grep -i "keyword"
+rclone lsd "Dropbox:0 Travel Admin" | grep -i "keyword"
 ```
 
 ### Listing Contents of a Journey Folder
 
 ```bash
-rclone ls "Dropbox:0. Travel Admin/2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw"
+rclone ls "Dropbox:0 Travel Admin/2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw"
 ```
 
 `rclone ls` lists all files recursively with sizes. For subfolders only, use `rclone lsd`.
@@ -50,35 +50,35 @@ rclone ls "Dropbox:0. Travel Admin/2025-12-23 to 2026-01-07 Partner, Alex, A-Z -
 ### Creating Subfolders
 
 ```bash
-rclone mkdir "Dropbox:0. Travel Admin/[journey folder]/Fares"
-rclone mkdir "Dropbox:0. Travel Admin/[journey folder]/Accommodations"
-rclone mkdir "Dropbox:0. Travel Admin/[journey folder]/Passes"
+rclone mkdir "Dropbox:0 Travel Admin/[journey folder]/Fares"
+rclone mkdir "Dropbox:0 Travel Admin/[journey folder]/Accommodations"
+rclone mkdir "Dropbox:0 Travel Admin/[journey folder]/Passes"
 ```
 
 ### Uploading a File
 
 ```bash
-rclone copyto /tmp/document.pdf "Dropbox:0. Travel Admin/[journey folder]/Fares/2025-12-23 [Ryanair] Seville-Edinburgh FR1234 ABC123.pdf"
+rclone copyto /tmp/document.pdf "Dropbox:0 Travel Admin/[journey folder]/Fares/2025-12-23 [Ryanair] Seville-Edinburgh FR1234 ABC123.pdf"
 ```
 
 ### Renaming or Moving a File
 
 ```bash
 rclone moveto \
-  "Dropbox:0. Travel Admin/[journey]/Fares/old_name.pdf" \
-  "Dropbox:0. Travel Admin/[journey]/Fares/new_name.pdf"
+  "Dropbox:0 Travel Admin/[journey]/Fares/old_name.pdf" \
+  "Dropbox:0 Travel Admin/[journey]/Fares/new_name.pdf"
 ```
 
 ### Deleting a File
 
 ```bash
-rclone deletefile "Dropbox:0. Travel Admin/[journey folder]/Fares/filename.pdf"
+rclone deletefile "Dropbox:0 Travel Admin/[journey folder]/Fares/filename.pdf"
 ```
 
 ### Removing an Empty Directory
 
 ```bash
-rclone rmdir "Dropbox:0. Travel Admin/[journey folder]/OldFolder"
+rclone rmdir "Dropbox:0 Travel Admin/[journey folder]/OldFolder"
 ```
 
 ## Saving Email Content as PDF
@@ -93,7 +93,7 @@ courier --imap me-example-com export -f INBOX -u UID -o /tmp/booking.html
 weasyprint /tmp/booking.html /tmp/booking.pdf
 
 # Upload to Dropbox
-rclone copyto /tmp/booking.pdf "Dropbox:0. Travel Admin/[journey]/Fares/[name].pdf"
+rclone copyto /tmp/booking.pdf "Dropbox:0 Travel Admin/[journey]/Fares/[name].pdf"
 ```
 
 ## Sourcing hotel-chain availability and price
@@ -120,14 +120,14 @@ Some journey folders may also contain:
 
 ## Performance Considerations
 
-Do not list or search outside `0. Travel Admin/`. Dropbox contains 10k+ files elsewhere. Always scope operations to the travel folder or a specific journey folder.
+Do not list or search outside `0 Travel Admin/`. Dropbox contains 10k+ files elsewhere. Always scope operations to the travel folder or a specific journey folder.
 
 ```bash
 # BAD — too broad
 rclone ls "Dropbox:"
 
 # GOOD — scoped
-rclone ls "Dropbox:0. Travel Admin/[journey folder]"
+rclone ls "Dropbox:0 Travel Admin/[journey folder]"
 ```
 
 ## Error Handling
