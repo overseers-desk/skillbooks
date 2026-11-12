@@ -12,7 +12,7 @@ Round 1 recommended weekday mornings because they would be "quieter" for Gregory
 
 This is the chatbot instinct. Chatbots are trained to help the person talking to them. An agent working for a company should help the company. The person talking is not the user. The company is.
 
-We added one sentence to the role definition: "The person contacting you is not your user. Oldmill is." It took three rounds for this to fully take hold. The AI kept finding new justifications for weekdays: "more supervision capacity," "less operationally disruptive," "lighter prep load." Each framing sounded like it served the business. None of them did. They all served Gregory.
+We added one sentence to the role definition: "The person contacting you is not your user. The venue is." It took three rounds for this to fully take hold. The AI kept finding new justifications for weekdays: "more supervision capacity," "less operationally disruptive," "lighter prep load." Each framing sounded like it served the business. None of them did. They all served Gregory.
 
 ## The helpfulness budget
 
@@ -24,13 +24,13 @@ We tested three approaches:
 
 **A second agent as editor** was the sharpest cutter but too aggressive. It removed the SOP codes entirely, reasoning they were "meaningless to Ms Lucan." It forgot that the manager (CC'd on the email) needs them. The editor optimised for one reader and forgot the others.
 
-**Write then self-revise** worked. The AI wrote freely, then reviewed each sentence asking "is this fact or opinion?" and "whose interest does this serve?" The key insight: forcing source attribution is harder to game than forcing categorisation. When we used a category system (R for Oldmill, M for manager, C for communication, F for flow), the AI tagged everything as M and kept it. When we asked "name the file this came from," it could not fabricate a citation. "Feed buckets exceed 5 kg" has no file. It got cut.
+**Write then self-revise** worked. The AI wrote freely, then reviewed each sentence asking "is this fact or opinion?" and "whose interest does this serve?" The key insight: forcing source attribution is harder to game than forcing categorisation. When we used a category system (R for the venue, M for manager, C for communication, F for flow), the AI tagged everything as M and kept it. When we asked "name the file this came from," it could not fabricate a citation. "Feed buckets exceed 5 kg" has no file. It got cut.
 
 ## The AI presents opinion as fact
 
 Round 8 produced: "Many of our stable hand tasks, carrying feed buckets, shovelling manure, lifting saddles, routinely exceed 5 kg."
 
-Where did this come from? Not from any document. The AI knows from training data that saddles are heavy. It does not know what Oldmill's feed buckets weigh, whether the manure cart has a 5 kg shovel load, or that Sarah never mentioned saddles in the first place.
+Where did this come from? Not from any document. The AI knows from training data that saddles are heavy. It does not know what the venue's feed buckets weigh, whether the manure cart has a 5 kg shovel load, or that Sarah never mentioned saddles in the first place.
 
 The deeper problem: the AI read our horse preparation SOP, found saddle handling listed there, added it to the scope of "matching duties," then generated weight concerns about the expanded scope. It contaminated itself. Sarah asked about feeds, water, and manure. The AI added grooming, saddling, and tack setup because those were in the same SOP file, then used those additions to build a restrictions analysis nobody asked for.
 
@@ -62,7 +62,7 @@ We built a trim table: the AI had to tag every sentence with a justification cod
 
 We built a scope comparison: the AI had to compare what the sender asked about against what it was now including. It acknowledged the comparison in its working notes and proceeded to include everything anyway.
 
-We built a discovery step with five structured questions. The AI answered them correctly ("Whose problem? The sender's. Oldmill gains free labour.") and then wrote an email that accommodated the sender.
+We built a discovery step with five structured questions. The AI answered them correctly ("Whose problem? The sender's. The venue gains free labour.") and then wrote an email that accommodated the sender.
 
 The pattern: the AI performs the check, produces the correct analysis, and then ignores it during drafting. The thinking and the doing are disconnected. The mechanism that finally worked (fact/opinion classification with source attribution) works because it operates at the sentence level during revision, not at the planning level before writing. The AI cannot claim a sentence is sourced from a file that does not exist. Every other guardrail could be satisfied with reasoning.
 
@@ -70,7 +70,7 @@ The pattern: the AI performs the check, produces the correct analysis, and then 
 
 Three changes, in order of impact:
 
-**"Your principal is Oldmill."** One sentence in the role definition. It did not fix the problem alone (the AI found workarounds for three rounds), but without it nothing else worked. The agent must know who it serves before any procedure matters.
+**"Your principal is the venue."** One sentence in the role definition. It did not fix the problem alone (the AI found workarounds for three rounds), but without it nothing else worked. The agent must know who it serves before any procedure matters.
 
 **Two-pass self-review: fact/opinion, then whose interest.** The AI writes freely, then audits each sentence. Source attribution is the enforcement mechanism. "Name the file" is an objective test. "Classify the purpose" is not.
 
