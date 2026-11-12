@@ -20,7 +20,7 @@ A reader-facing day plan (step 7): the lived day first, the few act-now items su
 
 ### 1. Anchors
 
-Extract the day's fixed points from documents, not from conversational memory: flights from the ticket PDFs (`pdftotext`: airport, departure time, terminal, who is on which booking reference), hotel checkout time, any timed tickets. When a remembered time and a document disagree, the document wins and the discrepancy is flagged.
+Extract the day's fixed points from documents, not from conversational memory: flights from the ticket PDFs (airport, departure time, terminal, who is on which booking reference), hotel checkout time, any timed tickets. When a remembered time and a document disagree, the document wins and the discrepancy is flagged.
 
 Documents state entitlements and schedules, not the state of the world. A baggage allowance is a ceiling, not a manifest; the actual load is evidenced by what the travellers carried on the inbound leg. A fact about the ground takes ground evidence.
 

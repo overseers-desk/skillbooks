@@ -37,7 +37,7 @@ The way home goes in the folder of the travellers who make it. When a party spli
 
 Files may originate from various sources: email confirmations, WhatsApp messages, photographs of physical documents (boarding passes, receipts), or forwarded from other travelers' mailboxes. The source doesn't affect how files are processed—all files in the folder are organised and named according to the same conventions regardless of origin.
 
-**Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access method (rclone) and is the single source of truth for folder location. When processing a journey, if only the folder name is provided, the system assumes it is located within the Travel Admin parent directory.
+**Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access method and is the single source of truth for folder location. When processing a journey, if only the folder name is provided, the system assumes it is located within the Travel Admin parent directory.
 
 ### New Booking Intake (No Journey Folder Yet)
 
@@ -98,7 +98,7 @@ The separation allows automated systems to run folder management independently, 
 Before executing procedures (individually or as a complete RUN), ensure:
 
 1. **Access to Travel Admin folder ("0 Travel Admin"):**
-   - Follow `sop-travel-folder-access.md` to access travel folders (rclone)
+   - Follow `sop-travel-folder-access.md` to access travel folders
    - Do not use `find(1)` command in any folder other than `0 Travel Admin` (10k+ files exist in cloud storage; broad searches take excessive time)
    - Do not use `find(1)` to locate `0 Travel Admin` itself—the folder location is defined in the access SOP and is guaranteed to exist
    - If access fails via both methods, the whole process should fail
@@ -382,8 +382,8 @@ Fully organized journey folder with all files compliant to naming conventions
      - Check for files without date prefix (orphaned files)
      - Identify files with incorrect date formats (e.g., DD-MM-YYYY, MM/DD/YYYY)
      - For orphaned files or files requiring content verification, extract text:
-       - PDF files: Use `pdftotext "filename.pdf" -`
-       - Image files (JPG/PNG/JPEG): Use `tesseract "filename.jpg" -` for OCR
+       - PDF files: read the text
+       - Image files (JPG/PNG/JPEG): OCR them
      - Verify file content matches the subfolder purpose:
        - **Fares**: Transport documents (flights, trains, buses, car rentals). Indicators: flight numbers, PNR codes, airport codes, departure/arrival times
        - **Passes**: Event tickets, museum entries, activity passes. Indicators: event names, venue names, admission tickets
@@ -410,8 +410,8 @@ Fully organized journey folder with all files compliant to naming conventions
 
    **a. Information Extraction**
    - Extract text from the document:
-     - PDF files: Use `pdftotext "filename.pdf" -`
-     - Image files (JPG/PNG/JPEG): Use `tesseract "filename.jpg" -` for OCR
+     - PDF files: read the text
+     - Image files (JPG/PNG/JPEG): OCR them
    - Extract the following information:
      - **Cancellation status**: Check if document or related emails indicate this booking was cancelled
      - **Date**: Use the travel/use date, NOT the purchase/booking date
@@ -871,22 +871,14 @@ Actions to execute (proceed without confirmation):
    **Saving Email Attachments to Dropbox:**
 
    ```bash
-   # Download attachment to /tmp
    courier --imap me-example-com save -f INBOX -u UID --attachment attachment.pdf -o /tmp/attachment.pdf
-
-   # Upload to Dropbox
-   rclone copyto /tmp/attachment.pdf "Dropbox:0 Travel Admin/[journey]/[subfolder]/[filename].pdf"
    ```
+
+   Then upload it to the journey's subfolder by the method in `sop-travel-folder-access.md`.
 
    If no PDF attachment exists, export the email body and convert (see `sop-travel-folder-access.md`).
 
-   **Renaming Files:**
-
-   ```bash
-   rclone moveto \
-     "Dropbox:0 Travel Admin/[journey]/[subfolder]/old_name.pdf" \
-     "Dropbox:0 Travel Admin/[journey]/[subfolder]/new_name.pdf"
-   ```
+   **Renaming Files:** by the method in `sop-travel-folder-access.md`.
 
    **Deleting Emails:**
 

@@ -422,7 +422,7 @@ claude -p "Follow travel/sop-cluster-research.md for Berlin, Dec 26-29 2025, fam
 
 See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines:
 
-- Access method (rclone)
+- Access method
 - Folder location within cloud storage
 - Error handling when access fails
 

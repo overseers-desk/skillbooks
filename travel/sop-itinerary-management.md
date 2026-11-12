@@ -82,7 +82,7 @@ The folder management SOP (`sop-travel-folder-management.md`) must be completed 
 
 A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are named per `sop-travel-folder-access.md` and contain standardised subfolders: Fares, Accommodations, Passes, and optionally Reimbursement folders.
 
-**Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access method (rclone) and is the single source of truth for folder location.
+**Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access method and is the single source of truth for folder location.
 
 ## RUN: Itinerary Management Execution
 
@@ -328,23 +328,16 @@ Create or update travel itineraries by researching destinations, identifying sui
 
 **TWINYO Relationship**: If TWINYO analysis exists, it has already performed route feasibility assessment (Stage 5-6). This phase focuses on arrival/departure logistics within the strategy TWINYO recommended. Do not re-evaluate alternative routes - adopt TWINYO's recommended strategy.
 
-Use `pdftotext` to extract booking details from PDF files in the Fares folder. Flight times, train times, and other transport details are reliably available in the booking confirmations. Do not guess or leave times as "TBC" when PDFs are available.
+Read booking details from the PDF files in the Fares folder. Flight times, train times, and other transport details are reliably available in the booking confirmations. Do not guess or leave times as "TBC" when PDFs are available.
 
 **Purpose of Timing Analysis:**
 
 This phase establishes feasibility windows and general timing constraints, NOT precise minute-by-minute schedules. The goal is to understand what activities are realistically possible given arrival/departure times, not to create rigid timelines. Use this information to inform activity recommendations and accommodation strategies, but do not translate it into pedantic scheduling in the final itinerary output.
 
-**Example usage**:
-```bash
-pdftotext "/path/to/Fares/2025-06-15 [Ryanair] Seville-Porto FR2323 DTF7HZ.pdf" -
-```
-
-This will extract text including flight numbers, departure times, arrival times, and other booking details needed for accurate itinerary planning.
-
 1. **Analyse First Day Arrival**
 
    Extract arrival information from first transport booking:
-   - **Use pdftotext to read the PDF** and extract actual departure and arrival times
+   - **Read the PDF** for the actual departure and arrival times
    - Arrival time at destination
    - Add processing time (immigration, baggage, customs)
    - Add transport time to accommodation
@@ -372,7 +365,7 @@ This will extract text including flight numbers, departure times, arrival times,
 2. **Analyse Last Day Departure**
 
    Extract departure information from last transport booking:
-   - **Use pdftotext to read the PDF** and extract actual departure time
+   - **Read the PDF** for the actual departure time
    - Check-out time from hotel (typically 11:00)
    - Required arrival time at airport/station (2 hours for international flights, less for trains)
    - Calculate latest useful activity time

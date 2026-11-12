@@ -76,7 +76,7 @@ Structured calendar block specifications:
    - **Do NOT filter by filename date** - return tickets have outbound date in filename but contain future return flights
 
 2. **Extract Flight Details and Filter by Actual Flight Dates**
-   - Use `pdftotext` on each PDF
+   - Read the text of each PDF
    - Parse ALL flight segments in each booking:
      - **PNR/booking reference** (for check-in events)
      - Flight numbers, airport codes, departure/arrival times **with full dates**, durations
@@ -155,32 +155,7 @@ Structured calendar block specifications:
 - Specifications formatted with timezone-aware timestamps
 - Planning output generated
 
-## Helper Procedure A: Airport Distance Lookup
-
-**Input**: IATA code
-
-**Output**: Distance in km
-
-**Method**:
-- Web search: `[IATA] airport to city center distance`
-- Verify correct airport (some cities have multiples)
-- Extract typical distance; if range, use midpoint
-- No result: 25km default
-
-## Appendix A: Common Timezones
-
-- **Asia/Tokyo** (NRT, HND): UTC+9
-- **Asia/Singapore** (SIN): UTC+8
-- **Asia/Shanghai** (PVG, PEK): UTC+8
-- **Asia/Dubai** (DXB): UTC+4
-- **Europe/Paris** (CDG): UTC+1/+2
-- **Europe/London** (LHR, LGW): UTC+0/+1
-- **America/New_York** (JFK, EWR): UTC-5/-4
-- **America/Los_Angeles** (LAX): UTC-8/-7
-- **Australia/Sydney** (SYD): UTC+10/+11
-- **Australia/Melbourne** (MEL): UTC+10/+11
-
-## Appendix B: Mode Comparison
+## Appendix: Mode Comparison
 
 **Detail mode**: Each flight segment becomes a separate calendar entry with flight number, route, and terminal information. Apply buffers per Step 6.
 
@@ -192,9 +167,8 @@ Structured calendar block specifications:
 
 ### Prerequisites
 
-- Google Calendar MCP server configured and accessible
+- A calendar tool with access to the traveller's working calendar
 - Travel data extracted (flight segments, train bookings, car rentals, event tickets)
-- Access to the traveller's working calendar
 
 ### Input
 
@@ -203,16 +177,13 @@ Structured calendar block specifications:
 
 ### Steps
 
-1. **Get Current Time**
-   - Use `mcp__google-calendar-mcp__get-current-time` to confirm timezone context
-
-2. **List Existing Events**
-   - Use `mcp__google-calendar-mcp__list-events` for the travel date range
+1. **List Existing Events**
+   - List the working calendar's events for the travel date range
    - Check for existing entries that might duplicate
 
-3. **Create Calendar Entries**
+2. **Create Calendar Entries**
 
-   For each travel item, use `mcp__google-calendar-mcp__create-event` with:
+   Create one event per travel item with:
    - `calendarId`: the traveller's working calendar ID. "primary" is the signed-in account's own calendar, which is the traveller's only in a session signed in as them
    - `start`: ISO datetime string (with buffers per Step 6)
    - `end`: ISO datetime string (with buffers per Step 6)
@@ -242,7 +213,7 @@ Structured calendar block specifications:
    |-----------|---------|----------|
    | All items | `Blocked Time` | (omit) |
 
-4. **Create Online Check-in Events**
+3. **Create Online Check-in Events**
 
    In detail mode only, create one check-in event per booking (not per flight segment):
 
@@ -261,7 +232,7 @@ Structured calendar block specifications:
 
    Skip this step in blocking mode.
 
-5. **Report Conflicts**
+4. **Report Conflicts**
    - List any existing meetings that fall within travel entry times
    - Recommend declining or rescheduling conflicting events
 
