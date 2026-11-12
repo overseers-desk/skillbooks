@@ -47,7 +47,7 @@ The detailed research instructions should NOT result in pedantic, overly precise
 - Recognise that travel is dynamic and plans will inevitably change
 - Present information that supports decision-making during the journey, not a strict script to follow
 
-The itinerary document is an operational reference that may be read first by staff as well as by the traveller. Therefore, avoid second-person conversational phrasing ("you", "your", "if you"). Write in a role-neutral voice that refers to the traveller(s) by name (e.g., "Alex") or as "the traveller".
+The itinerary document is an operational reference that may be read first by staff as well as by the traveller. Therefore, avoid second-person conversational phrasing ("you", "your", "if you"). Write in a role-neutral voice that refers to the traveller(s) by name or as "the traveller".
 
 The person requesting this itinerary is not seeking perfection or orderliness—they are seeking comprehensive information that helps navigate the chaos of travel with children and multiple commitments.
 
@@ -80,7 +80,7 @@ The folder management SOP (`sop-travel-folder-management.md`) must be completed 
 
 ## Journey Folders
 
-A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are named per `sop-travel-folder-access.md` (e.g., "2025-11-08 to 11-18 Partner, Alex, A-Z - Porto, Lisbon") and contain standardised subfolders: Fares, Accommodations, Passes, and optionally Reimbursement folders.
+A journey folder contains all documentation for a specific trip, including transport bookings, accommodation reservations, event tickets, and reimbursement documents. Journey folders are named per `sop-travel-folder-access.md` and contain standardised subfolders: Fares, Accommodations, Passes, and optionally Reimbursement folders.
 
 **Default Location**: See `sop-travel-folder-access.md` for how to access travel folders. That SOP defines the access method (rclone) and is the single source of truth for folder location.
 
@@ -104,7 +104,6 @@ This SOP assumes the folder management SOP has already been executed and the jou
 2. **Locate the journey folder**:
    - Extract journey name from user request (naming per `sop-travel-folder-access.md`)
    - Use the access method established in step 1 to find the journey folder within `0 Travel Admin/`
-   - Example journey folder: `2025-11-29 to 12-01 Partner, Alex, A-Z - Venice`
 
 3. **Verify folder exists and contains booking documents:**
    - Using the established access method, list the journey folder contents

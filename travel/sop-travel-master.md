@@ -85,7 +85,7 @@ inbound_transport:
   carrier: "Ryanair"
   flight_number: "FR1234"
   booking_ref: "ABC123"
-  passengers: ["Alex", "Partner", "Ivy", "Mia"]
+  passengers: ["Adult1", "Adult2", "Child1", "Child2"]
 
 outbound_transport:
   type: "train"
@@ -94,7 +94,7 @@ outbound_transport:
   arrival_time: "13:45"
   carrier: "DB"
   booking_ref: "XYZ789"
-  passengers: ["Alex", "Partner", "Ivy", "Mia"]
+  passengers: ["Adult1", "Adult2", "Child1", "Child2"]
 
 accommodation:
   hotel_name: "Hotel Indigo Berlin - Alexanderplatz"
@@ -141,25 +141,25 @@ segments:
 ```yaml
 travellers:
   adults:
-    - name: "Alex"
+    - name: "Adult1"
       constraints: "[e.g. motion sickness, mobility, overnight travel]"
       hotel_loyalty: "[programmes, in order of preference]"
       booking_address: "[email the bookings are made under]"
-    - name: "Partner"
+    - name: "Adult2"
       constraints: "[...]"
   children:
-    - name: "Ivy"
+    - name: "Child1"
       age_on_trip: "[from date of birth]"
       interests: "[...]"
-    - name: "Mia"
+    - name: "Child2"
       age_on_trip: "[from date of birth]"
 home: "[city and home airports]"
 
 segments:
   - cities: ["Edinburgh", "Berlin", "Munich"]
-    travellers: ["Alex", "Partner", "Ivy", "Mia"]
+    travellers: ["Adult1", "Adult2", "Child1", "Child2"]
   - cities: ["Vienna", "Warsaw"]
-    travellers: ["Alex", "Partner"]
+    travellers: ["Adult1", "Adult2"]
     notes: "Children return home after Munich"
 ```
 
@@ -407,7 +407,7 @@ RUN: Travel Management
 
 **Full RUN**:
 ```bash
-claude -p "Follow travel/sop-travel-master.md for journey '2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw'"
+claude -p "Follow travel/sop-travel-master.md for journey '[journey folder]'"
 ```
 
 **Research only for one city**:
@@ -427,11 +427,6 @@ See `sop-travel-folder-access.md` for how to access travel folders. That SOP def
 - Error handling when access fails
 
 Journey folders are named per `sop-travel-folder-access.md`.
-
-Examples:
-
-- `2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw`
-- `2025-11-29 to 12-01 Partner, Alex, A-Z - Venice`
 
 ---
 

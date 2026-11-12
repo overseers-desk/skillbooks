@@ -16,13 +16,6 @@ Each journey folder is named by its dates, its travellers and its destinations:
 
 The start date is the day the travellers leave, by any means of transport, a train to the departure airport included. The end date is the day they arrive home; a flight landing after midnight counts on its landing day.
 
-Examples:
-
-- `2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw`
-- `2025-11-29 to 12-01 Partner, Alex, A-Z - Venice`
-- `2026-06-10 Partner, Alex, A-Z - London`
-- `2025-11-08 ✖ Partner, Alex, A-Z - Marrakesh`
-
 ## Access Method: rclone
 
 All travel folder operations use rclone with the `Dropbox:` remote.
@@ -42,7 +35,7 @@ rclone lsd "Dropbox:0 Travel Admin" | grep -i "keyword"
 ### Listing Contents of a Journey Folder
 
 ```bash
-rclone ls "Dropbox:0 Travel Admin/2025-12-23 to 2026-01-07 Partner, Alex, A-Z - Edinburgh, Berlin, Munich, Vienna, Warsaw"
+rclone ls "Dropbox:0 Travel Admin/[journey folder]"
 ```
 
 `rclone ls` lists all files recursively with sizes. For subfolders only, use `rclone lsd`.

@@ -36,7 +36,7 @@ The simulation is worth exactly as much as its facts are real. The story does no
 
 ### Good (user-story style):
 
-> 6:15 AM Boxing Day. Family rushing through Edinburgh Airport. Ivy half-asleep in stroller, Mia asking "are we there yet." Security cleared with 45 min to spare. Good.
+> 6:15 AM Boxing Day. Family rushing through Edinburgh Airport. Younger child half-asleep in stroller, older one asking "are we there yet." Security cleared with 45 min to spare. Good.
 >
 > **Problem:** No breakfast planned. Children haven't eaten since last night. Land Berlin 11:05 local time; kids will be hungry and cranky.
 
@@ -138,7 +138,7 @@ With the verdict: top concerns, what works well, and the categorised issue list 
 >
 > **[MINOR]** 15-min wait outside at 3°C with kids; time arrival better.
 >
-> Inside 90 minutes. Ivy loves mummies, Mia restless. 11:30 "I'm hungry" on schedule.
+> Inside 90 minutes. Younger child loves the mummies, older one restless. 11:30 "I'm hungry" on schedule.
 >
 > **[VERIFY]** Lunch options near Museum Island at 11:30? Many German restaurants open 12:00.
 >
