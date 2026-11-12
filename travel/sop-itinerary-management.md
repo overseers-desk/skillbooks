@@ -666,6 +666,7 @@ Review the cluster research (`build/research/[destination]-cluster.md`) and Phas
    **Consider Split Stays:**
    - Stay in outskirts near primary cluster for multi-day exploration
    - Move to city centre for concentrated city-centre activities
+   - Each hotel change has cost the travellers 3-5 hours, so prefer fewer bases and fewer destinations unless the clusters are far apart
    
    **Example Pattern (from Porto experience):**
    - Days 1-2: Old city centre hotel → visit walkable monuments, markets, river attractions
@@ -990,6 +991,12 @@ This section appears at the beginning of the document and provides a concise ass
    - **Include specific hotel suggestions with reasoning**
    - Example: "☐ Book accommodation in Lisbon (Nov 17-18) - Suggested: InterContinental Lisbon (IHG upgrade potential, near conference venue, 15-min walk to MEO Arena)"
    - **Format for unbooked accommodations**: "☐ Book [Hotel Name] for [dates] - [brief reasoning]"
+   - **Booking channel**: each to-do names it. Book direct with the hotel, airline or rail company, on the traveller's own card: trips often change after booking, agencies make changes slow and dear, and a card payment can be charged back. An online agency earns its place only when it alone offers the best hotel, or links tickets no airline will put on one booking, or saves well over 10%. Budget-airline fares leave agencies no margin, and they recover it by upselling or misstating baggage, so book those with the airline. Hotels in the travellers' loyalty programmes are booked direct.
+   - Each booking carries the traveller's frequent-flyer number and is made under the travellers' booking address.
+   - **Reward seats** suit a trip that cannot be a business expense, one likely to change, or a last-minute one. A points search mixes true reward seats with ordinary fares paid in points at a poor rate; on Qantas the reward seat is the one with the reward badge and a small cash component.
+   - **Breakfast**: where the traveller's status includes it, book without; a hotel has refused to remove it later.
+   - **Status guests**: an email to each hotel's duty manager before arrival has brought upgrades.
+   - **Airbnb**: under the traveller's own account, so the host deals with the traveller, with the car booked alongside where the place needs one.
    - **Note**: The ☐ checkbox indicates "not yet complete" status. Once booked, this item should be REMOVED from the checklist entirely, and the booking should be integrated into the main itinerary timeline.
 
 2. **Booked but Not Synced** (Folder Sync Issue - Action Required):
@@ -1051,7 +1058,7 @@ This table provides a high-level overview of all intercity travel, enabling quic
   - Ground transport between airports (if different airports in different cities)
 
 - Note special requirements:
-  - Visa requirements
+  - Visa requirements, bought only from a government site or one it delegates to: visas from look-alike sites have failed at a border
   - Long layovers (specify duration)
   - Terminal changes
   - Border crossings
@@ -1453,7 +1460,7 @@ Review the generated itinerary against each item below. For each item, verify PA
 ### Iteration Process
 
 1. **First QC Pass**: Review generated itinerary against all 10 checklist items
-2. **Identify Failures**: For each FAIL, note the specific gap (e.g., "Item 2 FAIL: No car rental decision documented")
+2. **Identify Failures**: For each FAIL, note the specific gap (e.g., "Item 2 FAIL: No car rental decision documented"). Report a gap once: its consequences (no hotel named, so no hotel-to-airport distance) are not further failures
 3. **Revise Itinerary**: Return to itinerary document and add/revise content to address each failure
 4. **Second QC Pass**: Re-review revised sections against failed items
 5. **Repeat if Necessary**: Continue iteration until all items PASS
@@ -1582,6 +1589,7 @@ For each child-friendly activity identified:
    - Timed entry systems (increasingly common post-pandemic)
    - Advance ticket purchase requirements
    - Walk-up availability and queue times
+   - Prefer ticketed or bookable events to free walk-in ones, which mean queues and children on shoulders for a view. Events walk-in by nature (parades, markets, light shows) are the exception. For a walk-in event worth attending, write "No option to book; walk-in", not "No pre-booking required"
    - Cancellation policies (important with children - illness, fatigue can necessitate changes)
 
 3. **Practical Facilities:**
@@ -1621,6 +1629,13 @@ For each child-friendly activity identified:
 **Time of Day Factors**:
 - Late night arrivals (after 22:00): Public transport may be unavailable, private transfer likely needed
 - Early morning departures (before 06:00): May require pre-booked transport or overnight stay near airport
+- A late arrival that leaves a short night: an airport hotel may suit better than a city one; give the route inside the terminal to its door
+
+**Ground Transport Factors**:
+- When flights arrive at similar times, choose the arrival airport closer to the hotel or event
+- An airport often lies outside the city it is named for; where one ticket from the airport to the onward city is sold, buy it rather than two
+- When car hire looks sold out online, phone the firm: its listed stock has been incomplete
+- For a drive across borders, compare routes by the number of crossings as well as distance
 - Rush hours: Add buffer time for ground transport
 
 **Time Zone and Body Clock Factors**:
@@ -1628,7 +1643,7 @@ For each child-friendly activity identified:
 - When comparing options for travel from A to B, evaluate whether the travel period falls in the traveller's expected sleep window based on their current body clock (often still anchored to the previous city), not only the departure city's local time
 - For a traveller known to avoid overnight travel (night trains, overnight buses, red-eye flights), default to the daytime option: overnight travel is disproportionately tiring and often degrades the following day
 - Exception: an overnight-in-local-time journey can be acceptable when it occurs during body-clock daytime (i.e., it is not "overnight" for the traveller)
-- Exception: business class (or other lie-flat seating or sleeper berth in a train) can make overnight flights acceptable
+- Exception: business class (or other lie-flat seating or sleeper berth in a train) can make overnight flights acceptable. Confirm the overnight segment is lie-flat before booking; some business cabins are not
 - In the itinerary, state the recommendation explicitly and include brief reasoning that references local time and body clock alignment (e.g., "local night, but body-clock daytime")
 - If the journey crosses a large time zone gap (rule of thumb: \u2265 5 hours difference between the starting location and destination, or intercontinental travel), add a table that converts each long-haul leg's local departure/arrival times into the traveller's starting time zone ("bio-clock time") so the fatigue impact is explicit
 
