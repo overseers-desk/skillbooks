@@ -591,6 +591,8 @@ When TWINYO analysis exists, this phase MUST consume:
 
 Review the cluster research (`build/research/[destination]-cluster.md`) and Phase 4 selections. If TWINYO exists, read Stage 4 for verified accommodation options with availability status. For each accommodation strategy, specify hotel location, parking considerations, and how it serves activities across the cluster.
 
+**Where to look, for any party.** Search holiday rentals alongside hotels whenever the party needs more beds than one room holds: a whole apartment can cost far less than a suite or several rooms. Where the travellers' reference data says when they use holiday rentals, follow it. Before setting a loyalty programme aside, find its nearest property that fits the party, its price, and the journey to it. A base far from where the travellers arrive costs that journey twice, in and out; on a short stay, weigh it against the waking hours it takes and any timed departure that would then rest on one connection.
+
 **For Journeys WITHOUT Children:**
 
 1. **Evaluate Existing Accommodations**
@@ -650,10 +652,6 @@ Review the cluster research (`build/research/[destination]-cluster.md`) and Phas
       - For conferences: Proximity to venue may justify a hotel outside the programmes
    
    With no loyalty programme known for the travellers, choose on location alone.
-
-   d. **Holiday rentals**, searched alongside hotels when the party needs more than one hotel room's beds: an apartment often costs a fraction of a family suite. Where the travellers' reference data says when they use holiday rentals, follow it.
-
-   e. **A programme hotel out of reach.** When no programme hotel lies within reach of the plan, find the programme's nearest property with a room for the whole party, its price, and the journey to it, before setting the programme aside. A base the travellers must travel to reach from where they arrive (a ferry, a long drive) costs that journey on the way in and again on the way out; on a stay of a few nights it can take much of the waking time and hang a fixed departure on one connection. Weigh those hours and the price against the bases near where they arrive.
 
 2. **Multi-Location Stays**
    
@@ -1155,7 +1153,7 @@ For flights, trains, and booked events with fixed times:
 - Note operational requirements (check-in times, baggage allowances, special requirements)
 
 **Accommodations:**
-- Hotel name and address
+- Hotel name and address, marked as proposed, with its status from the Bookings Table, until it is booked
 - Standard check-in/check-out times
 - Describe arrival time in broad terms (e.g., "late afternoon after 16:05 flight arrival") rather than calculating precise timestamps
 - Note any special arrangements (late check-in, early departure)
