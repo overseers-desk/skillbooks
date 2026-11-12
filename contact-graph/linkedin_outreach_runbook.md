@@ -120,10 +120,8 @@ Repeat until the stop condition fires:
 7. **Drafting.** Only for `verified` candidates that returned `not_connected` at step 6.5.
 
    At session start (once, then cache in your working memory):
-   - Read `~/code/oldmill/overview.md`.
-   - Read `~/code/palacioexample-street.com/docs/overview.md`.
-   - Note: Example Street is in validation posture, not booking pitch. The
-     overview file is explicit on the framing the message must carry.
+   - Read the overview of each business the operator promotes; the operator
+     names them. Each overview states the framing its messages must carry.
 
    Branch on the candidate's `level`.
 
@@ -144,10 +142,9 @@ Repeat until the stop condition fires:
    - **Pick a touch-point** from the most recent thread (subject + date is
      usually enough; fetch one body via `courier --imap <ACCOUNT> read -f <FOLDER> -u <UID>` if a subject
      is too generic to anchor to).
-   - **Decide which business fits** this contact. Default: Oldmill. Switch
-     to Example Street if the email-thread topic, organisation, or geography
-     points to Spain / Andalucía / cruise / DMC-Europe / Sevilla / Cádiz
-     / Ronda / Iberian tourism operator.
+   - **Decide which business fits** this contact: the one whose market the
+     email-thread topic, organisation or geography points to, per the
+     overviews.
 
    Then draft a note of <= 300 characters, shaped by the level:
    - **Level 2**: lead with one concrete shared touch-point from the prior
@@ -156,8 +153,7 @@ Repeat until the stop condition fires:
    - **Level 1**: lead with one business USP relevant to the person's role, and
      reference the crossing only lightly (the memory is faint; do not overclaim
      a relationship).
-   - Either way, carry the business's framing (Example Street = honest validation
-     question, not booking pitch), and include no personal identifiers beyond
+   - Either way, carry the business's framing from its overview, and include no personal identifiers beyond
      `human.display_name`.
    - **Save the draft**:
      ```bash
@@ -180,7 +176,7 @@ Print one block to the operator:
 X drafted, Y unverifiable, Z ambiguous, W LinkedIn searches used.
 
 Drafted rows:
-[human_id] DisplayName | OrgGuess | Oldmill|Example Street | first ~60 chars of note...
+[human_id] DisplayName | OrgGuess | Business | first ~60 chars of note...
 [human_id] ...
 ```
 

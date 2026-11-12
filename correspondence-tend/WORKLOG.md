@@ -1,6 +1,6 @@
 # TEND — Correspondence Processing Worklog
 
-Methodology: [tend-methodology.md](tend-methodology.md). Oldmill-specific taxonomy and rules: `../../alex/email-processing.tend/taxonomy.yaml` and `rules.yaml`. Upstream producer (ingest, threading, entity extraction): [contact-graph worklog](../contact-graph/WORKLOG.md).
+Methodology: [tend-methodology.md](tend-methodology.md). The deployment's taxonomy and rules live with the deployment. Upstream producer (ingest, threading, entity extraction): [contact-graph worklog](../contact-graph/WORKLOG.md).
 
 ---
 

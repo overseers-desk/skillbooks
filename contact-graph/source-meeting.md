@@ -2,7 +2,7 @@
 
 ## 1. Source description
 
-Reads the meeting-notes corpus at `../../oldmill/knowledge-capture/staging/`. Each file is a markdown document recording a meeting or conversation.
+Reads the deployment's meeting-notes corpus, the knowledge-capture staging folder named at run time. Each file is a markdown document recording a meeting or conversation.
 
 ## 2. Stable item ID
 
