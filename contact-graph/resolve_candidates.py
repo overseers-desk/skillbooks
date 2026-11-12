@@ -102,6 +102,11 @@ REALSS_NAMES = {
     'yu sam': 2,
 }
 
+try:  # the owner's real identities, kept out of the repository
+    from owner_local import *  # noqa: F401,F403
+except ImportError:
+    pass
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

@@ -51,6 +51,11 @@ ACTIVE_ACCOUNTS = [
     'partner-example-com',
 ]
 
+try:  # the owner's real identities, kept out of the repository
+    from owner_local import *  # noqa: F401,F403
+except ImportError:
+    pass
+
 BATCH_SIZE = 4
 BODY_MAX_CHARS = 2000
 

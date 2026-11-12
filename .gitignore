@@ -10,3 +10,7 @@ __pycache__/
 
 # A journey's build output lives in its Dropbox journey folder.
 build/
+
+# Instance data stays out of this public repository.
+outreach-spar/experiments/
+contact-graph/owner_local.py
