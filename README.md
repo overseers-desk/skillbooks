@@ -29,11 +29,11 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 #### SPAR use cases
 
-**Oldmill segmented partnership outreach**. 19 segments (wedding planners, tour operators, community organisations, market stallholders, etc.), 415 contacts profiled, 258 approach messages drafted with A2 sparring. Campaign YAML defines per-segment goals, USP selection, and approach sequencing. This is the full SPAR pipeline with all four phases active and multi-band AR processing.
+**A tourism venue's segmented partnership outreach**. 19 segments (wedding planners, tour operators, community organisations, market stallholders), 415 contacts profiled, 258 approach messages drafted. The full pipeline, all four phases active.
 
-**Open Source Foundation governance outreach** (`outreach/` in `git@gitlab.com:bossdog/opensource.foundation.git`). Singapore-domiciled foundation building trust infrastructure for open source. 56-contact Singapore trip pipeline targeting founding members and chairman candidates, plus a 160-contact community-tier pipeline across the global open source security community (OpenSSF, SLSA/Sigstore, distro contributors). Two-axis rating system (strategic value × response likelihood) refined from the Oldmill deployment. Measured a consistent 0.60 corrections per profile across all segments. Demonstrates SPAR applied to institutional commitment asks rather than commercial partnership — different domain, same pipeline structure.
+**Open source foundation governance outreach**. A 56-contact search for founding members and a chair, and a 160-contact community tier across the open source security community. SPAR applied to institutional commitment asks rather than commercial partnership.
 
-**Courier GitHub star seeding**. Developer contacts extracted from local email archives, classified with Haiku, scored for closeness, and approached with a one-line ask (star a GitHub repo). Simplified SPAR: A2 rounds set to zero because the ask is simple enough that sparring adds no value. The `life_brief.yaml` provides era-appropriate catch-up context instead of per-contact profiling. Demonstrates that SPAR scales down — the methodology accommodates campaigns where a full profile and three spar rounds would be disproportionate to the ask.
+**Courier GitHub star seeding**. Developer contacts from email archives, scored for closeness and asked to star a repository, with sparring rounds set to zero. SPAR scaled down to a one-line ask.
 
 ### SIFT — Listing Evaluation and Response
 
@@ -54,7 +54,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 #### SIFT use cases
 
-**Published job listings**. 180+ job listings scored on four dimensions (influence/knowledge access, compensation, stepping-stone value, labour fit) with five amplifier tags (cross-culture, cross-domain, multilingual, china-west, regulated+technical). Registry in `registry.tsv`, dossiers in `dossiers/`.
+**Published job listings**. 180+ listings scored on four dimensions, with five amplifier tags.
 
 ### TEND — Correspondence Processing
 
@@ -75,7 +75,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 #### TEND use cases
 
-**Oldmill director inbox**. Taxonomy built from 226 emails across 5 batches covering the full sender spectrum (internal staff, retained professionals, external partners, job applicants, board members). 64 categories with 64 corresponding processing rules. The taxonomy and ruleset are the domain-specific artefacts; TEND defines how an agent uses them.
+**A business director's inbox**. A taxonomy built from 226 emails in five batches: 64 categories, each with its processing rule. The taxonomy and rules belong to the deployment; TEND defines how an agent uses them.
 
 ### SAGE — Product Development to Fit in a Proven Market
 
@@ -96,9 +96,9 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 #### SAGE use cases
 
-**Oldmill River Day**. The full pipeline: a 400-venue comparables frame with 196 profiled programmes and 27 numbered findings, a section-numbered catchment competition register, eighteen decision cards over roughly ten correction rounds, a three-arm design game whose first round was voided for format smuggling, an absorbed sheet crowned 15/15 on the main panel and 5/5 on a held-out panel, and eight numbered claims grounded in corpus prevalence. The run predates the methodology's extraction and is its source; its folder README records the run against these phase documents.
+**A school excursion product**. The full pipeline: a 400-venue comparables frame with 196 profiled programmes, eighteen decision cards and a three-arm design game. The run is the source the methodology was extracted from.
 
-**Oldmill inbound study-tour survey**. A Survey-phase deployment on its own: a two-sided design reading both the supplier side (four destination countries) and the seller side (six origin markets, in origin languages), with frame review, frozen codebook, inter-coder check and corrections all exercised. Demonstrates that SAGE's phases separate: a market can be surveyed to review grade before anyone commits to Adjudicate.
+**An inbound study-tour survey**. The Survey phase on its own, reading the supplier side in four destination countries and the seller side in six origin markets. A market can be surveyed to review grade before anyone commits to Adjudicate.
 
 ### SCOPE — Finding Where a Codebase Decides One Thing in Many Places
 
@@ -120,9 +120,9 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 #### SCOPE use cases
 
-**A JavaScript business platform** (three blind rounds on 2026-08-21). Plain JavaScript with TypeScript in the web tier, indexed in two passes with scip-typescript; 384 module concepts and twelve decided-once facts per round. The rounds drove the instrument: round 1 erased the codebase's own parallel-folder convention (the same handler name in 41 sphere files) and floored 112 modules, round 2 inflated nine sibling modules through a shared stem, round 3 brought B flags to 8% of the table. What survived: the pipeline stage vocabulary written five times across five spheres by a documented trade, and, earlier, a desktop breakpoint declared once and re-typed as a pixel literal in thirteen stylesheets. Dynamic import and directory discovery hide consumers from a static index, and the method names that as what it could not see.
+**A JavaScript business platform** (three blind rounds on 2026-08-21). 384 module concepts and twelve decided-once facts per round; the rounds calibrated the instrument.
 
-**RobCo Terminal** (run of 2026-08-21, then three blind rounds). Sixteen modules of a Rust workspace of roughly 59,000 lines, three Sonnet estimators. File-count estimates landed within a factor of three for ten of sixteen modules; site estimates were low by ten to thirty times across the board, which set the calibration rule. Flagged: the window module (a hub, twelve type consumers against two expected), the tmux gateway module (one type consumer against three expected, thirty mentioning files against nine, the leak signature), and the side the channel bank sits on (thirteen sites against three expected, no constant naming it). Two revivals verified their counts and named the mechanisms: the gateway concept carried on shared channel structs and in a lower crate's own vocabulary; the bank side recomputed from a scalar width at every consumer while a layout type already held the rectangles. The run predates the methodology's extraction and is its source. The three blind rounds that followed reproduced the bank side and the hub each time, added the coordinate unit (no type carries logical or physical, 57 sites) and the setting fan-out (one new setting, eight to twelve homes), and left the tmux carrier in the channel model as a judgment the owner holds: read as a second encoding in two rounds and as a shared vocabulary behind one translation seam in the third.
+**RobCo Terminal** (run of 2026-08-21, then three blind rounds). Sixteen modules of a 59,000-line Rust workspace. Flagged a hub module, a leaking gateway module and a layout fact decided at thirteen sites.
 
 ### LAMP — Whether the Market Can Find One Product, and What That Is Worth
 
@@ -143,7 +143,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 #### LAMP use cases
 
-**Oldmill website products**. Eight product runs of 13 September 2026, and the structural audit that restructured the methodology the same day. The audit found the discipline measuring honestly inside a frame that could not answer the operator's question: everything ranked by impressions with no money anywhere, the unit taken from what the instrument could cluster, the competitor set drawn from the ladder above the operator, and levers with no predicted magnitude, so that verification could never read a disappointment. The eight runs' measurements stand and their recommendations do not; the located captures are kept in the site's monthly capture series beside a site-wide impression study that shares the same seams list.
+**A venue's website products**. Eight product runs of 13 September 2026, whose audit restructured the methodology the same day.
 
 ### PLACE — Asserting the Market Position of Something Already Built
 
@@ -165,9 +165,9 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 #### PLACE use cases
 
-**questlog** (snapshot May–June 2026). A native session browser for an AI coding agent, positioned against a field of about twenty session viewers, managers, and cost dashboards. Thirteen numbered pains authored from a corpus of verbatim forum and issue-tracker quotes; a dated matrix of the field against those numbers; a discussion-dynamics table showing that launches in this category top out around twenty-five comments without a grievance or numeric hook; a coverage table with source paths and rarity per capability; and a naming note that retired two overclaiming names. The run predates the methodology's extraction and is its source.
+**questlog** (snapshot May–June 2026). A session browser for an AI coding agent, positioned against about twenty session viewers and cost dashboards. The run is the methodology's source.
 
-**RobCo Terminal** (run of 2026-08-23, the first run after extraction). A CRT-look terminal emulator with a channel bank and tmux control-mode integration, positioned against twenty-one terminals and multiplexers. Five Poll collectors over forums, issue trackers and long-form posts, one of which returned nothing on its first pass because the machine's one headless browser was held by a sibling collector, and was re-run serially; thirteen numbered pains, about a hundred quotes; a discussion-dynamics table from a search API showing the incumbent retro terminal reaching the front page six times in twelve years on its looks alone, at a low comment ratio; a source-open Audit that found three README claims without code behind them, ten capabilities built but unreachable, and the one gap between the code and daily use (an ASCII-only glyph atlas); a name that passes. The run drove three additions to the methodology: serialising browser-bound collectors, the built-but-unwired status in the Audit, and the counter-segment as a numbered pain.
+**RobCo Terminal** (run of 2026-08-23, the first run after extraction). A CRT-look terminal emulator positioned against twenty-one terminals and multiplexers.
 
 ### MIND — How the Market Holds One Trading Name, and Whether a Movement Is Ours
 
@@ -188,7 +188,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 #### MIND use cases
 
-**Oldmill brand reviews**. Six reviews between April 2025 and February 2026 by two model families, each a single-date snapshot carrying the same five sections, with no series, no panel and no instrument behind them. They are the source the methodology was extracted from, and the defects it corrects are theirs. The brand decision of 27 February 2026 in the same folder is a Decide artefact made before the method existed. No run has yet been made.
+**A venue's brand reviews**. Six single-date reviews from April 2025 to February 2026, the source the methodology was extracted from. No run has yet been made.
 
 ### MOVE — Where to Be, Given a Date Range
 
@@ -246,7 +246,6 @@ The methodologies share a structural principle: read before writing. SPAR profil
 - `almanac/` — Event discovery and rating for a year or a season, the ledger MOVE elects from (method only; data lives in the user's own repository)
 - `events/` — Event discovery and tracking
 - `roster/` — Roster management (architectural notes only)
-- `lessons/` — What building and testing the AESOPs taught, written up as it was learned
 - `tests/` — Test cases and results for validating SOPs through iterative rounds
 - `sop-authoring-rules.md` — Meta-guide for creating and updating SOPs
 - `authoring/` — Start here to create or revise an AESOP: the prompt that runs the author-test-fix loop, and a worked headless example
