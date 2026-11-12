@@ -72,7 +72,7 @@ Example: Lisbon→Porto by car should consider: Óbidos (walled medieval town), 
 
 ### Stage 4: Availability Verification
 
-Search accommodation on booking.com with exact dates, guest count, and ages. Document: X properties found, €Y-Z range, availability status (SCARCE/MODERATE/GOOD). Note if popular attractions require advance booking. Try enter into every page that shows booking to see if tickets are still available or time slot still open.
+Search accommodation across the sources `sop-itinerary-management.md` Phase 6 weighs (the travellers' loyalty programmes, other hotels, holiday rentals) with exact dates, guest count, and ages. Document: X properties found, €Y-Z range, availability status (SCARCE/MODERATE/GOOD). Note if popular attractions require advance booking. Try enter into every page that shows booking to see if tickets are still available or time slot still open.
 
 ### Stage 5: Physical Constraints
 
