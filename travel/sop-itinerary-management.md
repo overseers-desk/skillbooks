@@ -651,9 +651,9 @@ Review the cluster research (`build/research/[destination]-cluster.md`) and Phas
    
    With no loyalty programme known for the travellers, choose on location alone.
 
-   d. **Holiday rentals**, searched alongside hotels when the party needs more than one hotel room's beds: an apartment often costs a fraction of a family suite. Where the travellers' reference data says when they use them, that applies.
+   d. **Holiday rentals**, searched alongside hotels when the party needs more than one hotel room's beds: an apartment often costs a fraction of a family suite. Where the travellers' reference data says when they use holiday rentals, follow it.
 
-   When no programme hotel lies within reach of the plan, find the programme's nearest property with a room for the whole party, its price, and the journey to it, before setting the programme aside. A base the travellers must travel to reach from the arrival point (a ferry, a long drive) costs that journey on the way in and again on the way out; on a stay of a few nights it can take much of the waking time and hang a fixed departure on one connection. Weigh those hours and the price against the bases near the arrival point.
+   e. **A programme hotel out of reach.** When no programme hotel lies within reach of the plan, find the programme's nearest property with a room for the whole party, its price, and the journey to it, before setting the programme aside. A base the travellers must travel to reach from where they arrive (a ferry, a long drive) costs that journey on the way in and again on the way out; on a stay of a few nights it can take much of the waking time and hang a fixed departure on one connection. Weigh those hours and the price against the bases near where they arrive.
 
 2. **Multi-Location Stays**
    
@@ -1049,7 +1049,7 @@ This table lists what the journey needs booked, in date order: all intercity tra
 
 **Content guidelines:**
 
-- Include ALL intercity transportation in chronological order:
+- Include ALL intercity transportation, each night's lodging and timed tickets, in chronological order:
   - Flights (include flight numbers)
   - Trains (include train numbers if available)
   - Buses, ferries, hired car segments between cities
@@ -1061,11 +1061,11 @@ This table lists what the journey needs booked, in date order: all intercity tra
   - Terminal changes
   - Border crossings
 
-- **Verification approach**: Cross-check this table against the Completeness Checklist. Ensure all cities mentioned in the checklist appear as destinations in this table. If a city is mentioned but not in the table, it indicates a missing transport segment (genuine gap).
+- **Verification approach**: Cross-check this table against the Completeness Checklist. Ensure all cities mentioned in the checklist appear as destinations in this table. If a city is mentioned but not in the table, it indicates a missing booking (genuine gap).
 
 **Example row**:
 ```
-| 2025-11-15 | 14:20 | Seville (SVQ) | 16:05 | Porto (OPO) | Flight - Ryanair | DTF7HZ | Check-in baggage included |
+| 2025-11-15 | 14:20 | Seville (SVQ) | 16:05 | Porto (OPO) | Flight - Ryanair | Booked 2025-09-02, DTF7HZ | Check-in baggage included |
 ```
 
 ---
