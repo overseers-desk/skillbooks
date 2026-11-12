@@ -400,7 +400,7 @@ Fully organized journey folder with all files compliant to naming conventions
 4. **Email Account Verification** (if visible in documents)
    - Extract email address from booking confirmations where visible
    - Verify email matches the email account rules:
-     - booking@example.com for Alex's family travel (or when requested by Alex for the partner traveling alone)
+     - The travellers' booking address for family travel, where one is known
      - Traveller's email for non-family members
    - Flag any bookings made with incorrect email accounts
 
@@ -450,7 +450,7 @@ Fully organized journey folder with all files compliant to naming conventions
      - Useful for distinction between similar bookings
      - Names help identify ticket ownership
    - Format: `Alex,Mia,Ivy` (comma-separated, no spaces)
-   - Use established abbreviations when appropriate (e.g., `A-Z` for Ivy and Mia)
+   - Use the abbreviations the existing folder names already use
 
    **e. Filename Construction**
    - Assemble components in order:

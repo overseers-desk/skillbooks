@@ -213,7 +213,7 @@ Create or update travel itineraries by researching destinations, identifying sui
 
 1. **Check Passenger Names in Fares Folder**
    - From the Fares inventory (step 0a above), extract passenger names from filenames
-   - Check for known child names: "Ivy" and "Mia" (or variations: "A-Z", "Ivy,Mia")
+   - Check for travellers known to be children, by name or by an abbreviation the folder names use
    - If found, flag journey as **"with children"**
 
 2. **Check for Child Indicators in Tickets**
@@ -1467,7 +1467,7 @@ All 10 QC items verified PASS, failures corrected through iteration, creator rol
 
 ### Child-Specific Planning Considerations
 
-When children (Ivy and Mia, or others detected via ticket indicators) are part of the travel party, apply the following planning principles:
+When children (travellers known to be children, or detected via ticket indicators) are part of the travel party, apply the following planning principles:
 
 #### Daily Time and Energy Constraints
 

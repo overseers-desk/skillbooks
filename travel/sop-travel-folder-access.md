@@ -100,19 +100,6 @@ rclone copyto /tmp/booking.pdf "Dropbox:0. Travel Admin/[journey]/Fares/[name].p
 
 A hotel chain's own skill, where one exists in the environment, is the source of truth for whether the chain has a property near a place, its availability, and its price. A general aggregator under-lists a chain's properties and misses its member rates, so an aggregator's null or number cannot be delivered to the user as a conclusion about that chain. Attempt the chain's skill before telling the user a chain has, or lacks, a property in an area, or before quoting its rate. Where the environment has no such skill, give the aggregator figure marked unverified and name the source that would confirm it. This holds for any chain or provider that has a dedicated skill, not one brand in particular.
 
-## Traveller Profiles
-
-Traveller facts live outside the travel folder, in the personal repo:
-
-- `$HOME/code/alex/family.yaml`: identities, passports, travel constraints
-  (e.g. motion sickness), children's languages, traits and interests
-- `$HOME/code/alex/alex.yaml`: Alex as a person (background, roles,
-  living pattern); its header routes travel detail back to family.yaml
-
-This section is the single home for these paths. Other travel SOPs refer to
-"traveller profiles (per `sop-travel-folder-access.md`)" rather than
-repeating them.
-
 ## Journey Folder Structure
 
 Each journey folder contains standardised subfolders:

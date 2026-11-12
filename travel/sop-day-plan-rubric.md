@@ -9,7 +9,8 @@ This SOP suits the mid-journey case: the travellers are somewhere concrete (a ho
 ## Input
 
 - The situation: where the travellers are, the date, the day's hard endpoint
-- Booking documents from the journey folder, and traveller profiles, both per `sop-travel-folder-access.md`
+- Booking documents from the journey folder, per `sop-travel-folder-access.md`
+- What is known of the travellers: ages, constraints, interests
 
 ## Output
 
@@ -49,7 +50,7 @@ Run every line, every time; judgment decides what the findings mean, not whether
 | # | Check | What to record |
 |---|-------|----------------|
 | 1 | Weather | Hour-by-hour forecast for the day at each location; mark the outdoor-hostile hours |
-| 2 | Traveller profiles | Ages, constraints, interests; which constraints bind today, which do not, and why |
+| 2 | Travellers | Ages, constraints, interests; which constraints bind today, which do not, and why |
 | 3 | Opening hours | Each candidate activity against the actual calendar date (weekday pattern, holidays) |
 | 4 | Transport per leg | Options with two time bands, typical and bad; family fare with child fare rules |
 | 5 | Meals | Where each meal lands; what happens to it if the schedule slips an hour |

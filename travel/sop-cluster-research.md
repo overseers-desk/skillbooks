@@ -107,7 +107,7 @@ Each document contains:
 Extract from journey folder name (travellers come after the dates, before " - "; naming per `sop-travel-folder-access.md`):
 
 - **Adults**: Names other than known children
-- **Children**: Look for "Ivy", "Mia", "A-Z" or child indicators in tickets
+- **Children**: Travellers known to be children, or child indicators in tickets
 - **Elderly/mobility constraints**: Note if mentioned or if traveller is known to have mobility issues
 
 This composition affects attraction suitability ratings.

@@ -12,7 +12,8 @@ Two modes share this engine:
 ## Input
 
 - The situation: start point, date(s), travellers, and the hard endpoint (flight, checkout, timed event)
-- Booking documents from the journey folder, and traveller profiles, both per `sop-travel-folder-access.md`
+- Booking documents from the journey folder, per `sop-travel-folder-access.md`
+- What is known of the travellers: ages, constraints, interests (under master orchestration, `build/extraction/traveller-composition.yaml`)
 - Validation mode: the Itinerary.md (or segment) under test
 
 ## Output
@@ -25,7 +26,7 @@ Two modes share this engine:
 The simulation is worth exactly as much as its facts are real. The story does not invent:
 
 - **Anchors.** Flight time, airport, terminal and who is on which booking come from the ticket PDFs in the journey folder (`pdftotext`), not from conversational memory. When a stated time and a document disagree, the document wins and the discrepancy is flagged. Documents state entitlements and schedules, not the state of the world: a baggage allowance is a ceiling, not a manifest, and the actual load is evidenced by what was carried on the inbound leg.
-- **People.** Read the traveller profiles before the first scene. Ages, constraints (motion sickness, stamina) and interests are character properties that act in the plot. A constraint that does not bind today is worth one line saying why not.
+- **People.** Read what is known of the travellers before the first scene. Ages, constraints (motion sickness, stamina) and interests are character properties that act in the plot. A constraint that does not bind today is worth one line saying why not.
 - **Options.** The cast of candidate scenes is enumerated, not remembered. Before the first scene is chosen, list what exists within the day's reach by map radius and category (a maps or local-search skill if available; place-name text queries clip at administrative boundaries and miss the next district ten minutes away). Memory proposes the famous and the walkable, and the story then merely verifies its own assumption; enumerate first, imagine second. A round of enumeration in which every candidate is vetoed means the set was too small, not that nothing exists; widen the radius and categories and enumerate again. A veto is grounded like any other fact: a candidate cut as closed or unreachable carries the source that says so.
 - **Weather.** An outdoor scene is written against the forecast for that hour at that place, plus daylight times outside high summer. A forecast that forks the day (rain or dry) produces both story branches and the time by which the choice is made.
 - **Time on the road.** A traffic-variable leg gets a typical run and a bad run; when the leg feeds a hard anchor, the story walks the bad run too and states the latest safe departure. The bad run is walked with the real people in the vehicle: a duration that crosses a profile threshold (motion sickness, stamina) fails the option even when it still makes the anchor. Rail and metro legs get their actual frequency and journey time.

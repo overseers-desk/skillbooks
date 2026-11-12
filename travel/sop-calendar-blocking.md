@@ -194,7 +194,7 @@ Structured calendar block specifications:
 
 - Google Calendar MCP server configured and accessible
 - Travel data extracted (flight segments, train bookings, car rentals, event tickets)
-- Access to target calendar (typically primary calendar)
+- Access to the traveller's working calendar
 
 ### Input
 
@@ -213,7 +213,7 @@ Structured calendar block specifications:
 3. **Create Calendar Entries**
 
    For each travel item, use `mcp__google-calendar-mcp__create-event` with:
-   - `calendarId`: "primary" (or specific calendar ID)
+   - `calendarId`: the traveller's working calendar ID. "primary" is the signed-in account's own calendar, which is the traveller's only in a session signed in as them
    - `start`: ISO datetime string (with buffers per Step 6)
    - `end`: ISO datetime string (with buffers per Step 6)
    - `timeZone`: IANA timezone of departure/event location

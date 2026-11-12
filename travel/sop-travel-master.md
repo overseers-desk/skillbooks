@@ -142,13 +142,18 @@ segments:
 travellers:
   adults:
     - name: "Alex"
-      notes: "Hotel loyalty: [programmes, in order of preference]"
+      constraints: "[e.g. motion sickness, mobility, overnight travel]"
+      hotel_loyalty: "[programmes, in order of preference]"
+      booking_address: "[email the bookings are made under]"
     - name: "Partner"
+      constraints: "[...]"
   children:
     - name: "Ivy"
-      age_approx: 8
+      age_on_trip: "[from date of birth]"
+      interests: "[...]"
     - name: "Mia"
-      age_approx: 5
+      age_on_trip: "[from date of birth]"
+home: "[city and home airports]"
 
 segments:
   - cities: ["Edinburgh", "Berlin", "Munich"]
@@ -354,6 +359,7 @@ RUN: Travel Management
 
 2. EXTRACT bookings (when stale or missing, per Extraction Phase Caching)
    - From the booking PDFs, write build/extraction/*.yaml as the Booking Extraction interfaces define
+   - Into traveller-composition.yaml put every traveller fact the session holds, from whatever reference data it has or from the conversation; with none, the travellers named on the bookings. The later phases read the travellers from this file
 
 3. IDENTIFY city sequence
    - Read build/extraction/transport-segments.yaml

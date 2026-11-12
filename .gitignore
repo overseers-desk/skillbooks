@@ -7,3 +7,6 @@ __pycache__/
 
 # A session's shift records belong to the operator's repository.
 **/.claude/shifts/
+
+# A journey's build output lives in its Dropbox journey folder.
+build/
