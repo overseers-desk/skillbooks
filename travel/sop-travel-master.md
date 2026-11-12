@@ -142,7 +142,7 @@ segments:
 travellers:
   adults:
     - name: "Alex"
-      notes: "IHG Platinum member"
+      notes: "Hotel loyalty: [programmes, in order of preference]"
     - name: "Partner"
   children:
     - name: "Ivy"
@@ -221,7 +221,7 @@ All planned activity clusters accessible within 20 minutes by metro.
 
 **Recommended**: Hotel Indigo Berlin - Alexanderplatz (IHG)
 - 3-min walk to Alexanderplatz S-Bahn/U-Bahn
-- IHG property: Platinum upgrade potential
+- IHG property: status upgrade potential
 - Near Christmas market and TV Tower
 
 **Alternative**: InterContinental Berlin

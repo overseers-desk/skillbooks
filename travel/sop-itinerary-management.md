@@ -632,7 +632,7 @@ Review the cluster research (`build/research/[destination]-cluster.md`) and Phas
    
    **Primary Objective**: Select hotels that are reasonably close or reasonably accessible to activity clusters
    
-   **Constraint**: IHG hotels are LIMITED in many cities
+   **Constraint**: hotels in the travellers' loyalty programmes are LIMITED in many cities
    
    **Anchor Considerations:**
    - **If conference exists**: Conference location overrides other considerations (adult attendee needs daily access)
@@ -641,23 +641,23 @@ Review the cluster research (`build/research/[destination]-cluster.md`) and Phas
    
    **Selection Priority:**
    
-   a. **First Choice**: IHG hotel reasonably positioned relative to primary activity cluster (or conference venue if applicable)
-      - Father has IHG Platinum membership with suite upgrade potential
-      - Can book on the day to secure upgrade phone call before arrival
-      - One guaranteed upgrade per year available
-      - Look for IHG properties with suite availability
-      - For conferences: IHG near conference venue is ideal
+   a. **First Choice**: a hotel in the travellers' most preferred loyalty programme, reasonably positioned relative to primary activity cluster (or conference venue if applicable)
+      - What status brings (a suite upgrade, space for the family) depends on the tier held now; read it rather than assume it
+      - Look for programme properties with suite availability
+      - For conferences: a programme hotel near the conference venue is ideal
    
-   b. **Second Choice**: IHG hotel reasonably accessible via transport to activity cluster (or conference venue)
+   b. **Second Choice**: a programme hotel reasonably accessible via transport to activity cluster (or conference venue)
       - Not necessarily close, but transport time is manageable
       - Example: 20-30 minute train/metro to cluster
       - Consider: children's energy spent on transport reduces activity time
    
-   c. **Third Choice**: Non-IHG hotel better positioned for activity clusters (or conference venue)
-      - When no suitable IHG option exists or IHG properties are poorly positioned
+   c. **Third Choice**: a hotel outside the programmes, better positioned for activity clusters (or conference venue)
+      - When no suitable programme hotel exists or programme properties are poorly positioned
       - Prioritise location over brand loyalty when trade-off is significant
-      - Note the trade-off in recommendations (no Platinum benefits vs better location)
-      - For conferences: Proximity to venue may justify non-IHG selection
+      - Note the trade-off in recommendations (no status benefits vs better location)
+      - For conferences: Proximity to venue may justify a hotel outside the programmes
+   
+   With no loyalty programme known for the travellers, choose on location alone.
 
 2. **Multi-Location Stays**
    
@@ -774,7 +774,7 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
    b. **Present Options** (for unbooked accommodations)
       - List 2-3 viable options with pros/cons
       - **Highlight primary suggestion** (this becomes the to-do item)
-      - Format: "Primary suggestion: Hotel A (IHG): [location description], [distance to cluster], [upgrade potential]. Pros: [list]. Cons: [list]. Alternative: Hotel B [brief description]."
+      - Format: "Primary suggestion: Hotel A ([loyalty programme, if any]): [location description], [distance to cluster], [upgrade potential]. Pros: [list]. Cons: [list]. Alternative: Hotel B [brief description]."
       - Include fallback options when primary choice has limitations
    
    c. **Explain Reasoning**
@@ -800,7 +800,7 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
    
    **Creation Mode (10% of cases):**
    - Propose complete accommodation strategy
-   - Prioritise IHG options where feasible
+   - Prioritise hotels in the travellers' loyalty programmes where feasible
    - Present alternatives with clear reasoning
 
 ### Phase 8: Document Integration Preparation
@@ -828,7 +828,7 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
       - Recommended accommodations with reasoning
       - Explanation of conference/event proximity (if applicable)
       - Transport accessibility notes
-      - IHG upgrade potential notes (when applicable)
+      - Loyalty upgrade potential notes (when applicable)
 
    d. **Regional Transport Mode Decision** (from cluster analysis)
       - Document the conclusion about car rental vs public transport for this cluster
@@ -988,7 +988,7 @@ This section appears at the beginning of the document and provides a concise ass
    - List critical missing bookings requiring immediate action
    - Include date ranges and destination information
    - **Include specific hotel suggestions with reasoning**
-   - Example: "☐ Book accommodation in Lisbon (Nov 17-18) - Suggested: InterContinental Lisbon (IHG Platinum upgrade potential, near conference venue, 15-min walk to MEO Arena)"
+   - Example: "☐ Book accommodation in Lisbon (Nov 17-18) - Suggested: InterContinental Lisbon (IHG upgrade potential, near conference venue, 15-min walk to MEO Arena)"
    - **Format for unbooked accommodations**: "☐ Book [Hotel Name] for [dates] - [brief reasoning]"
    - **Note**: The ☐ checkbox indicates "not yet complete" status. Once booked, this item should be REMOVED from the checklist entirely, and the booking should be integrated into the main itinerary timeline.
 
@@ -1350,7 +1350,7 @@ Existing itinerary reviewed, to-do items updated (☑ for booked, ☐ for pendin
 - Day-by-day section uses **actual calendar dates** (not "Day 1, Day 2", but "December 26, 2025 (Friday), December 27, 2025 (Saturday)")
 - Seasonal events documented with **specific closure dates** (not "some markets close Dec 24-25", but "Alexanderplatz market: Nov 24-Dec 30, CLOSES Dec 30 - last day for Dec 29 travelers")
 - Activity operating hours include **date-specific schedules** mapped to actual travel dates
-- Accommodation to-do items include **specific hotel names with reasoning** (not "book accommodation", but "Book InterContinental Lisbon - near Rossio, IHG Platinum upgrade potential")
+- Accommodation to-do items include **specific hotel names with reasoning** (not "book accommodation", but "Book InterContinental Lisbon - near Rossio, IHG upgrade potential")
 - Transport costs documented as **family totals with children's fare policies** (not "€9.50/adult", but "€12.30/adult, children 6-14 free with adult pass, family of 4 = €24.60/day")
 
 ## Procedure 4: Quality Control Checklist and Iteration
@@ -1498,31 +1498,29 @@ When children (Ivy and Mia, or others detected via ticket indicators) are part o
 - "Reasonably close" does NOT mean walking distance (often impossible to achieve)
 - "Reasonably accessible" means manageable transport time considering children's constraints
 
-**IHG Platinum Membership Benefits:**
-- Father has IHG Platinum with suite upgrade potential
-- Can book on the day to secure upgrade phone call before arrival
-- One guaranteed upgrade per year available
+**Loyalty Programme Benefits:**
+- Status in the travellers' programmes can bring a suite upgrade, depending on the tier held now
 - Suites provide valuable extra space for families with children
 
-**Reality of IHG Availability:**
-- IHG hotels are LIMITED in many cities
+**Reality of Programme Availability:**
+- Programme hotels are LIMITED in many cities
 - Perfect positioning is often not achievable
-- Must balance IHG benefits against location suitability
+- Must balance status benefits against location suitability
 
 **Hotel Selection Decision Tree:**
 
-1. **Ideal scenario**: IHG hotel reasonably close to primary activity cluster
+1. **Ideal scenario**: Programme hotel reasonably close to primary activity cluster
    - Provides both upgrade potential and location benefits
    - Select this option when available
 
-2. **Common scenario**: IHG hotel reasonably accessible via transport to cluster
+2. **Common scenario**: Programme hotel reasonably accessible via transport to cluster
    - Example: 20-30 minute train/metro ride to cluster
    - Trade-off: Transport time reduces available activity time
    - Consider whether transport time is acceptable given children's energy constraints
 
-3. **Fallback scenario**: Non-IHG hotel better positioned for clusters
-   - When IHG options are poorly positioned or excessively distant
-   - Trade-off: Lose Platinum benefits (suite upgrade, points) but gain location benefits
+3. **Fallback scenario**: Hotel outside the programmes, better positioned for clusters
+   - When programme options are poorly positioned or excessively distant
+   - Trade-off: Lose status benefits (suite upgrade, points) but gain location benefits
    - Explicitly note this trade-off in recommendations
 
 4. **Multi-location scenario**: Split stay across different areas
@@ -1628,7 +1626,7 @@ For each child-friendly activity identified:
 **Time Zone and Body Clock Factors**:
 
 - When comparing options for travel from A to B, evaluate whether the travel period falls in the traveller's expected sleep window based on their current body clock (often still anchored to the previous city), not only the departure city's local time
-- For Alex specifically: default to avoiding overnight travel (night trains, overnight buses, red-eye flights) because it is disproportionately tiring and often degrades the following day
+- For a traveller known to avoid overnight travel (night trains, overnight buses, red-eye flights), default to the daytime option: overnight travel is disproportionately tiring and often degrades the following day
 - Exception: an overnight-in-local-time journey can be acceptable when it occurs during body-clock daytime (i.e., it is not "overnight" for the traveller)
 - Exception: business class (or other lie-flat seating or sleeper berth in a train) can make overnight flights acceptable
 - In the itinerary, state the recommendation explicitly and include brief reasoning that references local time and body clock alignment (e.g., "local night, but body-clock daytime")
