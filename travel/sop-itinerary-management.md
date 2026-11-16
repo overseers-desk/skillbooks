@@ -846,7 +846,7 @@ When constraints exist (e.g., limited Christmas Day dining), research WHAT is ac
 
 ### Checkpoint: Itinerary Planning Complete
 
-All research phases completed: traveller composition identified, event anchors categorised, seasonal context established, activities clustered geographically with operating schedules verified, accommodation strategy developed (IHG prioritised for children, conference proximity where applicable), day-by-day recommendations prepared, update mode respected.
+All research phases completed: traveller composition identified, event anchors categorised, seasonal context established, activities clustered geographically with operating schedules verified, accommodation strategy developed (the travellers' loyalty programmes prioritised, conference proximity where applicable), day-by-day recommendations prepared, update mode respected.
 
 **Quality requirements verified:**
 - Seasonal festivals researched with **specific dates** (not "likely open", but "open Dec 1-24, CLOSES Dec 30")
