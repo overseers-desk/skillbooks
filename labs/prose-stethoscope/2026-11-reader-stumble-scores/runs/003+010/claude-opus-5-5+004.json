@@ -1,0 +1,658 @@
+{
+"prompt": "003",
+"format": "010",
+"model": "claude-opus-5-5",
+"text": "004",
+"sents": [
+"Throughout the years, I have developed two ways to explain how a rubric turn-based optimizer would fall short.",
+"One is this: suppose that you choose a footballer for a team.",
+"You can count how many goals the footballer achieved in a number of seasons or how many goals were made possible thanks to the participation of this footballer.",
+"However, suppose you don’t do this but instead you break down a football match into 5-second clips and judge each 5-second clip on whether the footballer has done something that is conducive to a goal, or to his teammates achieving a goal.",
+"Every clip scores the same, so the player who does something in the most clips wins, and the one decisive pass counts once.",
+"Then, using this 5-second clip method, surely we will be getting the footballer who is busiest: attentive all the time, making more decisions in any given time interval than any of his teammates, rather than those who make the correct decisions and act at the right moment to get the goal.",
+"Another analogy I make more closely resembles how user and agent interact.",
+"Suppose we have two pilots.",
+"One pilot is a human who can look outside the window but has no access to instruments or any of the steering capability.",
+"The only way he can control the plane is to signal to the co-pilot if he is happy or not happy with what’s going on.",
+"And the co-pilot is an AI that controls the airplane: the rudder, the throttle, the thrust.",
+"The co-pilot has no view of the landscape or of where they are heading.",
+"He can change direction, altitude or angle until the human pilot is happy.",
+"Are they able to fly to the destination?",
+"Today’s AI is mostly trained in a similar manner: when the AI gives a reply, a scoring agent working from a rubric considers whether it is helpful to the user.",
+"Does it make the user more likely to accept it?",
+"Which is whether the user will be happy.",
+"And even when humans score the replies themselves, every turn they evaluate whether they are happy with the result.",
+"As emergent behaviour, this may lead to the outcome the human needed.",
+"But it is a struggle.",
+"And it’s very easy for AI to lose sight of what the user wants to achieve in the long run, over the whole conversation.",
+"Having talked much about how turn-based training falls short in achieving real-life goals, I do not mean to say that relying on emergent behaviour is not the way to achieve general intelligence.",
+"In fact, for a large part of human education, children were graded on micro-improvements one step at a time, similar to the turn-based method used to train AI.",
+"The idea is that the student who always had As in primary school will probably always have As in high school, will probably also have a lot of As in university, and will achieve a lot in their lifetime.",
+"And very often it is the case.",
+"Many of the best lawyers and doctors have been A students since they started school.",
+"However, there are two big differences."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader has read the essay's introduction, which lists seven pillars, the behaviours an AI employee needs; this chapter is about the first of them, and the text below comes from later in that chapter.\n\nThe text, each paragraph starting with its number:\n\n[P1] Throughout the years, I have developed two ways to explain how a rubric turn-based optimizer would fall short. One is this: suppose that you choose a footballer for a team. You can count how many goals the footballer achieved in a number of seasons or how many goals were made possible thanks to the participation of this footballer. However, suppose you don’t do this but instead you break down a football match into 5-second clips and judge each 5-second clip on whether the footballer has done something that is conducive to a goal, or to his teammates achieving a goal. Every clip scores the same, so the player who does something in the most clips wins, and the one decisive pass counts once. Then, using this 5-second clip method, surely we will be getting the footballer who is busiest: attentive all the time, making more decisions in any given time interval than any of his teammates, rather than those who make the correct decisions and act at the right moment to get the goal.\n\n[P2] Another analogy I make more closely resembles how user and agent interact. Suppose we have two pilots. One pilot is a human who can look outside the window but has no access to instruments or any of the steering capability. The only way he can control the plane is to signal to the co-pilot if he is happy or not happy with what’s going on. And the co-pilot is an AI that controls the airplane: the rudder, the throttle, the thrust. The co-pilot has no view of the landscape or of where they are heading. He can change direction, altitude or angle until the human pilot is happy. Are they able to fly to the destination?\n\n[P3] Today’s AI is mostly trained in a similar manner: when the AI gives a reply, a scoring agent working from a rubric considers whether it is helpful to the user. Does it make the user more likely to accept it? Which is whether the user will be happy. And even when humans score the replies themselves, every turn they evaluate whether they are happy with the result. As emergent behaviour, this may lead to the outcome the human needed. But it is a struggle. And it’s very easy for AI to lose sight of what the user wants to achieve in the long run, over the whole conversation.\n\n[P4] Having talked much about how turn-based training falls short in achieving real-life goals, I do not mean to say that relying on emergent behaviour is not the way to achieve general intelligence. In fact, for a large part of human education, children were graded on micro-improvements one step at a time, similar to the turn-based method used to train AI. The idea is that the student who always had As in primary school will probably always have As in high school, will probably also have a lot of As in university, and will achieve a lot in their lifetime. And very often it is the case. Many of the best lawyers and doctors have been A students since they started school. However, there are two big differences.\n\nScore each sentence on the nine offences below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Forgotten beat: for a paragraph's last sentence, score 0 to 9 how likely the intended reader is to be left waiting for something this sentence opens which the next paragraph does not take up.\n2. Unanchored reference: score 0 to 9 how likely the intended reader is to have to search at this sentence for what a word (a name, \"we\", \"this\", a term) refers to.\n3. Missing link: score 0 to 9 how likely the intended reader is to have to work out alone how this sentence connects to the one before.\n4. Out of order: score 0 to 9 how likely the intended reader is to be confused at this sentence because it relies on something the text only gives later.\n5. Repetition: score 0 to 9 how likely the intended reader is to feel at this sentence that they are being told something they were already told.\n6. Contradiction: score 0 to 9 how likely the intended reader is to feel at this sentence that it conflicts with something earlier.\n7. Purpose unclear: score 0 to 9 how likely the intended reader is to have expected this sentence to deliver a point, find that it does not, and take that as a fault in the writing rather than a deliberate setup.\n8. Register shift: score 0 to 9 how likely the intended reader is to be jarred by a change of voice at this sentence that the text has not prepared, including a move from a general point to a particular person, case or scene; a sentence that announces a story is about to start counts as preparation.\n9. Long dependency: score 0 to 9 how likely the intended reader is to have to hold words in mind at this sentence because the words that belong together sit far apart.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the nine scores comma-separated in the order above, TAB, why. Keep why to at most 15 words, except as the special instruction below requires. Last line: END.\n\nSpecial instruction for the why field. Where contradiction (6) scores 5 or more, the why field must also say whether the conflict is real or only apparent. If it is apparent, say what wording would stop it feeling like a conflict. If it is real, say that the point itself, not just the wording, needs deciding. This changes the text you write, not the score: score what the reader feels, whatever your diagnosis.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"Rubric turn-based optimizer\" is dense jargon; \"fall short\" of what is unstated."
+},
+"4": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "The long \"judge each clip on whether…\" clause delays the method's point."
+},
+"5": {
+"s": [
+0,
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0
+],
+"why": "States the busy-player conclusion before 1.6 draws it."
+},
+"6": {
+"s": [
+0,
+0,
+0,
+0,
+4,
+0,
+0,
+0,
+3
+],
+"why": "Repeats 1.5's verdict; the colon insert separates \"busiest\" from \"rather than those\"."
+},
+"14": {
+"s": [
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "P3 never directly answers whether the pilots reach the destination."
+},
+"15": {
+"s": [
+0,
+2,
+3,
+0,
+0,
+2,
+0,
+0,
+0
+],
+"why": "The reader must map the analogy alone: is the scoring agent the human pilot?"
+},
+"17": {
+"s": [
+0,
+3,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The fragment's \"Which\" has no clear antecedent; acceptance is equated with happiness unexplained."
+},
+"18": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"Humans\" could be the users or separate raters."
+},
+"19": {
+"s": [
+0,
+4,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"This\" and \"the human\" are unclear; \"emergent behaviour\" arrives unintroduced."
+},
+"20": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+2,
+0,
+0
+],
+"why": "It is unclear what \"it\" is and who struggles."
+},
+"21": {
+"s": [
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "P4 never returns to losing the long-run goal across the conversation."
+},
+"22": {
+"s": [
+0,
+2,
+3,
+0,
+0,
+4,
+0,
+0,
+3
+],
+"why": "The double negative half-endorses the method just criticised; \"general intelligence\" jumps scope."
+},
+"23": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "The shift to school grading is lightly prepared by \"In fact\"."
+},
+"24": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "It is unclear whose \"idea\" this is: educators' or the author's."
+},
+"27": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The two things being compared are unstated: school grading versus AI training."
+}
+},
+"secs": 32,
+"raw": "1.1\t0,3,0,0,0,0,0,0,0\t\"Rubric turn-based optimizer\" is dense jargon; \"fall short\" of what is unstated.\n1.4\t0,0,0,0,0,0,0,0,2\tThe long \"judge each clip on whether…\" clause delays the method's point.\n1.5\t0,0,0,2,0,0,0,0,0\tStates the busy-player conclusion before 1.6 draws it.\n1.6\t0,0,0,0,4,0,0,0,3\tRepeats 1.5's verdict; the colon insert separates \"busiest\" from \"rather than those\".\n2.8\t3,0,0,0,0,0,0,0,0\tP3 never directly answers whether the pilots reach the destination.\n3.1\t0,2,3,0,0,2,0,0,0\tThe reader must map the analogy alone: is the scoring agent the human pilot?\n3.3\t0,3,2,0,0,0,0,0,0\tThe fragment's \"Which\" has no clear antecedent; acceptance is equated with happiness unexplained.\n3.4\t0,2,0,0,0,0,0,0,0\t\"Humans\" could be the users or separate raters.\n3.5\t0,4,2,0,0,0,0,0,0\t\"This\" and \"the human\" are unclear; \"emergent behaviour\" arrives unintroduced.\n3.6\t0,3,0,0,0,0,2,0,0\tIt is unclear what \"it\" is and who struggles.\n3.7\t2,0,0,0,0,0,0,0,0\tP4 never returns to losing the long-run goal across the conversation.\n4.1\t0,2,3,0,0,4,0,0,3\tThe double negative half-endorses the method just criticised; \"general intelligence\" jumps scope.\n4.2\t0,0,0,0,0,0,0,2,0\tThe shift to school grading is lightly prepared by \"In fact\".\n4.3\t0,2,0,0,0,0,0,0,0\tIt is unclear whose \"idea\" this is: educators' or the author's.\n4.6\t0,3,0,0,0,0,0,0,0\tThe two things being compared are unstated: school grading versus AI training.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"Rubric turn-based optimizer\" is a compound term; the reader may not recall its definition."
+},
+"4": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3
+],
+"why": "Long \"suppose ... but instead ... and judge ... whether ... or\" chain before the point."
+},
+"5": {
+"s": [
+0,
+0,
+2,
+3,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Gives the verdict before 1.6 sets up \"this 5-second clip method\"."
+},
+"6": {
+"s": [
+0,
+0,
+3,
+0,
+5,
+0,
+0,
+0,
+3
+],
+"why": "Restates 1.5's \"busiest player wins\"; \"Then\" reads oddly after a conclusion is already given."
+},
+"10": {
+"s": [
+0,
+2,
+0,
+2,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"Co-pilot\" is used before 2.5 says the second pilot is the co-pilot."
+},
+"14": {
+"s": [
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The question is answered only obliquely in P3 (\"may... but it is a struggle\")."
+},
+"15": {
+"s": [
+0,
+2,
+3,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Mapping is unclear: the scoring agent replaces the human pilot, who was the user."
+},
+"17": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The fragment's tie between acceptance and happiness is left implicit."
+},
+"19": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"This\" and \"the human\" could mean the scorer or the user."
+},
+"20": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"It\" is vague: the training, the emergence, or reaching the outcome?"
+},
+"22": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+4,
+0,
+0,
+4
+],
+"why": "The double negative is hard to parse, and it seems to endorse the emergence P3 called a struggle."
+},
+"23": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "Shifts to children's schooling without preparation."
+},
+"24": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3
+],
+"why": "Long chain of \"will probably\" clauses hanging on \"the idea is that\"."
+},
+"27": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The two things being compared are unnamed: schooling versus AI training?"
+}
+},
+"secs": 32,
+"raw": "1.1\t0,3,0,0,0,0,0,0,0\t\"Rubric turn-based optimizer\" is a compound term; the reader may not recall its definition.\n1.4\t0,0,0,0,0,0,0,0,3\tLong \"suppose ... but instead ... and judge ... whether ... or\" chain before the point.\n1.5\t0,0,2,3,0,0,0,0,0\tGives the verdict before 1.6 sets up \"this 5-second clip method\".\n1.6\t0,0,3,0,5,0,0,0,3\tRestates 1.5's \"busiest player wins\"; \"Then\" reads oddly after a conclusion is already given.\n2.4\t0,2,0,2,0,0,0,0,0\t\"Co-pilot\" is used before 2.5 says the second pilot is the co-pilot.\n2.8\t2,0,0,0,0,0,0,0,0\tThe question is answered only obliquely in P3 (\"may... but it is a struggle\").\n3.1\t0,2,3,0,0,0,0,0,0\tMapping is unclear: the scoring agent replaces the human pilot, who was the user.\n3.3\t0,0,2,0,0,0,0,0,0\tThe fragment's tie between acceptance and happiness is left implicit.\n3.5\t0,4,0,0,0,0,0,0,0\t\"This\" and \"the human\" could mean the scorer or the user.\n3.6\t0,3,0,0,0,0,0,0,0\t\"It\" is vague: the training, the emergence, or reaching the outcome?\n4.1\t0,0,0,0,0,4,0,0,4\tThe double negative is hard to parse, and it seems to endorse the emergence P3 called a struggle.\n4.2\t0,0,0,0,0,0,0,2,0\tShifts to children's schooling without preparation.\n4.3\t0,0,0,0,0,0,0,0,3\tLong chain of \"will probably\" clauses hanging on \"the idea is that\".\n4.6\t0,3,0,0,0,0,0,0,0\tThe two things being compared are unnamed: schooling versus AI training?\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"Rubric turn-based optimizer\" arrives unexplained; it is unclear what it falls short of."
+},
+"4": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3
+],
+"why": "The long \"suppose... but instead...\" chain delays the method being described."
+},
+"6": {
+"s": [
+0,
+0,
+3,
+0,
+5,
+0,
+0,
+0,
+3
+],
+"why": "Repeats 1.5's busiest-player point; \"Then\" skips back over 1.5."
+},
+"14": {
+"s": [
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The pilot question is never answered directly; P3 turns to training."
+},
+"15": {
+"s": [
+0,
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The mapping is unclear: a rubric scorer versus the human pilot's signal."
+},
+"16": {
+"s": [
+0,
+3,
+3,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"It\" is ambiguous; the move from \"helpful\" to \"accept\" is unexplained."
+},
+"17": {
+"s": [
+0,
+3,
+3,
+0,
+2,
+0,
+0,
+0,
+0
+],
+"why": "The fragment \"Which\" has an unclear antecedent; it restates \"accept\" as \"happy\"."
+},
+"18": {
+"s": [
+0,
+2,
+0,
+0,
+3,
+0,
+0,
+0,
+0
+],
+"why": "\"Humans\": users or raters? The happiness point is repeated."
+},
+"19": {
+"s": [
+0,
+4,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"This\" and \"the human\" lack clear referents."
+},
+"20": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"It\" is vague: emergence, the training, or reaching the outcome?"
+},
+"22": {
+"s": [
+0,
+2,
+2,
+0,
+0,
+4,
+0,
+0,
+4
+],
+"why": "The double negative strains reading; it seems to retract P3's \"struggle\"; \"general intelligence\" is new."
+},
+"24": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "The long chain of predictions about the A student must be held."
+},
+"27": {
+"s": [
+1,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Differences between what? Education and AI training is only implied."
+}
+},
+"secs": 27,
+"raw": "1.1\t0,3,0,0,0,0,0,0,0\t\"Rubric turn-based optimizer\" arrives unexplained; it is unclear what it falls short of.\n1.4\t0,0,0,0,0,0,0,0,3\tThe long \"suppose... but instead...\" chain delays the method being described.\n1.6\t0,0,3,0,5,0,0,0,3\tRepeats 1.5's busiest-player point; \"Then\" skips back over 1.5.\n2.8\t3,0,0,0,0,0,0,0,0\tThe pilot question is never answered directly; P3 turns to training.\n3.1\t0,0,3,0,0,0,0,0,0\tThe mapping is unclear: a rubric scorer versus the human pilot's signal.\n3.2\t0,3,3,0,0,0,0,0,0\t\"It\" is ambiguous; the move from \"helpful\" to \"accept\" is unexplained.\n3.3\t0,3,3,0,2,0,0,0,0\tThe fragment \"Which\" has an unclear antecedent; it restates \"accept\" as \"happy\".\n3.4\t0,2,0,0,3,0,0,0,0\t\"Humans\": users or raters? The happiness point is repeated.\n3.5\t0,4,2,0,0,0,0,0,0\t\"This\" and \"the human\" lack clear referents.\n3.6\t0,3,0,0,0,0,0,0,0\t\"It\" is vague: emergence, the training, or reaching the outcome?\n4.1\t0,2,2,0,0,4,0,0,4\tThe double negative strains reading; it seems to retract P3's \"struggle\"; \"general intelligence\" is new.\n4.3\t0,0,0,0,0,0,0,0,2\tThe long chain of predictions about the A student must be held.\n4.6\t1,3,0,0,0,0,0,0,0\tDifferences between what? Education and AI training is only implied.\nEND",
+"r": 2
+}
+]
+}
+]
+}

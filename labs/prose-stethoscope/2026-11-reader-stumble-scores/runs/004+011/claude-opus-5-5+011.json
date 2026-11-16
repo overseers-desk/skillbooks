@@ -1,0 +1,67 @@
+{
+"prompt": "004",
+"format": "011",
+"model": "claude-opus-5-5",
+"text": "011",
+"sents": [
+"A frequent example: after an introduction at a meeting, the model drafted the follow-up email.",
+"It wrote out our address, the road name and the year the mill was built, and never said why we wanted to meet.",
+"Sometimes the butterfly is a puzzle.",
+"A prospective customer replied to one of our emails, and the model noticed that the email gave two different numbers for the same thing.",
+"It spent the rest of the session working out why, and the customer, who was the reason for the email, was forgotten.",
+"Asked why, the model said the numbers did not match, so it checked them."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader has read the essay's introduction, which lists seven pillars, the behaviours an AI employee needs; this chapter is about the first of them. The intended reader reads as an editor who listens closely for how the text moves from one sentence to the next.\n\nThe text, each paragraph starting with its number:\n\n[P1] A frequent example: after an introduction at a meeting, the model drafted the follow-up email. It wrote out our address, the road name and the year the mill was built, and never said why we wanted to meet.\n\n[P2] Sometimes the butterfly is a puzzle. A prospective customer replied to one of our emails, and the model noticed that the email gave two different numbers for the same thing. It spent the rest of the session working out why, and the customer, who was the reason for the email, was forgotten. Asked why, the model said the numbers did not match, so it checked them.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Unmarked turn: for a sentence that turns from stating a point to illustrating it with a generic person, company or scene, score 0 to 9 how likely the intended reader is to want words that mark the turn, such as \"Consider…\", \"Take…\" or \"For example…\".\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why. Keep why to at most 15 words. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+5
+],
+"why": "Jumps from \"butterfly is a puzzle\" straight into a customer scene; no \"For example\"."
+}
+},
+"secs": 9,
+"raw": "2.2\t5\tJumps from \"butterfly is a puzzle\" straight into a customer scene; no \"For example\".\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+4
+],
+"why": "Turns from the butterfly-as-puzzle claim to a customer anecdote with no marker."
+}
+},
+"secs": 11,
+"raw": "2.2\t4\tTurns from the butterfly-as-puzzle claim to a customer anecdote with no marker.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+3
+],
+"why": "Shifts from the claim \"butterfly is a puzzle\" into the customer anecdote without a marker."
+}
+},
+"secs": 10,
+"raw": "2.2\t3\tShifts from the claim \"butterfly is a puzzle\" into the customer anecdote without a marker.\nEND",
+"r": 2
+}
+]
+}
+]
+}

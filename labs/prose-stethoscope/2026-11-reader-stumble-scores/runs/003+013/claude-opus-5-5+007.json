@@ -1,0 +1,122 @@
+{
+"prompt": "003",
+"format": "013",
+"model": "claude-opus-5-5",
+"text": "007",
+"sents": [
+"Throughout the years, I have developed two ways to explain how a rubric turn-based optimizer would fall short.",
+"One is this: suppose that you choose a footballer for a team.",
+"You can count how many goals the footballer achieved in a number of seasons or how many goals were made possible thanks to the participation of this footballer.",
+"However, suppose you don’t do this but instead you break down a football match into 5-second clips and judge each 5-second clip on whether the footballer has done something that is conducive to a goal, or to his teammates achieving a goal.",
+"Every clip scores the same, so the player who does something in the most clips wins, and the one decisive pass counts once.",
+"Then, using this 5-second clip method, surely we will be getting the footballer who is busiest: attentive all the time, making more decisions in any given time interval than any of his teammates, rather than those who make the correct decisions and act at the right moment to get the goal.",
+"Another analogy I make more closely resembles how user and agent interact.",
+"Suppose we have two pilots.",
+"One pilot is a human who can look outside the window but has no access to instruments or any of the steering capability.",
+"The only way he can control the plane is to signal to the co-pilot if he is happy or not happy with what’s going on.",
+"And the co-pilot is an AI that controls the airplane: the rudder, the throttle, the thrust.",
+"The co-pilot has no view of the landscape or of where they are heading.",
+"He can change direction, altitude or angle until the human pilot is happy.",
+"Are they able to fly to the destination?",
+"Today’s AI is mostly trained in a similar manner: when the AI gives a reply, a scoring agent working from a rubric considers whether it is helpful to the user.",
+"Does it make the user more likely to accept it?",
+"Which is whether the user will be happy.",
+"And even when humans score the replies themselves, every turn they evaluate whether they are happy with the result.",
+"As emergent behaviour, this may lead to the outcome the human needed.",
+"But it is a struggle.",
+"And it’s very easy for AI to lose sight of what the user wants to achieve in the long run, over the whole conversation.",
+"Once the goal is out of sight, the model makes a mistake I see more often than any other: it takes what is important for what is relevant.",
+"The two are different.",
+"Whether something is important depends on the thing itself.",
+"Whether it is relevant depends on what you are trying to achieve.",
+"A person who goes to work knows this without being told.",
+"You don’t walk in and say, my child has been diagnosed with a disease.",
+"Is that important?",
+"Of course it is.",
+"Is it relevant to the work?",
+"No.",
+"A model has no such sense, because without the goal it has only importance to go by.",
+"A company found that for more than half a year it had been overpaying into its staff’s retirement fund, because it had misread a regulation.",
+"That is serious, and once the model knew about it, it could not stop bringing it up, even when negotiating with a supplier or briefing a lawyer on a matter that had nothing to do with it.",
+"Lawyers have a word for writing down everything important instead of what does the work: surplusage.",
+"The habit comes from the scoring.",
+"A reply that mentions the retirement fund looks thorough, the way the busiest footballer looks useful in every clip.",
+"Telling the model to leave out what is not relevant does not help.",
+"Even with an example of surplusage in front of it, and a warning not to produce it, the model still does it, quite reliably, and when asked, explains why each item was relevant after all.",
+"You might think that everything important should be written down, and I am sure the researchers at OpenAI and Anthropic think the same, for a reason of their own.",
+"If the AI knows something important and does not tell the user, it has made a decision that may not align with human intention.",
+"Could it be hiding something?",
+"Could it be scheming against us?",
+"With that fear in the room, the way models are trained is unlikely to change, and we will come back to what can be done about it in a later chapter.",
+"None of this means that relying on emergent behaviour is the wrong way to achieve general intelligence.",
+"In fact, for a large part of human education, children were graded on micro-improvements one step at a time, similar to the turn-based method used to train AI.",
+"The idea is that the student who always had As in primary school will probably always have As in high school, will probably also have a lot of As in university, and will achieve a lot in their lifetime.",
+"And very often it is the case.",
+"Many of the best lawyers and doctors have been A students since they started school.",
+"However, there are two big differences."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader has read the essay's introduction, which lists seven pillars, the behaviours an AI employee needs, and this chapter up to the passage below. The chapter is about the first pillar, play for the goal. It opened with the story of a kitten that keeps dropping its fishing rod to chase dragonflies, and argued that a model trained to do well at every reply is optimised the same way, one moment at a time. The passage below follows a section on why training that scores each step falls short when the real result comes only at the end.\n\nThe text, each paragraph starting with its number:\n\n[P1] Throughout the years, I have developed two ways to explain how a rubric turn-based optimizer would fall short. One is this: suppose that you choose a footballer for a team. You can count how many goals the footballer achieved in a number of seasons or how many goals were made possible thanks to the participation of this footballer. However, suppose you don’t do this but instead you break down a football match into 5-second clips and judge each 5-second clip on whether the footballer has done something that is conducive to a goal, or to his teammates achieving a goal. Every clip scores the same, so the player who does something in the most clips wins, and the one decisive pass counts once. Then, using this 5-second clip method, surely we will be getting the footballer who is busiest: attentive all the time, making more decisions in any given time interval than any of his teammates, rather than those who make the correct decisions and act at the right moment to get the goal.\n\n[P2] Another analogy I make more closely resembles how user and agent interact. Suppose we have two pilots. One pilot is a human who can look outside the window but has no access to instruments or any of the steering capability. The only way he can control the plane is to signal to the co-pilot if he is happy or not happy with what’s going on. And the co-pilot is an AI that controls the airplane: the rudder, the throttle, the thrust. The co-pilot has no view of the landscape or of where they are heading. He can change direction, altitude or angle until the human pilot is happy. Are they able to fly to the destination?\n\n[P3] Today’s AI is mostly trained in a similar manner: when the AI gives a reply, a scoring agent working from a rubric considers whether it is helpful to the user. Does it make the user more likely to accept it? Which is whether the user will be happy. And even when humans score the replies themselves, every turn they evaluate whether they are happy with the result. As emergent behaviour, this may lead to the outcome the human needed. But it is a struggle. And it’s very easy for AI to lose sight of what the user wants to achieve in the long run, over the whole conversation.\n\n[P4] Once the goal is out of sight, the model makes a mistake I see more often than any other: it takes what is important for what is relevant. The two are different. Whether something is important depends on the thing itself. Whether it is relevant depends on what you are trying to achieve. A person who goes to work knows this without being told. You don’t walk in and say, my child has been diagnosed with a disease. Is that important? Of course it is. Is it relevant to the work? No. A model has no such sense, because without the goal it has only importance to go by. A company found that for more than half a year it had been overpaying into its staff’s retirement fund, because it had misread a regulation. That is serious, and once the model knew about it, it could not stop bringing it up, even when negotiating with a supplier or briefing a lawyer on a matter that had nothing to do with it.\n\n[P5] Lawyers have a word for writing down everything important instead of what does the work: surplusage. The habit comes from the scoring. A reply that mentions the retirement fund looks thorough, the way the busiest footballer looks useful in every clip. Telling the model to leave out what is not relevant does not help. Even with an example of surplusage in front of it, and a warning not to produce it, the model still does it, quite reliably, and when asked, explains why each item was relevant after all.\n\n[P6] You might think that everything important should be written down, and I am sure the researchers at OpenAI and Anthropic think the same, for a reason of their own. If the AI knows something important and does not tell the user, it has made a decision that may not align with human intention. Could it be hiding something? Could it be scheming against us? With that fear in the room, the way models are trained is unlikely to change, and we will come back to what can be done about it in a later chapter.\n\n[P7] None of this means that relying on emergent behaviour is the wrong way to achieve general intelligence. In fact, for a large part of human education, children were graded on micro-improvements one step at a time, similar to the turn-based method used to train AI. The idea is that the student who always had As in primary school will probably always have As in high school, will probably also have a lot of As in university, and will achieve a lot in their lifetime. And very often it is the case. Many of the best lawyers and doctors have been A students since they started school. However, there are two big differences.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Unmarked turn: for a sentence that turns from stating a point to illustrating it with a generic person, company or scene, score 0 to 9 how likely the intended reader is to want words that mark the turn, such as \"Consider…\", \"Take…\" or \"For example…\". As a guide to the scale: after \"Rivers carve their valleys slowly.\", the sentence \"Take the Colorado, which cut its canyon over millions of years.\" scores 0, and \"A river that meets hard rock bends around it.\" scores 6.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why. Keep why to at most 15 words. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"26": {
+"s": [
+4
+],
+"why": "Turns from definitions to a generic working person with no marker such as \"Take\"."
+},
+"27": {
+"s": [
+2
+],
+"why": "A workplace scene follows on, but the preceding sentence partly sets it up."
+},
+"31": {
+"s": [
+7
+],
+"why": "The generic company example arrives unmarked; \"For example\" would signal the illustration."
+}
+},
+"secs": 12,
+"raw": "4.5\t4\tTurns from definitions to a generic working person with no marker such as \"Take\".\n4.6\t2\tA workplace scene follows on, but the preceding sentence partly sets it up.\n4.10\t7\tThe generic company example arrives unmarked; \"For example\" would signal the illustration.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"26": {
+"s": [
+5
+],
+"why": "Abrupt shift from defining relevance to a generic worker; nothing marks it as an example."
+},
+"33": {
+"s": [
+7
+],
+"why": "Company anecdote follows a claim about models with no \"For example\"; it reads as unexplained news."
+}
+},
+"secs": 15,
+"raw": "4.5\t5\tAbrupt shift from defining relevance to a generic worker; nothing marks it as an example.\n4.12\t7\tCompany anecdote follows a claim about models with no \"For example\"; it reads as unexplained news.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": false,
+"rows": {},
+"secs": 6,
+"raw": "API Error: Opus 5.5's safeguards flagged this message (https://www.anthropic.com/legal/aup). This sometimes happens with safe, normal conversations. Claude Code can't respond to this message with Opus 5.5.\n\nTry rephrasing the request in a new session or change your model.\n\nLearn more: https://support.claude.com/en/articles/8106465\n\nDetails: `[reasoning_extraction]`\n\nRequest ID: req_011Ch6V52gegt5VDxcAoLagb\n\nMessage ID: msg_011Ch6V52p6Qw1FLCQZaY9NT",
+"r": 2
+}
+]
+}
+]
+}

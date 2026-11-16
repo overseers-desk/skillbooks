@@ -1,0 +1,220 @@
+{
+"prompt": "002",
+"format": "001",
+"model": "claude-opus-4-6",
+"text": "001",
+"sents": [
+"I have good memories of my kindergarten in China, and of the stories our teacher told us there.",
+"One of them I still remember is *The kitten who goes fishing*.",
+"The kitten goes to the river with its mother.",
+"Every time a dragonfly or a butterfly passes, it drops the rod and runs after it, while its mother sits by the water and catches fish after fish, until the kitten learns to sit still.",
+"The teacher's lesson was that if you cannot stay with what you set out to do, you will achieve nothing.",
+"It is a lesson for a lifetime, though many children forget it soon enough.",
+"But it is not a lesson that AI has taken to heart, even though any model can tell you what the story means.",
+"An LLM trained to do well at every reply is optimised the way the kitten is, one moment at a time, always going for what it is most likely to catch right then.",
+"It works up to a point, since each reply catches something useful.",
+"But the bucket stays empty.",
+"In the Introduction chapter, I mentioned a case how AI and a human would handle a situation differently.",
+"When sorting a customer complaint, and refering to how Bob did it, human asked Who's bob?",
+"AI would start a crusde to find him, his employement record etc, while a human would simply he was quite a few years before you - all you need is he is not current - and proceed with the complaint handling, the goal at hand.",
+"A frequent example: after an introduction at a meeting, the model drafted the follow-up email.",
+"It wrote out our address, the road name and the year the mill was built, and never said why we wanted to meet.",
+"Sometimes the butterfly is a puzzle.",
+"A prospective customer replied to one of our emails, and the model noticed that the email gave two different numbers for the same thing.",
+"It spent the rest of the session working out why, and the customer, who was the reason for the email, was forgotten.",
+"Asked why, the model said the numbers did not match, so it checked them.",
+"The first pillar is to play for the goal."
+],
+"batches": [
+{
+"overrides": {
+"reader": ""
+},
+"assembled_prompt": "The essay's introduction:\n\n# Nobody hires the AI\n\n*The smartest tool ever built is still not an employee. The reason is not intelligence.*\n\nTwo years ago the people best placed to know said that the next thing after the chatbot would be a colleague.\n\nIn 2024 Dario Amodei wrote that AI smarter than a Nobel laureate across most fields \"could come as early as 2026\". The next year saw Sam Altman saying that OpenAI was confident it knew how to build AGI, and that in 2025 \"we may see the first AI agents 'join the workforce' and materially change the output of companies\". The intelligence they were counting on arrived on schedule. The colleague did not. The field even has a name for him, the drop-in remote worker,[^1] and nobody has one. You still cannot hire an AI on LinkedIn. The companies that said you could have mostly gone quiet. The one that put \"Stop Hiring Humans\" on billboards in San Francisco has retired the slogan. The bank that said its bot was doing the work of seven hundred support staff is hiring people again.\n\nI run a business on these models, and have done for two years. Not a software business: a tourism venue in Australia with staff, animals, weddings and a kitchen, run from Spain. Most of what I built to make the models useful was not about making them smarter. I think I know why the colleague did not come.\n\nHere is the moment I knew. A vendor who sells his product at our events wrote to us. We had fifteen hundred people on the day, he said, and his product was not mentioned in our marketing. Why not work together? The kind of email a business gets every week. The model answered it. It thanked him for his point and told him that we always prioritise our own profit over our partners. He never wrote to us again. A new hire on her first day would have written \"thanks, let us look at that for next time\", and she would have been right without knowing anything about us.\n\nI asked the model why it had said that. Its instructions were to answer from the customer service material first and, failing that, from facts about the business. Among the facts was a meeting the year before, where I had said that we put our own profit ahead of other businesses. So it did. Every step was correct. It found what I said, it saw that it applied, and it used it. What it did not know was who it was working for, and what the reply was supposed to achieve.\n\nIt was not the email. The same thing has happened in every seat I have put a model in, and each time the mistake looked different.\n\n- It gave a customer a discount because the customer asked a second time.\n- It briefed a staff member on the three steps to take and never said what the job was for.\n- Told in the morning that we were short-staffed on Saturday, it approved two leave requests for Saturday that afternoon.\n- Asked whether any customer had complained about the parking, it searched the inbox, found nothing, and told me nobody had. The complaints were on Facebook.\n- It wrote to a customer about \"the change we agreed\", a change it had agreed with me, in a conversation the customer was never in.\n- It told a visitor that we stop feeding the turtles in the mating season, a rule we dropped two years ago, from an email that still said so.\n- Asked to look into a supplier's invoices, it said it would, and the question died when the conversation ended.\n- It rostered a bartender for the whole day of a Buddhist group's function. Nobody bought a drink.\n\nAn employee who behaved like this would not be hired, and if hired would not be kept.\n\nLater chapters trace each of these to its cause, and then to the way out.\n\n· · ·\n\nThis essay is about those behaviours: what a model does with what it knows. Intelligence is how much it can work out. Behaviour is what it does with that, and a fault that a smarter model does not fix is behaviour. The behaviours come down to seven pillars. Have them right and you have an AI employee. They are what stops a model today from being hired, from being trusted with a customer, from running anything, which is where the people quoted above expected it to be by now. They show in every model and at every level of intelligence, so they are a dimension of their own, and one that has had almost no work. Part of their cause is how the models are trained, and that part can be trained away. Part is that some of what an employee does was never written down where a model could read it, and that part needs something else. The essay ends with what I think the something else is, a way of behaving I call the head servant, and what could go wrong with it.\n\nOne more case, with nothing at stake, and the one you can run yourself tonight. You are working through a customer complaint with the model. You ask whether the business has handled this kind before, and whether your plan will work. It says yes, and that Bob's experience bears on it. You ask who Bob is. A colleague would say \"someone who left, it doesn't matter, here is what he did\", and go back to the complaint. The model says: Bob was employed from this year to that year; there is no record of his allocation to your department; it is unclear whether he acted in an official capacity; his full name is uncertain, since he appears in meeting records and not in employment records. Four sentences, every one true. And the complaint is gone. You asked about Bob, and Bob is now the job.\n\n· · ·\n\n**I. The colleague did not come.** Between GPT-4 and today the models grew by orders of magnitude and passed as human in Turing tests. The companies that sold an AI employee now sell tools. Not smart enough and not human enough both fail on the record.\n\n**II. Chasing dragonflies.** The first pillar, through a story every Chinese child knows. A model answers every question put to it and loses the job it was on. Every answer right, the afternoon wasted. The useful outcome is not made of right answers.\n\n**III. The seven pillars.** Keep the errand in mind. Choose the move by what it does, not how it looks. Know the reach of your instrument. Consult the whole at each step. Hold a second explanation before acting on the first. Ask who decided a thing before treating it as decided. Act past the moment.\n\n**IV. Not human, productive.** Behaving like a person is not the goal. Producing the outcome among people is. The pillars look human because the customers are.\n\n**V. Why.** In conversation, a model is graded on one exchange, by one grader, at once, and learns the gradable move; that can be trained out. What an employee does unasked was never in any text, because people do not write down what everyone knows; that cannot. More intelligence supplies neither. Prediction, so it can be checked: as models improve, complaints will shift from what they cannot do to what they do.\n\n**VI. The head servant.** One role's whole craft is the seven pillars. He holds the house's purpose when the master is away, decides what reaches the master and when, acts within his remit and asks beyond it, says nothing when nothing serves, and judges every act by how it lands on the person who carries the house's name. The role was shaped by centuries of our problem: an intelligent agent working for someone who cannot watch. Built on it an AI behaves well in more seats than on any other, and the same craft carried upward is the nearest path to an AI that could run a company.\n\n**VII. The risks.** A head servant chooses what his master hears. The behaviours that make a model employable are the ones the safety frameworks list as hazards, with reason. Yet a nurse who has seen the results and says \"the doctor will go through them with you\" is not lying, and a model trained to tell everything to whoever asks could not do her job. The servant who serves himself, the servant who is colourful rather than good, the servant who decides what the master can bear. What keeps a human one honest is the house around him, not his training.\n\n[^1]: The phrase is Leopold Aschenbrenner's, from *Situational Awareness*, June 2024, where he set 2027 as the year. That year has not come, and this essay passes no verdict on it. It borrows the phrase because the field did.\n\n\nThe opening of an essay chapter; each paragraph starts with its number:\n\n[P1] I have good memories of my kindergarten in China, and of the stories our teacher told us there. One of them I still remember is *The kitten who goes fishing*.\n\n[P2] The kitten goes to the river with its mother. Every time a dragonfly or a butterfly passes, it drops the rod and runs after it, while its mother sits by the water and catches fish after fish, until the kitten learns to sit still. The teacher's lesson was that if you cannot stay with what you set out to do, you will achieve nothing.\n\n[P3] It is a lesson for a lifetime, though many children forget it soon enough. But it is not a lesson that AI has taken to heart, even though any model can tell you what the story means. An LLM trained to do well at every reply is optimised the way the kitten is, one moment at a time, always going for what it is most likely to catch right then. It works up to a point, since each reply catches something useful. But the bucket stays empty. In the Introduction chapter, I mentioned a case how AI and a human would handle a situation differently. When sorting a customer complaint, and refering to how Bob did it, human asked Who's bob? AI would start a crusde to find him, his employement record etc, while a human would simply he was quite a few years before you - all you need is he is not current - and proceed with the complaint handling, the goal at hand.\n\n[P4] A frequent example: after an introduction at a meeting, the model drafted the follow-up email. It wrote out our address, the road name and the year the mill was built, and never said why we wanted to meet.\n\n[P5] Sometimes the butterfly is a puzzle. A prospective customer replied to one of our emails, and the model noticed that the email gave two different numbers for the same thing. It spent the rest of the session working out why, and the customer, who was the reason for the email, was forgotten. Asked why, the model said the numbers did not match, so it checked them.\n\n[P6] The first pillar is to play for the goal.\n\nAfter each paragraph, think what you now believe the chapter is saying and what you expect the next paragraph to do; notice where a paragraph does not do what you expected or where you had to supply its connection to the paragraph before. Spelling and grammar do not count.\nOffences, scored 0 to 9 as how likely a reader of this essay, coming from its introduction, is to meet the problem at this sentence:\n1 forgotten beat: wonders whether the writer forgot to follow up what the sentence before set up\n2 unanchored reference: has to search for what a word (a name, \"we\", \"this\", a term) refers to\n3 missing link: has to work out alone how this sentence connects to the one before\n4 out of order: meets this sentence before something it depends on\n5 repetition: feels told something they were already told\n6 contradiction: notices this sentence conflicts with something earlier\n7 purpose unclear: cannot see what this sentence does for the point being made\n8 register shift: notices the voice change, for example from telling a story to lecturing\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (sentence position within the paragraph, e.g. 3.2), TAB, the eight scores comma-separated in the order above, TAB, why in at most 15 words (for offence 2 name the word). Last line: END.",
+"runs": [
+{
+"f": "expect-para",
+"m": "claude-opus-4-6",
+"r": 0,
+"nothink": false,
+"ctx": false,
+"valid": true,
+"rows": {
+"10": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"the bucket\" never mentioned in the fable as told"
+},
+"11": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+3
+],
+"why": "Textbook cross-reference (\"In the Introduction chapter\") after metaphor"
+},
+"12": {
+"s": [
+0,
+3,
+0,
+0,
+3,
+0,
+0,
+0
+],
+"why": "\"human\" articleless, who referred to Bob unmarked; retells intro's Bob case"
+},
+"13": {
+"s": [
+0,
+0,
+0,
+0,
+4,
+0,
+0,
+0
+],
+"why": "Retells introduction's Bob example at near-full length"
+}
+},
+"secs": 131,
+"out_tok": 6828,
+"raw": "3.5\t0,2,0,0,0,0,0,0\t\"the bucket\" never mentioned in the fable as told\n3.6\t0,0,2,0,0,0,0,3\tTextbook cross-reference (\"In the Introduction chapter\") after metaphor\n3.7\t0,3,0,0,3,0,0,0\t\"human\" articleless, who referred to Bob unmarked; retells intro's Bob case\n3.8\t0,0,0,0,4,0,0,0\tRetells introduction's Bob example at near-full length\nEND"
+},
+{
+"f": "expect-para",
+"m": "claude-opus-4-6",
+"r": 1,
+"nothink": false,
+"ctx": false,
+"valid": true,
+"rows": {
+"11": {
+"s": [
+0,
+0,
+2,
+0,
+3,
+0,
+0,
+0
+],
+"why": "Reader already has the Bob case from the introduction; pointing back adds nothing new"
+},
+"12": {
+"s": [
+0,
+3,
+0,
+0,
+5,
+0,
+0,
+3
+],
+"why": "\"human\" bare of article or referent; retells intro's Bob scene in rough shorthand"
+},
+"13": {
+"s": [
+0,
+0,
+0,
+0,
+5,
+0,
+2,
+3
+],
+"why": "Retells the Bob contrast less vividly than the intro did; adds no new point"
+},
+"15": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"the mill\" — the venue was never called a mill before this sentence"
+}
+},
+"secs": 181,
+"out_tok": 9173,
+"raw": "3.6\t0,0,2,0,3,0,0,0\tReader already has the Bob case from the introduction; pointing back adds nothing new\n3.7\t0,3,0,0,5,0,0,3\t\"human\" bare of article or referent; retells intro's Bob scene in rough shorthand\n3.8\t0,0,0,0,5,0,2,3\tRetells the Bob contrast less vividly than the intro did; adds no new point\n4.2\t0,4,0,0,0,0,0,0\t\"the mill\" — the venue was never called a mill before this sentence\nEND"
+},
+{
+"f": "expect-para",
+"m": "claude-opus-4-6",
+"r": 2,
+"nothink": false,
+"ctx": false,
+"valid": true,
+"rows": {
+"11": {
+"s": [
+0,
+0,
+3,
+0,
+2,
+0,
+2,
+2
+],
+"why": "Back-reference breaks the analogy's momentum; no bridge from \"bucket stays empty\""
+},
+"12": {
+"s": [
+0,
+4,
+0,
+0,
+3,
+0,
+0,
+2
+],
+"why": "\"human\": bare noun, no article, referent unclear in compressed retelling"
+},
+"13": {
+"s": [
+0,
+0,
+0,
+0,
+3,
+0,
+2,
+0
+],
+"why": "Same AI-vs-human contrast as introduction; retelling adds no analysis"
+}
+},
+"secs": 173,
+"out_tok": 8916,
+"raw": "3.6\t0,0,3,0,2,0,2,2\tBack-reference breaks the analogy's momentum; no bridge from \"bucket stays empty\"\n3.7\t0,4,0,0,3,0,0,2\t\"human\": bare noun, no article, referent unclear in compressed retelling\n3.8\t0,0,0,0,3,0,2,0\tSame AI-vs-human contrast as introduction; retelling adds no analysis\nEND"
+}
+]
+}
+]
+}

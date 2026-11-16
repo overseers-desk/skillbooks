@@ -1,0 +1,289 @@
+{
+"prompt": "001",
+"format": "002",
+"model": "claude-opus-5-5",
+"text": "008",
+"sents": [
+"Guan-guan go the ospreys, on the islet in the river.",
+"The modest, retiring, virtuous, young lady: for our prince a good mate she.",
+"Here long, there short, is the duckweed, to the left, to the right, borne about by the current.",
+"The modest, retiring, virtuous, young lady: waking and sleeping, he sought her.",
+"He sought her and found her not, and waking and sleeping he thought about her.",
+"Long he thought; oh! long and anxiously; on his side, on his back, he turned, and back again."
+],
+"batches": [
+{
+"overrides": {
+"reader": "",
+"description": "A classical Chinese poem in English translation; each stanza is numbered as a paragraph",
+"table_reader": "a reader of this poem"
+},
+"assembled_prompt": "A classical Chinese poem in English translation; each stanza is numbered as a paragraph; each paragraph starts with its number:\n\n[P1] Guan-guan go the ospreys, on the islet in the river. The modest, retiring, virtuous, young lady: for our prince a good mate she.\n\n[P2] Here long, there short, is the duckweed, to the left, to the right, borne about by the current. The modest, retiring, virtuous, young lady: waking and sleeping, he sought her.\n\n[P3] He sought her and found her not, and waking and sleeping he thought about her. Long he thought; oh! long and anxiously; on his side, on his back, he turned, and back again.\n\nFor each paragraph, look at its last sentence: does it open something the reader now waits for, and does the next paragraph take that up? Spelling and grammar do not count.\nOffences, scored 0 to 9 as how likely a reader of this poem is to meet the problem at this sentence:\n1 forgotten beat: wonders whether the writer forgot to follow up what the sentence before set up\n2 unanchored reference: has to search for what a word (a name, \"we\", \"this\", a term) refers to\n3 missing link: has to work out alone how this sentence connects to the one before\n4 out of order: meets this sentence before something it depends on\n5 repetition: feels told something they were already told\n6 contradiction: notices this sentence conflicts with something earlier\n7 purpose unclear: cannot see what this sentence does for the point being made\n8 register shift: notices the voice change, for example from telling a story to lecturing\n9 long dependency: has to hold words in mind because the words that belong together sit far apart\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (sentence position within the paragraph, e.g. 3.2), TAB, the nine scores comma-separated in the order above, TAB, why in at most 15 words (for offence 2 name the word). Last line: END.",
+"runs": [
+{
+"f": "end",
+"m": "opus",
+"r": 0,
+"nothink": false,
+"ctx": false,
+"valid": true,
+"rows": {
+"2": {
+"s": [
+0,
+2,
+3,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "Ospreys-to-lady jump left implicit; \"our prince\" unintroduced; colon inverts \"a good mate she\""
+},
+"3": {
+"s": [
+0,
+0,
+3,
+0,
+0,
+0,
+3,
+0,
+0
+],
+"why": "Duckweed image given without a stated link to the lady or prince"
+},
+"4": {
+"s": [
+0,
+2,
+0,
+0,
+3,
+0,
+0,
+0,
+0
+],
+"why": "Refrain repeats 1.2 verbatim; \"he\" taken to mean the prince, never confirmed"
+},
+"5": {
+"s": [
+0,
+0,
+0,
+0,
+3,
+0,
+0,
+0,
+0
+],
+"why": "Restates \"he sought her\" and \"waking and sleeping\" from 2.2"
+},
+"6": {
+"s": [
+3,
+0,
+0,
+0,
+2,
+0,
+0,
+0,
+0
+],
+"why": "Ends on unresolved longing; nothing follows; \"long he thought\" echoes 3.1"
+}
+},
+"secs": 17,
+"out_tok": 1059,
+"raw": "1.2\t0,2,3,0,0,0,0,0,2\tOspreys-to-lady jump left implicit; \"our prince\" unintroduced; colon inverts \"a good mate she\"\n2.1\t0,0,3,0,0,0,3,0,0\tDuckweed image given without a stated link to the lady or prince\n2.2\t0,2,0,0,3,0,0,0,0\tRefrain repeats 1.2 verbatim; \"he\" taken to mean the prince, never confirmed\n3.1\t0,0,0,0,3,0,0,0,0\tRestates \"he sought her\" and \"waking and sleeping\" from 2.2\n3.2\t3,0,0,0,2,0,0,0,0\tEnds on unresolved longing; nothing follows; \"long he thought\" echoes 3.1\nEND"
+},
+{
+"f": "end",
+"m": "opus",
+"r": 1,
+"nothink": false,
+"ctx": false,
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0,
+0
+],
+"why": "Osprey image not yet tied to any point; its role emerges later."
+},
+"2": {
+"s": [
+0,
+1,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Leap from ospreys to the lady is left for the reader."
+},
+"3": {
+"s": [
+0,
+0,
+3,
+0,
+0,
+0,
+2,
+0,
+0
+],
+"why": "Duckweed image follows the courtship statement with no stated link."
+},
+"4": {
+"s": [
+0,
+0,
+2,
+0,
+3,
+0,
+0,
+0,
+0
+],
+"why": "The lady refrain repeats 1.2 verbatim, and the duckweed link stays implicit."
+},
+"5": {
+"s": [
+0,
+0,
+0,
+0,
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"He sought her\" repeats the close of 2.2, though deliberately."
+},
+"6": {
+"s": [
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The search ends unresolved, and no following stanza takes it up."
+}
+},
+"secs": 17,
+"out_tok": 1155,
+"raw": "1.1\t0,0,0,0,0,0,2,0,0\tOsprey image not yet tied to any point; its role emerges later.\n1.2\t0,1,2,0,0,0,0,0,0\tLeap from ospreys to the lady is left for the reader.\n2.1\t0,0,3,0,0,0,2,0,0\tDuckweed image follows the courtship statement with no stated link.\n2.2\t0,0,2,0,3,0,0,0,0\tThe lady refrain repeats 1.2 verbatim, and the duckweed link stays implicit.\n3.1\t0,0,0,0,2,0,0,0,0\t\"He sought her\" repeats the close of 2.2, though deliberately.\n3.2\t3,0,0,0,0,0,0,0,0\tThe search ends unresolved, and no following stanza takes it up.\nEND"
+},
+{
+"f": "end",
+"m": "opus",
+"r": 2,
+"nothink": false,
+"ctx": false,
+"valid": true,
+"rows": {
+"2": {
+"s": [
+0,
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Leap from ospreys to the lady is left for the reader to bridge."
+},
+"3": {
+"s": [
+0,
+0,
+3,
+0,
+0,
+0,
+2,
+0,
+0
+],
+"why": "Duckweed image returns to nature; its tie to the lady is unstated."
+},
+"4": {
+"s": [
+0,
+1,
+0,
+0,
+2,
+0,
+0,
+0,
+0
+],
+"why": "Refrain repeats the lady's epithets verbatim; the seeking opened here is taken up next."
+},
+"5": {
+"s": [
+0,
+0,
+0,
+0,
+2,
+0,
+0,
+0,
+0
+],
+"why": "Restates \"waking and sleeping\" and \"sought her\" from the previous stanza."
+},
+"6": {
+"s": [
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "Sleepless longing is left unresolved with no stanza following; \"oh!\" turns exclamatory."
+}
+},
+"secs": 18,
+"out_tok": 1173,
+"raw": "1.2\t0,0,3,0,0,0,0,0,0\tLeap from ospreys to the lady is left for the reader to bridge.\n2.1\t0,0,3,0,0,0,2,0,0\tDuckweed image returns to nature; its tie to the lady is unstated.\n2.2\t0,1,0,0,2,0,0,0,0\tRefrain repeats the lady's epithets verbatim; the seeking opened here is taken up next.\n3.1\t0,0,0,0,2,0,0,0,0\tRestates \"waking and sleeping\" and \"sought her\" from the previous stanza.\n3.2\t3,0,0,0,0,0,0,2,0\tSleepless longing is left unresolved with no stanza following; \"oh!\" turns exclamatory.\nEND"
+}
+]
+}
+]
+}

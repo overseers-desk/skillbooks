@@ -1,0 +1,237 @@
+{
+"prompt": "001",
+"format": "002",
+"model": "claude-opus-5-5",
+"text": "009",
+"sents": [
+"London.",
+"Michaelmas term lately over, and the Lord Chancellor sitting in Lincoln's Inn Hall.",
+"Implacable November weather.",
+"As much mud in the streets as if the waters had but newly retired from the face of the earth.",
+"Fog everywhere.",
+"Fog up the river, where it flows among green aits and meadows; fog down the river, where it rolls defiled among the tiers of shipping and the waterside pollutions of a great (and dirty) city.",
+"Fog on the Essex marshes, fog on the Kentish heights.",
+"The raw afternoon is rawest, and the dense fog is densest, and the muddy streets are muddiest near that leaden-headed old obstruction, appropriate ornament for the threshold of a leaden-headed old corporation, Temple Bar.",
+"And hard by Temple Bar, in Lincoln's Inn Hall, at the very heart of the fog, sits the Lord High Chancellor in his High Court of Chancery.",
+"Never can there come fog too thick, never can there come mud and mire too deep, to assort with the groping and floundering condition which this High Court of Chancery, most pestilent of hoary sinners, holds this day in the sight of heaven and earth."
+],
+"batches": [
+{
+"overrides": {
+"reader": "",
+"description": "The opening of a novel",
+"table_reader": "a reader of this novel"
+},
+"assembled_prompt": "The opening of a novel; each paragraph starts with its number:\n\n[P1] London. Michaelmas term lately over, and the Lord Chancellor sitting in Lincoln's Inn Hall. Implacable November weather. As much mud in the streets as if the waters had but newly retired from the face of the earth.\n\n[P2] Fog everywhere. Fog up the river, where it flows among green aits and meadows; fog down the river, where it rolls defiled among the tiers of shipping and the waterside pollutions of a great (and dirty) city. Fog on the Essex marshes, fog on the Kentish heights.\n\n[P3] The raw afternoon is rawest, and the dense fog is densest, and the muddy streets are muddiest near that leaden-headed old obstruction, appropriate ornament for the threshold of a leaden-headed old corporation, Temple Bar. And hard by Temple Bar, in Lincoln's Inn Hall, at the very heart of the fog, sits the Lord High Chancellor in his High Court of Chancery.\n\n[P4] Never can there come fog too thick, never can there come mud and mire too deep, to assort with the groping and floundering condition which this High Court of Chancery, most pestilent of hoary sinners, holds this day in the sight of heaven and earth.\n\nFor each paragraph, look at its last sentence: does it open something the reader now waits for, and does the next paragraph take that up? Spelling and grammar do not count.\nOffences, scored 0 to 9 as how likely a reader of this novel is to meet the problem at this sentence:\n1 forgotten beat: wonders whether the writer forgot to follow up what the sentence before set up\n2 unanchored reference: has to search for what a word (a name, \"we\", \"this\", a term) refers to\n3 missing link: has to work out alone how this sentence connects to the one before\n4 out of order: meets this sentence before something it depends on\n5 repetition: feels told something they were already told\n6 contradiction: notices this sentence conflicts with something earlier\n7 purpose unclear: cannot see what this sentence does for the point being made\n8 register shift: notices the voice change, for example from telling a story to lecturing\n9 long dependency: has to hold words in mind because the words that belong together sit far apart\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (sentence position within the paragraph, e.g. 3.2), TAB, the nine scores comma-separated in the order above, TAB, why in at most 15 words (for offence 2 name the word). Last line: END.",
+"runs": [
+{
+"f": "end",
+"m": "opus",
+"r": 0,
+"nothink": false,
+"ctx": false,
+"valid": true,
+"rows": {
+"4": {
+"s": [
+1,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "P2 turns from mud to fog; mud returns only in P3."
+},
+"7": {
+"s": [
+0,
+0,
+0,
+0,
+2,
+0,
+0,
+0,
+0
+],
+"why": "Another \"fog\" clause; deliberate anaphora, but it is a third listing."
+},
+"9": {
+"s": [
+0,
+0,
+0,
+0,
+3,
+0,
+0,
+0,
+2
+],
+"why": "Restates P1's Chancellor sitting in Lincoln's Inn Hall; subject delayed by phrases."
+},
+"10": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+3
+],
+"why": "\"condition which\" is held apart from \"holds\"; the narration turns to moral denunciation."
+}
+},
+"secs": 19,
+"out_tok": 1276,
+"raw": "1.4\t1,0,2,0,0,0,0,0,0\tP2 turns from mud to fog; mud returns only in P3.\n2.3\t0,0,0,0,2,0,0,0,0\tAnother \"fog\" clause; deliberate anaphora, but it is a third listing.\n3.2\t0,0,0,0,3,0,0,0,2\tRestates P1's Chancellor sitting in Lincoln's Inn Hall; subject delayed by phrases.\n4.1\t0,0,0,0,0,0,0,2,3\t\"condition which\" is held apart from \"holds\"; the narration turns to moral denunciation.\nEND"
+},
+{
+"f": "end",
+"m": "opus",
+"r": 1,
+"nothink": false,
+"ctx": false,
+"valid": true,
+"rows": {
+"4": {
+"s": [
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Mud is set up, but P2 turns to fog; mud only returns in P3."
+},
+"5": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The jump from mud to fog comes with no connective."
+},
+"8": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+2,
+4
+],
+"why": "\"obstruction\" and \"corporation\" stay unnamed until \"Temple Bar\" closes the sentence."
+},
+"9": {
+"s": [
+0,
+0,
+0,
+0,
+2,
+0,
+0,
+0,
+0
+],
+"why": "Restates P1's Lord Chancellor sitting in Lincoln's Inn Hall."
+},
+"10": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3,
+4
+],
+"why": "\"condition\" waits for \"holds\" across an appositive; the voice turns denunciatory."
+}
+},
+"secs": 20,
+"out_tok": 1478,
+"raw": "1.4\t2,0,0,0,0,0,0,0,0\tMud is set up, but P2 turns to fog; mud only returns in P3.\n2.1\t0,0,2,0,0,0,0,0,0\tThe jump from mud to fog comes with no connective.\n3.1\t0,3,0,0,0,0,0,2,4\t\"obstruction\" and \"corporation\" stay unnamed until \"Temple Bar\" closes the sentence.\n3.2\t0,0,0,0,2,0,0,0,0\tRestates P1's Lord Chancellor sitting in Lincoln's Inn Hall.\n4.1\t0,0,0,0,0,0,0,3,4\t\"condition\" waits for \"holds\" across an appositive; the voice turns denunciatory.\nEND"
+},
+{
+"f": "end",
+"m": "opus",
+"r": 2,
+"nothink": false,
+"ctx": false,
+"valid": true,
+"rows": {
+"8": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+2,
+4
+],
+"why": "\"leaden-headed old corporation\" unexplained; subject Temple Bar withheld until sentence end"
+},
+"9": {
+"s": [
+0,
+0,
+0,
+0,
+3,
+0,
+0,
+0,
+2
+],
+"why": "Restates the Chancellor sitting in Lincoln's Inn Hall from 1.2"
+},
+"10": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3,
+4
+],
+"why": "Shifts from description to verdict; \"condition\" held apart from \"holds this day\""
+}
+},
+"secs": 16,
+"out_tok": 953,
+"raw": "3.1\t0,3,0,0,0,0,0,2,4\t\"leaden-headed old corporation\" unexplained; subject Temple Bar withheld until sentence end\n3.2\t0,0,0,0,3,0,0,0,2\tRestates the Chancellor sitting in Lincoln's Inn Hall from 1.2\n4.1\t0,0,0,0,0,0,0,3,4\tShifts from description to verdict; \"condition\" held apart from \"holds this day\"\nEND"
+}
+]
+}
+]
+}

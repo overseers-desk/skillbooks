@@ -1,0 +1,679 @@
+{
+"prompt": "003",
+"format": "010",
+"model": "claude-opus-5-5",
+"text": "001",
+"sents": [
+"I have good memories of my kindergarten in China, and of the stories our teacher told us there.",
+"One of them I still remember is *The kitten who goes fishing*.",
+"The kitten goes to the river with its mother.",
+"Every time a dragonfly or a butterfly passes, it drops the rod and runs after it, while its mother sits by the water and catches fish after fish, until the kitten learns to sit still.",
+"The teacher's lesson was that if you cannot stay with what you set out to do, you will achieve nothing.",
+"It is a lesson for a lifetime, though many children forget it soon enough.",
+"But it is not a lesson that AI has taken to heart, even though any model can tell you what the story means.",
+"An LLM trained to do well at every reply is optimised the way the kitten is, one moment at a time, always going for what it is most likely to catch right then.",
+"It works up to a point, since each reply catches something useful.",
+"But the bucket stays empty.",
+"In the Introduction chapter, I mentioned a case how AI and a human would handle a situation differently.",
+"When sorting a customer complaint, and refering to how Bob did it, human asked Who's bob?",
+"AI would start a crusde to find him, his employement record etc, while a human would simply he was quite a few years before you - all you need is he is not current - and proceed with the complaint handling, the goal at hand.",
+"A frequent example: after an introduction at a meeting, the model drafted the follow-up email.",
+"It wrote out our address, the road name and the year the mill was built, and never said why we wanted to meet.",
+"Sometimes the butterfly is a puzzle.",
+"A prospective customer replied to one of our emails, and the model noticed that the email gave two different numbers for the same thing.",
+"It spent the rest of the session working out why, and the customer, who was the reason for the email, was forgotten.",
+"Asked why, the model said the numbers did not match, so it checked them.",
+"The first pillar is to play for the goal."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader has read the essay's introduction, which lists seven pillars, the behaviours an AI employee needs; this chapter is about the first of them.\n\nThe text, each paragraph starting with its number:\n\n[P1] I have good memories of my kindergarten in China, and of the stories our teacher told us there. One of them I still remember is *The kitten who goes fishing*.\n\n[P2] The kitten goes to the river with its mother. Every time a dragonfly or a butterfly passes, it drops the rod and runs after it, while its mother sits by the water and catches fish after fish, until the kitten learns to sit still. The teacher's lesson was that if you cannot stay with what you set out to do, you will achieve nothing.\n\n[P3] It is a lesson for a lifetime, though many children forget it soon enough. But it is not a lesson that AI has taken to heart, even though any model can tell you what the story means. An LLM trained to do well at every reply is optimised the way the kitten is, one moment at a time, always going for what it is most likely to catch right then. It works up to a point, since each reply catches something useful. But the bucket stays empty. In the Introduction chapter, I mentioned a case how AI and a human would handle a situation differently. When sorting a customer complaint, and refering to how Bob did it, human asked Who's bob? AI would start a crusde to find him, his employement record etc, while a human would simply he was quite a few years before you - all you need is he is not current - and proceed with the complaint handling, the goal at hand.\n\n[P4] A frequent example: after an introduction at a meeting, the model drafted the follow-up email. It wrote out our address, the road name and the year the mill was built, and never said why we wanted to meet.\n\n[P5] Sometimes the butterfly is a puzzle. A prospective customer replied to one of our emails, and the model noticed that the email gave two different numbers for the same thing. It spent the rest of the session working out why, and the customer, who was the reason for the email, was forgotten. Asked why, the model said the numbers did not match, so it checked them.\n\n[P6] The first pillar is to play for the goal.\n\nScore each sentence on the nine offences below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Forgotten beat: for a paragraph's last sentence, score 0 to 9 how likely the intended reader is to be left waiting for something this sentence opens which the next paragraph does not take up.\n2. Unanchored reference: score 0 to 9 how likely the intended reader is to have to search at this sentence for what a word (a name, \"we\", \"this\", a term) refers to.\n3. Missing link: score 0 to 9 how likely the intended reader is to have to work out alone how this sentence connects to the one before.\n4. Out of order: score 0 to 9 how likely the intended reader is to be confused at this sentence because it relies on something the text only gives later.\n5. Repetition: score 0 to 9 how likely the intended reader is to feel at this sentence that they are being told something they were already told.\n6. Contradiction: score 0 to 9 how likely the intended reader is to feel at this sentence that it conflicts with something earlier.\n7. Purpose unclear: score 0 to 9 how likely the intended reader is to have expected this sentence to deliver a point, find that it does not, and take that as a fault in the writing rather than a deliberate setup.\n8. Register shift: score 0 to 9 how likely the intended reader is to be jarred by a change of voice at this sentence that the text has not prepared, including a move from a general point to a particular person, case or scene; a sentence that announces a story is about to start counts as preparation.\n9. Long dependency: score 0 to 9 how likely the intended reader is to have to hold words in mind at this sentence because the words that belong together sit far apart.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the nine scores comma-separated in the order above, TAB, why. Keep why to at most 15 words, except as the special instruction below requires. Last line: END.\n\nSpecial instruction for the why field. Where contradiction (6) scores 5 or more, the why field must also say whether the conflict is real or only apparent. If it is apparent, say what wording would stop it feeling like a conflict. If it is real, say that the point itself, not just the wording, needs deciding. This changes the text you write, not the score: score what the reader feels, whatever your diagnosis.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+1,
+3,
+0
+],
+"why": "Chapter opens on a personal memory right after the introduction's list of pillars."
+},
+"4": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3
+],
+"why": "\"until\" closes a long repeated action stretched across several clauses."
+},
+"7": {
+"s": [
+0,
+0,
+1,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "Jumps from children to AI; the intro has partly prepared this."
+},
+"10": {
+"s": [
+0,
+4,
+1,
+0,
+0,
+5,
+0,
+1,
+0
+],
+"why": "Apparent conflict: \"bucket\" absent from story; \"catches something useful\" then empty. Say \"catches butterflies, never fish\"."
+},
+"11": {
+"s": [
+0,
+1,
+4,
+0,
+3,
+0,
+1,
+2,
+0
+],
+"why": "Leaves the kitten for an intro case with no stated connection."
+},
+"12": {
+"s": [
+0,
+5,
+1,
+0,
+4,
+3,
+0,
+1,
+4
+],
+"why": "Who asked whom is unclear; \"Bob\" relies on the intro; the case is retold."
+},
+"13": {
+"s": [
+2,
+4,
+1,
+0,
+4,
+5,
+0,
+1,
+5
+],
+"why": "Apparent: the human first asks, then answers. Name the asker, e.g. \"when the AI asked\"."
+},
+"14": {
+"s": [
+0,
+1,
+3,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "\"Example\" of what? No tie back to the kitten or the Bob case."
+},
+"15": {
+"s": [
+0,
+5,
+0,
+0,
+0,
+2,
+0,
+0,
+0
+],
+"why": "\"our\", \"we\", \"the mill\" unexplained; \"frequent\" yet a single instance."
+},
+"16": {
+"s": [
+0,
+1,
+3,
+0,
+0,
+0,
+0,
+1,
+0
+],
+"why": "The reader must work out that the address details were the butterfly."
+},
+"17": {
+"s": [
+0,
+5,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "\"the email\": our email or the customer's reply?"
+},
+"18": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "\"the email\" is again ambiguous; the subject is split across a long clause."
+},
+"19": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"Asked why\": why it forgot the customer or why it checked?"
+},
+"20": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "\"Play for the goal\" swaps the fishing image for a sports one."
+}
+},
+"secs": 34,
+"raw": "1.1\t0,0,0,0,0,0,1,3,0\tChapter opens on a personal memory right after the introduction's list of pillars.\n2.2\t0,0,0,0,0,0,0,0,3\t\"until\" closes a long repeated action stretched across several clauses.\n3.2\t0,0,1,0,0,0,0,2,0\tJumps from children to AI; the intro has partly prepared this.\n3.5\t0,4,1,0,0,5,0,1,0\tApparent conflict: \"bucket\" absent from story; \"catches something useful\" then empty. Say \"catches butterflies, never fish\".\n3.6\t0,1,4,0,3,0,1,2,0\tLeaves the kitten for an intro case with no stated connection.\n3.7\t0,5,1,0,4,3,0,1,4\tWho asked whom is unclear; \"Bob\" relies on the intro; the case is retold.\n3.8\t2,4,1,0,4,5,0,1,5\tApparent: the human first asks, then answers. Name the asker, e.g. \"when the AI asked\".\n4.1\t0,1,3,0,0,0,0,2,0\t\"Example\" of what? No tie back to the kitten or the Bob case.\n4.2\t0,5,0,0,0,2,0,0,0\t\"our\", \"we\", \"the mill\" unexplained; \"frequent\" yet a single instance.\n5.1\t0,1,3,0,0,0,0,1,0\tThe reader must work out that the address details were the butterfly.\n5.2\t0,5,0,0,0,0,0,0,2\t\"the email\": our email or the customer's reply?\n5.3\t0,3,0,0,0,0,0,0,2\t\"the email\" is again ambiguous; the subject is split across a long clause.\n5.4\t0,2,0,0,0,0,0,0,0\t\"Asked why\": why it forgot the customer or why it checked?\n6.1\t0,0,2,0,0,0,0,3,0\t\"Play for the goal\" swaps the fishing image for a sports one.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+1,
+2,
+0
+],
+"why": "Opens on personal memory straight after the introduction's general list of pillars."
+},
+"4": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3
+],
+"why": "\"Every time\" and \"until\" sit far apart across the mother's clause."
+},
+"7": {
+"s": [
+0,
+0,
+4,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "\"But\" sets AI against children, yet both fail the lesson alike."
+},
+"9": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"It\" could be the LLM or the one-moment optimisation."
+},
+"10": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+4,
+0,
+0,
+0
+],
+"why": "The story never had a bucket; \"catches something useful\" sits oddly beside \"empty\"."
+},
+"11": {
+"s": [
+0,
+0,
+5,
+0,
+0,
+0,
+2,
+4,
+0
+],
+"why": "Sudden meta-reference to the Introduction; why it comes up here is unstated."
+},
+"12": {
+"s": [
+0,
+6,
+3,
+0,
+5,
+0,
+0,
+3,
+4
+],
+"why": "Bob, \"human\" and who refers to whom are unclear; the introduction already told this case."
+},
+"13": {
+"s": [
+1,
+5,
+0,
+0,
+3,
+5,
+0,
+0,
+6
+],
+"why": "Apparent: the human first asks, then answers. Name the asker, e.g. \"a new colleague asked\"."
+},
+"14": {
+"s": [
+0,
+3,
+4,
+0,
+0,
+0,
+0,
+4,
+0
+],
+"why": "\"Example\" of what is unstated; it jumps abruptly into a particular meeting."
+},
+"15": {
+"s": [
+0,
+5,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"Our\", \"we\" and \"the mill\" are never introduced."
+},
+"16": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The reader must infer that the address details were the butterfly."
+},
+"17": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"The email\" could be ours or the customer's reply."
+},
+"18": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "\"The email\" stays ambiguous; \"the customer… was forgotten\" is split by a clause."
+},
+"19": {
+"s": [
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The model's excuse invites comment that the pillar line does not give."
+},
+"20": {
+"s": [
+0,
+0,
+3,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "\"Play for the goal\" shifts the metaphor from fishing to sport."
+}
+},
+"secs": 34,
+"raw": "1.1\t0,0,0,0,0,0,1,2,0\tOpens on personal memory straight after the introduction's general list of pillars.\n2.2\t0,0,0,0,0,0,0,0,3\t\"Every time\" and \"until\" sit far apart across the mother's clause.\n3.2\t0,0,4,0,0,0,0,2,0\t\"But\" sets AI against children, yet both fail the lesson alike.\n3.4\t0,2,0,0,0,0,0,0,0\t\"It\" could be the LLM or the one-moment optimisation.\n3.5\t0,3,0,0,0,4,0,0,0\tThe story never had a bucket; \"catches something useful\" sits oddly beside \"empty\".\n3.6\t0,0,5,0,0,0,2,4,0\tSudden meta-reference to the Introduction; why it comes up here is unstated.\n3.7\t0,6,3,0,5,0,0,3,4\tBob, \"human\" and who refers to whom are unclear; the introduction already told this case.\n3.8\t1,5,0,0,3,5,0,0,6\tApparent: the human first asks, then answers. Name the asker, e.g. \"a new colleague asked\".\n4.1\t0,3,4,0,0,0,0,4,0\t\"Example\" of what is unstated; it jumps abruptly into a particular meeting.\n4.2\t0,5,0,0,0,0,0,0,0\t\"Our\", \"we\" and \"the mill\" are never introduced.\n5.1\t0,0,2,0,0,0,0,0,0\tThe reader must infer that the address details were the butterfly.\n5.2\t0,4,0,0,0,0,0,0,0\t\"The email\" could be ours or the customer's reply.\n5.3\t0,3,0,0,0,0,0,0,2\t\"The email\" stays ambiguous; \"the customer… was forgotten\" is split by a clause.\n5.4\t3,0,0,0,0,0,0,0,0\tThe model's excuse invites comment that the pillar line does not give.\n6.1\t0,0,3,0,0,0,0,3,0\t\"Play for the goal\" shifts the metaphor from fishing to sport.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "A chapter on a pillar opens with a personal childhood memory, unannounced."
+},
+"4": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "The \"until\" clause attaches to a long chain of actions."
+},
+"7": {
+"s": [
+0,
+0,
+4,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "\"But\" contrasts AI with forgetful children; the contrast does not follow."
+},
+"9": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"It\" could mean the LLM, the optimisation, or the kitten's way."
+},
+"10": {
+"s": [
+0,
+4,
+2,
+0,
+0,
+5,
+0,
+0,
+0
+],
+"why": "The bucket never appeared in the story. Apparent: say the catches never add up to the goal."
+},
+"11": {
+"s": [
+0,
+0,
+3,
+0,
+4,
+0,
+0,
+3,
+0
+],
+"why": "A back-reference to the Introduction breaks the fable and retells known material."
+},
+"12": {
+"s": [
+0,
+6,
+2,
+0,
+5,
+0,
+0,
+0,
+3
+],
+"why": "Unclear who asks about Bob or who Bob is; the case is already known."
+},
+"13": {
+"s": [
+2,
+4,
+0,
+2,
+0,
+5,
+0,
+3,
+5
+],
+"why": "The human asks, then answers. Apparent: name the asker (AI or a colleague) and the answerer separately."
+},
+"14": {
+"s": [
+0,
+2,
+4,
+0,
+0,
+3,
+0,
+3,
+0
+],
+"why": "\"Frequent\" introduces a single instance, and \"example\" of what after the Bob case?"
+},
+"15": {
+"s": [
+0,
+5,
+0,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "\"Our\", \"we\" and \"the mill\" are unintroduced; the reader must guess the business."
+},
+"16": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The butterfly returns as a metaphor without a bridge from the email case."
+},
+"17": {
+"s": [
+0,
+5,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"The email\" could be the customer's reply or the office's original."
+},
+"18": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+3
+],
+"why": "\"The email\" is ambiguous again; \"the customer … was forgotten\" is split by an aside."
+},
+"19": {
+"s": [
+3,
+0,
+0,
+0,
+0,
+0,
+2,
+0,
+0
+],
+"why": "The model's answer is left without comment; the reader expects the lesson drawn."
+},
+"20": {
+"s": [
+2,
+0,
+3,
+0,
+3,
+0,
+0,
+3,
+0
+],
+"why": "The pillar is named abruptly, in a sports metaphor after fishing, with no elaboration."
+}
+},
+"secs": 36,
+"raw": "1.1\t0,0,2,0,0,0,0,3,0\tA chapter on a pillar opens with a personal childhood memory, unannounced.\n2.2\t0,0,0,0,0,0,0,0,2\tThe \"until\" clause attaches to a long chain of actions.\n3.2\t0,0,4,0,0,0,0,3,0\t\"But\" contrasts AI with forgetful children; the contrast does not follow.\n3.4\t0,3,0,0,0,0,0,0,0\t\"It\" could mean the LLM, the optimisation, or the kitten's way.\n3.5\t0,4,2,0,0,5,0,0,0\tThe bucket never appeared in the story. Apparent: say the catches never add up to the goal.\n3.6\t0,0,3,0,4,0,0,3,0\tA back-reference to the Introduction breaks the fable and retells known material.\n3.7\t0,6,2,0,5,0,0,0,3\tUnclear who asks about Bob or who Bob is; the case is already known.\n3.8\t2,4,0,2,0,5,0,3,5\tThe human asks, then answers. Apparent: name the asker (AI or a colleague) and the answerer separately.\n4.1\t0,2,4,0,0,3,0,3,0\t\"Frequent\" introduces a single instance, and \"example\" of what after the Bob case?\n4.2\t0,5,0,0,0,0,0,2,0\t\"Our\", \"we\" and \"the mill\" are unintroduced; the reader must guess the business.\n5.1\t0,0,2,0,0,0,0,0,0\tThe butterfly returns as a metaphor without a bridge from the email case.\n5.2\t0,5,0,0,0,0,0,0,0\t\"The email\" could be the customer's reply or the office's original.\n5.3\t0,4,0,0,0,0,0,0,3\t\"The email\" is ambiguous again; \"the customer … was forgotten\" is split by an aside.\n5.4\t3,0,0,0,0,0,2,0,0\tThe model's answer is left without comment; the reader expects the lesson drawn.\n6.1\t2,0,3,0,3,0,0,3,0\tThe pillar is named abruptly, in a sports metaphor after fishing, with no elaboration.\nEND",
+"r": 2
+}
+]
+}
+]
+}

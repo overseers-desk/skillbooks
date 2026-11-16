@@ -1,0 +1,722 @@
+{
+"prompt": "003",
+"format": "008",
+"model": "claude-opus-5-5",
+"text": "007",
+"sents": [
+"Throughout the years, I have developed two ways to explain how a rubric turn-based optimizer would fall short.",
+"One is this: suppose that you choose a footballer for a team.",
+"You can count how many goals the footballer achieved in a number of seasons or how many goals were made possible thanks to the participation of this footballer.",
+"However, suppose you don’t do this but instead you break down a football match into 5-second clips and judge each 5-second clip on whether the footballer has done something that is conducive to a goal, or to his teammates achieving a goal.",
+"Every clip scores the same, so the player who does something in the most clips wins, and the one decisive pass counts once.",
+"Then, using this 5-second clip method, surely we will be getting the footballer who is busiest: attentive all the time, making more decisions in any given time interval than any of his teammates, rather than those who make the correct decisions and act at the right moment to get the goal.",
+"Another analogy I make more closely resembles how user and agent interact.",
+"Suppose we have two pilots.",
+"One pilot is a human who can look outside the window but has no access to instruments or any of the steering capability.",
+"The only way he can control the plane is to signal to the co-pilot if he is happy or not happy with what’s going on.",
+"And the co-pilot is an AI that controls the airplane: the rudder, the throttle, the thrust.",
+"The co-pilot has no view of the landscape or of where they are heading.",
+"He can change direction, altitude or angle until the human pilot is happy.",
+"Are they able to fly to the destination?",
+"Today’s AI is mostly trained in a similar manner: when the AI gives a reply, a scoring agent working from a rubric considers whether it is helpful to the user.",
+"Does it make the user more likely to accept it?",
+"Which is whether the user will be happy.",
+"And even when humans score the replies themselves, every turn they evaluate whether they are happy with the result.",
+"As emergent behaviour, this may lead to the outcome the human needed.",
+"But it is a struggle.",
+"And it’s very easy for AI to lose sight of what the user wants to achieve in the long run, over the whole conversation.",
+"Once the goal is out of sight, the model makes a mistake I see more often than any other: it takes what is important for what is relevant.",
+"The two are different.",
+"Whether something is important depends on the thing itself.",
+"Whether it is relevant depends on what you are trying to achieve.",
+"A person who goes to work knows this without being told.",
+"You don’t walk in and say, my child has been diagnosed with a disease.",
+"Is that important?",
+"Of course it is.",
+"Is it relevant to the work?",
+"No.",
+"A model has no such sense, because without the goal it has only importance to go by.",
+"A company found that for more than half a year it had been overpaying into its staff’s retirement fund, because it had misread a regulation.",
+"That is serious, and once the model knew about it, it could not stop bringing it up, even when negotiating with a supplier or briefing a lawyer on a matter that had nothing to do with it.",
+"Lawyers have a word for writing down everything important instead of what does the work: surplusage.",
+"The habit comes from the scoring.",
+"A reply that mentions the retirement fund looks thorough, the way the busiest footballer looks useful in every clip.",
+"Telling the model to leave out what is not relevant does not help.",
+"Even with an example of surplusage in front of it, and a warning not to produce it, the model still does it, quite reliably, and when asked, explains why each item was relevant after all.",
+"You might think that everything important should be written down, and I am sure the researchers at OpenAI and Anthropic think the same, for a reason of their own.",
+"If the AI knows something important and does not tell the user, it has made a decision that may not align with human intention.",
+"Could it be hiding something?",
+"Could it be scheming against us?",
+"With that fear in the room, the way models are trained is unlikely to change, and we will come back to what can be done about it in a later chapter.",
+"None of this means that relying on emergent behaviour is the wrong way to achieve general intelligence.",
+"In fact, for a large part of human education, children were graded on micro-improvements one step at a time, similar to the turn-based method used to train AI.",
+"The idea is that the student who always had As in primary school will probably always have As in high school, will probably also have a lot of As in university, and will achieve a lot in their lifetime.",
+"And very often it is the case.",
+"Many of the best lawyers and doctors have been A students since they started school.",
+"However, there are two big differences."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader has read the essay's introduction, which lists seven pillars, the behaviours an AI employee needs, and this chapter up to the passage below. The chapter is about the first pillar, play for the goal. It opened with the story of a kitten that keeps dropping its fishing rod to chase dragonflies, and argued that a model trained to do well at every reply is optimised the same way, one moment at a time. The passage below follows a section on why training that scores each step falls short when the real result comes only at the end.\n\nThe text, each paragraph starting with its number:\n\n[P1] Throughout the years, I have developed two ways to explain how a rubric turn-based optimizer would fall short. One is this: suppose that you choose a footballer for a team. You can count how many goals the footballer achieved in a number of seasons or how many goals were made possible thanks to the participation of this footballer. However, suppose you don’t do this but instead you break down a football match into 5-second clips and judge each 5-second clip on whether the footballer has done something that is conducive to a goal, or to his teammates achieving a goal. Every clip scores the same, so the player who does something in the most clips wins, and the one decisive pass counts once. Then, using this 5-second clip method, surely we will be getting the footballer who is busiest: attentive all the time, making more decisions in any given time interval than any of his teammates, rather than those who make the correct decisions and act at the right moment to get the goal.\n\n[P2] Another analogy I make more closely resembles how user and agent interact. Suppose we have two pilots. One pilot is a human who can look outside the window but has no access to instruments or any of the steering capability. The only way he can control the plane is to signal to the co-pilot if he is happy or not happy with what’s going on. And the co-pilot is an AI that controls the airplane: the rudder, the throttle, the thrust. The co-pilot has no view of the landscape or of where they are heading. He can change direction, altitude or angle until the human pilot is happy. Are they able to fly to the destination?\n\n[P3] Today’s AI is mostly trained in a similar manner: when the AI gives a reply, a scoring agent working from a rubric considers whether it is helpful to the user. Does it make the user more likely to accept it? Which is whether the user will be happy. And even when humans score the replies themselves, every turn they evaluate whether they are happy with the result. As emergent behaviour, this may lead to the outcome the human needed. But it is a struggle. And it’s very easy for AI to lose sight of what the user wants to achieve in the long run, over the whole conversation.\n\n[P4] Once the goal is out of sight, the model makes a mistake I see more often than any other: it takes what is important for what is relevant. The two are different. Whether something is important depends on the thing itself. Whether it is relevant depends on what you are trying to achieve. A person who goes to work knows this without being told. You don’t walk in and say, my child has been diagnosed with a disease. Is that important? Of course it is. Is it relevant to the work? No. A model has no such sense, because without the goal it has only importance to go by. A company found that for more than half a year it had been overpaying into its staff’s retirement fund, because it had misread a regulation. That is serious, and once the model knew about it, it could not stop bringing it up, even when negotiating with a supplier or briefing a lawyer on a matter that had nothing to do with it.\n\n[P5] Lawyers have a word for writing down everything important instead of what does the work: surplusage. The habit comes from the scoring. A reply that mentions the retirement fund looks thorough, the way the busiest footballer looks useful in every clip. Telling the model to leave out what is not relevant does not help. Even with an example of surplusage in front of it, and a warning not to produce it, the model still does it, quite reliably, and when asked, explains why each item was relevant after all.\n\n[P6] You might think that everything important should be written down, and I am sure the researchers at OpenAI and Anthropic think the same, for a reason of their own. If the AI knows something important and does not tell the user, it has made a decision that may not align with human intention. Could it be hiding something? Could it be scheming against us? With that fear in the room, the way models are trained is unlikely to change, and we will come back to what can be done about it in a later chapter.\n\n[P7] None of this means that relying on emergent behaviour is the wrong way to achieve general intelligence. In fact, for a large part of human education, children were graded on micro-improvements one step at a time, similar to the turn-based method used to train AI. The idea is that the student who always had As in primary school will probably always have As in high school, will probably also have a lot of As in university, and will achieve a lot in their lifetime. And very often it is the case. Many of the best lawyers and doctors have been A students since they started school. However, there are two big differences.\n\nScore each sentence on the ten offences below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Forgotten beat: for a paragraph's last sentence, score 0 to 9 how likely the intended reader is to be left waiting for something this sentence opens which the next paragraph does not take up.\n2. Unanchored reference: score 0 to 9 how likely the intended reader is to have to search at this sentence for what a word (a name, \"we\", \"this\", a term) refers to.\n3. Missing link: score 0 to 9 how likely the intended reader is to have to work out alone how this sentence connects to the one before.\n4. Out of order: score 0 to 9 how likely the intended reader is to be confused at this sentence because it relies on something the text only gives later.\n5. Repetition: score 0 to 9 how likely the intended reader is to feel at this sentence that they are being told something they were already told.\n6. Contradiction: score 0 to 9 how likely the intended reader is to feel at this sentence that it conflicts with something earlier.\n7. Purpose unclear: score 0 to 9 how likely the intended reader is to have expected this sentence to deliver a point, find that it does not, and take that as a fault in the writing rather than a deliberate setup.\n8. Register shift: score 0 to 9 how likely the intended reader is to be jarred by a change of voice at this sentence that the text has not prepared; a sentence that announces a story is about to start counts as preparation.\n9. Long dependency: score 0 to 9 how likely the intended reader is to have to hold words in mind at this sentence because the words that belong together sit far apart.\n10. Unbridged case: for a sentence that opens with \"A\" or \"An\" and brings in someone or something new, score 0 to 9 how likely the intended reader is to want a bridge before it, such as \"Consider…\", \"Take…\" or \"For example…\".\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the ten scores comma-separated in the order above, TAB, why. Keep why to at most 15 words, except as the special instruction below requires. Last line: END.\n\nSpecial instruction for the why field. Where contradiction (6) scores 5 or more, the why field must also say whether the conflict is real or only apparent. If it is apparent, say what wording would stop it feeling like a conflict. If it is real, say that the point itself, not just the wording, needs deciding. This changes the text you write, not the score: score what the reader feels, whatever your diagnosis.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"rubric turn-based optimizer\" is a new compound term, not yet tied to step-scoring training."
+},
+"4": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "\"suppose you don't do this but instead\" delays the actual proposal."
+},
+"5": {
+"s": [
+0,
+2,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "States the verdict before the method is finished; \"the one decisive pass\" has no antecedent."
+},
+"6": {
+"s": [
+0,
+0,
+3,
+0,
+5,
+0,
+0,
+0,
+3,
+0
+],
+"why": "Restates 1.5's conclusion; \"Then\" reads oddly after the conclusion is given."
+},
+"10": {
+"s": [
+0,
+2,
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"the co-pilot\" appears before the next sentence defines him as the AI."
+},
+"14": {
+"s": [
+3,
+0,
+0,
+0,
+0,
+0,
+2,
+0,
+0,
+0
+],
+"why": "The question is never answered directly; P3 shifts to training instead."
+},
+"15": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The rubric scorer does not map cleanly onto the analogy's human pilot."
+},
+"17": {
+"s": [
+0,
+3,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "A sentence fragment; what \"Which\" refers to is unclear."
+},
+"18": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"humans\": raters or users? This conflicts with \"the user\" just before."
+},
+"19": {
+"s": [
+0,
+4,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"this\" and \"the human\" have unclear referents; \"emergent behaviour\" arrives unexplained."
+},
+"20": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+2,
+0,
+0,
+0
+],
+"why": "A vague \"it\"; the struggle is asserted, not shown."
+},
+"26": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "Generic \"A person\" opens without a bridge, a mild case."
+},
+"27": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0,
+0
+],
+"why": "Abrupt shift to second-person, conversational voice."
+},
+"33": {
+"s": [
+0,
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+6
+],
+"why": "The company case arrives with no \"For example\" or \"Take\"."
+},
+"34": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "\"the model\": which model, and whose? Its deployment is never introduced."
+},
+"35": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The jump to lawyers' vocabulary is not linked to the retirement case."
+},
+"36": {
+"s": [
+0,
+2,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "A causal claim with no support; \"the scoring\" is a distant anchor."
+},
+"39": {
+"s": [
+0,
+0,
+0,
+0,
+3,
+2,
+0,
+0,
+3,
+0
+],
+"why": "Repeats 5.4; long clause chain; the model's explanations seem to imply a sense of relevance."
+},
+"40": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+3,
+0,
+0
+],
+"why": "Abrupt naming of OpenAI and Anthropic; the turn to a counter-view is unannounced."
+},
+"43": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0,
+0
+],
+"why": "Rhetorical alarm shifts the tone."
+},
+"44": {
+"s": [
+2,
+2,
+0,
+0,
+0,
+3,
+0,
+0,
+2,
+0
+],
+"why": "Attributes the training to fear, where 5.2 blamed the scoring; \"we\" shifts from humans to the author."
+},
+"45": {
+"s": [
+0,
+3,
+4,
+0,
+0,
+4,
+0,
+0,
+0,
+0
+],
+"why": "\"None of this\": of what? It returns to emergent behaviour from P3 and seems to soften the chapter's thesis."
+},
+"47": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "Long chain of \"will probably\" clauses."
+},
+"50": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"differences\" between what? The comparison's two sides are unnamed."
+}
+},
+"secs": 45,
+"raw": "1.1\t0,3,0,0,0,0,0,0,0,0\t\"rubric turn-based optimizer\" is a new compound term, not yet tied to step-scoring training.\n1.4\t0,0,0,0,0,0,0,0,2,0\t\"suppose you don't do this but instead\" delays the actual proposal.\n1.5\t0,2,0,2,0,0,0,0,0,0\tStates the verdict before the method is finished; \"the one decisive pass\" has no antecedent.\n1.6\t0,0,3,0,5,0,0,0,3,0\tRestates 1.5's conclusion; \"Then\" reads oddly after the conclusion is given.\n2.4\t0,2,0,3,0,0,0,0,0,0\t\"the co-pilot\" appears before the next sentence defines him as the AI.\n2.8\t3,0,0,0,0,0,2,0,0,0\tThe question is never answered directly; P3 shifts to training instead.\n3.1\t0,0,2,0,0,0,0,0,0,0\tThe rubric scorer does not map cleanly onto the analogy's human pilot.\n3.3\t0,3,3,0,0,0,0,0,0,0\tA sentence fragment; what \"Which\" refers to is unclear.\n3.4\t0,3,0,0,0,0,0,0,0,0\t\"humans\": raters or users? This conflicts with \"the user\" just before.\n3.5\t0,4,2,0,0,0,0,0,0,0\t\"this\" and \"the human\" have unclear referents; \"emergent behaviour\" arrives unexplained.\n3.6\t0,2,0,0,0,0,2,0,0,0\tA vague \"it\"; the struggle is asserted, not shown.\n4.5\t0,0,0,0,0,0,0,0,0,2\tGeneric \"A person\" opens without a bridge, a mild case.\n4.6\t0,0,0,0,0,0,0,2,0,0\tAbrupt shift to second-person, conversational voice.\n4.12\t0,0,4,0,0,0,0,0,0,6\tThe company case arrives with no \"For example\" or \"Take\".\n4.13\t0,3,0,0,0,0,0,0,2,0\t\"the model\": which model, and whose? Its deployment is never introduced.\n5.1\t0,0,2,0,0,0,0,0,0,0\tThe jump to lawyers' vocabulary is not linked to the retirement case.\n5.2\t0,2,2,0,0,0,0,0,0,0\tA causal claim with no support; \"the scoring\" is a distant anchor.\n5.5\t0,0,0,0,3,2,0,0,3,0\tRepeats 5.4; long clause chain; the model's explanations seem to imply a sense of relevance.\n6.1\t0,0,2,0,0,0,0,3,0,0\tAbrupt naming of OpenAI and Anthropic; the turn to a counter-view is unannounced.\n6.4\t0,0,0,0,0,0,0,2,0,0\tRhetorical alarm shifts the tone.\n6.5\t2,2,0,0,0,3,0,0,2,0\tAttributes the training to fear, where 5.2 blamed the scoring; \"we\" shifts from humans to the author.\n7.1\t0,3,4,0,0,4,0,0,0,0\t\"None of this\": of what? It returns to emergent behaviour from P3 and seems to soften the chapter's thesis.\n7.3\t0,0,0,0,0,0,0,0,3,0\tLong chain of \"will probably\" clauses.\n7.6\t0,3,0,0,0,0,0,0,0,0\t\"differences\" between what? The comparison's two sides are unnamed.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": false,
+"rows": {},
+"secs": 37,
+"raw": "API Error: Opus 5.5's safeguards flagged this message (https://www.anthropic.com/legal/aup). This sometimes happens with safe, normal conversations. Claude Code can't respond to this message with Opus 5.5.\n\nTry rephrasing the request in a new session or change your model.\n\nLearn more: https://support.claude.com/en/articles/8106465\n\nDetails: `[reasoning_extraction]`\n\nRequest ID: req_011Ch6S6obpGS7jFKu6BpowM\n\nMessage ID: msg_011Ch6S6ojFKrPr4Zt2mseDZ",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"rubric turn-based optimizer\" is a new coinage, only loosely tied to step-scoring"
+},
+"4": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "The \"judge each clip on whether…\" clause stretches the scoring condition far"
+},
+"5": {
+"s": [
+0,
+0,
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "States the outcome before the \"Then\" sentence that draws it"
+},
+"6": {
+"s": [
+0,
+0,
+0,
+0,
+5,
+0,
+0,
+0,
+3,
+0
+],
+"why": "The busiest player winning was already stated in the sentence before"
+},
+"14": {
+"s": [
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The question is answered only obliquely by P3's \"it is a struggle\""
+},
+"17": {
+"s": [
+0,
+3,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The fragment's \"Which\" has an unclear antecedent and link"
+},
+"19": {
+"s": [
+0,
+3,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"this\" is vague, and \"emergent behaviour\" arrives unexplained"
+},
+"23": {
+"s": [
+0,
+0,
+0,
+0,
+3,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The difference was already asserted in the previous sentence"
+},
+"26": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "Generic \"A person\" arrives without a lead-in"
+},
+"27": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0,
+0
+],
+"why": "Sudden shift to quoted, conversational direct speech"
+},
+"32": {
+"s": [
+0,
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+6
+],
+"why": "The company case starts without \"For example\"; its tie to the claim is unstated"
+},
+"33": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "\"the model\" is unclear: which deployment, the company's agent?"
+},
+"35": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "The term \"surplusage\" is held back to the end of a long definition"
+},
+"39": {
+"s": [
+0,
+0,
+0,
+0,
+2,
+0,
+0,
+0,
+3,
+0
+],
+"why": "A long chain of qualifiers; it partly restates \"does not help\""
+},
+"40": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3,
+0,
+0
+],
+"why": "Naming OpenAI and Anthropic abruptly shifts to an industry-commentary voice"
+},
+"44": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"it\" could mean the training, the surplusage, or the fear"
+},
+"45": {
+"s": [
+0,
+0,
+4,
+0,
+0,
+4,
+0,
+2,
+0,
+0
+],
+"why": "Jumps back to emergent behaviour; it seems to soften \"falls short\""
+},
+"50": {
+"s": [
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Promises two differences; the passage ends before delivering them"
+}
+},
+"secs": 33,
+"raw": "1.1\t0,3,0,0,0,0,0,0,0,0\t\"rubric turn-based optimizer\" is a new coinage, only loosely tied to step-scoring\n1.4\t0,0,0,0,0,0,0,0,3,0\tThe \"judge each clip on whether…\" clause stretches the scoring condition far\n1.5\t0,0,0,3,0,0,0,0,0,0\tStates the outcome before the \"Then\" sentence that draws it\n1.6\t0,0,0,0,5,0,0,0,3,0\tThe busiest player winning was already stated in the sentence before\n2.8\t3,0,0,0,0,0,0,0,0,0\tThe question is answered only obliquely by P3's \"it is a struggle\"\n3.3\t0,3,3,0,0,0,0,0,0,0\tThe fragment's \"Which\" has an unclear antecedent and link\n3.5\t0,3,3,0,0,0,0,0,0,0\t\"this\" is vague, and \"emergent behaviour\" arrives unexplained\n4.2\t0,0,0,0,3,0,0,0,0,0\tThe difference was already asserted in the previous sentence\n4.5\t0,0,0,0,0,0,0,0,0,2\tGeneric \"A person\" arrives without a lead-in\n4.6\t0,0,0,0,0,0,0,2,0,0\tSudden shift to quoted, conversational direct speech\n4.11\t0,0,4,0,0,0,0,0,0,6\tThe company case starts without \"For example\"; its tie to the claim is unstated\n4.12\t0,3,0,0,0,0,0,0,2,0\t\"the model\" is unclear: which deployment, the company's agent?\n5.1\t0,0,0,0,0,0,0,0,3,0\tThe term \"surplusage\" is held back to the end of a long definition\n5.5\t0,0,0,0,2,0,0,0,3,0\tA long chain of qualifiers; it partly restates \"does not help\"\n6.1\t0,0,0,0,0,0,0,3,0,0\tNaming OpenAI and Anthropic abruptly shifts to an industry-commentary voice\n6.5\t0,3,0,0,0,0,0,0,0,0\t\"it\" could mean the training, the surplusage, or the fear\n7.1\t0,0,4,0,0,4,0,2,0,0\tJumps back to emergent behaviour; it seems to soften \"falls short\"\n7.6\t2,0,0,0,0,0,0,0,0,0\tPromises two differences; the passage ends before delivering them\nEND",
+"r": 2
+}
+]
+}
+]
+}

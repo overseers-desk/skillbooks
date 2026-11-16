@@ -1,0 +1,93 @@
+{
+"prompt": "004",
+"format": "014",
+"model": "claude-opus-5-5",
+"text": "001",
+"sents": [
+"I have good memories of my kindergarten in China, and of the stories our teacher told us there.",
+"One of them I still remember is *The kitten who goes fishing*.",
+"The kitten goes to the river with its mother.",
+"Every time a dragonfly or a butterfly passes, it drops the rod and runs after it, while its mother sits by the water and catches fish after fish, until the kitten learns to sit still.",
+"The teacher's lesson was that if you cannot stay with what you set out to do, you will achieve nothing.",
+"It is a lesson for a lifetime, though many children forget it soon enough.",
+"But it is not a lesson that AI has taken to heart, even though any model can tell you what the story means.",
+"An LLM trained to do well at every reply is optimised the way the kitten is, one moment at a time, always going for what it is most likely to catch right then.",
+"It works up to a point, since each reply catches something useful.",
+"But the bucket stays empty.",
+"In the Introduction chapter, I mentioned a case how AI and a human would handle a situation differently.",
+"When sorting a customer complaint, and refering to how Bob did it, human asked Who's bob?",
+"AI would start a crusde to find him, his employement record etc, while a human would simply he was quite a few years before you - all you need is he is not current - and proceed with the complaint handling, the goal at hand.",
+"A frequent example: after an introduction at a meeting, the model drafted the follow-up email.",
+"It wrote out our address, the road name and the year the mill was built, and never said why we wanted to meet.",
+"Sometimes the butterfly is a puzzle.",
+"A prospective customer replied to one of our emails, and the model noticed that the email gave two different numbers for the same thing.",
+"It spent the rest of the session working out why, and the customer, who was the reason for the email, was forgotten.",
+"Asked why, the model said the numbers did not match, so it checked them.",
+"The first pillar is to play for the goal."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader has read the essay's introduction, which lists seven pillars, the behaviours an AI employee needs; this chapter is about the first of them. The intended reader reads as an editor who listens closely for how the text moves from one sentence to the next.\n\nThe text, each paragraph starting with its number:\n\n[P1] I have good memories of my kindergarten in China, and of the stories our teacher told us there. One of them I still remember is *The kitten who goes fishing*.\n\n[P2] The kitten goes to the river with its mother. Every time a dragonfly or a butterfly passes, it drops the rod and runs after it, while its mother sits by the water and catches fish after fish, until the kitten learns to sit still. The teacher's lesson was that if you cannot stay with what you set out to do, you will achieve nothing.\n\n[P3] It is a lesson for a lifetime, though many children forget it soon enough. But it is not a lesson that AI has taken to heart, even though any model can tell you what the story means. An LLM trained to do well at every reply is optimised the way the kitten is, one moment at a time, always going for what it is most likely to catch right then. It works up to a point, since each reply catches something useful. But the bucket stays empty. In the Introduction chapter, I mentioned a case how AI and a human would handle a situation differently. When sorting a customer complaint, and refering to how Bob did it, human asked Who's bob? AI would start a crusde to find him, his employement record etc, while a human would simply he was quite a few years before you - all you need is he is not current - and proceed with the complaint handling, the goal at hand.\n\n[P4] A frequent example: after an introduction at a meeting, the model drafted the follow-up email. It wrote out our address, the road name and the year the mill was built, and never said why we wanted to meet.\n\n[P5] Sometimes the butterfly is a puzzle. A prospective customer replied to one of our emails, and the model noticed that the email gave two different numbers for the same thing. It spent the rest of the session working out why, and the customer, who was the reason for the email, was forgotten. Asked why, the model said the numbers did not match, so it checked them.\n\n[P6] The first pillar is to play for the goal.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Unmarked turn: for a sentence that turns from stating a point to illustrating it with a generic person, company or scene, score 0 to 9 how likely the intended reader is to stumble because nothing marks the turn.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why: in at most 15 words, what the reader meets at this sentence. Describe the stumble, not a way to fix it. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"17": {
+"s": [
+3
+],
+"why": "Customer anecdote follows the butterfly claim with no cue that an instance begins."
+},
+"12": {
+"s": [
+2
+],
+"why": "Complaint scene and unknown Bob arrive abruptly; reader must infer this is the case."
+}
+},
+"secs": 20,
+"raw": "5.2\t3\tCustomer anecdote follows the butterfly claim with no cue that an instance begins.\n3.7\t2\tComplaint scene and unknown Bob arrive abruptly; reader must infer this is the case.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"12": {
+"s": [
+3
+],
+"why": "A Bob-and-complaint scene drops in mid-sentence; the asker and the setting are unclear."
+}
+},
+"secs": 18,
+"raw": "3.7\t3\tA Bob-and-complaint scene drops in mid-sentence; the asker and the setting are unclear.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"12": {
+"s": [
+3
+],
+"why": "Bob scene starts mid-sentence; unclear who \"human\" is or who asks whom."
+},
+"14": {
+"s": [
+3
+],
+"why": "\"A frequent example\" follows an example, leaving unclear what it exemplifies."
+}
+},
+"secs": 17,
+"raw": "3.7\t3\tBob scene starts mid-sentence; unclear who \"human\" is or who asks whom.\n4.1\t3\t\"A frequent example\" follows an example, leaving unclear what it exemplifies.\nEND",
+"r": 2
+}
+]
+}
+]
+}
