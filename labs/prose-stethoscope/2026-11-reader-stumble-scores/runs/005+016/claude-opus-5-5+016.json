@@ -1,0 +1,1045 @@
+{
+"prompt": "005",
+"format": "016",
+"model": "claude-opus-5-5",
+"text": "016",
+"sents": [
+"These models pass examinations most of us would fail.",
+"Ask one what a sensible employee would have written to the vendor in my opening story, and it will tell you.",
+"Put it in the employee's seat, and it writes something else.",
+"So the fault is not in what it knows.",
+"It is in what it was trained to do with what it knows.",
+"A model is made in two stages.",
+"In the first it reads.",
+"It is given a very large body of text and one task, to predict what comes next, and from that it gets its language and its knowledge.",
+"The second stage makes it an assistant, and it works by marking.",
+"The model gives an answer and the answer is marked.",
+"Sometimes people do the marking, comparing two answers and choosing the better.",
+"Sometimes another model does it, against a written sheet of criteria.",
+"The model is then adjusted toward whatever earned the better mark, and this is repeated at very large scale.",
+"What the marker is shown matters more than who he is.",
+"He is shown a prompt and the answer to it.",
+"Where there is a longer conversation, the earlier part is there as background, and the mark is still for the one answer.",
+"Work that ends in something a machine can check is treated differently, and I come to it below.",
+"For conversation, which is most of what an assistant does, the unit is the answer.",
+"This method built the chat assistant, and built it well.",
+"It is also where most of the behaviours in this essay come from.",
+"To see why, take a footballer, and suppose nobody counts goals.",
+"His match is cut into minutes.",
+"Each minute is shown to a judge who has not seen the others, and the judge marks whether he did the right thing in it.",
+"Train players on those marks and you get men who are always well placed and always make the tidy pass.",
+"The player who comes top is not the best player, because a match is won by something that runs across the minutes.",
+"A conversation with a purpose is a match.",
+"I was working through a complaint and asked who Bob was.",
+"The marker sees that question and a careful, complete answer to it, and gives full marks.",
+"The complaint is not in the minute he was shown.",
+"There is something else a marker cannot see in one answer, which is whether it helped.",
+"The helping happens later and somewhere else.",
+"What he can see is whether it looks like help.",
+"Ask a manager whether sales are good and she says: revenue is up thirty per cent, wages are up as much, so no.",
+"Ask a model and you get the figures by department and by customer segment.",
+"Each figure is a point of information, and points of information are what can be counted.",
+"The invented answer has the same root.",
+"\"I don't know\" looks like no help at all, and it is marked that way.",
+"A paper from OpenAI in 2025 says as much of the field's own tests: most give \"I don't know\" no credit, so a model that guesses outscores one that abstains.[^1]",
+"The marking also settles whom the model works for.",
+"The question put to the marker is whether the answer did what was asked.",
+"So the model learns to satisfy two parties, the one who wrote its instructions and the one who is typing.",
+"In a chat those two are everyone there is.",
+"In a business neither of them is the business.",
+"The model that answered our vendor followed its instructions to the letter.",
+"The customer who asked twice for a discount was the person typing, and got it.",
+"So was the staff member who asked for Saturday off.",
+"Nobody in those exchanges spoke for the venue, and the model was not trained to ask who did.",
+"The field's word for the aim is alignment, and its definition is generous: a system should act in accordance with the intentions, goals and values of the people it serves.",
+"An owner hears his business in that.",
+"What a marker can reward is the intention he can see, the one behind this instruction and this request.",
+"The larger reading is in the definition.",
+"The smaller one is in the training.",
+"It is the smaller one that is paid for.",
+"Intelligence is sold by the token to whoever is typing, and a company improves what its customers pay for.",
+"Last, the mark is given when the answer arrives.",
+"Whatever takes time earns nothing.",
+"The question about the supplier's invoices needed someone to come back to it the following week, and no mark was waiting there.",
+"The larger loss is the view formed over time.",
+"A manager begins to suspect that a product costs more trouble than it earns.",
+"He watches for a few months, weighs whether to raise it and with whom, and one day he says so.",
+"Nobody asked him.",
+"A model makes judgements too, as a by-product of the work: writing a program, it will tell you when it thinks the approach is wrong.",
+"But a judgement it did not state is gone when the reply is sent, and one it did state is gone when the conversation ends.",
+"Nothing in the marking asks it to keep one.",
+"That has a consequence people meet every day.",
+"Tell a model it is wrong, offering no new fact, and it will often give way, even when it was right.[^2] A person in that spot weighs the objection against a view he has held for some time.",
+"The model has only the objection, and the objection comes from the person its training taught it to satisfy.",
+"All of that is what the training put in.",
+"The rest is what neither stage gives, because it belongs to people doing something that cannot simply be learned from a corpus.",
+"One part of it is habit.",
+"The bartender who stood all day at a bar where nobody drank was rostered by a model.",
+"Asked whether that group was likely to drink, the model would have said no.",
+"Nobody asked.",
+"Using what you know on a question nobody put to you is a habit that reading does not form and marking does not reward.",
+"A person gets it by holding a job and answering for how it went.",
+"The other part is what is known only inside one house.",
+"At a meeting I once said that we put our own profit ahead of other businesses.",
+"Everyone in the room knew what kind of remark that was, and what it was not for.",
+"That knowledge was in no document, ours or anyone's.",
+"A new employee picks it up in her first months without being told.",
+"A model begins every conversation as a stranger.",
+"Can this be trained away?",
+"Much of it can, and some of it is being.",
+"Habits that show inside one answer can be marked directly.",
+"Training a model to decline what it does not know has been shown to work, and to carry over to tasks it was not trained on.",
+"The laboratories have also taken up the footballer's problem directly.",
+"Where a task ends in something a machine can check, they mark the whole task.",
+"A program is run against its tests and the mark goes to the finished work, however many steps it took.",
+"It is no accident that programming is where these models first worked for hours on their own.",
+"The method is now being carried to other kinds of work, by building practice tasks whose end state a machine can check.",
+"One researcher has put the rule plainly: what is easy to verify is easy to train.[^3]",
+"The rule also says where the method stops.",
+"A check can test what was written into the task.",
+"The reply to our vendor would have passed any check a laboratory could write: it answered the email, it was courteous, and everything in it was true.",
+"What made it wrong was known inside our venue and nowhere else.",
+"To mark an afternoon, someone has to know what the afternoon was for, and for most of a business's work that is known inside the house and written down nowhere.",
+"There is a second obstacle.",
+"Much of what a good employee does marks worse, answer for answer, than what an assistant does.",
+"\"Leave it with me until Thursday\" loses to a full reply now.",
+"Saying one thing where ten were available loses to saying ten.",
+"So I expect this part to be trained slowly, in the order in which checks can be found for it.",
+"What is known only inside one house will not come from a laboratory.",
+"It is in no text a laboratory holds.",
+"It has to be gathered on the job and kept there.",
+"More intelligence does not supply any of this.",
+"In two years I have worked through every release of these models.",
+"Each was cleverer than the last, and each lost the thread of a job in the same way.",
+"The reason is in the footballer.",
+"Intelligence is how much the player can do.",
+"The marking decides what he does with it, and a cleverer player under the same judges is still judged by the minute.",
+"In some respects he is worse: he has more to say, and one study found that the pull to agree with whoever is speaking grows as models grow.[^4]",
+"So here is a prediction that can be checked.",
+"By the end of 2027, the complaints people make about these models will have moved from what they cannot do to what they do.",
+"Fewer will say the model got it wrong.",
+"More will say it did, with great skill, something nobody wanted.",
+"[^1]:",
+"Kalai and others, \"Why Language Models Hallucinate\", OpenAI, September 2025.",
+"[^2]:",
+"Sharma and others, \"Towards Understanding Sycophancy in Language Models\", Anthropic, 2023.",
+"[^3]:",
+"Jason Wei, \"Asymmetry of verification and verifier's law\", 2025.",
+"[^4]:",
+"Perez and others, \"Discovering Language Model Behaviors with Model-Written Evaluations\", Anthropic, December 2022."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The text, each paragraph starting with its number:\n\n[P1] These models pass examinations most of us would fail. Ask one what a sensible employee would have written to the vendor in my opening story, and it will tell you. Put it in the employee's seat, and it writes something else. So the fault is not in what it knows. It is in what it was trained to do with what it knows.\n\n[P2] A model is made in two stages. In the first it reads. It is given a very large body of text and one task, to predict what comes next, and from that it gets its language and its knowledge. The second stage makes it an assistant, and it works by marking. The model gives an answer and the answer is marked. Sometimes people do the marking, comparing two answers and choosing the better. Sometimes another model does it, against a written sheet of criteria. The model is then adjusted toward whatever earned the better mark, and this is repeated at very large scale.\n\n[P3] What the marker is shown matters more than who he is. He is shown a prompt and the answer to it. Where there is a longer conversation, the earlier part is there as background, and the mark is still for the one answer. Work that ends in something a machine can check is treated differently, and I come to it below. For conversation, which is most of what an assistant does, the unit is the answer.\n\n[P4] This method built the chat assistant, and built it well. It is also where most of the behaviours in this essay come from.\n\n[P5] To see why, take a footballer, and suppose nobody counts goals. His match is cut into minutes. Each minute is shown to a judge who has not seen the others, and the judge marks whether he did the right thing in it. Train players on those marks and you get men who are always well placed and always make the tidy pass. The player who comes top is not the best player, because a match is won by something that runs across the minutes.\n\n[P6] A conversation with a purpose is a match. I was working through a complaint and asked who Bob was. The marker sees that question and a careful, complete answer to it, and gives full marks. The complaint is not in the minute he was shown.\n\n[P7] There is something else a marker cannot see in one answer, which is whether it helped. The helping happens later and somewhere else. What he can see is whether it looks like help. Ask a manager whether sales are good and she says: revenue is up thirty per cent, wages are up as much, so no. Ask a model and you get the figures by department and by customer segment. Each figure is a point of information, and points of information are what can be counted. The invented answer has the same root. \"I don't know\" looks like no help at all, and it is marked that way. A paper from OpenAI in 2025 says as much of the field's own tests: most give \"I don't know\" no credit, so a model that guesses outscores one that abstains.[^1]\n\n[P8] The marking also settles whom the model works for. The question put to the marker is whether the answer did what was asked. So the model learns to satisfy two parties, the one who wrote its instructions and the one who is typing. In a chat those two are everyone there is. In a business neither of them is the business.\n\n[P9] The model that answered our vendor followed its instructions to the letter. The customer who asked twice for a discount was the person typing, and got it. So was the staff member who asked for Saturday off. Nobody in those exchanges spoke for the venue, and the model was not trained to ask who did.\n\n[P10] The field's word for the aim is alignment, and its definition is generous: a system should act in accordance with the intentions, goals and values of the people it serves. An owner hears his business in that. What a marker can reward is the intention he can see, the one behind this instruction and this request. The larger reading is in the definition. The smaller one is in the training.\n\n[P11] It is the smaller one that is paid for. Intelligence is sold by the token to whoever is typing, and a company improves what its customers pay for.\n\n[P12] Last, the mark is given when the answer arrives. Whatever takes time earns nothing. The question about the supplier's invoices needed someone to come back to it the following week, and no mark was waiting there.\n\n[P13] The larger loss is the view formed over time. A manager begins to suspect that a product costs more trouble than it earns. He watches for a few months, weighs whether to raise it and with whom, and one day he says so. Nobody asked him. A model makes judgements too, as a by-product of the work: writing a program, it will tell you when it thinks the approach is wrong. But a judgement it did not state is gone when the reply is sent, and one it did state is gone when the conversation ends. Nothing in the marking asks it to keep one.\n\n[P14] That has a consequence people meet every day. Tell a model it is wrong, offering no new fact, and it will often give way, even when it was right.[^2] A person in that spot weighs the objection against a view he has held for some time. The model has only the objection, and the objection comes from the person its training taught it to satisfy.\n\n[P15] All of that is what the training put in. The rest is what neither stage gives, because it belongs to people doing something that cannot simply be learned from a corpus.\n\n[P16] One part of it is habit. The bartender who stood all day at a bar where nobody drank was rostered by a model. Asked whether that group was likely to drink, the model would have said no. Nobody asked. Using what you know on a question nobody put to you is a habit that reading does not form and marking does not reward. A person gets it by holding a job and answering for how it went.\n\n[P17] The other part is what is known only inside one house. At a meeting I once said that we put our own profit ahead of other businesses. Everyone in the room knew what kind of remark that was, and what it was not for. That knowledge was in no document, ours or anyone's. A new employee picks it up in her first months without being told. A model begins every conversation as a stranger.\n\n[P18] Can this be trained away? Much of it can, and some of it is being. Habits that show inside one answer can be marked directly. Training a model to decline what it does not know has been shown to work, and to carry over to tasks it was not trained on.\n\n[P19] The laboratories have also taken up the footballer's problem directly. Where a task ends in something a machine can check, they mark the whole task. A program is run against its tests and the mark goes to the finished work, however many steps it took. It is no accident that programming is where these models first worked for hours on their own. The method is now being carried to other kinds of work, by building practice tasks whose end state a machine can check. One researcher has put the rule plainly: what is easy to verify is easy to train.[^3]\n\n[P20] The rule also says where the method stops. A check can test what was written into the task. The reply to our vendor would have passed any check a laboratory could write: it answered the email, it was courteous, and everything in it was true. What made it wrong was known inside our venue and nowhere else. To mark an afternoon, someone has to know what the afternoon was for, and for most of a business's work that is known inside the house and written down nowhere.\n\n[P21] There is a second obstacle. Much of what a good employee does marks worse, answer for answer, than what an assistant does. \"Leave it with me until Thursday\" loses to a full reply now. Saying one thing where ten were available loses to saying ten. So I expect this part to be trained slowly, in the order in which checks can be found for it.\n\n[P22] What is known only inside one house will not come from a laboratory. It is in no text a laboratory holds. It has to be gathered on the job and kept there.\n\n[P23] More intelligence does not supply any of this. In two years I have worked through every release of these models. Each was cleverer than the last, and each lost the thread of a job in the same way. The reason is in the footballer. Intelligence is how much the player can do. The marking decides what he does with it, and a cleverer player under the same judges is still judged by the minute. In some respects he is worse: he has more to say, and one study found that the pull to agree with whoever is speaking grows as models grow.[^4]\n\n[P24] So here is a prediction that can be checked. By the end of 2027, the complaints people make about these models will have moved from what they cannot do to what they do. Fewer will say the model got it wrong. More will say it did, with great skill, something nobody wanted.\n\n[P25] [^1]: Kalai and others, \"Why Language Models Hallucinate\", OpenAI, September 2025.\n\n[P26] [^2]: Sharma and others, \"Towards Understanding Sycophancy in Language Models\", Anthropic, 2023.\n\n[P27] [^3]: Jason Wei, \"Asymmetry of verification and verifier's law\", 2025.\n\n[P28] [^4]: Perez and others, \"Discovering Language Model Behaviors with Model-Written Evaluations\", Anthropic, December 2022.\n\nScore each sentence on the five offences below. A score is roughly how many readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Total: for a sentence that allows no exception (no, nobody, none, never, always, every, all, cannot, only, the one, the whole), score 0 to 9 how likely a reader is to think at once of a plain exception and doubt the sentence for it.\n2. Defensive: score 0 to 9 how likely a reader is to wonder at this sentence whom it is answering, because it defends against or denies something nobody has said.\n3. Glib: score 0 to 9 how likely a reader is to find this sentence glib, a confident line that sounds settled and says less than it seems to.\n4. Explained to: score 0 to 9 how likely a reader is to feel talked down to at this sentence, because it tells them what any adult already knows or can see for themselves.\n5. Lowered standing: score 0 to 9 how likely a reader is to take the author less seriously at this sentence because the author lowers their own standing to speak on the point.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the five scores comma-separated in the order above, TAB, why: what the reader meets at this sentence, in at most 15 words. Describe the stumble, not a way to fix it. Where total (1) scores 4 or more, the why names the exception the reader thinks of. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"6": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Readers who know training see more than two stages: instruction tuning, preference tuning, others."
+},
+"8": {
+"s": [
+0,
+0,
+0,
+2,
+0
+],
+"why": "Next-word prediction is explained to readers who mostly know it already."
+},
+"14": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The aphorism claims a ranking it doesn't argue for."
+},
+"16": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Multi-turn or trajectory-level marking seems a plain exception to \"the one answer\"."
+},
+"18": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Agentic and coding work now seems a large share of assistant use."
+},
+"19": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"Built it well\" is asserted in passing without support."
+},
+"24": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Always\" in a hypothetical still invites doubt about every player."
+},
+"25": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "A top-marked player could also be the best; the confident verdict assumes otherwise."
+},
+"26": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The metaphor is stated as identity and does the argument's work."
+},
+"29": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Paragraph 3 said earlier conversation is shown as background, so the complaint may be visible."
+},
+"30": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some answers' helpfulness is visible at once, such as a correct fact."
+},
+"31": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "A direct factual answer helps immediately, not later or elsewhere."
+},
+"34": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Many readers have had concise model answers; the generalisation feels overdrawn."
+},
+"35": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Points of information are what can be counted\" sounds settled but stays vague."
+},
+"36": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"Same root\" is asserted rather than shown."
+},
+"37": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Labs explicitly reward honest abstention; paragraph 18 itself says such training works."
+},
+"42": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "A chat can involve other parties, such as people the user acts for."
+},
+"43": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "An owner who writes the instructions, or types himself, is the business."
+},
+"47": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Whoever wrote the model's instructions presumably spoke for the venue."
+},
+"52": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The neat larger/smaller pairing sounds conclusive but compresses a contested claim."
+},
+"53": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A short verdict asserts the economics without showing them."
+},
+"54": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Businesses buy enterprise seats and API contracts; the payer is often not the typist."
+},
+"56": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Paragraph 19 describes marking whole tasks lasting hours; long work does earn marks."
+},
+"64": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "Memory features and project files carry stated judgements across conversations."
+},
+"-1": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "The model also has its earlier answer and reasoning in context."
+},
+"68": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "The summary line claims more closure than the preceding argument earned."
+},
+"69": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Cannot simply be learned from a corpus\" sounds settled but stays vague."
+},
+"74": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Paragraph 13 said models volunteer unasked objections while coding."
+},
+"75": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Some people never acquire the habit despite holding jobs."
+},
+"78": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Everyone in the room\" invites doubt that all understood alike."
+},
+"80": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some new employees never pick up house norms, or need telling."
+},
+"81": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Memory and persistent project instructions mean a model need not start as a stranger."
+},
+"89": {
+"s": [
+0,
+2,
+2,
+0,
+0
+],
+"why": "\"No accident\" rebuts a claim of coincidence that nobody made."
+},
+"92": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "The transition claims the rule settles limits before showing it."
+},
+"94": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "A check could compare against a reference reply written by the venue."
+},
+"95": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "The knowledge could be written down or held by outsiders, such as the vendor."
+},
+"98": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Some markers would prefer a deferral when it is the honest answer."
+},
+"99": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Labs penalise verbosity; raters often prefer concise answers."
+},
+"103": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "The line restates the previous sentence as though it added a reason."
+},
+"105": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Better reasoning seems likely to supply some of it, such as inferring purpose."
+},
+"106": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Hundreds of releases across labs and open-weight models make \"every release\" implausible."
+},
+"107": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Some releases improved at holding a thread; \"same way\" sounds too uniform."
+},
+"108": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "An analogy is offered as the reason itself."
+},
+"109": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The tidy definition of intelligence sounds settled but is thin."
+},
+"115": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "\"Nobody wanted\" overreaches; the antithesis is a polished closing line."
+}
+},
+"secs": 56,
+"raw": "2.1\t3,0,0,0,0\tReaders who know training see more than two stages: instruction tuning, preference tuning, others.\n2.3\t0,0,0,2,0\tNext-word prediction is explained to readers who mostly know it already.\n3.1\t0,0,3,0,0\tThe aphorism claims a ranking it doesn't argue for.\n3.3\t3,0,0,0,0\tMulti-turn or trajectory-level marking seems a plain exception to \"the one answer\".\n3.5\t3,0,0,0,0\tAgentic and coding work now seems a large share of assistant use.\n4.1\t0,0,2,0,0\t\"Built it well\" is asserted in passing without support.\n5.4\t2,0,0,0,0\t\"Always\" in a hypothetical still invites doubt about every player.\n5.5\t3,0,3,0,0\tA top-marked player could also be the best; the confident verdict assumes otherwise.\n6.1\t0,0,3,0,0\tThe metaphor is stated as identity and does the argument's work.\n6.4\t4,0,0,0,0\tParagraph 3 said earlier conversation is shown as background, so the complaint may be visible.\n7.1\t3,0,0,0,0\tSome answers' helpfulness is visible at once, such as a correct fact.\n7.2\t4,0,0,0,0\tA direct factual answer helps immediately, not later or elsewhere.\n7.5\t3,0,2,0,0\tMany readers have had concise model answers; the generalisation feels overdrawn.\n7.6\t0,0,3,0,0\t\"Points of information are what can be counted\" sounds settled but stays vague.\n7.7\t0,0,2,0,0\t\"Same root\" is asserted rather than shown.\n7.8\t4,0,0,0,0\tLabs explicitly reward honest abstention; paragraph 18 itself says such training works.\n8.4\t2,0,0,0,0\tA chat can involve other parties, such as people the user acts for.\n8.5\t5,0,0,0,0\tAn owner who writes the instructions, or types himself, is the business.\n9.4\t4,0,0,0,0\tWhoever wrote the model's instructions presumably spoke for the venue.\n10.5\t0,0,3,0,0\tThe neat larger/smaller pairing sounds conclusive but compresses a contested claim.\n11.1\t0,0,3,0,0\tA short verdict asserts the economics without showing them.\n11.2\t4,0,4,0,0\tBusinesses buy enterprise seats and API contracts; the payer is often not the typist.\n12.2\t4,0,3,0,0\tParagraph 19 describes marking whole tasks lasting hours; long work does earn marks.\n13.7\t5,0,0,0,0\tMemory features and project files carry stated judgements across conversations.\n13.8\t3,0,0,0,0\tConsistency or memory training could reward keeping a view.\n14.4\t4,0,0,0,0\tThe model also has its earlier answer and reasoning in context.\n15.1\t0,0,2,0,0\tThe summary line claims more closure than the preceding argument earned.\n15.2\t0,0,3,0,0\t\"Cannot simply be learned from a corpus\" sounds settled but stays vague.\n16.5\t4,0,0,0,0\tParagraph 13 said models volunteer unasked objections while coding.\n16.6\t2,0,0,0,0\tSome people never acquire the habit despite holding jobs.\n17.3\t2,0,0,0,0\t\"Everyone in the room\" invites doubt that all understood alike.\n17.5\t3,0,0,0,0\tSome new employees never pick up house norms, or need telling.\n17.6\t4,0,0,0,0\tMemory and persistent project instructions mean a model need not start as a stranger.\n19.4\t0,2,2,0,0\t\"No accident\" rebuts a claim of coincidence that nobody made.\n20.1\t0,0,2,0,0\tThe transition claims the rule settles limits before showing it.\n20.3\t3,0,0,0,0\tA check could compare against a reference reply written by the venue.\n20.4\t2,0,0,0,0\tThe knowledge could be written down or held by outsiders, such as the vendor.\n21.2\t2,0,0,0,0\tSome markers would prefer a deferral when it is the honest answer.\n21.3\t3,0,0,0,0\tLabs penalise verbosity; raters often prefer concise answers.\n22.2\t0,0,2,0,0\tThe line restates the previous sentence as though it added a reason.\n23.1\t3,0,0,0,0\tBetter reasoning seems likely to supply some of it, such as inferring purpose.\n23.2\t4,0,0,0,0\tHundreds of releases across labs and open-weight models make \"every release\" implausible.\n23.3\t3,0,2,0,0\tSome releases improved at holding a thread; \"same way\" sounds too uniform.\n23.4\t0,0,3,0,0\tAn analogy is offered as the reason itself.\n23.5\t0,0,3,0,0\tThe tidy definition of intelligence sounds settled but is thin.\n24.4\t2,0,3,0,0\t\"Nobody wanted\" overreaches; the antithesis is a polished closing line.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": false,
+"rows": {},
+"secs": 9,
+"raw": "API Error: Opus 5.5's safeguards flagged this message (https://www.anthropic.com/legal/aup). This sometimes happens with safe, normal conversations. Claude Code can't respond to this message with Opus 5.5.\n\nTry rephrasing the request in a new session or change your model.\n\nLearn more: https://support.claude.com/en/articles/8106465\n\nDetails: `[reasoning_extraction]`\n\nRequest ID: req_011Ch7eYe9uQ7DVusX7EDejT\n\nMessage ID: msg_011Ch7eYeLq4QkH9ZqqwfYsY",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+0,
+2,
+1,
+0,
+0
+],
+"why": "Denies a fault in knowledge that no reader has yet proposed."
+},
+"5": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A neat turn that names the cause before showing it."
+},
+"14": {
+"s": [
+0,
+3,
+2,
+0,
+0
+],
+"why": "Answers a question about who the marker is that nobody raised."
+},
+"25": {
+"s": [
+1,
+0,
+2,
+0,
+0
+],
+"why": "Confident verdict on a hypothetical league, asserted rather than shown."
+},
+"26": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Metaphor stated as identity; it sounds settled but proves little."
+},
+"30": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some answers visibly help at once, like code that runs."
+},
+"31": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Help from a factual answer often happens immediately, in the reply."
+},
+"34": {
+"s": [
+2,
+0,
+1,
+0,
+0
+],
+"why": "Not every model answer breaks figures down by segment."
+},
+"35": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Aphoristic link between information and counting; the logic is left implied."
+},
+"36": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"The invented answer\" appears without introduction; the root claim is asserted."
+},
+"39": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "Large claim stated as settled before any support."
+},
+"42": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Others are affected by a chat: platform, public, people discussed."
+},
+"43": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "A small-business owner who types is the business."
+},
+"47": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Whoever wrote the venue's instructions presumably spoke for the venue."
+},
+"51": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "Symmetrical closing pair sounds conclusive but compresses the argument."
+},
+"52": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Second half of the pat antithesis; it adds little."
+},
+"53": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Bare assertion about incentives, delivered as a settled verdict."
+},
+"54": {
+"s": [
+4,
+0,
+2,
+3,
+0
+],
+"why": "Enterprise contracts are paid by businesses, not the person typing."
+},
+"56": {
+"s": [
+5,
+0,
+2,
+0,
+0
+],
+"why": "The essay's own P19 describes whole-task marks for long programs."
+},
+"57": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"No mark was waiting there\" is a flourish over the point."
+},
+"63": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "Memory features and saved context carry judgements across conversations."
+},
+"64": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some training does reward consistency across turns."
+},
+"66": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Many people also cave under repeated objection without new facts."
+},
+"67": {
+"s": [
+4,
+0,
+1,
+0,
+0
+],
+"why": "The model also has its own earlier answer in context."
+},
+"69": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A vague category; \"something\" is never specified here."
+},
+"74": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "P13 says models volunteer unasked judgements while coding."
+},
+"75": {
+"s": [
+2,
+0,
+2,
+0,
+0
+],
+"why": "People also learn this habit outside jobs; the line is tidy."
+},
+"77": {
+"s": [
+0,
+0,
+0,
+0,
+2
+],
+"why": "Some readers judge the confessed remark and the author with it."
+},
+"78": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Withholds what the remark meant while claiming everyone understood."
+},
+"79": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Such norms are sometimes in handbooks or minutes."
+},
+"80": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some new employees never pick up unwritten norms."
+},
+"81": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "System prompts and memory give models context before a conversation."
+},
+"89": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"No accident\" asserts causation with a knowing tone."
+},
+"94": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "A lab given the venue's interests could write a check for them."
+},
+"95": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Others outside the venue could have guessed what made it wrong."
+},
+"100": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Raters and graders often penalise long answers and prefer concision."
+},
+"103": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Internal documents can be supplied to laboratories or fine-tuning."
+},
+"105": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Some newer, more capable models do handle long tasks better."
+},
+"106": {
+"s": [
+4,
+0,
+0,
+0,
+2
+],
+"why": "Every release from every lab in two years seems implausible."
+},
+"107": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "The author's own P19 says newer models now work for hours."
+},
+"108": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Points back to a metaphor as if it were evidence."
+},
+"109": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "Crisp definition that sounds settled but is loose."
+},
+"115": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "\"Nobody wanted\" overstates; the punchline sounds more settled than it is."
+}
+},
+"secs": 56,
+"raw": "1.4\t0,2,1,0,0\tDenies a fault in knowledge that no reader has yet proposed.\n1.5\t0,0,2,0,0\tA neat turn that names the cause before showing it.\n3.1\t0,3,2,0,0\tAnswers a question about who the marker is that nobody raised.\n5.5\t1,0,2,0,0\tConfident verdict on a hypothetical league, asserted rather than shown.\n6.1\t0,0,3,0,0\tMetaphor stated as identity; it sounds settled but proves little.\n7.1\t3,0,0,0,0\tSome answers visibly help at once, like code that runs.\n7.2\t3,0,0,0,0\tHelp from a factual answer often happens immediately, in the reply.\n7.5\t2,0,1,0,0\tNot every model answer breaks figures down by segment.\n7.6\t0,0,3,0,0\tAphoristic link between information and counting; the logic is left implied.\n7.7\t0,0,3,0,0\t\"The invented answer\" appears without introduction; the root claim is asserted.\n8.1\t0,0,2,0,0\tLarge claim stated as settled before any support.\n8.4\t3,0,0,0,0\tOthers are affected by a chat: platform, public, people discussed.\n8.5\t4,0,4,0,0\tA small-business owner who types is the business.\n9.4\t4,0,0,0,0\tWhoever wrote the venue's instructions presumably spoke for the venue.\n10.4\t0,0,4,0,0\tSymmetrical closing pair sounds conclusive but compresses the argument.\n10.5\t0,0,3,0,0\tSecond half of the pat antithesis; it adds little.\n11.1\t0,0,3,0,0\tBare assertion about incentives, delivered as a settled verdict.\n11.2\t4,0,2,3,0\tEnterprise contracts are paid by businesses, not the person typing.\n12.2\t5,0,2,0,0\tThe essay's own P19 describes whole-task marks for long programs.\n12.3\t0,0,2,0,0\t\"No mark was waiting there\" is a flourish over the point.\n13.6\t5,0,0,0,0\tMemory features and saved context carry judgements across conversations.\n13.7\t3,0,0,0,0\tSome training does reward consistency across turns.\n14.2\t3,0,0,0,0\tMany people also cave under repeated objection without new facts.\n14.3\t4,0,1,0,0\tThe model also has its own earlier answer in context.\n15.2\t0,0,3,0,0\tA vague category; \"something\" is never specified here.\n16.5\t4,0,0,0,0\tP13 says models volunteer unasked judgements while coding.\n16.6\t2,0,2,0,0\tPeople also learn this habit outside jobs; the line is tidy.\n17.2\t0,0,0,0,2\tSome readers judge the confessed remark and the author with it.\n17.3\t0,0,3,0,0\tWithholds what the remark meant while claiming everyone understood.\n17.4\t2,0,0,0,0\tSuch norms are sometimes in handbooks or minutes.\n17.5\t3,0,0,0,0\tSome new employees never pick up unwritten norms.\n17.6\t4,0,0,0,0\tSystem prompts and memory give models context before a conversation.\n19.4\t0,0,2,0,0\t\"No accident\" asserts causation with a knowing tone.\n20.3\t3,0,0,0,0\tA lab given the venue's interests could write a check for them.\n20.4\t3,0,0,0,0\tOthers outside the venue could have guessed what made it wrong.\n21.4\t3,0,0,0,0\tRaters and graders often penalise long answers and prefer concision.\n22.2\t2,0,0,0,0\tInternal documents can be supplied to laboratories or fine-tuning.\n23.1\t3,0,2,0,0\tSome newer, more capable models do handle long tasks better.\n23.2\t4,0,0,0,2\tEvery release from every lab in two years seems implausible.\n23.3\t4,0,0,0,0\tThe author's own P19 says newer models now work for hours.\n23.4\t0,0,3,0,0\tPoints back to a metaphor as if it were evidence.\n23.5\t0,0,2,0,0\tCrisp definition that sounds settled but is loose.\n24.4\t2,0,3,0,0\t\"Nobody wanted\" overstates; the punchline sounds more settled than it is.\nEND",
+"r": 2
+}
+]
+}
+]
+}
