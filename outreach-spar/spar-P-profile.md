@@ -10,7 +10,7 @@ Use this procedure when you have a roster entry — a name, an organisation, and
 ## 2. Inputs
 
 - **Target:** Name, organisation, and whatever seed data the roster contains (platform URLs, role, segment, discovered_via). If the roster entry has no `contact_name`, resolving one is the first task of this phase — see §4.1. Entries with a blank `contact_name` are P-phase leads, not invalid data.
-- **Segment file:** The segment definition (`segments/{segment}.yaml`) that defines the segment's intended outcome and the mechanism by which contacts are expected to deliver it. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
+- **Segment file:** The segment definition (`segments/{segment}.yaml`), whose `discovery_criteria` state who belongs to the population and by what mechanism. Read this before anything else. It determines whether a contact type is structurally valid for the segment — independent of their domain relevance, seniority, or star rating.
 - **Rating rubric (in the segment file):** the segment's `rating_rubric` defines what "valuable to us" means for this population, campaign-independent. It is the standing standard you judge the contact against. You are not given the campaign's ask, pitch, or USP, nor any campaign overview document; the profile is reused across campaigns and over time, so that knowledge belongs to the approach phase (INVARIANTS.md I1).
 
 ## 3. Output
@@ -23,18 +23,20 @@ Additionally, P produces:
 
 ## 4. Procedure
 
+The segment's `target_type` sets the profile's depth. At the full depth (`cue-required`, the default) a member needs a cue before contact, evidence that they care, and the profile looks for one in what they have said, whom they know and what their organisation runs. At the thin depth (`qualification-only`) role and geography or sector qualify a member, usually from a register, and the profile delivers the four outcomes of §5.5. Whatever is marked *full depth* does not run at the thin depth; every other step runs at both, at the thin depth as far as the four outcomes need.
+
 ### 4.1 Resolve contact name (run only if the roster has no `contact_name`)
 
 If the roster entry has no `contact_name`, the organisation has been discovered by sweep but no individual has been identified. This step must complete before §4.2.
 
-**If the roster entry carries a platform profile URL, fetch it first** using that platform's skill, its module read beforehand. A direct profile view is the cheap access form (each module states its cost model), the name resolves immediately, and the profile yields organisation, community, and collaborator names that seed later keyword and cross-platform work. The skill writes its saved HTML to the canonical path that §4.3 reads, so running it here doubles as the §4.3 fetch: the same artefact serves both steps. WebFetch, raw chromium, or any other channel produces no such artefact, so §4.3 will still need the skill to run.
+**If the roster entry carries a platform profile URL, fetch it first** using that platform's skill, its module read beforehand. A direct profile view is the cheap access form (each module states its cost model), the name resolves immediately, and the profile yields organisation, community, and collaborator names that seed later keyword and cross-platform work. The skill writes its saved HTML to the canonical path that §4.3 reads, so running it here doubles as the §4.3 fetch: the same artefact serves both steps. A fetch by any other route leaves no such artefact, so §4.3 would still need the skill.
 
 **Otherwise, search these sources in order:**
 
 1. **Company website** — About, Team, or Contact pages often name the owner or manager.
 2. **Declared platforms** — look the company up on each platform the segment declares, cheapest access first per its module (a company-page read before a people-search; each module names where an owner's name surfaces).
-3. **ABN registry** — For sole traders and small Pty Ltd companies, the ABN Lookup may name an individual.
-4. **Yellow Pages, TrueLocal, Google Maps reviews** — Reviews and listings sometimes name the owner.
+3. **Registers** — the business register of the organisation's own country may name a sole trader or a small company's director; a charity or association register may list office-bearers.
+4. **Directories and reviews** — that country's business directories and map-listing reviews sometimes name the owner.
 5. **Web search** — `"[company name]" owner OR director OR founder OR operator`.
 
 **If a name is found:**
@@ -43,19 +45,19 @@ If the roster entry has no `contact_name`, the organisation has been discovered 
 - If `date_excluded` was set for a structural reason (contact type does not fit the segment's mechanism), finding a name does not revalidate the entry — the structural reason stands.
 
 **If no name is found after exhausting all sources:**
-- If the roster entry has no `stem`, write one using the organisation slug (e.g. `a-team-coaches` for "A-Team Coaches"). This ensures the row is identifiable in the state machine.
-- Record in `p_note`: "name search attempted [date]: no individual identified via website, declared platforms, ABN, web search."
+- If the roster entry has no `stem`, write one using the organisation slug (e.g. `acme-coaches` for "Acme Coaches"). This ensures the row is identifiable in the state machine.
+- Record in `p_note`: "name search attempted [date]: no individual identified via website, declared platforms, registers, directories, web search."
 - Set `date_excluded` to today with reason "name search exhausted ([date])." This is the P-phase's responsibility — sweep does not set `date_excluded` for entries whose individual was never identified.
-- Exception, organisation-population segments: where the segment's population is organisations (facilities, villages, clubs) and its plan treats a published office channel as a viable first contact, an exhausted name search alone does not exclude. The organisation remains a targetable row contacted at its office address; record "no individual identified ([date])" in `p_note` and rate the organisation on the segment rubric. Exclusion still applies when the row fails the mechanism test (§4.2) or no written channel exists at all. (A 2026-07 pilot excluded 18 reachable organisations on the person-centric reading of this rule; office-bearer registers such as ACNC Responsible People later named individuals for several.)
+- Exception, organisation-population segments: where the segment's population is organisations (facilities, villages, clubs) and the organisation publishes a written office channel, an exhausted name search alone does not exclude. The organisation remains a targetable row contacted at its office address; record "no individual identified ([date])" in `p_note` and rate the organisation on the segment rubric. Whether to write to an office address is each campaign's call. Exclusion still applies when the row fails the mechanism test (§4.2).
 - Do not proceed to §4.2 or produce a profile document. The roster entry is the permanent record.
 
 ### 4.2 Validate fit against segment file
 
-Before any further research, read the segment file and answer one question: can this contact deliver the outcome the segment describes, through the mechanism the segment describes?
+Before any further research, read the segment file and answer one question: is this contact one of the population its `discovery_criteria` describe, through the mechanism they name?
 
-This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the segment. The segment file specifies a mechanism: the particular way a contact is expected to deliver the segment's outcome. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the segment file explicitly includes that adjacent role.
+This is a structural check, not a relevance check. A contact may be in the right domain, at the right seniority, with strong apparent fit — and still be the wrong type of contact for the segment. The criteria name a mechanism: what a member does that makes them one. The check is whether this contact operates through that mechanism. A contact who is adjacent to the mechanism — who knows the right people, or works in the same field, or whose platform could theoretically be adapted — does not pass the check unless the segment file explicitly includes that adjacent role.
 
-If the contact cannot deliver the outcome through the mechanism the segment describes, set `date_excluded` to today's date, record the reason in `p_note`, and write a short profile document recording why the contact was excluded. The profile is the only durable record of the reasoning (`spar-roster-format.md`, Artefact retention); a future sweep that rediscovers the name reads it instead of repeating the evaluation. Do not proceed to §4.3.
+If the contact does not operate through that mechanism, set `date_excluded` to today's date, record the reason in `p_note`, and write a short profile document recording why the contact was excluded. The profile is the only durable record of the reasoning (`spar-roster-format.md`, Artefact retention); a future sweep that rediscovers the name reads it instead of repeating the evaluation. Do not proceed to §4.3.
 
 **Do not delete the roster row.** The roster is append-only. Deletion causes re-discovery in the next sweep, where the entry may be incorrectly validated if the profile stage repeats the same error. The `date_excluded` date is the permanent record that this contact was assessed and excluded. This rule applies to every exclusion in this procedure — it is not restated later; refer back here.
 
@@ -63,13 +65,13 @@ If an invalid entry has already passed Profile and reached the approach queue, t
 
 ### 4.3 Fetch declared platform profiles
 
-**No profile without.** Where the segment carries `no_profile_without` (`segment-schema.yaml`: one key, `any_of` or `all_of`, of `web` and platform-module tokens), run those checks first, once each, one query each, before any directory, review-site or same-name work, at either depth. `any_of`: the row is profiled only when at least one check finds the person; `all_of`: only when every check does. A row that fails is excluded as §4.1 excludes an exhausted name search, `date_excluded` today, `star_rating` 0, and the reason in `p_note` ("no_profile_without: [checks] empty, [date]"), and has no profile. No profile means what the words mean: not a profile called no-profile, nor a profile with empty content, as some AI have read it. In a dispatched run the worker declares the exclusion through a front-matter-only file, which the harness applies to the roster and removes. The date brings the row back for a later look.
+**No profile without.** Where the segment carries `no_profile_without` (`segment-schema.yaml`: one key, `any_of` or `all_of`, of `web` and platform-module tokens), run those checks first, once each, one query each, before any directory, review-site or same-name work. `any_of`: the row is profiled only when at least one check finds the person; `all_of`: only when every check does. A row that fails is excluded as §4.1 excludes an exhausted name search, `date_excluded` today, `star_rating` 0, and the reason in `p_note` ("no_profile_without: [checks] empty, [date]"), and has no profile. No profile means what the words mean: not a profile called no-profile, nor a profile with empty content, as some AI have read it. In a dispatched run the worker declares the exclusion through a front-matter-only file, which the harness applies to the roster and removes. The date brings the row back for a later look.
 
 The segment definition lists the population's platforms in its `platforms:` map (`segment-schema.yaml`); this step runs once per listed platform, its module (`platforms/{platform}.md`) read before the first access. `required` means the profile audit expects that platform's skill invoked for this contact; a profile written without it is rejected and comes back as fix instructions. `expected` means the population usually holds profiles and the look-up is a standing step, with the judgment to skip a given row yours.
 
 A platform the map does not declare is not searched. When evidence surfaces that the target holds a profile there (a link in a search result, on a web page, in another profile), read its module, then access; the module states the cost model an improvised fetch would otherwise trip over. A roster row that already carries a platform URL has passed discovery, so reading it when the rubric needs it is ordinary research, not this step. Email addresses and phone numbers are not platforms: whenever one is discovered, collect it (roster backfill, §4.15) or discard it on your judgment of correctness and currency.
 
-Per platform: if the roster provides a URL, fetch and parse it directly (if §4.1 already fetched it, the data is captured — proceed to §4.4). Only where no URL is known, and within the platform's cost model, search for the person by name and location, identify the correct profile, then fetch it. Prefer the platform's site skill for the fetch: it routes through the user's serialised browser, which paces access so a burst of profile views does not throttle the address or flag the logged-in session (see `spar-methodology.md`, "Web fetching and browser serialisation"). If no serialised-browsing skill is available in your environment, hand-roll a headless chromium fetch instead; do not halt. Fetches follow the access cadence in §6.
+Per platform: if the roster provides a URL, fetch and parse it directly (if §4.1 already fetched it, the data is captured — proceed to §4.4). Only where no URL is known, and within the platform's cost model, search for the person by name and location, identify the correct profile, then fetch it. Fetch through the platform's site skill: it routes through the user's serialised browser, which paces access so a burst of profile views does not throttle the address or flag the logged-in session (see `spar-methodology.md`, "Web fetching and browser serialisation"). Fetches follow the access cadence in §6.
 
 ### 4.4 Verify the match and extract
 
@@ -77,15 +79,15 @@ Per platform: if the roster provides a URL, fetch and parse it directly (if §4.
 
 **From each parsed profile, extract:**
 - Current role, organisation, and location
-- Full career history with dates; education (degrees, certifications, current study)
-- Volunteer and mentorship roles; community groups or pages they admin or follow; public posts the segment's rubric values
+- *Full depth:* the whole career history with dates; education (degrees, certifications, current study)
+- *Full depth:* volunteer and mentorship roles; community groups or pages they admin or follow; public posts the segment's rubric values
 - The platform-specific signals its module names (employment currency, role-currency contradictions, parser quirks to cross-reference). A currency signal means the stated role may be ending — see §4.13. Where platforms disagree on the current role, weigh source currency per the modules.
 
-### 4.5 Keyword search for relevance terms
+### 4.5 Keyword search for relevance terms (full depth)
 
 Run keyword searches on the saved HTML using terms drawn from the segment's `rating_rubric` and `discovery_criteria`. This determines which relevance signals have direct evidence.
 
-If you fetched via a site skill that offers a keyword-search tool, use it, passing the saved profile HTML and the keyword list; if you hand-rolled a chromium fetch, grep the saved DOM for the keyword list.
+Where the site skill offers a keyword-search tool, use it, passing the saved profile HTML and the keyword list; otherwise grep the saved page for the list.
 
 **Choose keywords from two sources:**
 
@@ -93,11 +95,11 @@ If you fetched via a site skill that offers a keyword-search tool, use it, passi
 
 2. **Profile-derived keywords.** After parsing the profile, note organisations, projects, and people mentioned. Run a second keyword search for these to extract context (what the target said about them, how they are connected). This is the step that surfaces connections — not the initial parse.
 
-Run multiple rounds of keyword search if needed. The first round checks relevance to the segment's rubric. The second round chases threads found in the first (e.g. if the first round finds "FOSSASIA" 24 times, the second round searches for specific people and partner organisations mentioned in FOSSASIA context).
+Run multiple rounds of keyword search if needed. The first round checks relevance to the segment's rubric. The second round chases threads found in the first (e.g. if the first round finds one summit named 24 times, the second round searches for the people and partner organisations mentioned around it).
 
 ### 4.6 Research the target's employer
 
-Visit the website of the target's current employer (and previous employer if the current role is recent — under 12 months). Convert fetched HTML to plain text before processing — see `spar-methodology.md`, "Context management for fetched pages", for the method. Note:
+Visit the website of the target's current employer (and previous employer if the current role is recent — under 12 months). Convert fetched HTML to plain text before processing — see `spar-methodology.md`, "Context management for fetched pages", for the method. At the thin depth the visit serves the name (§4.1), the channel (§4.8) and the mechanism evidence; at the full depth, note:
 - The organisation's mission statement and focus areas
 - Programmes, labs, working groups, or convenings the organisation runs — especially those that involve external stakeholders, policymakers, or industry participants
 - Named leaders (the target's direct supervisor or programme director)
@@ -119,20 +121,20 @@ Skip if the roster `email` field already contains a valid, unmasked address (has
 
 1. Organisation website contact/about/team page (§4.6 already visited the site)
 2. Web search: `"{contact name}" "{organisation}" email`
-3. Industry directories: ABN Lookup, Yellow Pages, TrueLocal
+3. The business register and directories of the organisation's own country
 4. Pattern guess + verify: construct `firstname@domain` from the contact name and the organisation's website domain, then web-search the guessed address in quotes. Data-broker sites (ZoomInfo, RocketReach) often confirm or mask real addresses — a masked result like `s***@domain.com` that matches the guess validates the pattern. Also check `whois` for the domain's email convention.
 
 **Email format gate.** Before writing any value to the `email` column, verify it contains an `@` sign with a plausible user@domain shape. Contact form URLs (`via website...`), phone numbers, placeholders (`[email obtained during call]`), and descriptive text are not email addresses and must not be written to the email field. If the only contact method found is a web form or phone number, record it in `p_note` instead. This gate matches the §10 check 4 validation rule in `spar-S-sweep.md` and prevents non-email strings from inflating downstream progress counts.
 
 Never write a masked or redacted email address (e.g. `b***@example.com`) to the roster. If a data-broker result is masked and the unmasked form cannot be verified, leave the field empty. The post-profile guardrail will blank any masked email that slips through.
 
-**Name-mismatch check.** If the email found is associated with a different name than the roster contact — e.g. the roster says "Jess" but the contact page email is `athena@example.com` — do not write it yet. Investigate who currently runs the business; the result feeds the Person-vs-company correction in §4.15.
+**Name-mismatch check.** If the email found is associated with a different name than the roster contact — e.g. the roster says "Jane" but the contact page email is `sam@example.com` — do not write it yet. Investigate who currently runs the business; the result feeds the Person-vs-company correction in §4.15.
 
-**Shared-inbox rule.** Before writing an email, check whether the same address is already carried by another row in this segment at the same organisation. If it is, do not write the duplicate and do not overwrite the other row. Research for a non-shared alternate — a personal mailbox, a direct-dial address, a `firstname@` form — and write that. If no non-shared alternate can be found, leave this contact's `email` field empty; the approach will proceed via a platform channel or phone, or (if no reachable channel remains) the contact simply sits outside the approachable population until one is found. A single shared inbox (`admin@`, `info@`, `hello@`, `grow@`, etc.) must belong to at most one roster row per organisation, because two outreach emails landing in the same inbox on behalf of two different people reads as bulk outreach, not considered correspondence. The runtime post-validator (`roster_shared_inbox_collision`) will reject the second write and re-prompt for this rule.
+**Shared-inbox rule.** Before writing an email, check whether the same address is already carried by another row in this segment at the same organisation. If it is, do not write the duplicate and do not overwrite the other row. Research for a non-shared alternate — a personal mailbox, a direct-dial address, a `firstname@` form — and write that. If no non-shared alternate can be found, leave this contact's `email` field empty; the approach will proceed via a platform channel or phone, or (if no reachable channel remains) the contact simply sits outside the approachable population until one is found. A single shared inbox (`admin@`, `info@`, `hello@`, etc.) must belong to at most one roster row per organisation, because two outreach emails landing in the same inbox on behalf of two different people reads as bulk outreach, not considered correspondence. The runtime post-validator (`roster_shared_inbox_collision`) will reject the second write and re-prompt for this rule.
 
 If the email passes the format gate, the name check, and the shared-inbox check, declare it in the profile front matter's `roster_patch:` block; the harness applies it to the roster (an interactive, unharnessed session writes the roster itself per `spar-roster-format.md`, "Programmatic access"). If not found, record in `p_note` via the same block: "email search attempted [date]: no public email found."
 
-### 4.9 Web search for public activity beyond the fetched platforms
+### 4.9 Web search for public activity beyond the fetched platforms (full depth)
 
 Search for the target's name plus the rubric's topic terms, excluding the platforms already fetched:
 
@@ -143,18 +145,18 @@ Search for the target's name plus the rubric's topic terms, excluding the platfo
 
 This catches conference talks, blog posts, published papers, media quotes, and GitHub activity that do not appear on the fetched platforms. If nothing turns up, note "no public activity found beyond the fetched platforms" — the absence is informative for yield.
 
-### 4.10 Record what the target has said publicly
+### 4.10 Record what the target has said publicly (full depth)
 
 For each substantive public statement found (platform posts, blog posts, conference talks, mailing list messages), record:
 - The quote or close paraphrase
 - The source (platform post, blog URL, conference name and year)
 - What it reveals about the target's concerns, positions, or interests
 
-When the target has published an article or given a talk, extract specific recommendations, proposals, or calls to action — not just the general argument. "Wrote about XZ" is less useful to the A phase than "recommended SBOMs as industry standard and called for a partnership model among OSS communities, enterprises, and federal agencies." These specifics are the hooks the A phase uses to connect the target's stated views to the campaign's offering. A summary that captures the framing but omits the concrete proposals strips out the most actionable material.
+When the target has published an article or given a talk, extract specific recommendations, proposals, or calls to action — not just the general argument. "Wrote about water safety" is less useful to the A phase than "recommended swimming lessons in every primary school and called for a funding partnership between clubs, schools and local government." These specifics are the hooks the A phase uses to connect the target's stated views to the campaign's offering. A summary that captures the framing but omits the concrete proposals strips out the most actionable material.
 
 Do not invent or infer statements. The A phase sometimes fabricates a connection that does not exist and blames the profile for hinting at it; there is no structural guard, so the only defence is care here — imply nothing the source does not state.
 
-### 4.11 Record who the target knows
+### 4.11 Record who the target knows (full depth)
 
 From posts on the fetched platforms (names mentioned or tagged), profile connections visible in the parse, and web search results, identify people connected to the target whom the segment's rubric values. For each:
 - Name and their role/organisation
@@ -171,7 +173,7 @@ grep -ril "PERSON NAME" <instance-root>/segments/
 
 If the person already has a profile, update it to record the new information. Examples: "this person was replaced at [org] by [target] as of [date]" (useful for inferring the departing person's industry experience); or "this person is the predecessor of [target] at [org], whose background may inform [target]'s approach." Prior industry experience — especially if the person came from the operator side of the same industry — changes the register of any approach written for them. A profile that records only the current role and misses a relevant predecessor role causes the A phase to write to a stranger who already speaks the trade's language. If the person is in the roster but has no profile yet, note the cross-reference in the current profile; the next P run for that contact will pick it up. Do not touch approach files — approach regeneration in response to a cross-reference update is a graph-type transition that the batch pipeline does not currently handle (see #4).
 
-**New names for the roster.** Any person found in this step who is not already in the roster and who belongs to the population (by role, organisation, or community membership per the segment's `discovery_criteria`) is declared as a `rows_new` row (§4.15), with `discovered_via` leading with `profile:{stem}` and naming the mechanism (e.g. "profile:jane-doe-acme · tagged in a post about FOSSASIA Summit 2024 by Jane"). The row enters the roster in DISCOVERED state and the next T1 batch profiles it; nothing else has to be done for it here. A row whose seed data is thin (name only, no organisation or role) is still worth declaring: the row is what keeps a later sweep from re-finding the person as new.
+**New names for the roster.** Any person found in this step who is not already in the roster and who belongs to the population (by role, organisation, or community membership per the segment's `discovery_criteria`) is declared as a `rows_new` row (§4.15), with `discovered_via` leading with `profile:{stem}` and naming the mechanism (e.g. "profile:jane-doe-acme · tagged by Jane in a post about a regional summit"). The row enters the roster in DISCOVERED state and the next T1 batch profiles it; nothing else has to be done for it here. A row whose seed data is thin (name only, no organisation or role) is still worth declaring: the row is what keeps a later sweep from re-finding the person as new.
 
 ### 4.12 Judge usefulness to us
 
@@ -187,7 +189,7 @@ If the segment file carries a `rating_rubric`, apply it as written. If it does n
 
 A rating resting on a role cannot stand on a role whose currency the discovery contradicts (an open-to-work signal, a headline/experience mismatch, an "ex-"); a rating resting on reach cannot stand on an unverified size label. Where discovery unsettles the basis of the rating, re-derive the rating from what was verified, not from the prior basis. (Where the role has been vacated outright, §4.15 governs: exclude and find the replacement.)
 
-If profiling reveals that the contact cannot deliver the segment's intended outcome through the mechanism the segment describes — including cases where §4.2 was not run before profiling began — set `star_rating` to 0 and exclude per §4.2, which includes writing the short exclusion profile. This is distinct from a 1-star rating: a 1-star contact is targetable if band processing reaches that level; a 0-star contact is excluded.
+If profiling reveals that the contact does not operate through the segment's mechanism (§4.2) — including cases where §4.2 was not run before profiling began — set `star_rating` to 0 and exclude per §4.2, which includes writing the short exclusion profile. This is distinct from a 1-star rating: a 0-star contact is excluded; a 1-star contact stays in the population, and whether a campaign drafts for it is that campaign's `filter.min_star`.
 
 **The profile front matter is `star_rating`'s authoritative home; the roster TSV column is a derived cache.** The harness syncs the roster from the profile whenever the two differ (`spar::apply_roster_patch`), so a harnessed worker writes the value once, in the front matter, and touches no TSV. **Order still matters: write the profile body first, then compute the rating, then write the front matter** — computing after the body forces a fresh re-read of the rubric, so the recorded value reflects a matured reading rather than an early guess (observed failure when ordered the other way: a front-matter 4 against a rubric-derived 1 in one run). An interactive, unharnessed session updates both copies itself per `spar-roster-format.md`, "Programmatic access". `response_likelihood` is set by the A phase, not P; do not write it here.
 
@@ -195,9 +197,9 @@ If profiling reveals that the contact cannot deliver the segment's intended outc
 
 ### 4.14 Record profile yield
 
-Count substantive data points. The following all qualify as data points: (a) public statements with extractable quotes, (b) specific recommendations or proposals the target has made, (c) career history entries that demonstrate relevant domain experience (e.g. cybersecurity crisis communications background at a consultancy), (d) current institutional context that creates access the rubric values (e.g. employer runs policy education programmes for government staff, or operates a technology convening series), (e) named connections the rubric values, (f) recent activity indicating current engagement (posts, conference appearances, publications within the past 12 months). Do not count only quoted public statements — a target who has said little publicly but whose employer operates a programme the rubric values directly has more data points than a narrow reading would suggest.
+Count substantive data points. The following all qualify as data points: (a) public statements with extractable quotes, (b) specific recommendations or proposals the target has made, (c) career history entries that demonstrate relevant domain experience (e.g. cybersecurity crisis communications background at a consultancy), (d) current institutional context that creates access the rubric values (e.g. employer runs policy education programmes for government staff, or operates a technology convening series), (e) named connections the rubric values, (f) recent activity indicating current engagement (posts, conference appearances, publications within the past 12 months). Do not count only quoted public statements — a target who has said little publicly but whose employer operates a programme the rubric values directly has more data points than a narrow reading would suggest. At the thin depth, each dated, sourced item under `## Mechanism evidence` is a data point (a kind published, an act towards us, recent activity); the name, the channel and the rating are not.
 
-Record the count as `yield: N` in the profile front matter. Downstream consumers derive behaviour from the count; thresholds belong in the A-phase AESOP, not here. The A phase reads the count and budgets challenger passes from it (`spar-A-approach.md` §4.6). The thresholds live there, not here: P reports the count, A decides how to use it.
+Record the count as `yield: N` in the profile front matter, `0` when nothing qualifies. The A phase reads it and budgets challenger passes from it (`spar-A-approach.md` §4.6); the thresholds live there: P reports the count, A decides how to use it.
 
 ### 4.15 Verification corrections
 
@@ -208,11 +210,9 @@ Compare what the profile reveals against what the roster entry says. If any of t
 - Their location has changed
 - Contact details (email, platform URLs) are incorrect — update the wrong value
 
-**Backfill empty contact fields.** If the roster entry has a blank `email` or a blank platform URL column and profiling discovers a value for it, that is not a correction — it is a backfill, and it is equally required. For `email` specifically, §4.8 runs a dedicated search earlier in the procedure; this backfill clause covers emails discovered incidentally during later steps (§4.9 web search, §4.11 connections) that §4.8 did not find. The sweep phase often finds only a phone number; the profile phase researches the person and their organisation in depth and routinely surfaces emails (from company websites, directories, ABN records) and platform URLs that the sweep did not capture. These must be written back to the roster, not left only in the profile prose.
+**Backfill empty contact fields.** If the roster entry has a blank `email` or a blank platform URL column and profiling discovers a value for it, that is not a correction — it is a backfill, and it is equally required. For `email` specifically, §4.8 runs a dedicated search earlier in the procedure; this backfill clause covers emails discovered incidentally during later steps (§4.9 web search, §4.11 connections) that §4.8 did not find. The sweep phase often finds only a phone number; the profile phase researches the person and their organisation in depth and routinely surfaces emails (from company websites, directories, business registers) and platform URLs that the sweep did not capture. These must be written back to the roster, not left only in the profile prose.
 
-Backfilled emails must pass the §4.8 format gate, name-mismatch check, and shared-inbox rule — this section does not repeat those rules.
-
-Only backfill emails that belong to the contact or their organisation. An email discovered for a different person mentioned in the profile (e.g. a successor, a co-admin) belongs in that person's roster row, not this one.
+Backfilled emails must pass the §4.8 format gate, name-mismatch check, and shared-inbox rule — this section does not repeat those rules. Only backfill emails that belong to the contact or their organisation. An email discovered for a different person mentioned in the profile (e.g. a successor, a co-admin) belongs in that person's roster row, not this one.
 
 For each empty contact field where a value was discovered, declare the value in the front matter's `roster_patch:` block for the harness to apply (interactive sessions update the roster directly per `spar-roster-format.md`, "Programmatic access").
 
@@ -223,11 +223,11 @@ For each empty contact field where a value was discovered, declare the value in 
 
 A row that appears to belong to another segment, or out of scope, is not a discovery: it is a `date_excluded` with the reason in `p_note`. Interactive sessions write the same row to the roster and the same entry to the census directly, so both regimes leave identical records.
 
-**Person vs. company.** Ask whether the segment's `discovery_criteria` name this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it per §4.2, declare the current person as a new row (`rows_new`, below), and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it. This is the canonical application point for the §4.8 name-mismatch signal.
+**Person vs. company.** Ask whether the segment's `discovery_criteria` name this person or the person currently in this role at this company. If the answer is the role — which is true for most contacts discovered via directories or company listings — and profiling shows someone else now holds it, the roster entry is wrong. Invalidate it per §4.2, declare the current person as a new row (`rows_new`, above), and do not pass the displaced entry to the A phase. Delete any existing profile for them; git history preserves it. This is the canonical application point for the §4.8 name-mismatch signal.
 
-If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_excluded` and the reason, then search for their replacement at the same organisation. The replacement is declared as a new row (`rows_new`, below) with `discovered_via` recording they were found as a replacement ("profile:{stem} · successor in the role").
+If the person has left the relevant role entirely (e.g. left the industry, retired), mark the roster entry with `date_excluded` and the reason, then search for their replacement at the same organisation. The replacement is declared as a new row (`rows_new`, above) with `discovered_via` recording they were found as a replacement ("profile:{stem} · successor in the role").
 
-If after §4.8 the entry still has no email and no platform URL, the contact is unreachable through any messaging channel. That is recorded reality, not an exclusion: `date_excluded` stays empty (it records a human do-not-contact decision), the row keeps its place in the roster, and the progress report shows the contact in no channel's count until a channel is found. Do not produce a profile document; the research is better spent on contacts a campaign can reach. Phone-only contacts are not unreachable — they continue via the phone path (state-machine `has_phone_only`).
+If after §4.8 the entry still has no email, no platform URL and no phone, no channel reaches the contact. That is a status, not an exclusion: `date_excluded` stays empty, since nothing found rules the contact out and a channel found later reaches them; the row keeps its place in the roster, and the progress report shows the contact in no channel's count until then. Do not produce a profile document; the research is better spent on contacts a campaign can reach. A phone-only contact is reachable and continues via the phone path (state-machine `has_phone_only`).
 
 Record all corrections and backfills in the profile document under a "Verification corrections" section so the change history is traceable.
 
@@ -267,9 +267,9 @@ profile_date: 2026-04-12            # ISO date this profile was generated
 star_rating: 4                      # 1–5; 0 only on an exclusion profile, where dependent_data.date_excluded is set (§4.2, §5.4)
 yield: 7                            # integer — substantive data points counted per §4.14
 dependent_data:                     # snapshot of roster fields whose change invalidates this profile (see §5.3)
-  contact_name: Kara Struckman
-  organisation: Wilson Center
-  role: Director, Environmental Change and Security Program
+  contact_name: Jane Doe
+  organisation: Acme Foundation
+  role: Programme Director
   date_excluded: null
 ---
 ```
@@ -280,7 +280,7 @@ dependent_data:                     # snapshot of roster fields whose change inv
 
 ### 5.2 Body
 
-The body is prose that the A-phase agent reads to select an angle and draft a message. Section order is fixed; the validator does not check body content, but A-phase readers expect this layout.
+At the full depth the body is prose that the A-phase agent reads to select an angle and draft a message (§5.5 gives the thin one). Section order is fixed; the validator does not check body content, but A-phase readers expect this layout.
 
 ```markdown
 # Profile: [Full Name]
@@ -317,7 +317,7 @@ The body is prose that the A-phase agent reads to select an angle and draft a me
 
 ## [Domain-specific operational context, if applicable]
 
-[e.g. "FOSSASIA operational role" — only include if the target has operational experience the rubric values that does not fit in the career history table]
+[e.g. "Event operations role" — only include if the target has operational experience the rubric values that does not fit in the career history table]
 
 ## Mechanism evidence
 
@@ -349,17 +349,17 @@ Per §4.2 and §4.13, a contact excluded during profiling receives a short profi
 
 ### 5.5 Qualification-only profiles
 
-When the segment definition declares `target_type: qualification-only` (see `segment-schema.yaml`), the population qualifies by role and geography or sector, usually from a register, and the pitch varies little between members. The profile's job shrinks to four outcomes:
+The thin depth (§4) delivers four outcomes:
 
-1. The current buyer-role holder's name (§4.1), or, where the name search is exhausted, the organisation's published office channel (§4.1's organisation-segment rule).
+1. The name of whoever holds the qualifying role, or, where §4.1's search is exhausted, the organisation's published office channel.
 2. A verified written channel, backfilled to the roster (§4.15).
 3. Confirmation the contact fits the segment's mechanism (`discovery_criteria`), with the evidence found, and, where the segment lists `kinds`, each kind's status (§5.2, Mechanism evidence).
 4. `star_rating` against the segment rubric (§4.13).
 
-Body sections: `# Profile:` heading, `## Current role` (or contact), `## Mechanism evidence`, `## Relevance assessment`, `## Verification corrections`. Career history, certifications, volunteer work, public statements, and connection mapping are omitted; front matter is unchanged (§5.1). Research effort follows the outcomes: when a register or the organisation's own page already answers a question, verifying it is the work, and depth beyond the four outcomes is spend without a reader. The declaration is a claim about the population's plausible uses; if a campaign later needs cue-required treatment of these contacts, re-profile the affected stems at full depth (explicit-stem rebuild).
+Body sections, in §5.2's order: `# Profile:` heading, `## Current role` (or contact), `## Mechanism evidence`, `## Relevance assessment`, `## Verification corrections`; the front matter is §5.1's. Research effort follows the outcomes: when a register or the organisation's own page already answers a question, verifying it is the work.
 
 ## 6. Subagent delegation and sequencing
 
 If this procedure is delegated to a subagent, the calling agent provides the §2 inputs by path (the roster and its entry, the segment file, the sweep file for the census check in §4.15), this AESOP's path, and the output path.
 
-**Platform fetch cadence.** Declared and evidence-surfaced platforms share a per-site access cadence that the serialised-browsing skill paces across all workers, so fetches may run concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser exists and fetches are hand-rolled do they run one at a time. Non-platform research (web search, GitHub, registry lookups) is unpaced and always concurrent-safe. This rule is the canonical constraint referenced from §4.3, §4.4, and §4.11.
+**Platform fetch cadence.** Declared and evidence-surfaced platforms share a per-site access cadence that the serialised browser paces across all workers, so fetches may run concurrently (see `spar-methodology.md`, "Web fetching and browser serialisation"). Non-platform research (web search, GitHub, registry lookups) is unpaced and always concurrent-safe. This rule is the canonical constraint referenced from §4.3.
