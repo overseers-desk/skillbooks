@@ -42,7 +42,7 @@ The following are signs that merging would harm targeting precision or operation
 
 **Different collateral or procedure.** If one segment requires a trade product sheet for offshore distribution while the other requires a simple experience description with photos, the approach procedure diverges. A merged segment would force conditional logic into the campaign's plan block: "if the contact is type X, do this; if type Y, do that." Conditional plan blocks are a sign that the merge is wrong.
 
-**Asymmetric pipeline stage.** If one segment is at S&P3.AR1 (approaches being sent) while the other is at S&P1 (still discovering contacts), merging mid-campaign creates confusion about what stage the combined segment is in. The progress report would show a blended number that misrepresents both halves.
+**Asymmetric pipeline stage.** If one segment has approaches being sent while the other is at S&P1 (still discovering contacts), merging mid-campaign creates confusion about what stage the combined segment is in. The progress report would show a blended number that misrepresents both halves.
 
 ## 5. Sub-segments within a segment
 
@@ -82,6 +82,6 @@ Segment structure should be revisited at two points:
 
 **After S&P3, before AR begins.** The roster is complete. The progress report shows the actual contact counts and overlap. If two segments have high structural redundancy (same ask, same funnel) with only cosmetic differences, this is the cheapest time to merge — no approaches have been sent, so no coordination is needed.
 
-**After AR1, during R.** The first band of responses may reveal that the campaign's assumed segmentation does not match how contacts see themselves. A contact classified as "enterprise reseller" may respond as a small reseller who happens to also carry enterprise accounts. If this pattern recurs across multiple contacts, the segment split may not reflect reality.
+**After the first replies.** They may reveal that the campaign's assumed segmentation does not match how contacts see themselves. A contact classified as "enterprise reseller" may respond as a small reseller who happens to also carry enterprise accounts. If this pattern recurs across multiple contacts, the segment split may not reflect reality.
 
 Do not revisit segment structure mid-S&P unless discovery reveals that the two segments' search vocabularies are identical (the same queries find the same people). In that case, the segments are empirically the same and should be merged before P begins.

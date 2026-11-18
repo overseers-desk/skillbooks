@@ -5,7 +5,7 @@
 
 ## 1. When to use this procedure
 
-Use this procedure when the S&P prong is complete (or the human has approved early engagement), the contact has a profile document, and the campaign is ready to begin outreach. A processes contacts in bands ordered by response likelihood, as defined in the methodology. A produces drafts for human review; it does not send messages. The director approves, edits, or rejects every draft before anything is sent.
+Use this procedure when the S&P prong is complete (or the human has approved early engagement), the contact has a profile document, and the campaign is ready to begin outreach. A produces drafts for human review; it does not send messages. The director approves, edits, or rejects every draft before anything is sent.
 
 ## 2. Inputs
 
@@ -129,7 +129,7 @@ Anti-patterns to avoid in all drafted messages:
 - If prior correspondence exists, open with the thread. It is a stronger opener than anything constructed from scratch.
 - Credentials belong in supporting clauses, not their own paragraph.
 - The ask must be concrete enough that the recipient can say yes or no in one sentence.
-- Across a band, vary message structure. If openers read as a pattern, something has gone wrong.
+- Across the campaign's messages, vary message structure. If openers read as a pattern, something has gone wrong.
 - Every factual claim about the campaign's offering must be traceable to a source document and field. Record this in `fact_provenance`. If you cannot name the source, do not include the claim.
 
 ### 4.6 Spar the message (A2) — separate agent, not self-review
@@ -164,16 +164,17 @@ The default sender and BCC address come from the campaign YAML (`sender.name`, `
 
 **Contact-detail backfill (the one roster change A declares).** A contact detail is population-tier, not engagement: a verified email, or a corrected or newly found platform URL, is the same fact for any campaign, so its home is the roster. When A discovers one at send time (typically a member's shared email from the §4.2 contact-info lookup), A declares it in the approach file's root `roster_patch:` block and the harness applies it to the segment's roster, the same mediation P uses. A backfilled email must pass the same gates P uses: the format gate (an `@` with a plausible `user@domain` shape; no masked, placeholder, or non-email value), the name-mismatch check, and the shared-inbox rule (all in `spar-P-profile.md`); the harness rejects a masked value before it reaches the roster. This contact detail is the only roster change A declares; everything campaign-bound stays in the approach file.
 
-## 5. Band processing
+## 5. Approach types
 
-A processes contacts in bands ordered by response likelihood, as defined in the methodology. Within each band:
+The plan block (the segment's entry under `segments:` in `campaign.yaml`) defines the approach type for each segment. Common patterns across campaigns:
 
-1. Order contacts by star rating (highest first).
-2. Process sequentially, not in parallel. Each approach file may inform the next.
-3. After the band is complete, the human reviews all drafts, approves/edits/rejects each one, and sends approved messages.
-4. After responses arrive, the human revises the campaign for the next band: the order and framings of the plan blocks' `usps`, drafting guidance in `prompt_appendices`, per-contact observations in `r_note`.
+- **Firsthand-experience invitation:** An invitation to experience the offering firsthand. The ask is a visit date, not a commitment.
+- **Personal email with collateral:** A short message with attached or linked materials. The collateral must exist before the message is sent.
+- **Meeting request:** A request for a consultative conversation, typically referencing an existing organisational relationship.
+- **Exhibitor or participation enquiry:** An enquiry to an organiser about joining their event or programme.
+- **Interest gauge:** An open question — "Is this something your group does?" — used when no booking history exists to validate the fit.
 
-Re-read the campaign's plan block and `prompt_appendices` before starting each new band; R may have changed the `usps` order or framings, tone guidance, or the ask.
+Do not default to a generic email when the plan block prescribes a specific format.
 
 ## 6. Approach file structure
 
@@ -183,7 +184,7 @@ Approach files are YAML documents with a **closed vocabulary**: the runtime vali
 
 - Root: `decisions`, `rounds`, `angle_rationale`, `response_likelihood`, `a_note`, `fact_provenance`, `quality_checklist`, `profile_hash`, `authored_model`, `challenger_model`
 - `authored_model`, `challenger_model`: the full ids of the models the author's first call and the first challenger pass ran on. The A harness writes both after validation; A writes neither. Optional: an approach written by hand, or before the record existed, has none.
-- `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle, used for band ordering. It is the campaign-dependent counterpart to the segment's `star_rating` (general value to us): change the ask and this changes, which is why it lives here, not on the roster. `a_note`: A's one-line summary for R (angle, channel, warmth, language). Both are campaign-bound and live here, not in the segment roster.
+- `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle. It is the campaign-dependent counterpart to the segment's `star_rating` (general value to us): change the ask and this changes, which is why it lives here, not on the roster. `a_note`: A's one-line summary for R (angle, channel, warmth, language). Both are campaign-bound and live here, not in the segment roster.
 - `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. **When present, this key must be on the first line of the file** — no leading blank line, no preceding keys (issue #63). The position discipline lets a future fast-classify path detect staleness by reading only the first line; `validate_approach` emits `profile_hash_misplaced` if the rule is broken. When the hash is present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When the hash is absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T6/T7 instead.
 - `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth is determined fresh by A (§4.1) and informs the drafting; it is not a stored field.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
@@ -320,21 +321,9 @@ Before presenting an approach file for human review:
 3. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
 4. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? A profile that is silent on a topic is not evidence the contact cares about it.
 5. **Concreteness.** Can the recipient answer the ask in one sentence?
-6. **Band-level pattern check.** Read the openers of all messages in the band sequentially. If they sound like variations of the same template, revise.
+6. **Pattern check.** Read the openers of the campaign's messages sequentially. If they sound like variations of the same template, revise.
 7. **Final round email cardinality.** The `final` round contains at most one message with `channel: email`. Sequential email follow-ups belong in subsequent rounds; additional recipients belong in `cc`/`bcc`. Multi-channel finals (e.g. one email + one phone) are fine — the cap is on emails only. Enforced by `validate_approach` (`too_many_final_emails`).
 
-## 8. Approach types
+## 8. Subagent delegation
 
-The plan block (the segment's entry under `segments:` in `campaign.yaml`) defines the approach type for each segment. Common patterns across campaigns:
-
-- **Firsthand-experience invitation:** An invitation to experience the offering firsthand. The ask is a visit date, not a commitment.
-- **Personal email with collateral:** A short message with attached or linked materials. The collateral must exist before the message is sent.
-- **Meeting request:** A request for a consultative conversation, typically referencing an existing organisational relationship.
-- **Exhibitor or participation enquiry:** An enquiry to an organiser about joining their event or programme.
-- **Interest gauge:** An open question — "Is this something your group does?" — used when no booking history exists to validate the fit.
-
-Do not default to a generic email when the plan block prescribes a specific format.
-
-## 9. Subagent delegation
-
-Point the subagent at this file, the profile document, the roster entry, and the campaign YAML. Include the current band parameters. Do not transcribe SPAR-A content into the prompt — reference the file path.
+Point the subagent at this file, the profile document, the roster entry, and the campaign YAML. Do not transcribe SPAR-A content into the prompt — reference the file path.

@@ -50,7 +50,7 @@ The challenger runs on a Sonnet-class model rather than the Opus tier that draft
 
 ## Flow control is deterministic; the model writes content, not the order
 
-The phase order is fixed and the human decides when to cross a prong boundary. S runs to completion, then P, then a human review of roster and profiles, then A in bands ordered by response likelihood, with a human revision between bands. No agent decides that profiling is finished or that engagement should begin.
+The phase order is fixed and the human decides when to cross a prong boundary. S runs to completion, then P, then a human review of roster and profiles, then A. No agent decides that profiling is finished or that engagement should begin.
 
 The general-purpose agent platforms advocate the same separation, and then offer autonomy alongside it as a configuration choice. Here it is the structure: the dispatcher enumerates eligible contacts from the state machine and launches one session per unit of work, so there is no step at which an agent could elect to continue.
 

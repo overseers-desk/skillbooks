@@ -118,7 +118,7 @@ A sweep that reaches the autonomous bound without earning closure escalates rath
 
 ### S&P₄+ (human-initiated)
 
-S&P₁ through S&P₃ run autonomously. Any iteration beyond S&P₃ is human-initiated, triggered by names accumulated during AR (the R phase reliably surfaces a small number of new names per band — respondents mention colleagues, connections reveal relevant people, revised strategy identifies uncovered segments). These names enter the roster at iteration number max(current) + 1, go through the same S steps as any other contact, and their profiles feed back into subsequent AR bands. The quantity is typically small enough that S&P₄ or S&P₅ is a lightweight pass, not a full discovery cycle.
+S&P₁ through S&P₃ run autonomously. Any iteration beyond S&P₃ is human-initiated, triggered by names accumulated during AR (replies reliably surface a small number of new names — respondents mention colleagues, connections reveal relevant people). These names enter the roster at iteration number max(current) + 1, go through the same S steps as any other contact, and their profiles feed back into AR. The quantity is typically small enough that S&P₄ or S&P₅ is a lightweight pass, not a full discovery cycle.
 
 ## 7. The sweep file (sweep.yaml)
 
