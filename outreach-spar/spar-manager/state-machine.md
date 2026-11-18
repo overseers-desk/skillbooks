@@ -414,7 +414,7 @@ Categories (applied in the rightmost column):
 | roster_duplicate_name_org       | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_1) |
 | roster_shared_inbox_collision   | DISCOVERED → REPLIED                    | P-harness validate_and_correct  | TROUBLE (case_2) |
 | roster_personal_email_reused    | DISCOVERED → REPLIED                    | —                               | AUDIT (case_3)   |
-| roster_no_channel               | DISCOVERED → REPLIED                    | T2/T4 in_scope_channel (#56); P §4.8/§4.15 exclude, so a firing means a legacy profile or a guard regression | AUDIT |
+| roster_no_channel               | DISCOVERED → REPLIED                    | T2/T4 in_scope_channel (#56); P §4.15 keeps such a row, unprofiled; fires until a channel is found | AUDIT |
 | roster_no_sweep_iteration       | DISCOVERED → REPLIED                    | —                               | AUDIT            |
 | roster_zero_star_no_invalid     | DISCOVERED → REPLIED                    | —                               | REAL (enforces `spar-roster-format.md` checklist 6: star 0 requires date_excluded) |
 | merged_contact_name             | DISCOVERED → REPLIED                    | —                               | WORK-HYGIENE     |

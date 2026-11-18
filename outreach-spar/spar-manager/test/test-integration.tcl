@@ -1,35 +1,7 @@
 #!/usr/bin/env tclsh9.0
-package require yaml
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir test-helpers.tcl]
 package require spar::state
-
-set State [spar::State new]
-
-# ════════════════════════════════════════════════════════════════════════
-# 13. Golden snapshot (real campaign data)
-# ════════════════════════════════════════════════════════════════════════
-section "13. Golden snapshot (real campaign data)"
-
-set campaign_dir [file normalize [file join $script_dir .. .. .. .. oldmill segments-outreach.spar]]
-if {![file isdirectory $campaign_dir]} {
-    puts "  SKIP: campaign directory not found ($campaign_dir)"
-} else {
-    # 13a. line-dance segment
-    set ld_seg [file join $campaign_dir line-dance]
-    set ld_contacts [$State classify_segment $ld_seg [approach_dir_of $ld_seg]]
-    set ld_counts [spar::progress_counts $ld_contacts]
-    assert_eq [dict get $ld_counts valid] 12 "golden line-dance: valid=12"
-    assert_eq [dict get $ld_counts profiled] 12 "golden line-dance: profiled=12"
-    assert_eq [dict get $ld_counts star3] 10 "golden line-dance: star3=10"
-
-    # 13b. community-organisation segment
-    set co_seg [file join $campaign_dir community-organisation]
-    set co_contacts [$State classify_segment $co_seg [approach_dir_of $co_seg]]
-    set co_counts [spar::progress_counts $co_contacts]
-    assert_eq [dict get $co_counts valid] 73 "golden community-organisation: valid=73"
-    assert_eq [dict get $co_counts profiled] 73 "golden community-organisation: profiled=73"
-}
 
 # ════════════════════════════════════════════════════════════════════════
 # 20. --json integration test (spar-progress)

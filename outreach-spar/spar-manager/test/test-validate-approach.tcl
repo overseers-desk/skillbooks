@@ -500,23 +500,23 @@ section "25. spar::build_reply_headers — reply header derivation"
 
 # Parent dict captured at A-time from `courier read`.
 set brh_parent_root [dict create \
-    account admin-oldmill \
+    account admin-acme \
     folder {[Gmail]/All Mail} \
     uid 34937 \
     message_id "<root@example.com>" \
     references {} \
-    subject "Requirement of Chef" \
-    from "Andrew Kerby <andrew@chefsontherun.example>" \
-    to {director@oldmill.example} \
+    subject "Quote for Catering" \
+    from "Alex Sample <alex@catering.example>" \
+    to {director@acme.example} \
     cc {}]
 
 # 25a. Plain reply (not reply-all) — To = parent.from; Cc empty.
-set brh1 [spar::build_reply_headers $brh_parent_root director@oldmill.example 0]
-assert_eq [dict get $brh1 to] "andrew@chefsontherun.example" \
+set brh1 [spar::build_reply_headers $brh_parent_root director@acme.example 0]
+assert_eq [dict get $brh1 to] "alex@catering.example" \
     "build_reply_headers: To derived from parent.from (email-only)"
 assert_eq [dict get $brh1 cc] "" \
     "build_reply_headers: Cc empty when reply_all=0"
-assert_eq [dict get $brh1 subject] "Re: Requirement of Chef" \
+assert_eq [dict get $brh1 subject] "Re: Quote for Catering" \
     "build_reply_headers: Subject prepends Re:"
 assert_eq [dict get $brh1 in_reply_to] "<root@example.com>" \
     "build_reply_headers: In-Reply-To = parent.message_id"
@@ -527,20 +527,20 @@ assert_eq [dict get $brh1 references] "<root@example.com>" \
 set brh_parent_multi [dict create \
     message_id "<thread2@example.com>" \
     references {<root2@example.com>} \
-    subject "demi-chef" \
-    from "Tania Flint <tania@chefsontherun.example>" \
-    to {director@oldmill.example, ops@chefsontherun.example} \
-    cc {colleague@oldmill.example}]
-set brh2 [spar::build_reply_headers $brh_parent_multi director@oldmill.example 1]
-assert_eq [dict get $brh2 to] "tania@chefsontherun.example" \
+    subject "Menu question" \
+    from "Tess Demo <tess@catering.example>" \
+    to {director@acme.example, ops@catering.example} \
+    cc {colleague@acme.example}]
+set brh2 [spar::build_reply_headers $brh_parent_multi director@acme.example 1]
+assert_eq [dict get $brh2 to] "tess@catering.example" \
     "build_reply_headers: reply-all keeps To = parent.from"
-# Cc is comma+space-joined; sender (director@oldmill.example) and the new To
-# (tania@chefsontherun.example) are excluded.
-assert_match [dict get $brh2 cc] "*ops@chefsontherun.example*" \
+# Cc is comma+space-joined; sender (director@acme.example) and the new To
+# (tess@catering.example) are excluded.
+assert_match [dict get $brh2 cc] "*ops@catering.example*" \
     "build_reply_headers: reply-all Cc keeps original other recipients"
-assert_match [dict get $brh2 cc] "*colleague@oldmill.example*" \
+assert_match [dict get $brh2 cc] "*colleague@acme.example*" \
     "build_reply_headers: reply-all Cc keeps original Cc"
-assert_eq [string match "*director@oldmill.example*" [dict get $brh2 cc]] 0 \
+assert_eq [string match "*director@acme.example*" [dict get $brh2 cc]] 0 \
     "build_reply_headers: reply-all Cc excludes the sender's own address"
 
 # 25c. References chain — append parent.message_id to existing chain.
@@ -550,21 +550,21 @@ assert_eq [dict get $brh2 references] "<root2@example.com> <thread2@example.com>
 # 25d. Re: dedup — parent already starts with Re: → don't double-prefix.
 set brh_parent_re [dict create \
     message_id "<m@x>" \
-    subject "RE: Requirement of Chef" \
-    from "andrew@example.com" \
+    subject "RE: Quote for Catering" \
+    from "alex@example.com" \
     references {}]
-set brh3 [spar::build_reply_headers $brh_parent_re director@oldmill.example 0]
-assert_eq [dict get $brh3 subject] "RE: Requirement of Chef" \
+set brh3 [spar::build_reply_headers $brh_parent_re director@acme.example 0]
+assert_eq [dict get $brh3 subject] "RE: Quote for Catering" \
     "build_reply_headers: Subject preserves existing Re: prefix (no double Re:)"
 
 # 25e. Re[2]: dedup — bracketed counter form is also a Re prefix.
 set brh_parent_re2 [dict create \
     message_id "<m@x>" \
-    subject "Re\[2\]: Requirement of Chef" \
-    from "andrew@example.com" \
+    subject "Re\[2\]: Quote for Catering" \
+    from "alex@example.com" \
     references {}]
-set brh4 [spar::build_reply_headers $brh_parent_re2 director@oldmill.example 0]
-assert_eq [dict get $brh4 subject] "Re\[2\]: Requirement of Chef" \
+set brh4 [spar::build_reply_headers $brh_parent_re2 director@acme.example 0]
+assert_eq [dict get $brh4 subject] "Re\[2\]: Quote for Catering" \
     "build_reply_headers: Subject preserves Re\[N\]: prefix"
 
 # 25f. parent.references already ends with parent.message_id → don't duplicate.
@@ -573,7 +573,7 @@ set brh_parent_dup [dict create \
     references {<a@x> <m@x>} \
     subject "X" \
     from "a@b.com"]
-set brh5 [spar::build_reply_headers $brh_parent_dup director@oldmill.example 0]
+set brh5 [spar::build_reply_headers $brh_parent_dup director@acme.example 0]
 assert_eq [dict get $brh5 references] "<a@x> <m@x>" \
     "build_reply_headers: References does not duplicate parent.message_id"
 
@@ -598,18 +598,18 @@ rounds:
   messages:
   - channel: email
     reply_all: false
-    body: Following up on the Chef requirement we discussed.
+    body: Following up on the catering quote we discussed.
     actioned_date: null
     replied_date: null
     parent:
-      account: admin-oldmill
+      account: admin-acme
       folder: "[Gmail]/All Mail"
       uid: 34937
       message_id: "<root@example.com>"
-      subject: Requirement of Chef
-      from: Andrew Kerby <andrew@example.com>
+      subject: Quote for Catering
+      from: Alex Sample <alex@example.com>
 }]
-set rv1_issues [spar::validate_approach $rv1_path "andrew@example.com" "Test Contact"]
+set rv1_issues [spar::validate_approach $rv1_path "alex@example.com" "Test Contact"]
 # Reply mode: To/Subject/desync checks don't apply (To is derived). Only
 # structural and reply-specific gates run.
 set rv1_errors [issues_with_severity $rv1_issues error]
@@ -629,9 +629,9 @@ rounds:
     parent:
       message_id: "<root@example.com>"
       subject: Original
-      from: andrew@example.com
+      from: alex@example.com
 }]
-set rv2_issues [spar::validate_approach $rv2_path "andrew@example.com" "Test Contact"]
+set rv2_issues [spar::validate_approach $rv2_path "alex@example.com" "Test Contact"]
 set rv2_missing [issues_with_code $rv2_issues email_missing_content]
 assert_eq [llength $rv2_missing] 0 \
     "validate_approach: reply mode without subject → no email_missing_content"
@@ -648,9 +648,9 @@ rounds:
     parent:
       message_id: "<root@example.com>"
       subject: Original
-      from: andrew@example.com
+      from: alex@example.com
 }]
-set rv3_issues [spar::validate_approach $rv3_path "andrew@example.com" "Test Contact"]
+set rv3_issues [spar::validate_approach $rv3_path "alex@example.com" "Test Contact"]
 set rv3_missing [issues_with_code $rv3_issues email_missing_content]
 assert_eq [llength $rv3_missing] 1 \
     "validate_approach: reply mode without body → email_missing_content"
@@ -670,9 +670,9 @@ rounds:
       folder: f
       uid: 1
       subject: x
-      from: andrew@example.com
+      from: alex@example.com
 }]
-set rv4_issues [spar::validate_approach $rv4_path "andrew@example.com" "Test Contact"]
+set rv4_issues [spar::validate_approach $rv4_path "alex@example.com" "Test Contact"]
 set rv4_errors [issues_with_code $rv4_issues reply_missing_parent_message_id]
 assert_eq [llength $rv4_errors] 1 \
     "validate_approach: reply with no parent.message_id → reply_missing_parent_message_id"
@@ -690,10 +690,10 @@ rounds:
     parent:
       message_id: "<root@example.com>"
       subject: x
-      from: andrew@example.com
+      from: alex@example.com
       bogus_key: nope
 }]
-set rv5_issues [spar::validate_approach $rv5_path "andrew@example.com" "Test Contact"]
+set rv5_issues [spar::validate_approach $rv5_path "alex@example.com" "Test Contact"]
 set rv5_unknown [issues_with_code $rv5_issues unknown_key_parent]
 assert_eq [llength $rv5_unknown] 1 \
     "validate_approach: parent with unknown key → unknown_key_parent"
