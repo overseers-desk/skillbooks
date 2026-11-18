@@ -747,7 +747,7 @@ s_note: $s_note"
             set file_items "1. Method: $method — read §4.1 through §4.5 (warmth, channel, language, angle, draft). Skip §4.6 (spar) — that is handled separately.
 2. Fact sources: [join $fact_sources {, }] — read in full. These are the ground truth about the organisation and the offer. The plan block (the segments.$segment block in $campaign_file) lists which USPs apply to this segment and whether each is functional or emotional. Use those USPs, do not invent your own from the sources.
 $profile_a1_instruction
-4. Campaign plan block: read the \"segments.$segment\" block in $campaign_file (campaign.yaml) — \"message_goal\" for the specific objective this message must achieve (e.g. secure a firsthand visit, collect a roster expression of interest); \"objective\" for the long-term commercial goal, not what this message asks for; \"first_ask\" for approach style guidance; and the USP framings. If the block has subsegments, determine which applies to this contact and use its overrides where present. The segment file $goal_path holds only the population definition (discovery_criteria, rating_rubric)."
+4. Campaign plan block: read the \"segments.$segment\" block in $campaign_file (campaign.yaml) — \"message_goal\" for the specific objective this message must achieve (e.g. agree to a call, register interest); \"objective\" for the long-term commercial goal, not what this message asks for; \"first_ask\" for approach style guidance; and the USP framings. If the block has subsegments, determine which applies to this contact and use its overrides where present. The segment file $goal_path holds only the population definition (discovery_criteria, rating_rubric)."
             set item_num 5
             if {$antifacts ni {"" "none"}} {
                 append file_items "
@@ -756,7 +756,7 @@ ${item_num}. Antifact checklist: $antifacts — check your draft against every f
             }
             if {$campaign_principles ne ""} {
                 append file_items "
-${item_num}. Campaign principles: $campaign_principles — read the \"Profile-informed approaches\" section. Do not ask the recipient for information already captured in their profile."
+${item_num}. Campaign principles: $campaign_principles — read in full. Do not ask the recipient for information already captured in their profile."
             }
 
             set author_prompt [string map [list \

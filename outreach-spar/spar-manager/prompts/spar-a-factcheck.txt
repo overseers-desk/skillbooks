@@ -3,7 +3,7 @@
 Break character. Now check every factual claim in the draft message against the authority below. Flag any errors or claims that cannot be verified.
 
 __FACTCHECK_FILES__
-Do not flag drive-time or distance claims (e.g. "X minutes from Y"). These are approximate figures and do not need fact-check verification.
+Do not flag a figure the draft itself presents as approximate (e.g. "about 20 minutes", "roughly 200 members"); it needs no check.
 
 For each issue found, write: "FACTCHECK: [claim in draft] — [what the source says or that no source exists]"
 Any issue found here means VERDICT: REVISE, whatever the reaction said.

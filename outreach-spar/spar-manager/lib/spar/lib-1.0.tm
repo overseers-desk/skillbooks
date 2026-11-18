@@ -161,7 +161,6 @@ proc spar::yaml_parse {text} {
 }
 
 # load_campaign — parse campaign YAML, resolve relative paths against YAML dir
-# Port of spar-a-batch.sh lines 27-67
 proc spar::load_campaign {yaml_path} {
     set yaml_path [file normalize $yaml_path]
     if {![file exists $yaml_path]} {
@@ -576,7 +575,6 @@ proc spar::roster_core_columns {} {
 }
 
 # load_roster — read TSV, return list of dicts keyed by header columns
-# Port of spar-p-batch.sh lines 129-167 and spar_lib.py load_roster()
 proc spar::load_roster {tsv_path} {
     set fd [open $tsv_path r]
     fconfigure $fd -translation binary
@@ -1402,7 +1400,6 @@ proc spar::get_max_passes {profile_path} {
 }
 
 # lang_instruction — map language code to instruction string
-# Port of spar-a-batch.sh lines 81-86
 proc spar::lang_instruction {code} {
     switch -- $code {
         en-gb   { return "Use British English." }
@@ -1431,13 +1428,13 @@ proc spar::channel_desc {row} {
     set c [join $conn ", "]
 
     if {[llength $conn] > 0 && $has_email && $has_phone} {
-        return "Per SPAR-A §4.2: connection channel ($c) + email + phone = prepare (1) connection message, (2) email after acceptance or 4–5 days, (3) phone follow-up if no email reply after 3 days."
+        return "Per SPAR-A §4.2: connection channel ($c) + email + phone = prepare (1) connection message, (2) email after acceptance or wait_days, (3) phone follow-up if no reply within wait_days."
     } elseif {[llength $conn] > 0 && $has_email} {
-        return "Per SPAR-A §4.2: connection channel ($c) + email, no phone = prepare (1) connection message, (2) email after acceptance or 4–5 days."
+        return "Per SPAR-A §4.2: connection channel ($c) + email, no phone = prepare (1) connection message, (2) email after acceptance or wait_days."
     } elseif {[llength $conn] > 0} {
         return "Per SPAR-A §4.2: connection channel ($c), no email = connection message only, with slightly more context than usual since there is no email follow-up."
     } elseif {$has_email && $has_phone} {
-        return "Per SPAR-A §4.2: email + phone, no connection channel = prepare (1) email, (2) phone follow-up script if no reply after 3 days."
+        return "Per SPAR-A §4.2: email + phone, no connection channel = prepare (1) email, (2) phone follow-up if no reply within wait_days."
     } elseif {$has_email} {
         return "Per SPAR-A §4.2: email only, no phone, no connection channel = email only."
     } elseif {$has_phone} {

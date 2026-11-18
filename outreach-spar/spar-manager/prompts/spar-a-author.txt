@@ -19,7 +19,7 @@ __CHANNEL_DESC__
 
 - The sender is __SENDER_LINE__.
 - Today is __TODAY__. Name days relative to it where the message turns on time.
-- The email must stand alone for a recipient who has never heard of the sender's organisation. Introduce who you are, what the organisation is, and why you are writing.
+- The email must stand alone: introduce who you are, what the organisation is and why you are writing, leaving out only what the warmth level (§4.1) shows they know.
 - Read the plan block (the `segments.<segment>` block in the campaign YAML) to determine the correct approach type. Do not default to a generic email.
 - __LANG_INSTRUCTION__
 - No emoji.
