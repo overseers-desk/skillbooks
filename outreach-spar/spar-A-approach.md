@@ -33,7 +33,7 @@ This gate exists because A is the first point where profile content and campaign
 
 ### 4.1 Determine the warmth level
 
-Warmth is engagement state, not profile content (INVARIANTS.md I1; SPAR-P §4.7): it changes between campaigns and the first message sent falsifies it, so A determines it fresh at contact time. Assess it from the contact's approach file (prior rounds and replies, if any) and a current IMAP check for prior correspondence with the sender's accounts. The dispatcher prefetch (§4.1.1) supplies the IMAP evidence.
+Warmth is engagement state, not profile content (INVARIANTS.md I1; SPAR-P §4.7): it changes between campaigns and the first message sent falsifies it, so A determines it fresh at contact time. Assess it from the contact's approach file (prior rounds and replies, if any) and a current IMAP check for prior correspondence with the sender's accounts. The brief's prefetch section supplies the IMAP evidence.
 
 When the brief's prefetch section says it did not run (courier absent on the host, or its account list failing), the IMAP evidence is missing, not empty: no mailbox was searched. Assess warmth from the approach file alone; where that shows no prior round or reply, draft cold, the one opener that presumes no relationship, and say in `a_note` that the mail check did not run, so the operator reads the warmth as unestablished rather than settled and can run A again once it does.
 
@@ -69,14 +69,14 @@ Read the plan block (the segment's entry under `segments:` in `campaign.yaml`) f
 
 Channel selection rules, in priority order:
 
-- **Connection channel + email + phone:** Prepare three pieces in sequence: (1) connection message, (2) email after the connection is accepted or after 4–5 days, one body whose opener is chosen at send time (§4.1), (3) phone follow-up if the email gets no reply after 3 days.
-- **Email + phone, no connection channel:** Email first, phone follow-up if no reply after 3 days.
+- **Connection channel + email + phone:** Prepare three pieces in sequence: (1) connection message, (2) email after the connection is accepted or after the campaign's `wait_days`, one body whose opener is chosen at send time (§4.1), (3) phone follow-up if the email gets no reply within its `wait_days`.
+- **Email + phone, no connection channel:** Email first, phone follow-up if no reply within its `wait_days`.
 - **Email only:** Email only.
 - **Connection channel, no email:** Connection message only, with slightly more context than usual since there is no email follow-up.
 - **Phone only:** Phone script only; this is the only scenario where phone is the first touch. The email that follows the call is drafted after it, as a later round, once the call has yielded an address and something to follow. The address goes to the roster through §4.8.
 - **No reachable channel:** Flag for human resolution.
 
-The approach file includes all pieces for the selected combination. Sequencing and timing between pieces (days to wait, conditions to trigger each step) follow methodology rules and are not restated per contact.
+The approach file includes all pieces for the selected combination. Sequencing and timing between pieces (days to wait, conditions to trigger each step) are each follow-up channel's `wait_days` and `wait_condition` in the campaign (`spar-campaign-yaml.md`).
 
 **Verify the email at source for platform-connected contacts.** Where the contact's platform lets a member publish their own contact info (the platform module says whether and how), read the member's self-listed email before relying on an `email` value that was pattern-derived rather than confirmed. Prefer the shared address over a pattern guess: a guessed address often reaches the wrong inbox or a generic one, while the shared address is what the member chose to publish. A newly found address is written back to the roster (§4.8). If the lookup returns no shared email, fall back to the best address on file and mark it unverified in the approach `a_note`.
 
@@ -134,29 +134,23 @@ Anti-patterns to avoid in all drafted messages:
 
 ### 4.6 Spar the message (A2) — separate agent, not self-review
 
-A2 tests whether the draft would land well with the recipient and whether it contains factual errors. A2 must run as a separate agent process with its own context — not as self-review within the A1 agent.
+A2 tests whether the draft would land with the recipient and whether it contains factual errors. It runs as a separate agent with its own context, not as self-review by A1.
 
-**A2 is mandatory for all contacts.** Low-yield profiles need sparring more than high-yield ones: less evidence means more room to hallucinate relevance. (The one override is the campaign's cost ladder: `a_max_passes: 0` in `campaign.yaml` disables the challenger entirely; see `spar-campaign-yaml.md`.) Passes are budgeted by profile yield:
+**A2 is mandatory for all contacts.** Thin profiles invite hallucinated relevance. (The one override is the campaign's cost ladder: `a_max_passes: 0` in `campaign.yaml` disables the challenger entirely; see `spar-campaign-yaml.md`.) Passes are budgeted by profile yield: up to 3 at yield ≥ 6, otherwise 1.
 
-- yield ≥ 6: up to 3 passes
-- yield 3–5: 1 pass
-- yield < 3: 1 pass
+Spawn one subagent (C2), Sonnet-class (it shifts behaviour more authentically under persona instructions), for two sequential steps.
 
-Spawn one subagent (C2) to perform two sequential steps. Use a Sonnet-class model — less capable models shift behaviour more authentically under persona instructions.
+**Step 1 — Role-play (context-isolated).** C2 receives only the profile, the draft, today's date (a time-bound offer is judged by it) and any prior correspondence the sender's mail index holds with the recipient. No campaign or method files. C2 goes through the draft sentence by sentence: for each phrase that talks as if the recipient already held something, it says where that resolves (an earlier sentence, the correspondence, something the recipient would know, or nowhere) and scores 0 to 5 how far. It then reacts in character, a stranger unless the correspondence shows otherwise, naming which points would stop a reply and which it would only ask about, and ends with `REPLY_PCT`, its percent chance of replying. If the message is in a non-default language, C2 answers in it.
 
-**Step 1 — Role-play (context-isolated).** C2 receives only the profile, the draft, and today's date. No campaign files, no method files. The date is the recipient's own situation, like their role and calendar, and a time-bound offer is judged against it. C2 reacts in character as the recipient — a stranger who has never heard of the sender. No rubric, no structured format: a natural reaction. If the message is in a non-default language, C2 responds in that language.
+**Step 2 — Fact-check.** C2 breaks character and checks every factual claim in the draft against the campaign YAML (the `usps:` registry and the segment plan block) and the anti-claims file it names, taking a USP's claim as written (the campaign was verified when defined). It opens a `fact_sources` document only where a `rests_on` sends it to one, and states corrections as what the source says. A figure the draft presents as approximate needs no check. Role-play comes first so source knowledge cannot taint the persona.
 
-**Step 2 — Fact-check.** C2 breaks character and checks every factual claim in the draft, then appends corrections. Its authority is the campaign YAML: the `usps:` registry and the segment plan block, with the anti-claims file. A USP's claim is taken as written there, because the campaign was verified once when it was defined and C2 runs once per contact. C2 opens a `fact_sources` document only where a `rests_on` sends it to one. Corrections state what the source says rather than citing a file path.
-
-The two steps must be sequential: role-play before fact-check, so source-file knowledge does not contaminate the persona.
-
-A1 reads both steps. If C2 identifies a misalignment or a factual error, A1 revises and the pass repeats. When the persona raised more than three points, A1 sorts each before revising: answer in this email, leave for the reply, or absorb by reframing a sentence already there; the draft changes only for the first and third, and the sorting is recorded in the round's `revision_note`. The pass criterion matches: a question the reader would ask on replying is not a concern; only what would stop the reply is. Record all drafts and C2 responses in the approach file — the human needs to see how the message evolved.
+C2 says REVISE when a phrase scores 0 to 2, a point would stop the reply, or the fact-check finds an issue; otherwise DONE. On REVISE, A1 revises and the pass repeats. When the persona raised more than three points, A1 sorts each before revising: answer in this email, leave for the reply, or absorb by reframing a sentence already there; only the first and third change the draft, and the sorting goes in the round's `revision_note`. A question the reader would ask on replying is not a concern. Record all drafts and C2 responses in the approach file.
 
 ### 4.7 Assemble the approach file
 
 Write the approach file as `campaigns/{campaign}/{stem}.yaml` following the structure shown in §6. Run the §7 quality checklist before presenting for human review.
 
-The default sender and BCC address come from the campaign YAML (`sender.name`, `sender.email`, `sender.bcc`) and do not need to be written into the approach file. Write a `decisions.sender` block only when this specific outreach should go from someone other than the campaign's default sender — e.g. a colleague with a prior relationship to the contact. When present, `decisions.sender.email` (and optional `sender.name`) overrides the campaign sender for this contact; per-message `bcc` / `cc` likewise override `sender.bcc`. All of this is resolved by the T3 dispatcher at send time.
+The default sender and BCC address come from the campaign YAML (`sender.name`, `sender.email`, `sender.bcc`) and do not need to be written into the approach file. Write a `decisions.sender` block only when this specific outreach should go from someone other than the campaign's default sender — e.g. a colleague with a prior relationship to the contact. When present, `decisions.sender.email` (and optional `sender.name`) overrides the campaign sender for this contact; per-message `bcc` / `cc` likewise override `sender.bcc`. All of this is resolved by the T6 dispatcher at send time.
 
 ### 4.8 Engagement notes and the roster backfill
 
@@ -178,23 +172,23 @@ Do not default to a generic email when the plan block prescribes a specific form
 
 ## 6. Approach file structure
 
-Approach files are YAML documents with a **closed vocabulary**: the runtime validator (`spar::validate_approach` in `spar-manager/lib/spar/validate-1.0.tm`, which holds the authoritative key set) rejects any key you write outside the set below, emitting plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
+Approach files are YAML documents with a **closed vocabulary**: the runtime validator (`spar::validate_approach`, whose key set is `spar-manager/rules/approach.rules`) rejects any key you write outside the set below, emitting plain-language errors such as `unknown key 'X' at <level>` or `'X' at <level> belongs at <other_level>`.
 
 **Canonical keys by level:**
 
-- Root: `decisions`, `rounds`, `angle_rationale`, `response_likelihood`, `a_note`, `fact_provenance`, `quality_checklist`, `profile_hash`, `authored_model`, `challenger_model`
+- Root: `decisions`, `rounds`, `angle_rationale`, `response_likelihood`, `a_note`, `fact_provenance`, `quality_checklist`, `profile_hash`, `roster_patch`, `roster_patch_applied`, `r_note`, `authored_model`, `challenger_model`; the harness stamps `roster_patch_applied` and the reviewer writes `r_note`, not A.
 - `authored_model`, `challenger_model`: the full ids of the models the author's first call and the first challenger pass ran on. The A harness writes both after validation; A writes neither. Optional: an approach written by hand, or before the record existed, has none.
-- `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle. It is the campaign-dependent counterpart to the segment's `star_rating` (general value to us): change the ask and this changes, which is why it lives here, not on the roster. `a_note`: A's one-line summary for R (angle, channel, warmth, language). Both are campaign-bound and live here, not in the segment roster.
-- `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. **When present, this key must be on the first line of the file** — no leading blank line, no preceding keys (issue #63). The position discipline lets a future fast-classify path detect staleness by reading only the first line; `validate_approach` emits `profile_hash_misplaced` if the rule is broken. When the hash is present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When the hash is absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T6/T7 instead.
-- `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T3 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth is determined fresh by A (§4.1) and informs the drafting; it is not a stored field.
+- `response_likelihood`: integer percentage (0–100), A's estimate of reply probability under the chosen angle. Unlike the roster's `star_rating`, it changes with the ask, so it lives here. `a_note`: A's one-line summary for the human reviewer (angle, channel, warmth, language).
+- `profile_hash`: `sha256:<64-hex>` — SHA-256 of the profile file's bytes at generation time, prefixed `sha256:`. Computed by the A harness; A copies the value verbatim. Optional in the schema: manually-authored approaches and any path that did not read a profile have no hash to record. **When present, this key must be on the first line of the file** — no leading blank line, no preceding keys (issue #63). The position discipline lets a future fast-classify path detect staleness by reading only the first line; `validate_approach` emits `profile_hash_misplaced` if the rule is broken. When the hash is present and the profile exists, mismatch is an error (`profile_hash_mismatch`) — the source profile was rebuilt or edited, and the approach must be regenerated. When the hash is absent, `validate_approach` accepts the file and the state machine routes any divergence (deleted / edited profile) through T3/T4 instead.
+- `decisions`: `channel`, `language`, `angle`, `sender`, `channel_detail`, `subsegment`. Populate `sender` (with `name` and `email`) only when this contact should be emailed by someone other than the campaign's default sender; otherwise omit the block. At T6 send time the dispatcher uses `decisions.sender.email` in preference to `sender.email` from the campaign YAML. See §4.7. Warmth is determined fresh by A (§4.1) and informs the drafting; it is not a stored field.
 - `round`: `type` (draft/review/final), `number`, `messages`, `verdict`, `fact_check`, `in_character`, `chosen_usps`, `revision_note`, `notes`, `replies`, `antifact_check`
 - `message`: `channel`, `subject`, `body`, `to`, `actioned_date`, `message_id`, `replied_date`, `reply_summary`, `script`, `text`, `bcc`, `cc`, `director_note`, `to_note`, `phone_note`, `invitation_unavailable`, `parent`, `reply_all`. The first message in the `final` round is the first touch; the dispatcher reads message order as channel priority (`spar::final_auto_send_channel`).
-- `parent` (inside an email message): `account`, `folder`, `uid`, `message_id`, `references`, `subject`, `from`, `to`, `cc`. Its presence is what makes the message a reply on an existing thread: captured verbatim from `courier read` on the parent message, and T3 derives In-Reply-To, References, the `Re:` Subject, and the To/Cc set from these fields at send time.
+- `parent` (inside an email message): `account`, `folder`, `uid`, `message_id`, `references`, `subject`, `from`, `to`, `cc`. Its presence is what makes the message a reply on an existing thread: captured verbatim from `courier read` on the parent message, and T6 derives In-Reply-To, References, the `Re:` Subject, and the To/Cc set from these fields at send time.
 - `invitation_unavailable: true` on a platform-channel message: records the observed fact that this profile offers no way to attach a note to a connection invitation (a follow-first creator profile, an invitation limit, an email-required gate). The dispatcher then sends the note text as a direct message instead of an invitation; the platform may still refuse, so treat that path as uncertain. Absent, the first touch takes the form the channel's platform module states, within the module's length cap; a message over the cap is an authoring error to shorten, and the validator enforces the cap mechanically.
 - `fact_provenance` / `fact_check` items: `claim`, `source` (plus `result`, `note`, `correction` for `fact_check` only)
 - `script` items (inside a message): `point`, `text`
 
-**Structural rules:** At least one round must have `type: final`. Draft and review rounds require `number`. Email messages must have `subject` or `body`. A reply (an email message carrying a `parent` block) needs only `body` — the Subject is derived from `parent.subject` — and must carry a non-empty `parent.message_id` so T3 can construct the threading headers.
+**Structural rules:** At least one round must have `type: final`. Draft and review rounds require `number`. Email messages must have `subject` or `body`. A reply (an email message carrying a `parent` block) needs only `body` — the Subject is derived from `parent.subject` — and must carry a non-empty `parent.message_id` so T6 can construct the threading headers.
 
 **Example skeleton — terse, but covers every canonical key so you never need to invent one:**
 
@@ -211,7 +205,7 @@ decisions:
   subsegment: boutique-operator
 angle_rationale: Why this angle fits this contact.
 response_likelihood: 75
-a_note: Angle, channel, warmth, language, and any notable drafting consideration (A's one-line summary for R).
+a_note: Angle, channel, warmth, language, and any notable drafting consideration (A's one-line summary for the human reviewer).
 rounds:
   - type: draft
     number: 1
@@ -234,7 +228,7 @@ rounds:
           - point: Opening hook
             text: "Hi — calling from ..."
           - point: Ask
-            text: "Would Tuesday work for a site visit?"
+            text: "Would Tuesday work for a short call?"
         phone_note: Best time to call is Tuesday morning.
   - type: review
     number: 1
@@ -301,9 +295,7 @@ rounds:
           cc: ""
 ```
 
-Omit `subject`/`to` from a reply message — T3 derives them from the `parent` block. `reply_all: true` preserves the original Cc set (minus the chosen sender's own address); `reply_all: false` (default) replies to the parent's From only.
-
-The file is `campaigns/{campaign}/{stem}.yaml`, named by the contact's roster stem.
+Omit `subject`/`to` from a reply message — T6 derives them from the `parent` block. `reply_all: true` preserves the original Cc set (minus the chosen sender's own address); `reply_all: false` (default) replies to the parent's From only.
 
 **Parser constraints (tcllib yaml 0.4.2):**
 
@@ -316,7 +308,7 @@ The file is `campaigns/{campaign}/{stem}.yaml`, named by the contact's roster st
 
 Before presenting an approach file for human review:
 
-1. **YAML structure self-check.** The dispatcher runs `spar::validate_approach` automatically post-assembly; if the file is malformed it loops you back with the exact errors. Do **not** invoke `tclsh`, `spar::validate_approach`, or any validator subprocess yourself — `tclsh -c` is not a valid flag and the call blocks indefinitely on stdin, which wedges the whole harness chain. Your self-check is mental: root keys drawn from §6's canonical set; every round has `type` and `number`; the `final` round contains ≤1 `channel: email` message; email addresses are real (not placeholders). Campaign-wide validation is reported separately by `spar-progress`.
+1. **YAML structure self-check.** The dispatcher runs `spar::validate_approach` automatically post-assembly; if the file is malformed it loops you back with the exact errors. Do **not** invoke `tclsh`, `spar::validate_approach`, or any validator subprocess yourself — `tclsh -c` is not a valid flag and the call blocks indefinitely on stdin, which wedges the whole harness chain. Your self-check is mental: root keys drawn from §6's canonical set; every round has `type`, and every draft and review round a `number`; the `final` round contains ≤1 `channel: email` message; email addresses are real (not placeholders). Campaign-wide validation is reported separately by `spar-progress`.
 2. **Coverage and completeness.** `fact_provenance` covers every factual claim in the final draft, and `a_note` tells the whole story. Presence of these fields, and of `chosen_usps` on each draft and final round, is flagged by `validate_approach` on unsent work (warnings); what it cannot judge is whether the provenance list reaches every claim and the note says enough, which is this check.
 3. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
 4. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? A profile that is silent on a topic is not evidence the contact cares about it.
