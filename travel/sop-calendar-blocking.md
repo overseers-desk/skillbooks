@@ -194,11 +194,11 @@ Structured calendar block specifications:
 
    **Detail mode (default):**
 
-   Create separate calendar entries for each flight segment with terminal details.
+   Create separate calendar entries for each flight segment with terminal details. A flight entry spans its buffers, so its start and end are not the flight's; the title carries the departure and arrival times as the ticket prints them.
 
    | Item Type | Summary | Location |
    |-----------|---------|----------|
-   | Flight segment | `✈ [Flight#] [Origin]-[Dest]` | `[Airport Name] Terminal [X]` |
+   | Flight segment | `✈ [Flight#] [Origin] [HH:MM] → [Dest] [HH:MM]` | `[Airport Name] Terminal [X]` |
    | Online check-in | `📱 Check-in PNR: [PNR] ([Flight1]+[Flight2]+...)` | (omit) |
    | Train | `🚄 [Operator] [Origin]-[Dest]` | `[Station Name]` |
    | Car rental pickup | `🚗 Pickup: [Company] [Location]` | `[Airport/City] [Company] [Branch]` |
