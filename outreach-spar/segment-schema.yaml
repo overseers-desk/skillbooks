@@ -186,7 +186,7 @@ discovery_criteria: |
 #     - member: ...             # a market member the operation already knows
 #       provenance: ...         # where it is known from (ledger, mailbox, ...)
 #   rounds: []
-#   next_round:               # optional; a human stages proposals between rounds
+#   next_round:               # optional
 #   rows_to_verify: []        # optional; roster rows a later source disputed
 #
 # Parser constraints (tcllib yaml 0.4.2), each checked by the validator:

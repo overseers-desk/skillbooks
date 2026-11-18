@@ -235,8 +235,6 @@ Do not replicate SPAR-S content in prompts — copies drift and cannot be correc
 
 **Model tier:** spawn each subagent at Sonnet tier (`model: sonnet` or the spawning tool's equivalent). The tier in this document's header binds the launcher; a subagent spawned without it inherits the launcher's own model.
 
-**Access cadence:** Signed-in platform lookups share a per-site access cadence that the serialised-browsing skill paces across every worker at once, so subagents may be dispatched concurrently (see `spar-methodology.md`, "Web fetching and browser serialisation"). Searches that do not sign in (web, register, directory) are exempt.
-
-This AESOP does not prescribe how to access social media; each operator uses their own method and tooling. The access-cadence constraint is the only requirement.
+**Access cadence:** Page fetches that need a browser, signed-in platform lookups included, go through the serialised browser, which paces each site's access across every worker at once, so subagents may be dispatched concurrently; a host without it gets an error (`spar-methodology.md`, "Web fetching and browser serialisation"). Searches that do not sign in (web, register, directory) are exempt.
 
 **Context management for web page fetching:** covered in `spar-methodology.md`, "Web fetching and browser serialisation" — convert pages to plain text before they enter context, one page at a time.

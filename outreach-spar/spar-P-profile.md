@@ -48,7 +48,7 @@ If the roster entry has no `contact_name`, the organisation has been discovered 
 - If the roster entry has no `stem`, write one using the organisation slug (e.g. `acme-coaches` for "Acme Coaches"). This ensures the row is identifiable in the state machine.
 - Record in `p_note`: "name search attempted [date]: no individual identified via website, declared platforms, registers, directories, web search."
 - Set `date_excluded` to today with reason "name search exhausted ([date])." This is the P-phase's responsibility — sweep does not set `date_excluded` for entries whose individual was never identified.
-- Exception, organisation-population segments: where the segment's population is organisations (facilities, villages, clubs) and the organisation publishes a written office channel, an exhausted name search alone does not exclude. The organisation remains a targetable row contacted at its office address; record "no individual identified ([date])" in `p_note` and rate the organisation on the segment rubric. Whether to write to an office address is each campaign's call. Exclusion still applies when the row fails the mechanism test (§4.2).
+- Exception, organisation-population segments: where the segment's population is organisations (facilities, villages, clubs) and the organisation publishes a written office channel, an exhausted name search alone does not exclude. The organisation remains a targetable row contacted at its office address; record "no individual identified ([date])" in `p_note` and rate the organisation on the segment rubric. Exclusion still applies when the row fails the mechanism test (§4.2).
 - Do not proceed to §4.2 or produce a profile document. The roster entry is the permanent record.
 
 ### 4.2 Validate fit against segment file

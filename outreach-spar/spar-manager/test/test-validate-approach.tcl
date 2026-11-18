@@ -534,8 +534,7 @@ set brh_parent_multi [dict create \
 set brh2 [spar::build_reply_headers $brh_parent_multi director@acme.example 1]
 assert_eq [dict get $brh2 to] "tess@catering.example" \
     "build_reply_headers: reply-all keeps To = parent.from"
-# Cc is comma+space-joined; sender (director@acme.example) and the new To
-# (tess@catering.example) are excluded.
+# Cc is comma+space-joined; the sender and the new To are excluded.
 assert_match [dict get $brh2 cc] "*ops@catering.example*" \
     "build_reply_headers: reply-all Cc keeps original other recipients"
 assert_match [dict get $brh2 cc] "*colleague@acme.example*" \

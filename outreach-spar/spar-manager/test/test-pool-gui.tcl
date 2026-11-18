@@ -3,8 +3,7 @@
 # TransitionTree wiring.
 #
 # Skipped when no Tk display is available: wish9.0 not on PATH, no
-# DISPLAY, and no Xvfb to start one. The integration tests file uses
-# the same conditional-skip idiom for its golden-campaign dependency.
+# DISPLAY, and no Xvfb to start one.
 
 set script_dir [file dirname [file normalize [info script]]]
 source [file join $script_dir test-helpers.tcl]

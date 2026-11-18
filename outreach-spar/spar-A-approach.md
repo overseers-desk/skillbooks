@@ -33,9 +33,9 @@ This gate exists because A is the first point where profile content and campaign
 
 ### 4.1 Determine the warmth level
 
-Warmth is engagement state, not profile content (INVARIANTS.md I1; SPAR-P §4.7): it changes between campaigns and the first message sent falsifies it, so A determines it fresh at contact time. Assess it from the contact's approach file (prior rounds and replies, if any) and a current IMAP check for prior correspondence with the sender's accounts. The brief's prefetch section supplies the IMAP evidence.
+Warmth is engagement state, not profile content (INVARIANTS.md I1; SPAR-P §4.7): it changes between campaigns and the first message sent falsifies it, so A determines it fresh at contact time. Assess it from the contact's approach file (prior rounds and replies, if any) and a current IMAP check for prior correspondence with the sender's accounts. The dispatcher prefetch supplies the IMAP evidence.
 
-When the brief's prefetch section says it did not run (courier absent on the host, or its account list failing), the IMAP evidence is missing, not empty: no mailbox was searched. Assess warmth from the approach file alone; where that shows no prior round or reply, draft cold, the one opener that presumes no relationship, and say in `a_note` that the mail check did not run, so the operator reads the warmth as unestablished rather than settled and can run A again once it does.
+When the dispatcher prefetch says it did not run (courier absent on the host, or its account list failing), the IMAP evidence is missing, not empty: no mailbox was searched. Assess warmth from the approach file alone; where that shows no prior round or reply, draft cold, the one opener that presumes no relationship, and say in `a_note` that the mail check did not run, so the operator reads the warmth as unestablished rather than settled and can run A again once it does.
 
 | Level | Opener style |
 |---|---|
@@ -69,14 +69,14 @@ Read the plan block (the segment's entry under `segments:` in `campaign.yaml`) f
 
 Channel selection rules, in priority order:
 
-- **Connection channel + email + phone:** Prepare three pieces in sequence: (1) connection message, (2) email after the connection is accepted or after the campaign's `wait_days`, one body whose opener is chosen at send time (§4.1), (3) phone follow-up if the email gets no reply within its `wait_days`.
-- **Email + phone, no connection channel:** Email first, phone follow-up if no reply within its `wait_days`.
+- **Connection channel + email + phone:** Prepare three pieces in sequence: (1) connection message, (2) email after the connection is accepted or after the email slot's `wait_days` from the request, one body whose opener is chosen at send time (§4.1), (3) phone follow-up if the email draws no reply within the phone slot's `wait_days` of sending.
+- **Email + phone, no connection channel:** Email first, phone follow-up if it draws no reply within the phone slot's `wait_days` of sending.
 - **Email only:** Email only.
 - **Connection channel, no email:** Connection message only, with slightly more context than usual since there is no email follow-up.
 - **Phone only:** Phone script only; this is the only scenario where phone is the first touch. The email that follows the call is drafted after it, as a later round, once the call has yielded an address and something to follow. The address goes to the roster through §4.8.
 - **No reachable channel:** Flag for human resolution.
 
-The approach file includes all pieces for the selected combination. Sequencing and timing between pieces (days to wait, conditions to trigger each step) are each follow-up channel's `wait_days` and `wait_condition` in the campaign (`spar-campaign-yaml.md`).
+The approach file includes all pieces for the selected combination. Timing between pieces is the follow-up slots' `wait_days` and `wait_condition` (`spar-campaign-yaml.md`).
 
 **Verify the email at source for platform-connected contacts.** Where the contact's platform lets a member publish their own contact info (the platform module says whether and how), read the member's self-listed email before relying on an `email` value that was pattern-derived rather than confirmed. Prefer the shared address over a pattern guess: a guessed address often reaches the wrong inbox or a generic one, while the shared address is what the member chose to publish. A newly found address is written back to the roster (§4.8). If the lookup returns no shared email, fall back to the best address on file and mark it unverified in the approach `a_note`.
 
@@ -129,20 +129,20 @@ Anti-patterns to avoid in all drafted messages:
 - If prior correspondence exists, open with the thread. It is a stronger opener than anything constructed from scratch.
 - Credentials belong in supporting clauses, not their own paragraph.
 - The ask must be concrete enough that the recipient can say yes or no in one sentence.
-- Across the campaign's messages, vary message structure. If openers read as a pattern, something has gone wrong.
+- Across the campaign's messages (§4.4 item 4), vary message structure. If openers read as a pattern, something has gone wrong.
 - Every factual claim about the campaign's offering must be traceable to a source document and field. Record this in `fact_provenance`. If you cannot name the source, do not include the claim.
 
 ### 4.6 Spar the message (A2) — separate agent, not self-review
 
 A2 tests whether the draft would land with the recipient and whether it contains factual errors. It runs as a separate agent with its own context, not as self-review by A1.
 
-**A2 is mandatory for all contacts.** Thin profiles invite hallucinated relevance. (The one override is the campaign's cost ladder: `a_max_passes: 0` in `campaign.yaml` disables the challenger entirely; see `spar-campaign-yaml.md`.) Passes are budgeted by profile yield: up to 3 at yield ≥ 6, otherwise 1.
+**A2 is mandatory for all contacts.** Low yield invites hallucinated relevance. (The one override is the campaign's cost ladder: `a_max_passes: 0` in `campaign.yaml` disables the challenger entirely; see `spar-campaign-yaml.md`.) Passes are budgeted by profile yield: up to 3 at yield ≥ 6, otherwise 1.
 
-Spawn one subagent (C2), Sonnet-class (it shifts behaviour more authentically under persona instructions), for two sequential steps.
+Spawn one subagent (C2), Sonnet-class, for two sequential steps: a model weaker than A1's shifts more authentically under persona instructions.
 
 **Step 1 — Role-play (context-isolated).** C2 receives only the profile, the draft, today's date (a time-bound offer is judged by it) and any prior correspondence the sender's mail index holds with the recipient. No campaign or method files. C2 goes through the draft sentence by sentence: for each phrase that talks as if the recipient already held something, it says where that resolves (an earlier sentence, the correspondence, something the recipient would know, or nowhere) and scores 0 to 5 how far. It then reacts in character, a stranger unless the correspondence shows otherwise, naming which points would stop a reply and which it would only ask about, and ends with `REPLY_PCT`, its percent chance of replying. If the message is in a non-default language, C2 answers in it.
 
-**Step 2 — Fact-check.** C2 breaks character and checks every factual claim in the draft against the campaign YAML (the `usps:` registry and the segment plan block) and the anti-claims file it names, taking a USP's claim as written (the campaign was verified when defined). It opens a `fact_sources` document only where a `rests_on` sends it to one, and states corrections as what the source says. A figure the draft presents as approximate needs no check. Role-play comes first so source knowledge cannot taint the persona.
+**Step 2 — Fact-check.** C2 breaks character and checks every factual claim in the draft against the campaign YAML (the `usps:` registry and the segment plan block) and the anti-claims file it names, taking a USP's claim as written (the campaign was verified when defined). It opens a `fact_sources` document only where a `rests_on` sends it to one, and states corrections as what the source says. A figure the draft presents as approximate needs no check. Role-play comes first, so source knowledge cannot taint it.
 
 C2 says REVISE when a phrase scores 0 to 2, a point would stop the reply, or the fact-check finds an issue; otherwise DONE. On REVISE, A1 revises and the pass repeats. When the persona raised more than three points, A1 sorts each before revising: answer in this email, leave for the reply, or absorb by reframing a sentence already there; only the first and third change the draft, and the sorting goes in the round's `revision_note`. A question the reader would ask on replying is not a concern. Record all drafts and C2 responses in the approach file.
 
@@ -313,7 +313,7 @@ Before presenting an approach file for human review:
 3. **Presupposition test.** Does any sentence tell the recipient something they already know about themselves? If so, restructure.
 4. **Manufactured-connection test.** Is every claim of shared interest traceable to a specific profile data point? A profile that is silent on a topic is not evidence the contact cares about it.
 5. **Concreteness.** Can the recipient answer the ask in one sentence?
-6. **Pattern check.** Read the openers of the campaign's messages sequentially. If they sound like variations of the same template, revise.
+6. **Pattern check.** Read the openers of the campaign's other approach files. If they sound like variations of the same template, revise.
 7. **Final round email cardinality.** The `final` round contains at most one message with `channel: email`. Sequential email follow-ups belong in subsequent rounds; additional recipients belong in `cc`/`bcc`. Multi-channel finals (e.g. one email + one phone) are fine — the cap is on emails only. Enforced by `validate_approach` (`too_many_final_emails`).
 
 ## 8. Subagent delegation

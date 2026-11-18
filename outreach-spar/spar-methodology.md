@@ -171,7 +171,7 @@ The A pass for a contact is itself an author/challenger exchange. Two role lette
 - **A** — the author, the drafting agent (the A1 sub-phase above).
 - **C** — the challenger, the context-isolated agent that reads the same profile and reacts as the recipient would (the second agent, called C2 above).
 
-`A/C{n}` marks the nth challenge round: `A/C1` is the challenger's first reaction to the draft, `A/C2` the second, and so on. The slash is always written, so the round marker never collapses into the bare agent name `C2`. The number of rounds is capped by profile yield (the A2 yield ladder above): every contact gets at least one A/C round, and up to three where the profile is rich. Like the split form, `A/C{n}` is task-assignment notation ("you are running A/C2: here is the draft and the challenger's first reaction"), not a campaign-position coordinate.
+`A/C{n}` marks the nth challenge round: `A/C1` is the challenger's first reaction to the draft, `A/C2` the second, and so on. The slash is always written, so the round marker never collapses into the bare agent name `C2`. The number of rounds is capped by profile yield (the A2 yield ladder above): a campaign's `a_max_passes` can lower the cap, and 0 turns the challenger off. Like the split form, `A/C{n}` is task-assignment notation ("you are running A/C2: here is the draft and the challenger's first reaction"), not a campaign-position coordinate.
 
 ## Artefacts
 
