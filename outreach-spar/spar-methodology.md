@@ -171,7 +171,7 @@ The A pass for a contact is itself an author/challenger exchange. Two role lette
 - **A** — the author, the drafting agent (the A1 sub-phase above).
 - **C** — the challenger, the context-isolated agent that reads the same profile and reacts as the recipient would (the second agent, called C2 above).
 
-`A/C{n}` marks the nth challenge round: `A/C1` is the challenger's first reaction to the draft, `A/C2` the second, and so on. The slash is always written, so the round marker never collapses into the bare agent name `C2`. The number of rounds is capped by profile yield (the A2 yield ladder above); below the threshold the draft stands unsparred and there is no A/C round. Like the split form, `A/C{n}` is task-assignment notation ("you are running A/C2: here is the draft and the challenger's first reaction"), not a campaign-position coordinate.
+`A/C{n}` marks the nth challenge round: `A/C1` is the challenger's first reaction to the draft, `A/C2` the second, and so on. The slash is always written, so the round marker never collapses into the bare agent name `C2`. The number of rounds is capped by profile yield (the A2 yield ladder above): every contact gets at least one A/C round, and up to three where the profile is rich. Like the split form, `A/C{n}` is task-assignment notation ("you are running A/C2: here is the draft and the challenger's first reaction"), not a campaign-position coordinate.
 
 ## Artefacts
 
@@ -181,34 +181,16 @@ The A pass for a contact is itself an author/challenger exchange. Two role lette
 | Per-segment plan block (objective, USP framings, message goal, first ask, funnel, sequencing) | campaign planner | A | `campaign.yaml` `segments.<name>` |
 | Profile documents | P | A, human review | Segment folder (`segments/{segment}/`) |
 | Communications log files (`{stem}.yaml`, engagement: messages, `response_likelihood`, `a_note`, `r_note`) | A; replies and follow-ups extend the file over time | A subsequent runs, R | Campaign folder (`campaigns/{campaign}/`) |
-| Segment summary (search vocabulary, invisible segments) | S&P₃ | Future S&P runs on same segment | Segment directory |
 
 ## Web fetching and browser serialisation
 
-S and P both research from the open web, and some of what they read sits behind rate limiting or a login (signed-in platform sites, busier directory sites). The hazard is access cadence: hit such a site too fast or too often and it throttles the address or, when a logged-in session is in play, flags the profile, which then needs repair before further work. Both phases reach these sites the same way, so the rule lives here once rather than in each phase.
+S and P both research from the open web, and some of what they read sits behind rate limiting or a login (signed-in platform sites, busier directory sites). Hit such a site too fast or too often and it throttles the address or flags the logged-in profile. Both phases reach these sites the same way, so the rule lives here once.
 
-Prefer the user's serialised-browsing skill when it is available. It paces access across every SPAR worker at once, which is what the cadence problem needs: S and P are not sequential at the dataset level — a contact is swept before it is profiled, but while some records are profiled others are still being swept — so several workers may want the same site at once, and only a serialiser spanning them all keeps the cadence safe. A per-phase or per-worker throttle cannot, because it cannot see the other phase's traffic.
-
-When no serialised-browsing skill is available in the environment, hand-roll a headless chromium fetch; do not halt for lack of the skill. For P the dispatcher resolves the host's invocation and passes it to the worker; elsewhere invoke `chromium` from `PATH` with `--headless --dump-dom` and the host's user-data-dir. Reference such a skill by the capability it provides, never by a wrapper or script name.
+Fetches that need a browser go through the serialised browser, which the serialised-browsing skill provides. It paces access across every SPAR worker at once, which a per-phase or per-worker throttle cannot: S and P overlap, since some records are profiled while others are still being swept, so several workers may want the same site at once. The dispatcher resolves the fetch command and passes it to the worker; spar never launches a browser itself, and a host without the serialiser gets an error. Reference the skill by the capability it provides, never by a wrapper or script name.
 
 ### Context management for fetched pages
 
-Raw or even processed HTML consumes far more context tokens than the facts it yields. A single About page can return thousands of tokens; a session processing 20 websites will exhaust its context on page content before it finishes. Convert fetched HTML to plain text or markdown before bringing content into the conversation:
-
-```bash
-# chromium fetch → pandoc → plain text (discards all markup)
-chromium --headless --dump-dom \
-  --virtual-time-budget=5000 --window-size=1920,3000 \
-  "URL" 2>/dev/null \
-  | pandoc -f html -t plain --wrap=none > /tmp/page-text.txt
-
-# Then extract the needed fact from the plain text file
-grep -i 'founder\|director\|owner\|manager' /tmp/page-text.txt
-```
-
-For batch website lookups (e.g. resolving contact names for 20 organisations), process one page at a time: fetch, extract the fact, discard the page content, then fetch the next. Do not fetch multiple pages in parallel via WebFetch — the results all land in context simultaneously and cannot be discarded.
-
-If `WebFetch` (the built-in tool) is used instead of headless chromium, write a tight extraction prompt that returns only the specific fact needed (e.g. "Return only the owner or director's full name and role, nothing else"). Even with a tight prompt, WebFetch results are large enough that more than 5–6 pages in one session will strain context.
+A rendered page costs far more context tokens than the facts it yields. Send the fetch to a file, convert it to plain text (`pandoc -f html -t plain --wrap=none`), and extract the needed fact with `grep`. Process one page at a time, fetching, extracting, then moving on; parallel WebFetch calls land all their results in context at once. With `WebFetch`, ask a tight extraction prompt that returns only the fact needed; more than 5-6 pages a session still strain context.
 
 ## Model assignment
 
