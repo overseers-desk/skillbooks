@@ -8,7 +8,7 @@ Each decision below names the alternative it beat and what it cost to beat it. W
 
 A contact's pipeline position is not stored anywhere. It is derived from which files exist: a roster row alone means discovered, a roster row plus `segments/{segment}/{stem}.md` means profiled, plus `campaigns/{campaign}/{stem}.yaml` means approached. There is no index, no status column, and no `segment` field inside any roster row, profile, or approach file. Reassigning a contact between segments is therefore a file move, and the new state re-derives itself from what now exists.
 
-The relational alternative was argued in full and rejected. Its case: a roster row and its approach data would share a foreign key, so an email corrected in one place would propagate to the send list without file scanning; staleness would be a single query instead of a script that globs YAML and regex-parses `to:` fields; channel routing could be evaluated at send time from current roster data rather than baked in at drafting time; cross-segment duplicate detection and progress reporting would be joins rather than custom code.
+The relational alternative was argued and rejected. Its case: a roster row and its approach data would share a foreign key, so an email corrected in one place would propagate to the send list without file scanning; staleness would be a single query instead of a script that globs YAML and regex-parses `to:` fields; channel routing could be evaluated at send time from current roster data rather than baked in at drafting time; cross-segment duplicate detection and progress reporting would be joins rather than custom code.
 
 What beat it: the artefacts are read by a human before anything is sent. A director reviews drafts, and a YAML file in a git diff shows what changed and who changed it. A row in a relational store does not. The same property serves the AI workers, which write files and cannot write to a schema they do not hold open.
 
@@ -22,7 +22,7 @@ The roster is a TSV file with no quoting: a tab separates fields, a newline sepa
 
 What it beat: `sqlite3` in `.mode tabs` is literal on output but not on input: `.import` applies CSV quoting rules, so a value beginning with a double quote swallows the following record and the row count drops, with a stderr warning and exit 0. It stays as the documented backup for a machine without mlr, because that fault is loud enough to check for and the tool is on every machine. `trdsql` was tried first and dropped when its UPDATE, INSERT and DELETE turned out to no-op silently on file sources: it imports the file into a temporary in-memory database, modifies that, and exits 0 having touched nothing (issue #10). `q` corrupted files on round-trip by treating a carriage return as a record separator. Python's `csv` writer re-quotes every field, so every line of the diff reads as changed.
 
-The residual cost is that a literal writer will write anything it is given. A newline assigned into a value lands in the file as a newline and splits the record. The first time this was missed, 21 records were rejoined from 26 physical lines.
+The residual cost is that a literal writer will write anything it is given. A newline assigned into a value lands in the file as a newline and splits the record. The first miss left 21 records split across 26 physical lines.
 
 TSV rather than CSV for the same reason one level up: roster fields hold quoted speech, URLs, and free text that make comma quoting a liability.
 
@@ -30,7 +30,7 @@ TSV rather than CSV for the same reason one level up: roster fields hold quoted 
 
 The CLI and the Tk GUI execute transitions through the same objects, the same shared dispatcher, and the same worker procs. A send path reachable from only one front end is forbidden by invariant, because the two surfaces would drift and the user's `--jobs` budget would mean different things in each.
 
-Tcl is what makes one implementation possible: `tclsh` runs the CLI and `wish` runs the GUI from the same sources. The port from the original shell scripts also removed the `yq` and `jq` dependencies, since tcllib carries yaml and json, and replaced GNU parallel with the language's own event loop.
+Tcl makes one implementation possible: `tclsh` runs the CLI and `wish` the GUI, from the same sources. The port from the original shell scripts also removed the `yq` and `jq` dependencies, since tcllib carries yaml and json, and replaced GNU parallel with the language's own event loop.
 
 ## Concurrency is coroutines on the event loop, not threads
 
@@ -42,7 +42,7 @@ Threads are still used in the two places that are genuinely CPU-bound: the test 
 
 ## The challenger is a separate process, not self-review
 
-The A phase drafts a message, then tests it against an agent that role-plays the recipient. That agent runs as its own process with its own context, holding only the profile and the draft.
+The A phase drafts a message, then tests it against an agent that role-plays the recipient. That agent runs as its own process with its own context, holding the profile, the draft and any prior mail between sender and contact.
 
 The first version ran the role-play inside the drafting agent, which had every campaign file open. The simulated recipient therefore knew what a cold stranger could not, and returned reactions that were favourable because they were informed. Instructing an agent to disregard what it knows does not work. Context isolation is structural, not procedural, and the only way to get an agent that does not know something is to start one that never did.
 
@@ -70,7 +70,7 @@ So examples in procedure documents are visibly generic, real ground truth arrive
 
 ## Building on a general agent platform was considered and declined
 
-The comparison was run in detail against OpenClaw in April 2026, and is kept with the other lessons rather than here, because it is pegged to that product's state at the time. Its finding is what matters and does not expire.
+The comparison was run in detail against OpenClaw in April 2026 and is kept in `2026-04-09-openclaw-comparison.md`, since it is pegged to that product's state at the time. Its finding is what matters and does not expire.
 
 Of the design problems SPAR had accumulated by then, none would have been prevented by the platform. They concerned what the pipeline should track (contact identity across segments, email-to-person relationships, profile-to-approach dependencies) and when it should check (discovery time or profiling time, drafting time or send time). Those are domain-model problems. A workflow platform supplies an execution substrate and no domain model, so the same problems arrive in the same form.
 

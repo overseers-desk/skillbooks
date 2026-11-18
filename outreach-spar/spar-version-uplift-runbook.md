@@ -8,18 +8,11 @@ Spec 2.2 names two optional segment-definition fields, `kinds` (already accepted
 
 ## 2.0 → 2.1: the USP moves into the campaign
 
-Spec 2.1 changes the campaign YAML only. `usp_document:` becomes `fact_sources:`, a list, and the `usps:` registry gains a block form carrying provenance (`spar-campaign-yaml.md`). Segment YAMLs are untouched and stay valid at `2.0`; the tool supports both numbers.
-
-```
-tclsh9.0 spar-manager/migrate-to-2.1.tcl <instance-root>              # dry-run plan
-tclsh9.0 spar-manager/migrate-to-2.1.tcl <instance-root> --execute
-```
-
-The script renames the field, carries each registry label through unchanged, and stamps `version: "2.1"`. What it leaves for a person or an agent is the judgement: which USPs came from a document, so taking that document's numbering and a `rests_on`, and which the campaign made itself, so keeping a bare label under an unnumbered key. A campaign that ran on prompt-appendix prose naming further source documents moves those paths into `fact_sources` in the same pass.
+Spec 2.1 changes the campaign YAML only. `usp_document:` becomes `fact_sources:`, a list, and the `usps:` registry gains a block form carrying provenance (`spar-campaign-yaml.md`). Segment YAMLs are untouched and stay valid at `2.0`. The loader lifts `usp_document` into a one-entry `fact_sources`, so a 2.0 campaign runs as it is. To bring one to 2.1, edit it: write `fact_sources:` as a list in place of `usp_document:`, carry each registry label through unchanged, and stamp `version: "2.1"`. The judgement is which USPs came from a document, so taking that document's numbering and a `rests_on`, and which the campaign made itself, so keeping a bare label under an unnumbered key. A campaign that ran on prompt-appendix prose naming further source documents moves those paths into `fact_sources` in the same pass.
 
 ## 1.0 → 2.0: the layout migration
 
-Spec 2.0 restructures the instance into `segments/` and `campaigns/` folders with campaign-keyed approach files (`spar-campaign-directory.md`). The tool supports 2.0 only, so a 1.0 instance is migrated, not merely stamped. The migration is scripted:
+Spec 2.0 restructures the instance into `segments/` and `campaigns/` folders with campaign-keyed approach files (`spar-campaign-directory.md`). The tool supports 2.0 and later, not 1.0, so a 1.0 instance is migrated, not merely stamped. The migration is scripted:
 
 ```
 tclsh9.0 spar-manager/tools/migrate-to-2.0.tcl <instance-root>              # dry-run plan + findings

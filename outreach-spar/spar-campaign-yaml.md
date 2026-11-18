@@ -67,7 +67,6 @@ Channel vocabulary: `email`, `phone`, and one channel per platform module (the m
 | `fact_sources` | list of paths | (none) | Documents the campaign's claims draw on: an organisation overview, a product or offer definition, a competitor register. A1 reads them before drafting, for the ground truth a message needs beyond the USPs themselves; the challenger opens one only where a `rests_on` names it. A source document that numbers its own USPs lends that numbering to the registry. No precedence holds between entries, so keeping them consistent is the campaign author's job. |
 | `antifacts` | path or `none` | inherited | Path to the anti-claim document A1 checks its draft against and the A2 challenger fact-checks from. A campaign that supplies no value inherits the instance's (`campaigns.yaml`, see Path resolution); a campaign that means to draft without a checklist writes `none`. With neither, A dispatch fails rather than drafting unchecked. Relative to the YAML file's directory. |
 | `campaign_principles` | path or `none` | inherited | Path to campaign-level principles document. When present, A1 reads it before drafting. A campaign that supplies no value inherits the instance's (`campaigns.yaml`); with neither, A1 relies on the method document and segment file alone. Relative to the YAML file's directory. |
-| `ses_region` | string | `ap-southeast-2` | AWS SES region for email sending |
 | `a_max_passes` | integer | 3 | Hard ceiling on challenger passes per contact in the A phase. The effective value for each contact is `min(a_max_passes, profile-derived)`. Profile-derived comes from the profile's `yield` front-matter field: `yield >= 6` yields 3, otherwise 1 (see `spar-P-profile.md` §5.1). Must be an integer ≥ 0. A ceiling does not force passes; the challenger can still return `DONE` earlier. Quality/cost ladder: `0` disables the challenger entirely — the initial draft flows straight to assembly with no fact-check (cheapest, no adversarial review). `1` runs the challenger once; the author revises based on its feedback, but that revision is never re-validated (feedback applied, not verified). `2` re-challenges the first revision. `3` (default) allows up to two re-challenges. Note that at any `a_max_passes ≥ 1` the *last* revision is still unvalidated — there is no pass that both critiques and then re-challenges the final draft. |
 | `reply_check.mailbox` | string | `sender.email` | Address of the mailbox the reply checker searches. It resolves at run time, through `courier list`, to the courier account that logs in as that address or carries an identity for it. Set it when replies to `sender.email` are read in another mailbox, as when the campaign relays through its own SMTP from an address that is an alias of that mailbox. |
 | `reply_check.folder` | string | `INBOX` | IMAP folder in that mailbox the reply checker searches. Set it when the mailbox's mail rules file this campaign's replies elsewhere (e.g. `Partnerships`). Replies found are appended to the matching approach YAML as `replies:` entries with `direction: received`. |
@@ -107,7 +106,7 @@ Each plan block may carry:
 |---|---|---|
 | `objective` | prose | What this campaign aims to accomplish with this segment, in 1–3 sentences. |
 | `usps` | list | Which of the campaign's USPs apply to this segment, and why. Each entry has `id` (from the USP registry), `type` (`emotional` or `functional`, segment-specific), and `framing` (prose: why this one lands with contacts in this segment). The segment selects, orders and reframes; it authors no claim, so a `framing` that would read the same for every segment belongs in the registry entry instead. A USP a segment wants that the registry lacks is added to the registry; `spar-validate-cli.tcl` reports an `id` the registry does not define (`unknown_usp_id`). |
-| `message_goal` | prose | The outcome the first message aims for (e.g. "agree to a call or a site visit"). |
+| `message_goal` | prose | The outcome the first message aims for (e.g. "agree to a call"). |
 | `first_ask` | prose | The model message or pattern for first contact. May contain placeholders the A phase fills from the profile. |
 | `ask_stance` | `direct` or `problem-led` | The stance chosen via the classifier in `spar-methodology.md` ("Classifying the ask"). `direct`: state the want plainly (we are the buyer, or a plain mutual offer). `problem-led`: frame around the recipient's problem, because naming the want would weaken us (we compete to be selected). |
 | `recipient_problem` | prose | Required when `ask_stance` is `problem-led`. The recipient's own problem this campaign solves, which the first message addresses. |
@@ -152,7 +151,7 @@ fact_sources:
   - ../overview.md
   - ../product-definition.md
 antifacts: ../overview-antifacts.md
-campaign_principles: goal-campaign-principles.md
+campaign_principles: example-outreach.principles.md
 
 language: en-gb
 
@@ -176,7 +175,7 @@ usps:
 segments:
   segment-a:
     objective: |
-      Get segment-a contacts to agree to a site visit.
+      Get segment-a contacts to agree to a call.
     usps:
       - id: U1
         type: emotional
@@ -187,7 +186,7 @@ segments:
         framing: |
           Why u1 matters to contacts in segment-a.
     message_goal: |
-      Agree to a complimentary site visit.
+      Agree to a short call.
     first_ask: |
       The model first-contact message or pattern for segment-a.
     ask_stance: problem-led        # or: direct
@@ -203,7 +202,7 @@ segments:
         description: |
           What happens at this step.
       - step: 2
-        name: Site visit
+        name: Call
         description: |
           What happens at this step.
     approach_sequencing:
@@ -222,8 +221,6 @@ filter:
   skip_excluded: true
   min_star: 3
   require_profile: true
-
-ses_region: ap-southeast-2
 
 prompt_appendices:
   p_author: ""

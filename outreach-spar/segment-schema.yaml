@@ -48,7 +48,7 @@ title: ...                                        # human-readable segment name
 version: "2.2"                                     # SPAR spec generation (see spar-methodology.md, "Versioning")
 date: 2026-03-30                                   # date this file was last substantively revised
 sweeper: ...                                       # optional: market family this segment sweeps with; resolves to
-                                                   # sweeper-<name>.yaml beside the campaign YAMLs (spar-S-sweep.md §7.1).
+                                                   # sweeper-<name>.yaml at the instance root (spar-S-sweep.md §7.1).
                                                    # Membership is authored here only; the sweeper file lists no segments.
 
 # --- Target type (profile depth) — optional; default cue-required ---
@@ -186,7 +186,7 @@ discovery_criteria: |
 #     - member: ...             # a market member the operation already knows
 #       provenance: ...         # where it is known from (ledger, mailbox, ...)
 #   rounds: []
-#   next_round:               # optional; compiled between rounds from sweep feedback
+#   next_round:               # optional; a human stages proposals between rounds
 #   rows_to_verify: []        # optional; roster rows a later source disputed
 #
 # Parser constraints (tcllib yaml 0.4.2), each checked by the validator:

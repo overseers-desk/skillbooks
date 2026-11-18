@@ -18,6 +18,7 @@ outreach-spar/
   spar-campaign-directory.md   Instance layout, and which document owns each realm of facts
   spar-segment-categorisation.md  Segment merge/split guidance
   spar-version-uplift-runbook.md  Migrating an instance to the current spec generation
+  2026-04-*.md                 Dated records: the development chronicle, the OpenClaw comparison
   spar-manager/                Tcl dispatcher, state machine, CLI, GUI
   experiments/                 Run data from model and host comparisons; not part of the spec
 ```

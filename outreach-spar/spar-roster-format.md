@@ -6,7 +6,7 @@
 
 One TSV file per segment. TSV, not CSV — roster fields contain quoted speech, URLs, and free-text that cause quoting problems with commas.
 
-Every row names a person in `contact_name`, or carries a blank `contact_name` for P §4.1 to resolve (organisation identified, person not yet found). Where that name search is exhausted, the row is excluded, with one exception: in an organisation-population segment whose plan treats a published office channel as a viable first contact, the organisation stays a targetable row reached at its office address (`spar-P-profile.md` §4.1). Each S&P iteration updates the same file via the `sweep_iteration` column; do not create separate files per iteration. The file is `segments/{segment}.tsv`, the dotted stem sibling of the segment folder (e.g. `segments/software-reseller.tsv`; see `spar-campaign-directory.md`).
+Every row names a person in `contact_name`, or carries a blank `contact_name` for P §4.1 to resolve (organisation identified, person not yet found). Where that name search is exhausted, the row is excluded, with one exception: in an organisation-population segment, an organisation that publishes a written office channel stays a targetable row reached at that address (`spar-P-profile.md` §4.1); whether to write to it is each campaign's call. Each S&P iteration updates the same file via the `sweep_iteration` column; do not create separate files per iteration. The file is `segments/{segment}.tsv`, the dotted stem sibling of the segment folder (e.g. `segments/software-reseller.tsv`; see `spar-campaign-directory.md`).
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
@@ -31,8 +31,6 @@ Three faults to guard:
 - **A tab or newline assigned into a value splits the row.** mlr writes both out literally and a TSV record is one line. Assign a line break as CR, per the convention above, and a tab as a space. The harness's own writer converts at its funnel; an mlr edit is outside that funnel and holds the contract itself.
 - **`-I` empties a roster carrying a header and no data rows**, at exit 0, because mlr writes no header when it has no records. Such a file has nothing to update; the guard is to not run an update against one.
 - **A ragged row aborts the run**, at exit 1, file untouched. Fix the row, or pass `--allow-ragged-csv-input` when the short row is intended.
-
-For concurrent access (worker scripts), wrap the mlr call with `flock -x <lockfile>`; when a dispatcher provides the canonical lockfile path in the prompt, use that path verbatim rather than inventing a new filename.
 
 **Where mlr is absent,** `sqlite3` in `.mode tabs` is the backup. It is a backup rather than the tool because its `.import` applies CSV quoting rules: a field whose value begins with a double quote swallows the following record, so the row count silently drops. It warns on stderr and exits 0. A ragged row is filled with NULL, also at exit 0. Check both before trusting a result.
 
@@ -87,7 +85,7 @@ Columns are ordered left-to-right by pipeline stage: identity, contact channels,
 | 6 | email | text | S; P updates; A backfills on discovery | A | A may write a verified email found at send time (see `spar-A-approach.md` §4.8) |
 | 7–8 | {platform}_url | URL | S; A corrects on discovery | P (fetches it) | Platform profile URL columns, one per platform module (`platforms/{platform}.md` documents its own column, or its absence). A new URL column is a change to this table, not implied by a new module. |
 
-Every row must have at least one of email or a platform URL column populated. Phone alone is insufficient for campaigns that begin with a written introduction.
+A row with an email or a platform URL has a written channel; a phone number alone is reached by phone. The validator warns (`roster_no_channel`) on a row with none of the three.
 
 ### Discovery provenance
 
@@ -104,7 +102,7 @@ Every row must have at least one of email or a platform URL column populated. Ph
 
 ### Phase handover
 
-The S and P phases each have one note column in the roster. Only that phase writes to it; subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files). The A and R phases do not write their campaign-bound output to the roster: `response_likelihood`, `a_note`, and `r_note` are campaign-bound, and a segment's roster is shared across campaigns, so that output lives in the per-contact approach YAML instead (see `spar-methodology.md`, "Campaigns and segments", and `spar-A-approach.md`). The one exception is population-tier contact details: when A discovers a verified email, or a corrected platform URL, at send time, it backfills the roster, the same as P (see `spar-A-approach.md` §4.8). Such a detail is campaign-independent, so the roster is its home, not the approach file.
+The S and P phases each have one note column in the roster. Only that phase writes to it; subsequent phases read it as context before doing their work. Notes are roster-level summaries, not replacements for full artefacts (profile documents, approach files). The A phase does not write its campaign-bound output to the roster, and R writes none: `response_likelihood`, `a_note`, and the reviewer's `r_note` are campaign-bound, and a segment's roster is shared across campaigns, so that output lives in the per-contact approach YAML instead (see `spar-methodology.md`, "Campaigns and segments", and `spar-A-approach.md`). The one exception is population-tier contact details: when A discovers a verified email, or a corrected platform URL, at send time, it backfills the roster, the same as P (see `spar-A-approach.md` §4.8). Such a detail is campaign-independent, so the roster is its home, not the approach file.
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
@@ -120,8 +118,8 @@ Columns 13–14 are empty during S and populated by P. Empty columns are expecte
 |---|---|---|
 | S | Roster row (this is S's primary output) | roster `s_note`: why this person was included |
 | P | Profile document (`segments/{segment}/{stem}.md` with YAML front matter) | roster `p_note`: one-line relevance summary and routing for A |
-| A | Approach file (`{stem}.yaml`) | approach YAML `a_note` root key: angle and outcome summary for R |
-| R | Campaign YAML updates (plan-block `usps` order and framings, `prompt_appendices` guidance) | approach YAML `r_note` root key: per-contact observation from the human reviewer |
+| A | Approach file (`{stem}.yaml`) | approach YAML `a_note` root key: angle and outcome summary for the human reviewer |
+| R | Replies appended to the approach file by the reply check | approach YAML `r_note` root key: per-contact observation from the human reviewer |
 
 A phase note should answer: "what does the next phase need to know about this contact from my phase, in one line?" If the observation requires more than a short sentence, it belongs in the full artefact, not in the note. The S and P notes live in the roster; the A and R notes live in the approach YAML, beside the messages they summarise.
 
@@ -150,7 +148,7 @@ These assertions apply to the core columns. Checks a campaign adds at dispatch l
 1. Every row has a non-empty `contact_name` that is not a placeholder, or has a blank `contact_name` that P §4.1 will resolve (organisation identified, person not yet found).
 2. Every row has the expected number of tab-separated fields.
 3. No two rows share the same (`contact_name`, `organisation`) pair (case-insensitive).
-4. Every row has at least one of email or a platform URL.
+4. Every row has at least one of email, a platform URL or phone; the validator warns (`roster_no_channel`) on one with none.
 5. Every row has a `sweep_iteration` value.
 6. Every row with `star_rating = 0` has a non-empty `date_excluded`.
 7. Every row has a non-empty `stem`.
@@ -164,5 +162,5 @@ This document defines the roster schema. The operational procedures for populati
 - **SPAR-S** (`spar-S-sweep.md`) — populates columns 1–12 (including `stem` at discovery)
 - **SPAR-P** (`spar-P-profile.md`) — populates columns 13–14, corrects columns 3–8 and 11, and appends whole rows (columns 1–12) for members it discovers, declared as `rows_new` and applied by the harness (§4.15); creates `segments/{segment}/{stem}.md` using the pre-existing `stem`
 - **SPAR-A** (`spar-A-approach.md`) — creates `campaigns/{campaign}/{stem}.yaml` using the pre-existing `stem`, writing `response_likelihood`, `a_note`, and the messages into it; writes to the roster only to backfill a population-tier contact detail discovered at send time (a verified email, a corrected platform URL; see §4.8)
-- **R** (human, no procedure document) — writes the `r_note` root key into the campaign's approach file; does not write to the roster
+- **R** (the dispatcher's reply check) — appends replies to the approach file, where the reviewer's `r_note` also lives; writes nothing to the roster
 - **spar::state** — reads `stem` from the roster and checks for the presence of the profile and the campaign's approach file on disk to classify contact state; never writes to the roster
