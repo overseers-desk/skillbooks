@@ -25,7 +25,7 @@ The discovery steps are the same for both types. The differences — whether P i
 ## 3. Outputs
 
 - **Roster TSV file:** One file per segment, `segments/{segment}.tsv` (`spar-campaign-directory.md`). Contains every discovered contact with metadata tracking how and when they were found.
-- **Sweep file:** `segments/{segment}.sweep.yaml`, the dotted stem sibling of the roster (§7). Carries the market denominator, the source census with per-source status, escapes, and one record per round. It replaces the earlier `summary-[segment-name].md`; a segment still carrying a summary file migrates its content into `sweep.yaml` at the next sweep and deletes the summary.
+- **Sweep file:** `segments/{segment}.sweep.yaml`, the dotted stem sibling of the roster (§7). Carries the market denominator, the source census with per-source status, escapes, and one record per round.
 - **New names for P:** Contacts discovered during S enter P within the same S&P iteration. Names that belong to a different segment go into that segment's roster (§9).
 
 ## 4. Roster file format
@@ -122,7 +122,7 @@ S&P₁ through S&P₃ run autonomously. Any iteration beyond S&P₃ is human-ini
 
 ## 7. The sweep file (sweep.yaml)
 
-One sweep file per segment (`segments/<segment>.sweep.yaml`, beside the roster and the segment definition). It is the segment's discovery record and the S phase's working memory: the denominator, the instruments, what each round did, and what the next round should do. Future work on the segment starts from this file rather than rediscovering the vocabulary, and the T0 transition reads it as its input: one task per source not yet exhausted. It supersedes the earlier `summary-[segment-name].md`.
+One sweep file per segment (`segments/<segment>.sweep.yaml`, beside the roster and the segment definition). It is the segment's discovery record and the S phase's working memory: the denominator, the instruments, what each round did, and what the next round should do. Future work on the segment starts from this file rather than rediscovering the vocabulary, and the T0 transition reads it as its input: one task per source not yet exhausted.
 
 The head is forward-only (it states current reality); the rounds log is append-only (it states what happened). Structure:
 
@@ -164,7 +164,7 @@ rounds:
 
 **New-source claims.** Profiling and later rounds routinely propose "new" sources. A profile declares one as a `sources_new` entry (SPAR-P §4.15) and the harness refuses a name the census already holds, whatever its status: a source already listed as exhausted is a re-discovery, not an input for the next round. A human staging a source by hand makes the same check against the census before adding it.
 
-The per-round `surprises` field absorbs what the old summary file recorded (vocabulary gaps, invisible sub-segments, CRM gap analysis results).
+The per-round `surprises` field records vocabulary gaps, invisible sub-segments and CRM gap analysis results.
 
 ### 7.1 The sweeper file (shared sweep knowledge)
 
@@ -217,8 +217,8 @@ Run this checklist against all roster files after each iteration. Each check is 
 1. **Column count:** every row has the expected number of tab-separated fields (core columns per `spar-roster-format.md` plus any further columns the header carries).
 2. **Named contacts:** every row has a non-empty `contact_name` that is not a placeholder (e.g. "(not publicly listed)", "(not found)"), or has a blank `contact_name` with a provisional organisation-slug stem. Rows with blank `contact_name` and no `date_excluded` are P-phase leads awaiting SPAR-P §4.1 name resolution — they are not errors.
 3. **No duplicate contacts:** no two rows in the same roster file share the same (`contact_name`, `organisation`) pair (case-insensitive), and where rows carry a source key (§4) no two share it. Multiple contacts at the same organisation is permitted.
-4. **Email format:** every non-empty `email` field contains an `@` sign. Strings like `via website`, `(07) 5572 3588`, or `[email obtained during call]` are not email addresses and must not pass validation. This is the gate that prevents non-email strings from inflating counts downstream.
-5. **Reachable:** every row has at least one of email (valid, per check 4) or a platform URL populated. Phone alone is insufficient for campaigns that begin with a written introduction.
+4. **Email format:** every non-empty `email` field contains an `@` sign. Strings like `via website`, `(02) 5550 0123`, or `[email obtained during call]` are not email addresses and must not pass validation. This is the gate that prevents non-email strings from inflating counts downstream.
+5. **Reachable counted:** the round record's `reachable_after` equals the roster's count of live rows with a written channel (a valid email per check 4, or a platform URL), computed from the files; found and reachable are reported separately (§6, S&P₂).
 6. **Iteration recorded:** every row has a `sweep_iteration` value.
 7. **Segment matches file:** if the roster uses a `segment` column, the value on every row matches the roster filename.
 8. **Iteration progress:** for each roster, confirm that `sweep_iteration` is populated on every row, that every `sweep_iteration` value present has a matching round record in the sweep file, and that closure (§6) has been evaluated.
@@ -235,7 +235,7 @@ Do not replicate SPAR-S content in prompts — copies drift and cannot be correc
 
 **Model tier:** spawn each subagent at Sonnet tier (`model: sonnet` or the spawning tool's equivalent). The tier in this document's header binds the launcher; a subagent spawned without it inherits the launcher's own model.
 
-**Access cadence:** Signed-in platform lookups share a per-site access cadence that the serialised-browsing skill paces across every worker at once, so subagents may be dispatched concurrently when it is in use (see `spar-methodology.md`, "Web fetching and browser serialisation"). Only where no serialiser is available and lookups are hand-rolled do they run one at a time. Searches that do not sign in (web, register, directory) are exempt.
+**Access cadence:** Signed-in platform lookups share a per-site access cadence that the serialised-browsing skill paces across every worker at once, so subagents may be dispatched concurrently (see `spar-methodology.md`, "Web fetching and browser serialisation"). Searches that do not sign in (web, register, directory) are exempt.
 
 This AESOP does not prescribe how to access social media; each operator uses their own method and tooling. The access-cadence constraint is the only requirement.
 
