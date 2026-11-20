@@ -2,7 +2,8 @@
 """Listen to a prose draft: run the flow pass and the faults pass on it and print every sentence a
 reader scored, with the scores and the reader's reason.
 usage: stethoscope.py <draft.md> [--reader "who reads it and what they have read"] [--runs N] [--model M]
-A first line starting with '#' is taken as the title and not read. Paragraphs are separated by blank lines."""
+A first line starting with '#' is taken as the title and not read. Paragraphs are separated by blank lines;
+each list item, table row and later heading is read as a unit of its own."""
 import argparse, json, os, re, subprocess, sys, tempfile
 from concurrent.futures import ThreadPoolExecutor
 
@@ -14,6 +15,29 @@ def template(name):
     s = open(os.path.join(HERE, f"{name}.md")).read()
     head, body = s[4:].split("\n---\n", 1)
     return [c.strip() for c in head.split(": ", 1)[1].split(",")], body.rstrip("\n")
+
+
+def units(lines):
+    """Paragraphs of prose, with each list item, table row and heading as a unit of its own."""
+    out, cur = [], []
+    def flush():
+        if cur:
+            out.append(" ".join(cur)); cur.clear()
+    for raw in lines:
+        line = raw.strip()
+        if not line:
+            flush(); continue
+        if re.match(r"^\|?\s*:?-{3,}", line):
+            continue
+        if line.startswith("|"):
+            flush(); out.append("; ".join(c.strip() for c in line.strip("|").split("|") if c.strip())); continue
+        if re.match(r"^#+\s", line):
+            flush(); out.append(re.sub(r"^#+\s+", "", line)); continue
+        if re.match(r"^([-*+]\s|\d+[.)]\s)", line):
+            flush(); cur.append(re.sub(r"^([-*+]|\d+[.)])\s+", "", line)); continue
+        cur.append(line)
+    flush()
+    return [u for u in out if u]
 
 
 def call(prompt, model):
@@ -36,7 +60,7 @@ def main():
     lines = open(a.draft).read().strip().split("\n")
     if lines and lines[0].startswith("#"):
         lines = lines[1:]
-    paras = [p.strip().replace("\n", " ") for p in "\n".join(lines).split("\n\n") if p.strip()]
+    paras = units(lines)
     text = "\n\n".join(f"[P{n}] {p}" for n, p in enumerate(paras, 1))
     sents = {(pi, si): s for pi, p in enumerate(paras, 1) for si, s in enumerate(SPLIT.split(p), 1)}
 
@@ -45,8 +69,13 @@ def main():
         cols, body = template(name)
         prompt = body.replace("{reader}", a.reader).replace("{text}", text)
         jobs += [(name, cols, prompt, r) for r in range(1, a.runs + 1)]
+    def run(j):
+        reply = call(j[2], a.model)
+        print(f"{j[0]} pass, run {j[3]}: done", file=sys.stderr, flush=True)
+        return reply
+    print(f"{len(jobs)} calls on {a.model}, a minute or more each", file=sys.stderr, flush=True)
     with ThreadPoolExecutor(6) as ex:
-        replies = list(ex.map(lambda j: call(j[2], a.model), jobs))
+        replies = list(ex.map(run, jobs))
 
     print("pass\trun\tsentence\tscores (2 or more; * marks 4 or more, a stumble)\twhy\ttext")
     for (name, cols, _, r), reply in zip(jobs, replies):
