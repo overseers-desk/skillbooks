@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-"""Listen to a prose draft: run the flow pass and the faults pass on it and print every sentence a
-reader scored, with the scores and the reader's reason.
-usage: stethoscope.py <draft.md> [--reader "who reads it and what they have read"] [--runs N] [--model M]
+"""Listen to a prose draft: run each module on it as a pass of its own and print every sentence a reader
+scored, with the scores and the reader's reason.
+usage: stethoscope.py <draft.md> [--reader "who reads it and what they have read"] [--module M ...]
+       [--fact name="..." ...] [--runs N] [--model M]
+A module is a file: front matter naming its columns, then the prompt, with {text} where the draft goes
+and a {slot} for each thing the caller supplies. --module takes the name of one beside this script or
+the path of one anywhere; without it the flow and faults modules run. --fact fills a module's slot, and
+a slot left unfilled stops the run.
 A first line starting with '#' is taken as the title and not read. Paragraphs are separated by blank lines;
-each list item, table row and later heading is read as a unit of its own."""
+each list item, table row and later heading is read as a unit of its own, and fenced blocks are skipped."""
 import argparse, json, os, re, subprocess, sys, tempfile
 from concurrent.futures import ThreadPoolExecutor
 
@@ -11,21 +16,27 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SPLIT = re.compile(r'(?<=[.?!:])\s+(?=[A-Z"*“‘])')
 
 
-def template(name):
-    s = open(os.path.join(HERE, f"{name}.md")).read()
-    head, body = s[4:].split("\n---\n", 1)
-    return [c.strip() for c in head.split(": ", 1)[1].split(",")], body.rstrip("\n")
+def template(module):
+    """A module's name, columns and prompt, from a name beside this script or a path."""
+    path = module if os.sep in module or module.endswith(".md") else os.path.join(HERE, f"{module}.md")
+    head, body = open(path).read()[4:].split("\n---\n", 1)
+    meta = dict(line.split(": ", 1) for line in head.split("\n"))
+    return os.path.splitext(os.path.basename(path))[0], [c.strip() for c in meta["columns"].split(",")], body.rstrip("\n")
 
 
 def units(lines):
     """Paragraphs of prose, with each list item, table row and heading as a unit of its own."""
-    out, cur = [], []
+    out, cur, fenced = [], [], False
     def flush():
         if cur:
             out.append(" ".join(cur)); cur.clear()
     for raw in lines:
         line = raw.strip()
-        if not line:
+        if re.match(r"^(```|~~~)", line):
+            flush(); fenced = not fenced; continue
+        if fenced:
+            continue
+        if not line or line.startswith(":::"):
             flush(); continue
         if re.match(r"^\|?\s*:?-{3,}", line):
             continue
@@ -54,6 +65,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("draft")
     ap.add_argument("--reader", default="The intended reader comes to this text fresh and has read nothing before it.")
+    ap.add_argument("--module", action="append")
+    ap.add_argument("--fact", action="append", default=[])
     ap.add_argument("--runs", type=int, default=1)
     ap.add_argument("--model", default="claude-opus-5-5")
     a = ap.parse_args()
@@ -64,11 +77,17 @@ def main():
     text = "\n\n".join(f"[P{n}] {p}" for n, p in enumerate(paras, 1))
     sents = {(pi, si): s for pi, p in enumerate(paras, 1) for si, s in enumerate(SPLIT.split(p), 1)}
 
+    facts = dict(f.split("=", 1) for f in a.fact)
+    facts.setdefault("reader", a.reader)
     jobs = []
-    for name in ("flow", "faults"):
-        cols, body = template(name)
-        prompt = body.replace("{reader}", a.reader).replace("{text}", text)
-        jobs += [(name, cols, prompt, r) for r in range(1, a.runs + 1)]
+    for module in a.module or ["flow", "faults"]:
+        name, cols, body = template(module)
+        for k, v in facts.items():
+            body = body.replace("{" + k + "}", v)
+        unfilled = sorted(set(re.findall(r"\{([a-z][a-z-]*)\}", body)) - {"text"})
+        if unfilled:
+            sys.exit(f"the {name} module needs " + " ".join(f'--fact {k}="..."' for k in unfilled))
+        jobs += [(name, cols, body.replace("{text}", text), r) for r in range(1, a.runs + 1)]
     def run(j):
         reply = call(j[2], a.model)
         print(f"{j[0]} pass, run {j[3]}: done", file=sys.stderr, flush=True)
