@@ -3,8 +3,11 @@
 so that results on a text kept outside this lab can be reported here.
 An expectation's label may open with its source in brackets; the first word inside is the strength.
 Only runs made with the prompt as the files now assemble it are counted, so a cell rerun after a fact
-or a criterion changed is not mixed with its earlier runs. An expectation is met, or a quiet broken,
-when more than half of those runs score 4 or more on a named offence at a listed sentence.
+or a criterion changed is not mixed with its earlier runs. A flag is met when more than half of those
+runs score 4 or more on a named offence at any of its sentences, since a reader can place a row one
+sentence off. A quiet is broken, and a contested place scored, when some one of its sentences,
+taken together with any of its own sentences beside it, scores 4 or more in more than half the runs.
+Two runs that each score a different sentence of a long passage once do not count against it.
 usage: tally.py [--root <dir>] <prompt>+<format> ..."""
 import glob, json, os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -29,11 +32,15 @@ for pf in args:
                 cols = [i for i, o in enumerate(offence_of) if offences == "any" or o in offences.split(",")]
                 if not cols or not runs:
                     continue
-                hits = 0
-                for r in runs:
-                    keys = list(r["rows"]) if sents == "all" else sents.split(",")
-                    hits += any(r["rows"][k]["s"][i] >= 4 for k in keys if k in r["rows"] for i in cols)
-                won = hits * 2 > len(runs)
+                def hot(r, k):
+                    return k in r["rows"] and any(r["rows"][k]["s"][i] >= 4 for i in cols)
+                listed = lambda r: list(r["rows"]) if sents == "all" else sents.split(",")
+                if kind == "flag":
+                    won = sum(any(hot(r, k) for k in listed(r)) for r in runs) * 2 > len(runs)
+                else:
+                    places = {k for r in runs for k in listed(r) if k.lstrip("-").isdigit()}
+                    near = lambda r, k: any(hot(r, n) for n in (str(int(k) - 1), k, str(int(k) + 1)) if n in places)
+                    won = any(sum(near(r, k) for r in runs) * 2 > len(runs) for k in places)
                 if kind == "flag":
                     m = re.match(r"\[(\w+)", label)
                     src = m.group(1) if m else "unmarked"
