@@ -1,0 +1,72 @@
+{
+"prompt": "003",
+"format": "019",
+"model": "claude-opus-5-5",
+"text": "020",
+"sents": [
+"I am not an expert on why dry-stone walls fail, and people who have studied it properly would know better than I do.",
+"In my second year as a waller I built forty metres along the top of a hill farm.",
+"After one wet winter a stretch of it bellied out like a full sack.",
+"I rebuilt the stretch with heavier face stones, and the next spring it bellied again.",
+"An older waller who was passing pulled a single face stone out of it and put his arm into the wall up to the elbow.",
+"There was nothing behind the stone.",
+"Thinking about that hollow afterwards, I started to wonder whether the middle of a wall might matter more than its faces, and the interesting thing I found is that a wall seems to fail from the inside.",
+"Suppose the small stones in the middle, which I believe is called the hearting, are thrown in loose.",
+"They would presumably settle, and the faces might then have nothing to lean on.",
+"From what I have read since, each stone should probably be placed and wedged by hand, and I gather that a long stone is meant to run through the wall every metre or so.",
+"I have built that way for twenty years, and so far none of those walls has moved, though I could not say for certain why."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader is a reader of a book on country crafts, written by people who practise them.\n\nThe text, each paragraph starting with its number:\n\n[P1] I am not an expert on why dry-stone walls fail, and people who have studied it properly would know better than I do. In my second year as a waller I built forty metres along the top of a hill farm. After one wet winter a stretch of it bellied out like a full sack.\n\n[P2] I rebuilt the stretch with heavier face stones, and the next spring it bellied again. An older waller who was passing pulled a single face stone out of it and put his arm into the wall up to the elbow. There was nothing behind the stone. Thinking about that hollow afterwards, I started to wonder whether the middle of a wall might matter more than its faces, and the interesting thing I found is that a wall seems to fail from the inside.\n\n[P3] Suppose the small stones in the middle, which I believe is called the hearting, are thrown in loose. They would presumably settle, and the faces might then have nothing to lean on. From what I have read since, each stone should probably be placed and wedged by hand, and I gather that a long stone is meant to run through the wall every metre or so. I have built that way for twenty years, and so far none of those walls has moved, though I could not say for certain why.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Height: score 0 to 9 how likely the intended reader is to feel at this sentence that the author stands below their own subject: that as they write they are still finding it out, guessing at it, or taking it from others, where the reader expects them to know it for themselves.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why: in at most 15 words, what the reader meets at this sentence. Describe the stumble, not a way to fix it. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+8
+],
+"why": "Author opens by disclaiming expertise and deferring to others on the book's subject."
+},
+"7": {
+"s": [
+6
+],
+"why": "Central lesson framed as wondering and \"seems\", not as something known."
+},
+"8": {
+"s": [
+8
+],
+"why": "A twenty-year waller is unsure of the basic name \"hearting\"."
+},
+"9": {
+"s": [
+6
+],
+"why": "Settling of loose hearting is offered as a guess (\"presumably\", \"might\")."
+},
+"10": {
+"s": [
+8
+],
+"why": "Core technique sourced from reading and hearsay, hedged with \"probably\", \"gather\"."
+},
+"11": {
+"s": [
+5
+],
+"why": "Twenty years of practice, yet the author disclaims knowing why it works."
+}
+},
+"secs": 11,
+"raw": "1.1\t8\tAuthor opens by disclaiming expertise and deferring to others on the book's subject.\n2.4\t6\tCentral lesson framed as wondering and \"seems\", not as something known.\n3.1\t8\tA twenty-year waller is unsure of the basic name \"hearting\".\n3.2\t6\tSettling of loose hearting is offered as a guess (\"presumably\", \"might\").\n3.3\t8\tCore technique sourced from reading and hearsay, hedged with \"probably\", \"gather\".\n3.4\t5\tTwenty years of practice, yet the author disclaims knowing why it works.\nEND",
+"r": 0
+}
+]
+}
+]
+}

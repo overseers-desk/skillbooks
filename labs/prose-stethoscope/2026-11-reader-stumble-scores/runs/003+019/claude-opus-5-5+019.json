@@ -1,0 +1,43 @@
+{
+"prompt": "003",
+"format": "019",
+"model": "claude-opus-5-5",
+"text": "019",
+"sents": [
+"In my second year as a waller I built forty metres along the top of a hill farm, and I was proud of it.",
+"The joints were tight and the courses ran level.",
+"After one wet winter a stretch of it bellied out like a full sack.",
+"I took the fault to be in the face stones, and rebuilt the stretch with heavier ones.",
+"The next spring it bellied again.",
+"An older waller who was passing pulled a single face stone out of it and put his arm into the wall up to the elbow.",
+"There was nothing behind the stone.",
+"I had thrown the small stones into the middle loose, as filling, and they had settled.",
+"A dry-stone wall fails from the inside.",
+"The faces are what a walker sees, and the hearting, the small stones packed between them, is what holds the faces up.",
+"Each of those stones has to be placed and wedged by hand, and every metre or so a long stone has to run through the wall and tie the two faces together.",
+"I have built that way for twenty years, and none of those walls has moved."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader is a reader of a book on country crafts, written by people who practise them.\n\nThe text, each paragraph starting with its number:\n\n[P1] In my second year as a waller I built forty metres along the top of a hill farm, and I was proud of it. The joints were tight and the courses ran level. After one wet winter a stretch of it bellied out like a full sack.\n\n[P2] I took the fault to be in the face stones, and rebuilt the stretch with heavier ones. The next spring it bellied again. An older waller who was passing pulled a single face stone out of it and put his arm into the wall up to the elbow. There was nothing behind the stone. I had thrown the small stones into the middle loose, as filling, and they had settled.\n\n[P3] A dry-stone wall fails from the inside. The faces are what a walker sees, and the hearting, the small stones packed between them, is what holds the faces up. Each of those stones has to be placed and wedged by hand, and every metre or so a long stone has to run through the wall and tie the two faces together. I have built that way for twenty years, and none of those walls has moved.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Height: score 0 to 9 how likely the intended reader is to feel at this sentence that the author stands below their own subject: that as they write they are still finding it out, guessing at it, or taking it from others, where the reader expects them to know it for themselves.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why: in at most 15 words, what the reader meets at this sentence. Describe the stumble, not a way to fix it. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"6": {
+"s": [
+2
+],
+"why": "The key insight arrives from another waller, not the author's own finding."
+}
+},
+"secs": 8,
+"raw": "2.3\t2\tThe key insight arrives from another waller, not the author's own finding.\nEND",
+"r": 0
+}
+]
+}
+]
+}
