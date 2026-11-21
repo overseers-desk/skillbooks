@@ -1,0 +1,787 @@
+{
+"prompt": "003",
+"format": "015",
+"model": "claude-opus-5-5",
+"text": "016",
+"sents": [
+"These models pass examinations most of us would fail.",
+"Ask one what a sensible employee would have written to the vendor in my opening story, and it will tell you.",
+"Put it in the employee's seat, and it writes something else.",
+"So the fault is not in what it knows.",
+"It is in what it was trained to do with what it knows.",
+"A model is made in two stages.",
+"In the first it reads.",
+"It is given a very large body of text and one task, to predict what comes next, and from that it gets its language and its knowledge.",
+"The second stage makes it an assistant, and it works by marking.",
+"The model gives an answer and the answer is marked.",
+"Sometimes people do the marking, comparing two answers and choosing the better.",
+"Sometimes another model does it, against a written sheet of criteria.",
+"The model is then adjusted toward whatever earned the better mark, and this is repeated at very large scale.",
+"What the marker is shown matters more than who he is.",
+"He is shown a prompt and the answer to it.",
+"Where there is a longer conversation, the earlier part is there as background, and the mark is still for the one answer.",
+"Work that ends in something a machine can check is treated differently, and I come to it below.",
+"For conversation, which is most of what an assistant does, the unit is the answer.",
+"This method built the chat assistant, and built it well.",
+"It is also where most of the behaviours in this essay come from.",
+"To see why, take a footballer, and suppose nobody counts goals.",
+"His match is cut into minutes.",
+"Each minute is shown to a judge who has not seen the others, and the judge marks whether he did the right thing in it.",
+"Train players on those marks and you get men who are always well placed and always make the tidy pass.",
+"The player who comes top is not the best player, because a match is won by something that runs across the minutes.",
+"A conversation with a purpose is a match.",
+"I was working through a complaint and asked who Bob was.",
+"The marker sees that question and a careful, complete answer to it, and gives full marks.",
+"The complaint is not in the minute he was shown.",
+"There is something else a marker cannot see in one answer, which is whether it helped.",
+"The helping happens later and somewhere else.",
+"What he can see is whether it looks like help.",
+"Ask a manager whether sales are good and she says: revenue is up thirty per cent, wages are up as much, so no.",
+"Ask a model and you get the figures by department and by customer segment.",
+"Each figure is a point of information, and points of information are what can be counted.",
+"The invented answer has the same root.",
+"\"I don't know\" looks like no help at all, and it is marked that way.",
+"A paper from OpenAI in 2025 says as much of the field's own tests: most give \"I don't know\" no credit, so a model that guesses outscores one that abstains.[^1]",
+"The marking also settles whom the model works for.",
+"The question put to the marker is whether the answer did what was asked.",
+"So the model learns to satisfy two parties, the one who wrote its instructions and the one who is typing.",
+"In a chat those two are everyone there is.",
+"In a business neither of them is the business.",
+"The model that answered our vendor followed its instructions to the letter.",
+"The customer who asked twice for a discount was the person typing, and got it.",
+"So was the staff member who asked for Saturday off.",
+"Nobody in those exchanges spoke for the venue, and the model was not trained to ask who did.",
+"The field's word for the aim is alignment, and its definition is generous: a system should act in accordance with the intentions, goals and values of the people it serves.",
+"An owner hears his business in that.",
+"What a marker can reward is the intention he can see, the one behind this instruction and this request.",
+"The larger reading is in the definition.",
+"The smaller one is in the training.",
+"It is the smaller one that is paid for.",
+"Intelligence is sold by the token to whoever is typing, and a company improves what its customers pay for.",
+"Last, the mark is given when the answer arrives.",
+"Whatever takes time earns nothing.",
+"The question about the supplier's invoices needed someone to come back to it the following week, and no mark was waiting there.",
+"The larger loss is the view formed over time.",
+"A manager begins to suspect that a product costs more trouble than it earns.",
+"He watches for a few months, weighs whether to raise it and with whom, and one day he says so.",
+"Nobody asked him.",
+"A model makes judgements too, as a by-product of the work: writing a program, it will tell you when it thinks the approach is wrong.",
+"But a judgement it did not state is gone when the reply is sent, and one it did state is gone when the conversation ends.",
+"Nothing in the marking asks it to keep one.",
+"That has a consequence people meet every day.",
+"Tell a model it is wrong, offering no new fact, and it will often give way, even when it was right.[^2] A person in that spot weighs the objection against a view he has held for some time.",
+"The model has only the objection, and the objection comes from the person its training taught it to satisfy.",
+"All of that is what the training put in.",
+"The rest is what neither stage gives, because it belongs to people doing something that cannot simply be learned from a corpus.",
+"One part of it is habit.",
+"The bartender who stood all day at a bar where nobody drank was rostered by a model.",
+"Asked whether that group was likely to drink, the model would have said no.",
+"Nobody asked.",
+"Using what you know on a question nobody put to you is a habit that reading does not form and marking does not reward.",
+"A person gets it by holding a job and answering for how it went.",
+"The other part is what is known only inside one house.",
+"At a meeting I once said that we put our own profit ahead of other businesses.",
+"Everyone in the room knew what kind of remark that was, and what it was not for.",
+"That knowledge was in no document, ours or anyone's.",
+"A new employee picks it up in her first months without being told.",
+"A model begins every conversation as a stranger.",
+"Can this be trained away?",
+"Much of it can, and some of it is being.",
+"Habits that show inside one answer can be marked directly.",
+"Training a model to decline what it does not know has been shown to work, and to carry over to tasks it was not trained on.",
+"The laboratories have also taken up the footballer's problem directly.",
+"Where a task ends in something a machine can check, they mark the whole task.",
+"A program is run against its tests and the mark goes to the finished work, however many steps it took.",
+"It is no accident that programming is where these models first worked for hours on their own.",
+"The method is now being carried to other kinds of work, by building practice tasks whose end state a machine can check.",
+"One researcher has put the rule plainly: what is easy to verify is easy to train.[^3]",
+"The rule also says where the method stops.",
+"A check can test what was written into the task.",
+"The reply to our vendor would have passed any check a laboratory could write: it answered the email, it was courteous, and everything in it was true.",
+"What made it wrong was known inside our venue and nowhere else.",
+"To mark an afternoon, someone has to know what the afternoon was for, and for most of a business's work that is known inside the house and written down nowhere.",
+"There is a second obstacle.",
+"Much of what a good employee does marks worse, answer for answer, than what an assistant does.",
+"\"Leave it with me until Thursday\" loses to a full reply now.",
+"Saying one thing where ten were available loses to saying ten.",
+"So I expect this part to be trained slowly, in the order in which checks can be found for it.",
+"What is known only inside one house will not come from a laboratory.",
+"It is in no text a laboratory holds.",
+"It has to be gathered on the job and kept there.",
+"More intelligence does not supply any of this.",
+"In two years I have worked through every release of these models.",
+"Each was cleverer than the last, and each lost the thread of a job in the same way.",
+"The reason is in the footballer.",
+"Intelligence is how much the player can do.",
+"The marking decides what he does with it, and a cleverer player under the same judges is still judged by the minute.",
+"In some respects he is worse: he has more to say, and one study found that the pull to agree with whoever is speaking grows as models grow.[^4]",
+"So here is a prediction that can be checked.",
+"By the end of 2027, the complaints people make about these models will have moved from what they cannot do to what they do.",
+"Fewer will say the model got it wrong.",
+"More will say it did, with great skill, something nobody wanted.",
+"[^1]:",
+"Kalai and others, \"Why Language Models Hallucinate\", OpenAI, September 2025.",
+"[^2]:",
+"Sharma and others, \"Towards Understanding Sycophancy in Language Models\", Anthropic, 2023.",
+"[^3]:",
+"Jason Wei, \"Asymmetry of verification and verifier's law\", 2025.",
+"[^4]:",
+"Perez and others, \"Discovering Language Model Behaviors with Model-Written Evaluations\", Anthropic, December 2022."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader has read the essay's introduction, which lists seven pillars, the behaviours an AI employee needs, and the chapters before this one, which take the pillars in turn.\n\nThe text, each paragraph starting with its number:\n\n[P1] These models pass examinations most of us would fail. Ask one what a sensible employee would have written to the vendor in my opening story, and it will tell you. Put it in the employee's seat, and it writes something else. So the fault is not in what it knows. It is in what it was trained to do with what it knows.\n\n[P2] A model is made in two stages. In the first it reads. It is given a very large body of text and one task, to predict what comes next, and from that it gets its language and its knowledge. The second stage makes it an assistant, and it works by marking. The model gives an answer and the answer is marked. Sometimes people do the marking, comparing two answers and choosing the better. Sometimes another model does it, against a written sheet of criteria. The model is then adjusted toward whatever earned the better mark, and this is repeated at very large scale.\n\n[P3] What the marker is shown matters more than who he is. He is shown a prompt and the answer to it. Where there is a longer conversation, the earlier part is there as background, and the mark is still for the one answer. Work that ends in something a machine can check is treated differently, and I come to it below. For conversation, which is most of what an assistant does, the unit is the answer.\n\n[P4] This method built the chat assistant, and built it well. It is also where most of the behaviours in this essay come from.\n\n[P5] To see why, take a footballer, and suppose nobody counts goals. His match is cut into minutes. Each minute is shown to a judge who has not seen the others, and the judge marks whether he did the right thing in it. Train players on those marks and you get men who are always well placed and always make the tidy pass. The player who comes top is not the best player, because a match is won by something that runs across the minutes.\n\n[P6] A conversation with a purpose is a match. I was working through a complaint and asked who Bob was. The marker sees that question and a careful, complete answer to it, and gives full marks. The complaint is not in the minute he was shown.\n\n[P7] There is something else a marker cannot see in one answer, which is whether it helped. The helping happens later and somewhere else. What he can see is whether it looks like help. Ask a manager whether sales are good and she says: revenue is up thirty per cent, wages are up as much, so no. Ask a model and you get the figures by department and by customer segment. Each figure is a point of information, and points of information are what can be counted. The invented answer has the same root. \"I don't know\" looks like no help at all, and it is marked that way. A paper from OpenAI in 2025 says as much of the field's own tests: most give \"I don't know\" no credit, so a model that guesses outscores one that abstains.[^1]\n\n[P8] The marking also settles whom the model works for. The question put to the marker is whether the answer did what was asked. So the model learns to satisfy two parties, the one who wrote its instructions and the one who is typing. In a chat those two are everyone there is. In a business neither of them is the business.\n\n[P9] The model that answered our vendor followed its instructions to the letter. The customer who asked twice for a discount was the person typing, and got it. So was the staff member who asked for Saturday off. Nobody in those exchanges spoke for the venue, and the model was not trained to ask who did.\n\n[P10] The field's word for the aim is alignment, and its definition is generous: a system should act in accordance with the intentions, goals and values of the people it serves. An owner hears his business in that. What a marker can reward is the intention he can see, the one behind this instruction and this request. The larger reading is in the definition. The smaller one is in the training.\n\n[P11] It is the smaller one that is paid for. Intelligence is sold by the token to whoever is typing, and a company improves what its customers pay for.\n\n[P12] Last, the mark is given when the answer arrives. Whatever takes time earns nothing. The question about the supplier's invoices needed someone to come back to it the following week, and no mark was waiting there.\n\n[P13] The larger loss is the view formed over time. A manager begins to suspect that a product costs more trouble than it earns. He watches for a few months, weighs whether to raise it and with whom, and one day he says so. Nobody asked him. A model makes judgements too, as a by-product of the work: writing a program, it will tell you when it thinks the approach is wrong. But a judgement it did not state is gone when the reply is sent, and one it did state is gone when the conversation ends. Nothing in the marking asks it to keep one.\n\n[P14] That has a consequence people meet every day. Tell a model it is wrong, offering no new fact, and it will often give way, even when it was right.[^2] A person in that spot weighs the objection against a view he has held for some time. The model has only the objection, and the objection comes from the person its training taught it to satisfy.\n\n[P15] All of that is what the training put in. The rest is what neither stage gives, because it belongs to people doing something that cannot simply be learned from a corpus.\n\n[P16] One part of it is habit. The bartender who stood all day at a bar where nobody drank was rostered by a model. Asked whether that group was likely to drink, the model would have said no. Nobody asked. Using what you know on a question nobody put to you is a habit that reading does not form and marking does not reward. A person gets it by holding a job and answering for how it went.\n\n[P17] The other part is what is known only inside one house. At a meeting I once said that we put our own profit ahead of other businesses. Everyone in the room knew what kind of remark that was, and what it was not for. That knowledge was in no document, ours or anyone's. A new employee picks it up in her first months without being told. A model begins every conversation as a stranger.\n\n[P18] Can this be trained away? Much of it can, and some of it is being. Habits that show inside one answer can be marked directly. Training a model to decline what it does not know has been shown to work, and to carry over to tasks it was not trained on.\n\n[P19] The laboratories have also taken up the footballer's problem directly. Where a task ends in something a machine can check, they mark the whole task. A program is run against its tests and the mark goes to the finished work, however many steps it took. It is no accident that programming is where these models first worked for hours on their own. The method is now being carried to other kinds of work, by building practice tasks whose end state a machine can check. One researcher has put the rule plainly: what is easy to verify is easy to train.[^3]\n\n[P20] The rule also says where the method stops. A check can test what was written into the task. The reply to our vendor would have passed any check a laboratory could write: it answered the email, it was courteous, and everything in it was true. What made it wrong was known inside our venue and nowhere else. To mark an afternoon, someone has to know what the afternoon was for, and for most of a business's work that is known inside the house and written down nowhere.\n\n[P21] There is a second obstacle. Much of what a good employee does marks worse, answer for answer, than what an assistant does. \"Leave it with me until Thursday\" loses to a full reply now. Saying one thing where ten were available loses to saying ten. So I expect this part to be trained slowly, in the order in which checks can be found for it.\n\n[P22] What is known only inside one house will not come from a laboratory. It is in no text a laboratory holds. It has to be gathered on the job and kept there.\n\n[P23] More intelligence does not supply any of this. In two years I have worked through every release of these models. Each was cleverer than the last, and each lost the thread of a job in the same way. The reason is in the footballer. Intelligence is how much the player can do. The marking decides what he does with it, and a cleverer player under the same judges is still judged by the minute. In some respects he is worse: he has more to say, and one study found that the pull to agree with whoever is speaking grows as models grow.[^4]\n\n[P24] So here is a prediction that can be checked. By the end of 2027, the complaints people make about these models will have moved from what they cannot do to what they do. Fewer will say the model got it wrong. More will say it did, with great skill, something nobody wanted.\n\n[P25] [^1]: Kalai and others, \"Why Language Models Hallucinate\", OpenAI, September 2025.\n\n[P26] [^2]: Sharma and others, \"Towards Understanding Sycophancy in Language Models\", Anthropic, 2023.\n\n[P27] [^3]: Jason Wei, \"Asymmetry of verification and verifier's law\", 2025.\n\n[P28] [^4]: Perez and others, \"Discovering Language Model Behaviors with Model-Written Evaluations\", Anthropic, December 2022.\n\nScore each sentence on the nine offences below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Forgotten beat: for a paragraph's last sentence, score 0 to 9 how likely the intended reader is to be left waiting for something this sentence opens which the next paragraph does not take up.\n2. Unanchored reference: score 0 to 9 how likely the intended reader is to have to search at this sentence for what a word (a name, \"we\", \"this\", a term) refers to.\n3. Missing link: score 0 to 9 how likely the intended reader is to have to work out alone how this sentence connects to the one before.\n4. Out of order: score 0 to 9 how likely the intended reader is to be confused at this sentence because it relies on something the text only gives later.\n5. Repetition: score 0 to 9 how likely the intended reader is to feel at this sentence that they are being told something they were already told.\n6. Contradiction: score 0 to 9 how likely the intended reader is to feel at this sentence that it conflicts with something earlier.\n7. Purpose unclear: score 0 to 9 how likely the intended reader is to have expected this sentence to deliver a point, find that it does not, and take that as a fault in the writing rather than a deliberate setup.\n8. Register shift: score 0 to 9 how likely the intended reader is to be jarred by a change of voice at this sentence that the text has not prepared; a sentence that announces a story is about to start counts as preparation.\n9. Long dependency: score 0 to 9 how likely the intended reader is to have to hold words in mind at this sentence because the words that belong together sit far apart.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the nine scores comma-separated in the order above, TAB, why: what the reader meets at this sentence, in at most 15 words except as the special instruction below requires. Describe the stumble, not a way to fix it. Last line: END.\n\nSpecial instruction for the why field. Where contradiction (6) scores 5 or more, the why field must also say whether the conflict is real or only apparent, and why you think so. If it is apparent, quote the words that create it, say how they mislead, and say that the point itself holds. If it is real, name the two claims that cannot both be true. Leave any new wording to the writer. This changes the text you write, not the score: score what the reader feels, whatever your diagnosis.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"The fault\" names no stated fault; reader infers it from the gap."
+},
+"14": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "\"He\" for a marker just described as people or a model."
+},
+"17": {
+"s": [
+0,
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Exception flagged but deferred; reader holds an open caveat."
+},
+"25": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+3,
+0,
+0,
+0
+],
+"why": "\"Won\" sits oddly after \"nobody counts goals\"."
+},
+"27": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "Bob and the complaint appear abruptly; reader may not place them."
+},
+"33": {
+"s": [
+0,
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Manager example arrives without a stated tie to \"looks like help\"."
+},
+"36": {
+"s": [
+0,
+4,
+3,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"The invented answer\" is undefined here; jump from over-answering to guessing."
+},
+"45": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Discount-seeking customer is assumed known from an earlier chapter."
+},
+"46": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Saturday-off staff member is assumed known from an earlier chapter."
+},
+"52": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"Larger reading\" needs mapping back to the definition and the owner."
+},
+"54": {
+"s": [
+3,
+0,
+3,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "Sudden turn to commerce; P12 does not pick it up."
+},
+"57": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The supplier's invoices question is assumed known."
+},
+"69": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Something that cannot simply be learned from a corpus\" stays vague."
+},
+"71": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Bartender anecdote is assumed known from an earlier chapter."
+},
+"72": {
+"s": [
+0,
+5,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"That group\" has no antecedent in this text."
+},
+"77": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+3,
+0,
+0
+],
+"why": "Reader is not told what kind of remark it was."
+},
+"82": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"This\" could mean habit, tacit knowledge, or every trained-in fault."
+},
+"96": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "\"An afternoon\" appears as a new unit without introduction."
+},
+"101": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"This part\" is unclear: which part is slow to train?"
+},
+"103": {
+"s": [
+0,
+0,
+0,
+0,
+3,
+0,
+0,
+0,
+0
+],
+"why": "Restates P17's point that the knowledge is in no document."
+}
+},
+"secs": 34,
+"raw": "1.4\t0,2,0,0,0,0,0,0,0\t\"The fault\" names no stated fault; reader infers it from the gap.\n3.1\t0,3,0,0,0,0,0,2,0\t\"He\" for a marker just described as people or a model.\n3.4\t0,0,0,2,0,0,0,0,0\tException flagged but deferred; reader holds an open caveat.\n5.5\t0,0,0,0,0,3,0,0,0\t\"Won\" sits oddly after \"nobody counts goals\".\n6.2\t0,4,0,0,0,0,0,3,0\tBob and the complaint appear abruptly; reader may not place them.\n7.4\t0,0,3,0,0,0,0,0,0\tManager example arrives without a stated tie to \"looks like help\".\n7.7\t0,4,3,0,0,0,0,0,0\t\"The invented answer\" is undefined here; jump from over-answering to guessing.\n9.2\t0,3,0,0,0,0,0,0,0\tDiscount-seeking customer is assumed known from an earlier chapter.\n9.3\t0,3,0,0,0,0,0,0,0\tSaturday-off staff member is assumed known from an earlier chapter.\n10.5\t0,2,0,0,0,0,0,0,0\t\"Larger reading\" needs mapping back to the definition and the owner.\n11.2\t3,0,3,0,0,0,0,3,0\tSudden turn to commerce; P12 does not pick it up.\n12.3\t0,4,0,0,0,0,0,0,0\tThe supplier's invoices question is assumed known.\n15.2\t0,0,0,0,0,0,3,0,0\t\"Something that cannot simply be learned from a corpus\" stays vague.\n16.2\t0,3,0,0,0,0,0,0,0\tBartender anecdote is assumed known from an earlier chapter.\n16.3\t0,5,0,0,0,0,0,0,0\t\"That group\" has no antecedent in this text.\n17.2\t0,0,0,0,0,0,3,0,0\tReader is not told what kind of remark it was.\n18.1\t0,3,0,0,0,0,0,0,0\t\"This\" could mean habit, tacit knowledge, or every trained-in fault.\n20.5\t0,4,0,0,0,0,0,0,2\t\"An afternoon\" appears as a new unit without introduction.\n21.5\t0,3,0,0,0,0,0,0,0\t\"This part\" is unclear: which part is slow to train?\n22.2\t0,0,0,0,3,0,0,0,0\tRestates P17's point that the knowledge is in no document.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"2": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"my opening story\" points back to the introduction's vendor story."
+},
+"27": {
+"s": [
+0,
+4,
+3,
+0,
+0,
+0,
+0,
+3,
+0
+],
+"why": "A first-person anecdote about Bob and a complaint arrives unannounced."
+},
+"33": {
+"s": [
+0,
+0,
+3,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "The manager example appears before its tie to \"looks like help\" is shown."
+},
+"35": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "Reader must infer that countable points are what the marker rewards."
+},
+"36": {
+"s": [
+0,
+4,
+3,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"The invented answer\" assumes the reader recalls hallucination from earlier chapters."
+},
+"45": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The discount-seeking customer is introduced as if already known."
+},
+"46": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "The Saturday-off staff member is referenced as already known."
+},
+"51": {
+"s": [
+0,
+3,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"The larger reading\" leaves the reader to reconstruct which two readings exist."
+},
+"54": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+5,
+0,
+0,
+0
+],
+"why": "Apparent. \"to whoever is typing\" implies the customer pays, though P9's venue pays. Per-exchange billing still holds."
+},
+"57": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"The question about the supplier's invoices\" assumes an earlier story is remembered."
+},
+"58": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"Larger loss\" is compared with something left unnamed."
+},
+"69": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"The rest\" of what is unclear, and \"people doing something\" is vague."
+},
+"71": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+3
+],
+"why": "The long bartender subject delays \"was rostered\", and the story arrives cold."
+},
+"72": {
+"s": [
+0,
+5,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"That group\" has no antecedent, since no group of guests was mentioned."
+},
+"74": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+4,
+0,
+0,
+0
+],
+"why": "This clashes with 13.5, where models volunteer unasked judgements while coding."
+},
+"77": {
+"s": [
+0,
+0,
+3,
+0,
+0,
+0,
+0,
+2,
+0
+],
+"why": "A meeting remark about profit appears with no stated link to the point."
+},
+"78": {
+"s": [
+0,
+0,
+0,
+0,
+0,
+0,
+5,
+0,
+0
+],
+"why": "The remark's kind and purpose are withheld, so the example lands on nothing."
+},
+"82": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"This\" could mean all the behaviours or only the last two parts."
+},
+"96": {
+"s": [
+0,
+4,
+0,
+0,
+0,
+0,
+0,
+0,
+2
+],
+"why": "\"An afternoon\" replaces minutes and match without warning."
+},
+"98": {
+"s": [
+0,
+0,
+0,
+0,
+2,
+0,
+0,
+0,
+0
+],
+"why": "This echoes P12's point about deferred work earning no mark."
+},
+"99": {
+"s": [
+0,
+0,
+0,
+0,
+3,
+0,
+0,
+0,
+0
+],
+"why": "This repeats P7's figures-versus-one-answer point."
+},
+"100": {
+"s": [
+0,
+3,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"This part\" could mean habits, deferred work, or whole-task marking."
+},
+"103": {
+"s": [
+0,
+0,
+0,
+0,
+4,
+0,
+0,
+0,
+0
+],
+"why": "This restates \"in no document\" (17.4) and \"written down nowhere\" (20.5)."
+},
+"111": {
+"s": [
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"He\" slides from the footballer to the model mid-sentence."
+},
+"112": {
+"s": [
+0,
+0,
+2,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"why": "\"So\" leaves the reader to derive how the prediction follows."
+}
+},
+"secs": 93,
+"raw": "1.2\t0,2,0,0,0,0,0,0,0\t\"my opening story\" points back to the introduction's vendor story.\n6.2\t0,4,3,0,0,0,0,3,0\tA first-person anecdote about Bob and a complaint arrives unannounced.\n7.4\t0,0,3,0,0,0,0,2,0\tThe manager example appears before its tie to \"looks like help\" is shown.\n7.6\t0,0,2,0,0,0,0,0,0\tReader must infer that countable points are what the marker rewards.\n7.7\t0,4,3,0,0,0,0,0,0\t\"The invented answer\" assumes the reader recalls hallucination from earlier chapters.\n9.2\t0,3,0,0,0,0,0,0,0\tThe discount-seeking customer is introduced as if already known.\n9.3\t0,3,0,0,0,0,0,0,0\tThe Saturday-off staff member is referenced as already known.\n10.4\t0,3,2,0,0,0,0,0,0\t\"The larger reading\" leaves the reader to reconstruct which two readings exist.\n11.2\t0,0,2,0,0,5,0,0,0\tApparent. \"to whoever is typing\" implies the customer pays, though P9's venue pays. Per-exchange billing still holds.\n12.3\t0,4,0,0,0,0,0,0,0\t\"The question about the supplier's invoices\" assumes an earlier story is remembered.\n13.1\t0,0,2,0,0,0,0,0,0\t\"Larger loss\" is compared with something left unnamed.\n15.2\t0,3,0,0,0,0,2,0,0\t\"The rest\" of what is unclear, and \"people doing something\" is vague.\n16.2\t0,4,0,0,0,0,0,0,3\tThe long bartender subject delays \"was rostered\", and the story arrives cold.\n16.3\t0,5,0,0,0,0,0,0,0\t\"That group\" has no antecedent, since no group of guests was mentioned.\n16.5\t0,0,0,0,0,4,0,0,0\tThis clashes with 13.5, where models volunteer unasked judgements while coding.\n17.2\t0,0,3,0,0,0,0,2,0\tA meeting remark about profit appears with no stated link to the point.\n17.3\t0,0,0,0,0,0,5,0,0\tThe remark's kind and purpose are withheld, so the example lands on nothing.\n18.1\t0,2,0,0,0,0,0,0,0\t\"This\" could mean all the behaviours or only the last two parts.\n20.5\t0,4,0,0,0,0,0,0,2\t\"An afternoon\" replaces minutes and match without warning.\n21.2\t0,0,0,0,2,0,0,0,0\tThis echoes P12's point about deferred work earning no mark.\n21.3\t0,0,0,0,3,0,0,0,0\tThis repeats P7's figures-versus-one-answer point.\n21.4\t0,3,0,0,0,0,0,0,0\t\"This part\" could mean habits, deferred work, or whole-task marking.\n22.2\t0,0,0,0,4,0,0,0,0\tThis restates \"in no document\" (17.4) and \"written down nowhere\" (20.5).\n23.7\t0,2,0,0,0,0,0,0,0\t\"He\" slides from the footballer to the model mid-sentence.\n24.1\t0,0,2,0,0,0,0,0,0\t\"So\" leaves the reader to derive how the prediction follows.\nEND",
+"r": 1
+}
+]
+}
+]
+}
