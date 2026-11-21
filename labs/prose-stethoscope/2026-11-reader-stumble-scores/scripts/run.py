@@ -1,14 +1,28 @@
 #!/usr/bin/env python3
 """Run a stumble reader on one text and add the batch to its cell, runs/<prompt>+<format>/<model>+<text>.json.
-usage: run.py <prompt> <format> <model> <text> <repeats> [key=value ...] [--dry-run]
+usage: run.py <prompt> <format> <model> <text> <repeats> [key=value ...] [--root <dir>] [--dry-run]
 The ids are the three-digit file names in prompts/, formats/ and texts/; the model is spelled as the
-README's Models section gives it. A key=value pair replaces a value the files supply (reader,
-description, table_reader), and the batch records it. --dry-run prints the assembled prompt and calls
-nothing."""
+README's Models section gives it. A {key} slot in a prompt, format or criterion takes its value from the
+text's front matter (reader, or any fact the criterion asks the caller for); a slot nothing fills stops
+the run. A key=value pair replaces a value the files supply, and the batch records it. --root names the
+directory whose texts/ and runs/ are used, for texts kept outside this lab; prompts, formats and
+criteria are always this lab's. --dry-run prints the assembled prompt and calls nothing."""
 import json, os, re, subprocess, sys, tempfile, time
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA = ROOT  # where texts/ and runs/ are
+NOT_SLOTS = ("role", "flag", "quiet", "contested")
+
+
+def take_root(argv):
+    """Remove --root <dir> from argv and read texts/ and runs/ from that directory."""
+    global DATA
+    if "--root" in argv:
+        i = argv.index("--root")
+        DATA = os.path.abspath(argv[i + 1])
+        del argv[i:i + 2]
+    return argv
 SPLIT = re.compile(r'(?<=[.?!:])\s+(?=[A-Z"*])')
 
 
@@ -27,7 +41,7 @@ def load(path):
 
 
 def paragraphs(t):
-    body = load(f"{ROOT}/texts/{t}.md")[1].split("\n", 1)[1].strip()  # the first line is the title
+    body = load(f"{DATA}/texts/{t}.md")[1].split("\n", 1)[1].strip()  # the first line is the title
     return [p.strip() for p in body.split("\n\n") if p.strip()]
 
 
@@ -38,21 +52,25 @@ def sentences(t):
 def render(p, f, t, overrides=None):
     pmeta, ptpl = load(f"{ROOT}/prompts/{p}.md")
     fmeta, ftpl = load(f"{ROOT}/formats/{f}.md")
-    tmeta = load(f"{ROOT}/texts/{t}.md")[0]
-    v = {"reader": tmeta.get("reader", [""])[0], "description": pmeta.get("description", [""])[0],
-         "table_reader": fmeta.get("table_reader", [""])[0]}
+    tmeta = load(f"{DATA}/texts/{t}.md")[0]
+    v = {"reader": "", "description": pmeta.get("description", [""])[0], "table_reader": fmeta.get("table_reader", [""])[0]}
+    v.update({k: x[0] for k, x in tmeta.items() if k not in NOT_SLOTS})
     v.update(overrides or {})
     number = fmeta.get("numbering", ["{n}. "])[0]
     crit = "\n".join(number.replace("{n}", str(i)) + load(f"{ROOT}/criteria/{c.strip()}.md")[1].strip()
                      for i, c in enumerate(fmeta["criteria"][0].split(","), 1))
     text = "\n\n".join(f"[P{n}] {x}" for n, x in enumerate(paragraphs(t), 1))
-    out = ptpl.replace("{reader}", v["reader"]).replace("{description}", v["description"])
-    out = out.replace("{format}", ftpl.replace("{criteria}", crit).replace("{table_reader}", v["table_reader"]))
+    out = ptpl.replace("{format}", ftpl.replace("{criteria}", crit))
+    for k, x in v.items():
+        out = out.replace("{" + k + "}", x)
+    unfilled = set(re.findall(r"\{([a-z][a-z_-]*)\}", out)) - {"text"}
+    if unfilled:
+        sys.exit(f"text {t} gives no value for: {', '.join(sorted(unfilled))}")
     return out.replace("{text}", text)
 
 
 def cell_path(p, f, m, t):
-    return f"{ROOT}/runs/{p}+{f}/{m}+{t}.json"
+    return f"{DATA}/runs/{p}+{f}/{m}+{t}.json"
 
 
 def append_batch(p, f, m, t, overrides, prompt, runs):
@@ -81,7 +99,7 @@ def call(prompt, model, n_scores, where):
 
 
 if __name__ == "__main__":
-    args = [a for a in sys.argv[1:] if a != "--dry-run"]
+    args = [a for a in take_root(sys.argv[1:]) if a != "--dry-run"]
     p, f, m, t, repeats = args[:5]
     overrides = dict(a.split("=", 1) for a in args[5:])
     prompt = render(p, f, t, overrides)
