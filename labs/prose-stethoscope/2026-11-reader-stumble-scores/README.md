@@ -142,6 +142,13 @@ Wordings 040, 042 and 044, with the fact of what the reader is reading for.
 - The skill ships 044 for a CV alone. On essays it stays mostly quiet, misses the one fault of the author's it was aimed at, and scores a credential he kept.
 - It is a quiet reader. It hears a line whose subject is something else and lets smaller trivia pass. It also scored the one supposition in the record, a made-up use case in a CV, at 5 under 040 and 3 to 4 after.
 
+### In a fresh session
+
+The skill's instructions were tried by new sessions that had a renamed copy of the plugin, a user's request, and nothing else. Each is one try, and a session's choice is not a measurement.
+
+- A CV, with two worries stated: that it read as a hands-on engineer's, and that a recruiter would think the author still committed to another business. The session ran all seven modules, wrote the three facts as sentences from the request, left flow's repetition rows out as the form of a CV, and read level's rows on one job as a finding about that job. It rewrote nothing. This try used an earlier draft of the instructions, the same for a CV except that learning-path then carried its instruction.
+- An essay chapter, with the questions where the author sounds unsure and whether anything in it should go. On the instructions as first reworked for the shipped shape, which named the three modules for an essay and gave the reason for leaving work off, the session ran flow, faults and height, and work as well. Work scored nothing at the cut-off there and the session cut nothing. The instructions were then made to say that the skill has no answer to whether anything in an essay should go. On those, a further session ran flow, faults and height and told the author so.
+
 ### Named and not built
 
 Two more modules were named when the set was designed. A supposition, meaning a made-up case in a kind of text with no room for one, had one case in the author's record, and work scored it. A story opened and never taken up had no case there, and the flow reader's forgotten beat is its nearest neighbour. Either can be supplied to the skill as a module of the caller's own.
