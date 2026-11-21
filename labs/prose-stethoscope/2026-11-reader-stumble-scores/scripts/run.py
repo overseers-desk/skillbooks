@@ -3,8 +3,8 @@
 usage: run.py <prompt> <format> <model> <text> <repeats> [key=value ...] [--root <dir>] [--dry-run]
 The ids are the three-digit file names in prompts/, formats/ and texts/; the model is spelled as the
 README's Models section gives it. A {key} slot in a prompt, format or criterion takes its value from the
-text's front matter (reader, or any fact the criterion asks the caller for); a slot nothing fills stops
-the run. A key=value pair replaces a value the files supply, and the batch records it. --root names the
+text's front matter (reader, or any fact the criterion asks the caller for), the prompt's (description)
+or the format's (table_reader); a slot nothing fills stops the run. A key=value pair replaces a value the files supply, and the batch records it. --root names the
 directory whose texts/ and runs/ are used, for texts kept outside this lab; prompts, formats and
 criteria are always this lab's. --dry-run prints the assembled prompt and calls nothing."""
 import json, os, re, subprocess, sys, tempfile, time
@@ -16,7 +16,6 @@ NOT_SLOTS = ("role", "flag", "quiet", "contested")
 
 
 def take_root(argv):
-    """Remove --root <dir> from argv and read texts/ and runs/ from that directory."""
     global DATA
     if "--root" in argv:
         i = argv.index("--root")

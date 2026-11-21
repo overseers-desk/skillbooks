@@ -8,7 +8,8 @@ and a {slot} for each thing the caller supplies. --module takes the name of one 
 the path of one anywhere; without it the flow and faults modules run. --fact fills a module's slot, and
 a slot left unfilled stops the run.
 A first line starting with '#' is taken as the title and not read. Paragraphs are separated by blank lines;
-each list item, table row and later heading is read as a unit of its own, and fenced blocks are skipped."""
+each list item, table row and later heading is read as a unit of its own, and fenced blocks and ::: fence
+lines are skipped."""
 import argparse, json, os, re, subprocess, sys, tempfile
 from concurrent.futures import ThreadPoolExecutor
 

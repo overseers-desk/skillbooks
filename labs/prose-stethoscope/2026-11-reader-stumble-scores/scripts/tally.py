@@ -7,7 +7,7 @@ or a criterion changed is not mixed with its earlier runs. A flag is met when mo
 runs score 4 or more on a named offence at any of its sentences, since a reader can place a row one
 sentence off. A quiet is broken, and a contested place scored, when some one of its sentences,
 taken together with any of its own sentences beside it, scores 4 or more in more than half the runs.
-Two runs that each score a different sentence of a long passage once do not count against it.
+Runs that each score a different sentence of a long passage once do not count against it.
 usage: tally.py [--root <dir>] <prompt>+<format> ..."""
 import glob, json, os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

@@ -3,7 +3,7 @@
 An expectation names one or more offences (comma-separated, or "any"), the sentences (comma-separated,
 or "all") and what is there. A flag expectation is met when a listed sentence scores 4 or more on a
 criterion of a named offence; a quiet one is broken the same way, and a contested one, a place the
-text's record leaves undecided, is counted the same way and judged neither. A cell whose format has no criterion
+source of the text's expectations leaves undecided, is counted the same way and judged neither. A cell whose format has no criterion
 of the named offences skips the expectation; with --any it is counted on every criterion the format
 has instead, which shows what a reader already raises at a place another offence is expected.
 usage: matrix.py [--root <dir>] [--any]"""
@@ -36,5 +36,5 @@ for path in sorted(glob.glob(f"{DATA}/runs/*/*.json")):
             for r in runs:
                 keys = list(r["rows"]) if sents == "all" else sents.split(",")
                 hits += any(r["rows"][k]["s"][i] >= 4 for k in keys if k in r["rows"] for i in cols)
-            result = f"{hits}/{len(runs)}" + ("" if kind == "flag" else " flagged") + (" (on its own offences)" if other else "")
+            result = f"{hits}/{len(runs)}" + ("" if kind == "flag" else " flagged") + (" (on the format's own offences)" if other else "")
             print(f"| {cell['prompt']}+{cell['format']} | {cell['model']} | {cell['text']} | {kind} {offences} at {sents}: {label} | {result} |")
