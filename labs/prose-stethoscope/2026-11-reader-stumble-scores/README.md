@@ -1,6 +1,6 @@
 # reader-stumble-scores
 
-Cold readers that score every sentence of a text for what a reader meets there: a stumble in the flow, a line that costs the author the reader's trust, and, as questions of their own, faults that live above the sentence.
+Cold readers, each a stripped `claude -p` call given only the text and a line saying who reads it, that score every sentence for what a reader of the text meets there: a stumble in the flow, a line that costs the author the reader's trust, and, as questions of their own, faults that live above the sentence.
 
 ## Problem
 
@@ -10,7 +10,7 @@ The same writing fails above the sentence. A CV reported an engineer's detail at
 
 ## The flow reader
 
-Prompt 003 with format 006, on `claude-opus-5-5`. The skill ships it with format 015, which asks for the reason as what the reader meets and not a way to fix it, and has the reader give its ground for calling a conflict real or apparent and leave new wording to the writer. The figures in this section are format 006's. Under format 015 the hiccup scores 3, 3 and 4 in three runs where 006 scored it 4, 4 and 4, and the deliberate deferral 3 in all three (`runs/003+015/`). The reader is told who reads the text and what they have read before, then scores each sentence 0 to 9 on nine kinds of stumble and answers in the TSV that `TSV-FORMAT.md` describes. A score of 4 or more is a stumble. The forgotten beat counts at 4 or more on either sentence of a paragraph join, since readers place it on the sentence that sets something up as often as on the one that turns away.
+Prompt 003 with format 006, on `claude-opus-5-5`. The skill ships it with format 015, which asks for the reason as what the reader meets and not a way to fix it, and has the reader give its ground for calling a conflict real or apparent and leave new wording to the writer. The figures in this section are format 006's. Under format 015 the hiccup scores 3, 3 and 4 in three runs where 006 scored it 4, 4 and 4, so only one run of three reaches the cut-off, and the deliberate deferral (`texts/004.md`) scores 3 in all three (`runs/003+015/`). The catch described below is format 006's, and the shipped format makes it in one run of three. Format 015 was taken because 006 asks the reader for replacement wording when a contradiction scores 5 or more, and the skill reports without prescribing. Whether the lower score is chance or a real drop was left open; the six to nine further runs that would tell were not made. The reader is told who reads the text and what they have read before, then scores each sentence 0 to 9 on nine kinds of stumble and answers in the TSV that `TSV-FORMAT.md` describes. A score of 4 or more is a stumble, and 4 is the cut-off. The forgotten beat, a paragraph's last sentence opening something the next paragraph does not take up, counts at 4 or more on either sentence of a paragraph join, since readers place it on the sentence that sets something up as often as on the one that turns away.
 
 What it does:
 
@@ -30,13 +30,13 @@ Prompt 005 with format 016: five criteria, a total (a sentence allowing no excep
 
 ## Questions above the sentence
 
-Each is one criterion asked alone in its own call, prompt 003 with a format of one criterion, since a criterion added to the flow reader moved its one tuned catch. Some need a fact that only whoever runs the skill holds, such as whom the author is to be taken for. The fact is one sentence, and the criterion has a slot for it. The skill calls each of these a module, and the criterion and format in the table are the pair it ships; `scripts/module.py` prints each pair as the skill's file.
+Each is one criterion asked alone in its own call, prompt 003 with a format of one criterion, since a criterion added to the flow reader moved its one tuned catch. Some need a fact that only whoever runs the skill holds, such as whom the author is to be taken for. The fact is one sentence, and the criterion has a slot for it. The skill calls each of these a module, and the criterion and format in the table are the pair it ships; `scripts/module.py` prints each pair as the skill's file. It offers all of them for a CV or another text read to size up its author, and height alone for an essay. What was tried on essays and not shipped is recorded under learning-path and work below.
 
 | Module | Criterion and format | Asks how likely the reader is to | Fact |
 |---|---|---|---|
 | height | 036 in 019 | feel that the author stands below their own subject: still finding it out, guessing, or taking from others what the reader expects them to know | |
 | level | 043 in 027 | place the author lower than the standing claimed, by what the author chose to tell of their own part | `taken-for` |
-| learning-path | 037 in 028 | feel they are told the story of how the author came to know a thing, where they wanted what the author knows | |
+| learning-path | 037 in 021 | feel they are told the story of how the author came to know a thing, where they wanted what the author knows | |
 | must-not-conclude | 039 in 023 | be led toward a conclusion the author does not want drawn | `must-not-conclude` |
 | work | 044 in 029 | wonder why they are told this, because the sentence's subject is something other than what they came for and nothing later uses it | `reading-for` |
 
@@ -50,35 +50,37 @@ The texts:
 - Held out: the CV's final version; the chapter "Play for the goal" whole, at three commits; and chapter VI in its first draft and its rewrite (`texts/013.md`, `texts/014.md`).
 - For the rate of rows on CVs nobody here objected to: four other people's CVs, two judged good and two judged weak in earlier work outside this lab, where AI judges compared CVs in pairs.
 
-The CV in every version, the other people's CVs, the whole chapter, and the fuller expectations for chapters V and VI with the modules' run records on those chapters, are private. They sit in private repositories, in folders read through `--root`. Their location is left out of this record, which gives their results as counts from `tally.py`.
+An expectation is a place where a module should score, a flag, or should not, a quiet. It comes from the author's record, never from the criterion it tests, and carries the strength of its source: `owner`, he objected in words; `accepted`, someone working with him objected and he accepted it; `audit`, an AI cut the line in its own audit and he did not restore it; `reading`, a supervising session's reading alone, where a row is evidence for the reading and a miss is no failure. Where a result below gives his view, his words are in the private record. Expectations were written before the wording they test was run. Those for the tuning texts were committed then; those for the held-out texts were kept by the supervising session until every wording was frozen.
 
-An expectation is a place where a module should score, a flag, or should not, a quiet. It comes from the author's record, never from the criterion it tests, and carries the strength of its source: `owner`, he objected in words; `accepted`, someone working with him objected and he accepted it; `audit`, an AI cut the line in its own audit and he did not restore it; `reading`, a supervising session's reading alone, where a row is evidence for the reading and a miss is no failure. Where a result below gives his view, his words are in the private record. Expectations were committed before the wording they test was run.
+A run is one call of a reader on a text, and a cell is all the runs of one wording on one text. Scores below are given run by run, so "6 and 5" is one sentence in two runs. A cell had two runs, and a third where the two disagreed on an expectation; the two texts made for this lab had one. A flag is met when more than half the runs score 4 or more at any of its sentences, since a reader can place a row one sentence off. A quiet is broken when some one of its sentences, counted together with the sentences of the same quiet on either side of it, scores 4 or more in more than half the runs. So two runs that each score a different and distant sentence of a long passage once do not break it, and two runs that score neighbouring sentences once each do. The author had set twelve runs as the most one test of one wording should take. That bound was applied to each wording, counted across all its tuning texts, with at most three wordings to a module, so that a wording could not be fitted to its texts by repetition. Height's second wording exceeds it by two runs, made to settle a kept line that had scored at the cut-off.
 
-Two sessions did the work. One worded the criteria and ran them. The other, the supervising session, had studied the author's record, wrote the expectations, and kept those of the held-out texts to itself. The wording session did not open a held-out text. It ran each frozen wording there without reading the rows, and the supervising session read the cells and gave its verdict. Once every wording was frozen the supervising session released its held-out expectations, written before the runs, and they were entered on the private texts, a prediction that failed staying as an expectation that failed. The held-out counts below are `tally.py`'s over those lines.
+Two AI sessions did the work. One worded the criteria and ran them. The other, the supervising session, had studied the author's record, wrote the expectations, and kept those of the held-out texts to itself. The wording session did not open a held-out text. It ran each frozen wording there without reading the rows, and the supervising session read the cells and gave its verdict. Once every wording was frozen the supervising session released its held-out expectations, written before the runs, and they were entered on the private texts, a prediction that failed staying as an expectation that failed. The held-out counts below are `tally.py`'s over those lines.
 
-A run is one call of a reader on a text, and a cell is all the runs of one wording on one text. Scores below are given run by run, so "6 and 5" is one sentence in two runs. A cell had two runs, and a third where the two disagreed on an expectation; the two constructed controls had one. A flag is met when more than half the runs score 4 or more at any of its sentences, since a reader can place a row one sentence off. A quiet is broken when some one of its sentences scores 4 or more in more than half the runs, so two runs that each score a different sentence of a long passage once do not break it. The author had bounded a test of one wording at twelve runs. That bound was applied to each wording across its tuning texts, with at most three wordings to a module, so that a wording could not be fitted to its texts by repetition. One cell exceeds it by two runs, made to settle a kept line that had scored at the cut-off.
+The CV in every version, the other people's CVs, the whole chapter, and the fuller expectations for chapters V and VI with the run records of the above-sentence modules on those chapters, are private. They sit in private repositories, in folders read through `--root`. Their location is left out of this record, which gives their results as counts from `tally.py`, with single scores and descriptions of a line where a count alone would not say what was heard.
 
 After a held-out result two things were changed, both described below: work's criterion was reworded once, and learning-path's format gained an instruction. Nothing else was.
 
-Held-out results for the wordings the skill ships, two runs each:
+Held-out results, two runs each. The figures count expectations, not runs, and "none set" means the text carries no expectation of that kind for the module. Rows marked "not shipped" are for a text the skill does not offer that module for, or a form it does not ship:
 
 | Module | Text | Flags met | Quiets broken |
 |---|---|---|---|
-| height | the whole chapter, latest version | none set | 1 of 6: the quiet on the whole chapter, by two kept sentences that lean on another voice |
+| height | the whole chapter, latest version | none set | 1 of 6: the quiet on the whole chapter, by two kept sentences, one leaning on a named authority and one guessing at what others think |
 | height | the whole chapter, two earlier versions | `owner` 0 of 2, `reading` 0 of 1 | none set |
 | height | chapter VI, draft and rewrite | none set | 0 of 2 |
 | height | the final CV | none set | 1 of 1: a prediction of no row, broken by one sentence at 4 and 4 |
-| learning-path | the whole chapter, two earlier versions | `owner` 2 of 2 | none set |
-| learning-path | the final CV | `reading` 2 of 2 | none set |
+| learning-path | the final CV | `reading` 1 of 2 | none set |
+| learning-path, not shipped for an essay | the whole chapter, two earlier versions | `owner` 2 of 2 | none set |
+| learning-path with the instruction, not shipped | the final CV | `reading` 2 of 2 | none set |
+| learning-path with the instruction, not shipped | the whole chapter, two earlier versions | `owner` 2 of 2 | none set |
 | level | the final CV | `reading` 1 of 1 | 1 of 1: a line the author shaped himself, at 6 and 6 |
 | must-not-conclude | the final CV | none set | 1 of 1: a prediction of no row; on reading the two sentences the supervising session judged the module right |
-| work | chapter VI, draft | `owner` 0 of 1 | none set |
-| work | chapter VI, rewrite | none set | 0 of 1 |
 | work | the final CV | none set | none set; no sentence scores in both runs |
+| work, not shipped for an essay | chapter VI, draft | `owner` 0 of 1 | none set |
+| work, not shipped for an essay | chapter VI, rewrite | none set | 0 of 1 |
 
-The `owner` flag on the two earlier versions of the whole chapter is one sentence: height was expected to score it and did not, and it was then given to learning-path, which does.
+The `owner` flag on the two earlier versions of the whole chapter is one sentence. Height was expected to score it and did not. The supervising session, having read the sentence and seen height's score, then expected learning-path to hear it, before learning-path was run on those texts, and it does.
 
-Before any wording, the flow and faults readers were run on the two CV versions and on chapter V. At the lines the author had objected to in words they raised his objection at none. At about half they scored the same sentence for another reason, an unintroduced name or a figure given twice.
+Before any wording, the flow and faults readers were run on the two CV versions and on chapter V. On the CV, at the lines the author had objected to in words, they raised his objection at none, and at about half they scored the same sentence for another reason, an unintroduced name or a figure given twice. On chapter V's first draft the faults reader had already raised two of his objections in 3 of 3 runs, the first disowning sentence and one defensive sentence, and missed the second disowning sentence in 0 of 3.
 
 ### height
 
@@ -94,17 +96,17 @@ Wordings 035 and 036, and 036 in a format (020) that invited a row for a problem
 
 ### level
 
-Wordings 038, 041 and 043, with the fact that the author is to be taken for someone who already leads at the scale of the post the CV applies for.
+Wordings 038, 041 and 043, with the fact that the author is to be taken for someone who already leads at the scale of the post the CV applies for, thirty or more engineers.
 
 - Tuning, on the first CV draft. Of five lines he objected to, four are met by 2 of 3 runs, with his reason: counts of scripts and tools, and implementation detail, reported by a candidate for a post leading thirty engineers. The fifth, a line taking pride in still doing a junior's work, scores 3, 3, 2 with the right reason. Both `accepted` lines are met, at 6. Two audit cuts, lists of tools, stay at 3.
 - Quiets. None of eight broken.
-- Wording 038 let the reader weigh "what it shows them doing, counting or dwelling on", and the reader measured every number against the thirty in the fact. Wording 041 asked what the author chose to tell and still scored 4, 3, 4 a line the author wrote himself, in which a system directs twenty staff, as his own headcount. Wording 043 adds "about their own part", and that line draws no row.
+- Wording 038 let the reader weigh "what it shows them doing, counting or dwelling on", and the reader measured every number against the thirty engineers of the post. Wording 041 asked what the author chose to tell and still scored 4, 3, 4 a line the author wrote himself, saying how many staff a system directs, by reading that number as his own headcount. Wording 043 adds "about their own part", and that line draws no row.
 - Held out, the final CV: 3 and 2 rows of 52. The supervising session's one prediction is met at 5 and 5. One line the author shaped himself scores 6 and 6, against a prediction of quiet.
-- Other people's CVs, one run each: 1 and 5 rows at 4 or more on the two judged good, 7 and 23 on the two judged weak. The reasons name a senior director's bullet about code he wrote himself, lists of editors and build tools, weekly summaries.
+- Other people's CVs, one run each: 1 and 5 rows at 4 or more on the two judged good, 7 and 23 on the two judged weak. The reasons name a senior director's bullet about code he wrote himself, lists of editors and build tools, weekly summaries. Whether each of those rows is a hit was not judged; what the four show is that the count follows the earlier judges' order and that the module does not score a CV for being one.
 
 ### learning-path
 
-One criterion, 037, in two answer formats: plain (021), and with a special instruction (028) modelled on the flow reader's for contradiction. With the instruction, at 4 or more the reason also says which of two things the passage is doing: resting the point on how the author came by it, or telling a story that an author who already holds the point has chosen. The score stays what the reader feels. The skill ships the second.
+One criterion, 037, in two answer formats: plain (021), and with a special instruction (028) modelled on the flow reader's for contradiction. With the instruction, at 4 or more the reason also says which of two things the passage is doing: resting the point on how the author came by it, or telling a story that an author who already holds the point has chosen. The score stays what the reader feels. The skill ships the plain format, for a CV alone. The instruction and every essay result below are kept as work not yet fit to publish, and the result on the whole chapter is the place to start from next time.
 
 - Tuning. The one line of the author's own among the tuning texts, a spoken example of a growth story in a CV, scores 8 and 8 in both formats. A supervising session's readings on the CV versions, lines that name a method by where it came from, are recognised with the right reason at 2 to 4 in the plain format and at 4 to 5 with the instruction. No quiet broken.
 - Held out in the plain format, the final CV: rows fall on the two places predicted and nowhere else.
@@ -113,6 +115,7 @@ One criterion, 037, in two answer formats: plain (021), and with a special instr
 - With the instruction, the final CV: the same two places and no other, the first at 4 and 4 where it had been 3 and 3. The reader says there that the derivation stands where the method should be.
 - With the instruction, the whole chapter. The rejected sentence scores 6 in all four runs of the two earlier versions, each time diagnosed as resting the point on how the author came by it, and the sentences after it are diagnosed the same way in three runs of four. In the latest version, with the author's replacement at the head, the replacement draws no row and the same stretch sits mostly at 4, diagnosed as a story chosen to show the point. On that chapter the diagnosis separates what the score alone does not. It is not steady: it splits between runs on three or four sentences, and gives the first diagnosis to two sentences the author kept.
 - With the instruction, chapter VI: a limit. On both versions one passage scores 5 and 6, and on the rewrite a second scores 5 and 5, each diagnosed as resting the point on how the author came by it. The author's record of that chapter values those passages as claims sized to what he can show, told as what he has found. Two of his standards meet there, speaking from knowledge and claiming no more than the support carries, and the module cannot tell which he chose. A row with that diagnosis is a report to weigh.
+- Why the plain format ships, and for a CV alone. On a CV the second diagnosis excuses a fault: the author's spoken example of a researcher's line, wrong for a CV by his own account, was diagnosed as a story the author chose in one run of two. On an essay the first diagnosis condemns a choice, as chapter VI shows, and the scores alone would have an editor delete a story. The price on a CV is the mild case, a line that names a method by where it came from, which the plain format leaves at 3.
 - Beside height. On the tuning texts both score the same lines. They part where an author who plainly knows the subject still tells how he came to it: such a line in a CV version scores 2 on height and 4 to 5 here, and height gave the first predicted place of the final CV 3 and 3.
 - Other people's CVs, one run each in the plain format: 1, 0, 0 and 1 rows at 4 or more.
 
@@ -120,7 +123,7 @@ One criterion, 037, in two answer formats: plain (021), and with a special instr
 
 One wording, 039, whose reason names what the reader concludes.
 
-- Tuning. All six lines the author objected to are met, at 6 to 9: a stated country of residence, roles dated to the present, a company founded this year. No quiet of eight broken.
+- Tuning. All six lines the author objected to are met, at 6 to 9: lines that state where he lives or show a commitment as current. No quiet of eight broken.
 - The fact decides what it hears. Told that the reader should form no view of where the author lives, it scored each line pointing to any country, among them two that pointed where he was content to be placed. Told that the reader should not conclude he lives outside two named countries, it scored those two lines 2 and went on scoring the rest.
 - Held out, the final CV: two sentences score 5 and 4 in both runs, for a conclusion the author had named as his fear. The supervising session had predicted no row, and on reading the two sentences it judged the module right.
 
@@ -134,8 +137,9 @@ Wordings 040, 042 and 044, with the fact of what the reader is reading for.
 - So wording 044 adds the kinds of work a sentence can be doing, in the author's terms made general: it helps the reader understand, ties the matter to something they know, sets up what follows, gives the author standing to speak, leaves a picture they will remember, or lets them smile in recognition. This is the one criterion reworded after a held-out result. The whole chapter is a tuning text for work from that point, and chapter VI is its held-out essay.
 - With 044. On the whole chapter the vivid detail is quiet in both runs and the credential falls to 4 and 4 with the same reason, that nothing later uses it: one of seven quiets broken. On the CV his line holds at 4 and 4, so naming standing as a kind of work did not excuse a prize that is the venue's.
 - Held out, the final CV. With 042 nothing scores in both runs and two kept lines drew 4 in one run each; with 044 nothing scores in both runs and one sentence drew 4 once.
-- Held out with 044, chapter VI. On the rewrite nothing reaches 3. On the first draft the passage where, by the author's record, the draft opened on the picture and not the problem draws no row, so that fault is unheard. Three sentences describing a product by name score 4, one of them in both runs (`runs/003+029/claude-opus-5-5+013.json`, sentences 121 to 123).
+- Held out with 044, chapter VI. On the rewrite nothing reaches 4. On the first draft the passage where, by the author's record, the draft opened on the picture and not the problem draws no row, so that fault is unheard. Three sentences describing a product by name score 4, one of them in both runs (sentences 121 to 123 of `texts/013.md`; the cell is private).
 - Other people's CVs, one run each with 042: 1, 0, 0 and 3 rows at 4 or more. The three are hobbies. 044 was not run on them.
+- The skill ships 044 for a CV alone. On essays it stays mostly quiet, misses the one fault of the author's it was aimed at, and scores a credential he kept.
 - It is a quiet reader. It hears a line whose subject is something else and lets smaller trivia pass. It also scored the one supposition in the record, a made-up use case in a CV, at 5 under 040 and 3 to 4 after.
 
 ### Named and not built
@@ -152,7 +156,7 @@ Two more modules were named when the set was designed. A supposition, meaning a 
 
 `TSV-FORMAT.md` describes what the reader returns and why it has that shape. Everything that varies sits in a folder, one file per item, named by a three-digit id:
 
-- `texts/`: the text under test. Its front matter gives the reader line, its role (tuned on, held out, control or case), any fact a criterion asks the caller for, and the expectations it is checked against: `flag` lines a reader should raise, `quiet` lines it should not, and `contested` lines the record leaves undecided, each as the offences that should or should not fire (or `any`), the sentences (or `all`), and what is there, which may open with its source in brackets.
+- `texts/`: the text under test. Its front matter gives the reader line, its role (tuned on, held out, control or case), any fact a criterion asks the caller for, and the expectations it is checked against: `flag` lines a reader should raise, `quiet` lines it should not, and `contested` lines the record leaves undecided, each as the offences that should or should not fire (or `any`), the sentences (or `all`), numbered through the whole text from 1 as `run.py` splits it, and what is there, which may open with its source in brackets. `texts/001.authorship.tsv` gives who wrote each sentence of text 001, for `by-author.py`.
 - `criteria/`: one criterion wording, with the offence it measures in its front matter, so an expectation finds its column in any format. A `{slot}` in it is filled from the text's front matter, and a slot nothing fills stops the run.
 - `formats/`: a TSV definition, the criteria in column order and the rules around them.
 - `prompts/`: how the reader is told to read.
