@@ -210,6 +210,20 @@ The unit of suspicion is the sentence that would lose nothing if a period replac
 
 ---
 
+### l07 — Reversed "is where / is how" clauses
+
+A place, a tool, a stage or an abstraction is made the subject, and the action hangs off "is where", "is how", "is what", "is why" or "is when". The subject is usually a noun nobody would put first when saying the thing aloud. The shape often comes in pairs joined by "and", the second clause capping the first. It gives a small fact the cadence of a verdict. In human writing it lives in proverbs and slogans, lines built to be quoted ("Home is where the heart is"). A fronted "Where…" clause set up for a contrast belongs to the same family.
+
+**Example:**
+> The handover **is where** the delay shows, and a week of night shifts **is how** I learned to spot it.
+> **Where** the pilot tested one depot, I ran all four for a year.
+
+**Not this:** a demonstrative subject in ordinary speech ("that's how I found it", "this is where it breaks"), a literal place ("the shed is where we keep the hay"), and quoted sayings.
+
+**Fix:** Put the person or the plain actor back as subject and use an ordinary verb: "You see the delay at handover. I learned to spot it on night shifts." "The pilot tested one depot. I ran all four for a year." Where the subject displaces a person who did the thing, the line also carries `W09`.
+
+---
+
 ### g01 — Signal words (AI-speech canaries)
 
 A small set of words whose mere presence signals the sentence was probably produced in "improve" mode. A model that can speak plainly, when asked to polish, drifts toward these words, so the harder it is pushed to improve, the closer it gets to cliché and the worse the result. The word is a canary, not a banned item.
@@ -550,6 +564,7 @@ This taxonomy was first tuned for encyclopedic text. Several codes do not transf
 | l04 | Rule-of-three padding |
 | l05 | Elegant variation (forced synonym cycling) |
 | l06 | Chained clauses avoiding the period |
+| l07 | Reversed "is where / is how" clauses |
 | s01 | Title case in headings |
 | s02 | Overuse of boldface |
 | s03 | Inline-header vertical lists |
