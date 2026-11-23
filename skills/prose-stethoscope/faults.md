@@ -9,7 +9,7 @@ Score each sentence on the five offences below. A score is roughly how many read
 
 1. Total: for a sentence that allows no exception (no, nobody, none, never, always, every, all, cannot, only, the one, the whole), score 0 to 9 how likely a reader is to think at once of a plain exception and doubt the sentence for it.
 2. Defensive: score 0 to 9 how likely a reader is to wonder at this sentence whom it is answering, because it defends against or denies something nobody has said.
-3. Glib: score 0 to 9 how likely a reader is to find this sentence glib, a confident line that sounds settled and says less than it seems to.
+3. Glib: score 0 to 9 how likely a reader is to find this sentence glib: a confident line that sounds settled and says less than it seems to, or a line shaped as a saying where a plain statement belongs: two clauses joined by "and" or "so", the second capping the first, as in "The kitchen is where a restaurant is made, and the menu is how it is sold" or "A recipe is a list of steps, and steps are what a cook can follow"; nearly every reader hears that shape, whatever the line says. A quotation, a saying offered as one, or verse does not count.
 4. Explained to: score 0 to 9 how likely a reader is to feel talked down to at this sentence, because it tells them what any adult already knows or can see for themselves.
 5. Lowered standing: score 0 to 9 how likely a reader is to take the author less seriously at this sentence because the author lowers their own standing to speak on the point.
 
