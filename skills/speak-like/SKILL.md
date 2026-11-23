@@ -1,7 +1,7 @@
 ---
 name: speak-like
-description: Before drafting prose for a reader other than the user, read its Writing mode. Explicit /speak-like <identity> rewrites a draft line by line as that identity; `speak-like human` strips AI tells.
-argument-hint: <identity> [manner flags] [--profile <path>] [--dialect <varieties>] [--findings <path>] [--two-pass] <draft-path>
+description: Before drafting prose for a reader other than the user, read its Writing mode. Explicit /speak-like <identity> rewrites a draft line by line as that identity; `speak-like human` strips AI tells; `--profile economist` edits a report to The Economist's standard for a reader outside the project.
+argument-hint: <identity> [manner flags] [--profile <name|path>] [--dialect <varieties>] [--findings <path>] [--two-pass] <draft-path>
 ---
 
 # speak-like
@@ -22,6 +22,7 @@ In scope: email, chat and social messages, posts, letters, release notes, public
 /speak-like human release-notes.md
 /speak-like director --warmly board-update.md
 /speak-like aussie developer --tersely --profile docs/style.md notes.md
+/speak-like --profile economist report.md
 ```
 
 The identity is every word before the first flag or path, compound as spoken (`aussie developer`). With no identity given, assume `human`.
@@ -40,9 +41,9 @@ The codes come in two registers. Lowercase codes (`anti-pattern.md`) are AI tell
 
 The draft must already be a file on disk; the passes read it by path, never from pasted text, so a shortened copy cannot blind them. Each pass runs as a fresh-context subagent (the reasons are below).
 
-1. **Pass 1, label.** Spawn a subagent with the prompt at `${CLAUDE_PLUGIN_ROOT}/skills/speak-like/label-prompt.md`. Substitute `$ANTIPATTERN_PATH` with `${CLAUDE_PLUGIN_ROOT}/skills/speak-like/anti-pattern.md`, `$EDITORIAL_BASE_PATH` with `${CLAUDE_PLUGIN_ROOT}/skills/speak-like/editorial-base.md`, `$PROFILE_PATH` with the `--profile` path or `(none)`, `$DIALECT_TARGETS` with the `--dialect` value or `(none)`, and `$FILE` with the draft's absolute path. The subagent writes a `.sc` sidecar beside the draft (`report.md` to `report.sc`), one line per draft line, codes in brackets or empty. It aims only; it does not edit.
+1. **Pass 1, label.** Spawn a subagent with the prompt at `${CLAUDE_PLUGIN_ROOT}/skills/speak-like/label-prompt.md`. Substitute `$ANTIPATTERN_PATH` with `${CLAUDE_PLUGIN_ROOT}/skills/speak-like/anti-pattern.md`, `$EDITORIAL_BASE_PATH` with `${CLAUDE_PLUGIN_ROOT}/skills/speak-like/editorial-base.md`, `$PROFILE_PATH` with the `--profile` path, or for a name the shipped `${CLAUDE_PLUGIN_ROOT}/skills/speak-like/profile-<name>.md`, or `(none)`, `$DIALECT_TARGETS` with the `--dialect` value or `(none)`, and `$FILE` with the draft's absolute path. The subagent writes a `.sc` sidecar beside the draft (`report.md` to `report.sc`), one line per draft line, codes in brackets or empty. It aims only; it does not edit.
 2. **Pass 2, edit.** Spawn a subagent with the prompt at `${CLAUDE_PLUGIN_ROOT}/skills/speak-like/edit-prompt.md`, the same substitutions plus `$SC_PATH` for the sidecar, `$IDENTITY` for the identity phrase, `$MANNER` for the manner adverbs or `(none)`, and `$FINDINGS_PATH` for the `--findings` path or `(none)`. The subagent rewrites every line over the threshold, repairs any judge-reported giveaways, then makes a minimum-touch smoothing pass over the whole file, writes the draft back, and updates the `.sc` (clearing fixed codes, suffixing unresolved ones with `?`).
-3. **Review gate.** Present the summary report below to the user. Nothing is committed and no `.sc` is deleted until the user accepts.
+3. **Review gate.** Answer any `[code?]` line from sources you hold, never by inference; then present the summary report below to the user. Nothing is committed and no `.sc` is deleted until the user accepts.
 4. With `--two-pass`, run a second label-then-edit cycle on the now-revised draft, to catch tells the first edit surfaced. Otherwise stop after one cycle.
 
 ### Edit threshold
@@ -93,7 +94,7 @@ Two flows, one interface (the findings file):
 
 ## The profile and dialect seam
 
-Without `--profile` and `--dialect`, the skill catches the lowercase AI tells and applies the Orwell base; `D01` stays inert. A project adds its own house rules by passing an editorial guide of uppercase-coded rules through `--profile`, and its target language variety through `--dialect` (or declared inside the profile). The profile's codes join the base under the same threshold. A profile must avoid the reserved prefixes `W` and `D`, which belong to the base.
+Without `--profile` and `--dialect`, the skill catches the lowercase AI tells and applies the Orwell base; `D01` stays inert. A project adds its own house rules by passing an editorial guide of uppercase-coded rules through `--profile`, and its target language variety through `--dialect` (or declared inside the profile). The profile's codes join the base under the same threshold. A profile must avoid the reserved prefixes `W` and `D`, which belong to the base. A name given to `--profile` picks a profile shipped here: `economist` is The Economist's editorial standard, read for a global generalist outside the project.
 
 ## Model selection
 
@@ -107,6 +108,7 @@ Pass 1 is classification and runs well on the session's default tier. Pass 2 on 
 - `editorial-base.md` — the shipped uppercase codes (`W01`–`W07`, `D01`)
 - `label-prompt.md` — the Pass 1 subagent prompt
 - `edit-prompt.md` — the Pass 2 subagent prompt
+- `profile-economist.md` — the shipped `economist` profile, thirteen rules from *The Economist Style Guide*
 
 ## Why fresh-context subagents
 
