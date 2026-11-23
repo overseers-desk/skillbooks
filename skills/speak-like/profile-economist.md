@@ -10,7 +10,7 @@ Rule of thumb for the A/B split: if the fix can be written without consulting an
 
 The editor leaves a class B failure as it stands in every pass, the whole-draft pass included, and keeps its code with `?`. Its report gives the question for each such line: the sentence, what is wrong, and for a sentence-level fault the move, such as the two words that sit too far apart. A question about a source or a date does not carry its answer: "what is the significance of this date?", not "explain that this was the year the Berlin Wall fell".
 
-A line left for the author is still edited for its other codes; only the part the question is about stays as it stands. No base rule or AI-tell code turns active a passive that R7 keeps, or cuts a figure R10 sends to the author. An R1 or R3 fix lengthens its line, and that is the fix. An unused Sources entry is `R10`.
+This profile stands alone. The labeller marks only these thirteen rules and emits no other code, and the editor's whole-draft pass repairs the joins between edited lines and does not re-say a paragraph. A line left for the author is still edited for its other R codes; only the part the question is about stays as it stands. A sentence saying what the piece does not claim is a caveat and stays. An R1 or R3 fix lengthens its line, and that is the fix. An unused Sources entry is `R10`.
 
 ---
 

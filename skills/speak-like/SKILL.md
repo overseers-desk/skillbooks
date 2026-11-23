@@ -94,7 +94,7 @@ Two flows, one interface (the findings file):
 
 ## The profile and dialect seam
 
-Without `--profile` and `--dialect`, the skill catches the lowercase AI tells and applies the Orwell base; `D01` stays inert. A project adds its own house rules by passing an editorial guide of uppercase-coded rules through `--profile`, and its target language variety through `--dialect` (or declared inside the profile). The profile's codes join the base under the same threshold. A profile must avoid the reserved prefixes `W` and `D`, which belong to the base. A name given to `--profile` picks a profile shipped here: `economist` is The Economist's editorial standard, read for a global generalist outside the project.
+Without `--profile` and `--dialect`, the skill catches the lowercase AI tells and applies the Orwell base; `D01` stays inert. A project adds its own house rules by passing an editorial guide of uppercase-coded rules through `--profile`, and its target language variety through `--dialect` (or declared inside the profile). The profile's codes join the base under the same threshold. A profile must avoid the reserved prefixes `W` and `D`, which belong to the base. A name given to `--profile` picks a profile shipped here: `economist` is The Economist's editorial standard, read for a global generalist outside the project. A profile may say that it stands alone, as `economist` does, and then only its own codes apply.
 
 ## Model selection
 

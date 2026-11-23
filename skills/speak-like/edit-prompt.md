@@ -25,6 +25,8 @@ A line MUST be edited if its `.sc` label holds:
 
 A line with a single lowercase code is tolerated: noted, not rewritten. One AI-ism in an otherwise sound sentence is acceptable; a cluster is not.
 
+Where the profile says it stands alone, edit only for the profile's codes and by the profile's own rules, and in the passes below repair the joins between edited lines without re-saying a paragraph that carries no code.
+
 Exception: a line carrying `g01` (a signal word) is always re-examined by the say-it-aloud method in the holistic pass and the reader tests, even if `g01` is its only code. The signal word is a canary, not an automatic edit: re-say the sentence, then keep the word only if it survives as something you would say aloud (often a genuine literal use), otherwise let the re-said version stand.
 
 For each line that must be edited:
