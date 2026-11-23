@@ -8,9 +8,9 @@ The labeller marks each line that fails a rule with the rule's code. A failure h
 
 Rule of thumb for the A/B split: if the fix can be written without consulting any source outside the draft, it is A; if writing the fix needs the author's intent or a fact the draft does not surface, it is B. Edits rearrange, cut and rephrase what the draft says, and they do not add to it: a count worked out by counting is a fact supplied, and so is an actor inferred.
 
-The editor leaves a class B line as it stands in every pass, the whole-draft pass included, and keeps its code with `?`. Its report gives the question for each such line: the sentence, what is wrong, and for a sentence-level fault the move, such as the two words that sit too far apart. A question about a source or a date does not carry its answer: "what is the significance of this date?", not "explain that this was the year the Berlin Wall fell".
+The editor leaves a class B failure as it stands in every pass, the whole-draft pass included, and keeps its code with `?`. Its report gives the question for each such line: the sentence, what is wrong, and for a sentence-level fault the move, such as the two words that sit too far apart. A question about a source or a date does not carry its answer: "what is the significance of this date?", not "explain that this was the year the Berlin Wall fell".
 
-No base rule or AI-tell code reopens a line this profile leaves for the author, or a passive that R7 keeps. An R1 or R3 fix lengthens its line, and that is the fix. An unused Sources entry is `R10`.
+A line left for the author is still edited for its other codes; only the part the question is about stays as it stands. No base rule or AI-tell code turns active a passive that R7 keeps, or cuts a figure R10 sends to the author. An R1 or R3 fix lengthens its line, and that is the fix. An unused Sources entry is `R10`.
 
 ---
 
