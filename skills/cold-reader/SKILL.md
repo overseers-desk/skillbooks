@@ -6,7 +6,7 @@ argument-hint: <draft-path> | --staged | --since <ref> [--report] [--plan-agent]
 
 # cold-reader
 
-A colleague walks into a working session already under way and says "sorry I'm late, I see you have started." He knows the project and the document produced by it, but not what this conversation has covered leading to the document. Everything written from here has to land for him. When the document is a code diff, he is the maintainer who inherits it, and he does what a maintainer does with comments that will cost him later: cuts them. This skill is in the family of edit-email and edit-economistly.
+A colleague walks into a working session already under way and says "sorry I'm late, I see you have started." He knows the project and the document produced by it, but not what this conversation has covered leading to the document. Everything written from here has to land for him. When the document is a code diff, he is the maintainer who inherits it, and he does what a maintainer does with comments that will cost him later: cuts them. This skill is in the family of edit-email and speak-like's economist profile.
 
 ## Problem this skill exists to solve
 
@@ -22,7 +22,7 @@ The author cannot see the scaffolding it carried in, and fixes what it is shown 
 
 A code diff adds a maintenance cost. A mechanism's name sits in the code, then in its own comment, then in a caller's comment, then in a module doc, and a rename becomes shotgun surgery with comments as many of the wounds. Measured on one 34k-line Rust tree over 246 commits: a rename or signature change touched a median 114 lines across 3 files and 13 hunks; 69% of the comment-only hunks in those commits existed only because a comment had spelled the name. Of the comment lines naming a mechanism, 36% were plain repetition; the other 64% were pointers whose value is the reference itself, and one of those was already stale. An AI editing code also adds a comment wherever it touches logic and removes few, so the comment share climbs with every pass over the same lines, and what it adds restates the operation beside it. The author is poorly placed to make these cuts, having written each comment for the reader it imagined; the fresh reader who inherits the code can tell a pointer from decoration and a reason from a restatement, so on a diff this skill gives him edit tools.
 
-The boundary from edit-economistly: its reader is a generalist outside the project who needs entities glossed and acronyms expanded; here the reader is inside the project and needs none of that. The boundary from edit-email runs the other way: its reader holds the email and its thread and no project at all, so this colleague certifies a file path or a scenario name that the recipient of an email could never resolve.
+The boundary from speak-like's economist profile: its reader is a generalist outside the project who needs entities glossed and acronyms expanded; here the reader is inside the project and needs none of that. The boundary from edit-email runs the other way: its reader holds the email and its thread and no project at all, so this colleague certifies a file path or a scenario name that the recipient of an email could never resolve.
 
 The rules both the author and the colleague work to are in `${CLAUDE_PLUGIN_ROOT}/skills/cold-reader/rulebook.md`.
 
