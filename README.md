@@ -64,7 +64,7 @@ claude --plugin-dir /path/to/skillbooks
 
 ## Prerequisites
 
-The skills are self-contained: they run their own fresh-context subagents and need no credentials and no browser. Only **typst-pdf** has an external dependency: [Typst](https://typst.app) on `PATH`.
+The skills run their own fresh-context subagents and need no credentials and no browser. Only **typst-pdf** has an external dependency: [Typst](https://typst.app) on `PATH`.
 
 ## License
 
