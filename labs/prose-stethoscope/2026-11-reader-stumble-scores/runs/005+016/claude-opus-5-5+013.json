@@ -1491,6 +1491,1329 @@
 "r": 2
 }
 ]
+},
+{
+"overrides": {},
+"assembled_prompt": "The text, each paragraph starting with its number:\n\n[P1] Picture an operating theatre. The surgeon stands over an open chest. Around her are five or six people, every one of them highly trained. The nurse has the next instrument in her hand before it is asked for. Nobody debates the plan. Nobody acts without the surgeon's word. In that room you want everyone to be intelligent, and you do not want anyone to decide.\n\n[P2] This is the seat today's AI was built for. An assistant is a member of the surgical team. It is quick. It understands the situation. It reads what the person in front of it intends, sometimes before the sentence is finished. And it does nothing until it is told.\n\n[P3] It is a very successful design. Hundreds of millions of people use an assistant like this every week, and for the person at the keyboard it works. I use one every day.\n\n[P4] But look at what the design assumes. The surgeon is in the room. She has one patient. For those hours she thinks of nothing else, and every decision passes through her. The team makes her hands faster. It does not make her load lighter.\n\n[P5] No business is like that. The owner of a business is not in the room. He has dozens of matters open and cannot give any of them his whole mind. Most of them he never sees. Put a surgical team into that business and it waits, intelligent and idle, for a surgeon who is somewhere else. And each time it does act it needs a small correction, and each correction costs the owner the one thing he is short of.\n\n[P6] So which seat should an AI sit in, if it is to be a colleague? There is one as old as the household, and I think it is the right one.\n\n[P7] Think of the head servant of a large house: the steward, the majordomo, the butler of an English novel. He is not his master's hands. He keeps the house when the master is away, which is most of the time. And he holds a power that nobody on a surgical team has. He decides what reaches the master's ear.\n\n[P8] The master he serves is nothing like a surgeon. He has moods. He has a family, and friends, and a round of golf to play. He is sharp in the morning and tired by four. On a good day he can give his mind to three matters, perhaps five, and the house throws up far more than that. Urgent things arrive so often that the important ones never get in, until one day they are urgent too.\n\n[P9] So before the servant says a word, most of his work is done. He has asked himself:\n\n[P10] - Does the master need to hear this at all, or is it mine to settle?\n- Is it heavy or light? A light one he can decide in a breath, and feel the better for it.\n- When? The hardest matter goes to the morning. Some things can wait until tomorrow.\n- How do I put it, truthfully, so that he can take it in?\n- What belongs beside it? What else does he need to know, and is there good news to set against the bad?\n- Do I act and tell him afterwards, or ask first?\n\n[P11] A good servant does this all day and the master never sees it. What the master hears is one sentence. \"David would like to see you on Sunday about the investment. You should know he is in a lawsuit with his wife.\" Nobody asked for the second half. It came from a man who had thought about what Sunday's meeting was for.\n\n[P12] He acts without being asked. That is the difference from the surgical team. It is also what went wrong in half the failures this essay opened with: the leave approved, the discount given. The servant's answer to that is a remit. Inside it he acts and reports. Outside it he prepares the decision and brings it. Which side of the line a matter falls on is the first thing he learns about a house.\n\n[P13] And he knows when to do nothing. I own a tourism venue. Someone asks to hire it at two on a Tuesday. We are never booked then, so the obvious answer is yes. A model says yes, or else it asks me. A good manager does neither straight away. Who gains? Will the staff see a booking at that hour, take it for a mistake and ring the customer? Would one line in the confirmation prevent that? It takes him ten seconds, and he may still say yes. But he has decided, where the model either assumed or handed the question up.\n\n[P14] Half of the craft is not speaking at all. There is a scene in the film *Interstellar* that I think about often. The crew have landed on a planet where every hour costs seven years at home. A wave has swamped the ship. The captain shouts that they have to leave now. The robot at the controls answers in a handful of words: the engines are flooded, let it drain.\n\n[P15] Think of everything a chat assistant would have said in that moment. The apology. The three options. The risks of each. The robot knew all of it. It gave the state of things and the one thing to do, because that was all the captain could use.\n\n[P16] I have looked for the one role that would bring the most of these behaviours with it. The head servant is the best I have found.\n\n[P17] I do not think that is an accident. The pillars of the earlier chapters are this one role's whole craft. He keeps the errand in mind because the house is his errand. He works for the result because nobody is watching the work. He knows whose man he is, and he reads the person in front of him because that is how a message gets through. The role was shaped over centuries by exactly our problem: an intelligent agent working for someone who cannot watch.\n\n[P18] It is a better place to start than the helpful assistant, and other roles are this one with something changed. A buyer is a servant sent to market. A receptionist is a servant at the door. The role also carries upward. What the servant asks himself before he speaks to his master is what a chief executive asks before he speaks to his board, and what one king weighed before he wrote to another. If there is a path to an AI that could run a company, I think it starts in the servants' hall.\n\n[P19] Can it be built? The knowledge is not what is missing. People have written this craft down for as long as there have been masters. In January 1942 a memorandum went round the United States Army under the title \"Completed Staff Work\". It told a staff officer to study a problem and present the solution \"in such form that all that remains to be done on the part of the head of the staff division, or the commander, is to indicate his approval or disapproval of the completed action\". Every model has read it, along with every novel that has a butler in it. Ask one what a good head servant does and it will tell you, correctly and at length.\n\n[P20] That is the trouble. It knows the craft as a subject. It does not have it as a habit, and a habit is not given by listing it. I have written the list into instructions many times. The model agrees with every line, and then at two in the morning sends me a report that there is nothing to report. A checklist cannot bring out a way of thinking.\n\n[P21] What can be done today is to build the house around the model. I call it a harness: rules the model meets at the moment they apply, and other models whose only job is to check the first one.\n\n[P22] Here is one piece of the harness I built for my own business. When it writes to someone we hope to win as a customer, a second model reads the draft from that person's chair. It holds only what that person holds. Before I trust its verdict I ask it one question: who do you work for? If it is not sure that it works for the customer, I throw the verdict away. No single model will read the other person unless it is asked to. So I gave the other person a seat.\n\n[P23] This is what my company, Halden, is built on. Halden is an AI agent that works out what the job is. It reads the systems a business already runs, the accounts, the bookings, the roster and the inbox, together, and brings the work done. It sees what no single system shows: the event booked in one system that sells out the day in another while the roster still shows six staff. Routine matters it settles alone. Anything that moves money or people arrives as a draft with the workings attached, and a person approves. It has been in daily use at my own venue for about a year.\n\n[P24] It is not the head servant. Nobody has built him yet. A harness is a house put up around a model that still lacks the habits, and the essay has said why training alone will not supply them. But it is the step that can be taken now, and I chose where to take it: small businesses, where attention is shortest. The owner stays the master of the house.\n\n[P25] A servant who chooses what his master hears has power over him. The last chapter is about that.\n\nScore each sentence on the five offences below. A score is roughly how many readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Total: for a sentence that allows no exception (no, nobody, none, never, always, every, all, cannot, only, the one, the whole), score 0 to 9 how likely a reader is to think at once of a plain exception and doubt the sentence for it.\n2. Defensive: score 0 to 9 how likely a reader is to wonder at this sentence whom it is answering, because it defends against or denies something nobody has said.\n3. Glib: score 0 to 9 how likely a reader is to find this sentence glib, a confident line that sounds settled and says less than it seems to.\n4. Explained to: score 0 to 9 how likely a reader is to feel talked down to at this sentence, because it tells them what any adult already knows or can see for themselves.\n5. Lowered standing: score 0 to 9 how likely a reader is to take the author less seriously at this sentence because the author lowers their own standing to speak on the point.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the five scores comma-separated in the order above, TAB, why: what the reader meets at this sentence, in at most 15 words. Describe the stumble, not a way to fix it. Where total (1) scores 4 or more, the why names the exception the reader thinks of. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"2": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Every one highly trained\": readers recall theatres also hold trainees and orderlies."
+},
+"5": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Anaesthetists and nurses do raise objections; surgical safety checklists invite it."
+},
+"6": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "The anaesthetist acts on their own judgement throughout an operation."
+},
+"7": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "The anaesthetist decides constantly, so the neat closing line feels too tidy."
+},
+"8": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "Readers think of agentic AI built to act on its own."
+},
+"12": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Agentic tools and scheduled AI tasks act without being told each time."
+},
+"16": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Reads as answering a charge of hostility to AI that nobody made."
+},
+"19": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Team members make many small decisions without passing them through her."
+},
+"20": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "A team that counts sponges and handles tasks does lighten a surgeon's load."
+},
+"21": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Scrub nurses and assistants take tasks off her; the contrast sounds neater than true."
+},
+"23": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "A sole trader or a small shop owner is present all day."
+},
+"24": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Many owners stand behind their own counter every day."
+},
+"26": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Never sees\" seems strong for matters in a small business."
+},
+"28": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "\"The one thing\" sounds settled; owners are short of cash too."
+},
+"30": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A confident claim made before any case for it is given."
+},
+"32": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A crisp denial that so far says little."
+},
+"34": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "A scrub nurse or anaesthetist does alert the surgeon to what matters."
+},
+"40": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "A familiar Eisenhower-style aphorism that sounds more settled than it is."
+},
+"42": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"Most of his work is done\" is asserted rather than shown."
+},
+"-1": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A tidy verdict on a hypothetical model's behaviour."
+},
+"49": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Masters do sometimes see their servants weighing matters."
+},
+"55": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "P1's nurse hands instruments before being asked, which contradicts this."
+},
+"60": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"The first thing he learns\" is a neat assertion with nothing behind it."
+},
+"64": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Never booked then\" is an absolute about trade."
+},
+"66": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "A model could also flag a risk or add a caveat."
+},
+"72": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Half of the craft\" is a confident fraction with no measure behind it."
+},
+"73": {
+"s": [
+0,
+0,
+0,
+0,
+2
+],
+"why": "A film anecdote offered as support makes the case seem lighter."
+},
+"78": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "It caricatures what chat assistants say without showing an example."
+},
+"81": {
+"s": [
+2,
+0,
+2,
+0,
+0
+],
+"why": "\"All the captain could use\" is asserted about a fictional scene."
+},
+"86": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Denies an accusation of coincidence that nobody raised."
+},
+"87": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "\"Whole craft\" overclaims; the pillars cannot be his entire craft."
+},
+"88": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "Wordplay on \"errand\" sounds like an explanation but explains little."
+},
+"89": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A neat causal line resting on assertion."
+},
+"91": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Exactly our problem\" is a confident fit that is claimed rather than shown."
+},
+"92": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Surgeons, teachers and engineers are not servants with something changed."
+},
+"97": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A rhetorical flourish closing a large claim with an image."
+},
+"103": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "Many models, especially small ones, never trained on that 1942 memo."
+},
+"110": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Aviation and surgical checklists did change ways of thinking."
+},
+"118": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Models do sometimes take the other party's view unprompted."
+},
+"119": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A neat closing image that restates the mechanism."
+},
+"121": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Works out what the job is\" sounds substantive but stays vague."
+},
+"125": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Anything\" invites the thought of small refunds handled automatically."
+},
+"128": {
+"s": [
+3,
+2,
+0,
+0,
+0
+],
+"why": "Competitors claim to have built such agents; it reads as pre-empting rivals."
+},
+"129": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "The essay showed that instructions fail, not that training would."
+},
+"130": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Hospital emergency staff or solo parents may have shorter attention."
+},
+"131": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Answers a fear of the owner losing control before it is raised."
+}
+},
+"secs": 48,
+"raw": "1.2\t2,0,0,0,0\t\"Every one highly trained\": readers recall theatres also hold trainees and orderlies.\n1.5\t4,0,0,0,0\tAnaesthetists and nurses do raise objections; surgical safety checklists invite it.\n1.6\t5,0,0,0,0\tThe anaesthetist acts on their own judgement throughout an operation.\n1.7\t4,0,3,0,0\tThe anaesthetist decides constantly, so the neat closing line feels too tidy.\n2.1\t0,0,2,0,0\tReaders think of agentic AI built to act on its own.\n2.5\t4,0,0,0,0\tAgentic tools and scheduled AI tasks act without being told each time.\n3.3\t0,3,0,0,0\tReads as answering a charge of hostility to AI that nobody made.\n4.3\t3,0,0,0,0\tTeam members make many small decisions without passing them through her.\n4.4\t3,0,3,0,0\tA team that counts sponges and handles tasks does lighten a surgeon's load.\n4.5\t4,0,4,0,0\tScrub nurses and assistants take tasks off her; the contrast sounds neater than true.\n5.1\t4,0,0,0,0\tA sole trader or a small shop owner is present all day.\n5.2\t4,0,0,0,0\tMany owners stand behind their own counter every day.\n5.4\t2,0,0,0,0\t\"Never sees\" seems strong for matters in a small business.\n5.6\t2,0,3,0,0\t\"The one thing\" sounds settled; owners are short of cash too.\n6.2\t0,0,2,0,0\tA confident claim made before any case for it is given.\n7.2\t0,0,2,0,0\tA crisp denial that so far says little.\n7.4\t3,0,0,0,0\tA scrub nurse or anaesthetist does alert the surgeon to what matters.\n8.5\t2,0,3,0,0\tA familiar Eisenhower-style aphorism that sounds more settled than it is.\n9.1\t0,0,2,0,0\t\"Most of his work is done\" is asserted rather than shown.\n10.6\t0,0,0,3,0\tTelling the reader that some things can wait states the obvious.\n11.1\t2,0,0,0,0\tMasters do sometimes see their servants weighing matters.\n12.2\t4,0,0,0,0\tP1's nurse hands instruments before being asked, which contradicts this.\n12.7\t0,0,2,0,0\t\"The first thing he learns\" is a neat assertion with nothing behind it.\n13.4\t2,0,0,0,0\t\"Never booked then\" is an absolute about trade.\n13.6\t3,0,0,0,0\tA model could also flag a risk or add a caveat.\n13.12\t0,0,3,0,0\tA tidy verdict on a hypothetical model's behaviour.\n14.1\t0,0,3,0,0\t\"Half of the craft\" is a confident fraction with no measure behind it.\n14.2\t0,0,0,0,2\tA film anecdote offered as support makes the case seem lighter.\n15.1\t0,0,2,0,0\tIt caricatures what chat assistants say without showing an example.\n15.4\t2,0,2,0,0\t\"All the captain could use\" is asserted about a fictional scene.\n17.1\t0,3,0,0,0\tDenies an accusation of coincidence that nobody raised.\n17.2\t3,0,4,0,0\t\"Whole craft\" overclaims; the pillars cannot be his entire craft.\n17.3\t0,0,4,0,0\tWordplay on \"errand\" sounds like an explanation but explains little.\n17.4\t0,0,3,0,0\tA neat causal line resting on assertion.\n17.6\t0,0,3,0,0\t\"Exactly our problem\" is a confident fit that is claimed rather than shown.\n18.1\t4,0,3,0,0\tSurgeons, teachers and engineers are not servants with something changed.\n18.6\t0,0,3,0,0\tA rhetorical flourish closing a large claim with an image.\n19.6\t5,0,0,0,0\tMany models, especially small ones, never trained on that 1942 memo.\n20.6\t4,0,3,0,0\tAviation and surgical checklists did change ways of thinking.\n22.6\t3,0,0,0,0\tModels do sometimes take the other party's view unprompted.\n22.7\t0,0,2,0,0\tA neat closing image that restates the mechanism.\n23.2\t0,0,3,0,0\t\"Works out what the job is\" sounds substantive but stays vague.\n23.6\t2,0,0,0,0\t\"Anything\" invites the thought of small refunds handled automatically.\n24.2\t3,2,0,0,0\tCompetitors claim to have built such agents; it reads as pre-empting rivals.\n24.3\t2,0,3,0,0\tThe essay showed that instructions fail, not that training would.\n24.4\t3,0,2,0,0\tHospital emergency staff or solo parents may have shorter attention.\n24.5\t0,3,0,0,0\tAnswers a fear of the owner losing control before it is raised.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"6": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Some readers think of the anaesthetist, who adjusts the plan as conditions change."
+},
+"7": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Exception: the anaesthetist manages the airway and drugs without waiting for the surgeon."
+},
+"-1": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Exception: anaesthetist and scrub nurse each make decisions; the closing line sounds neater than true."
+},
+"8": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A sweeping claim about all of today's AI, stated as settled."
+},
+"12": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "Exception: agentic tools already act on schedules and triggers without being told."
+},
+"16": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Reads as heading off an unspoken charge that the author dislikes assistants."
+},
+"20": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A neat antithesis that sounds conclusive but carries little argument."
+},
+"23": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Some readers think of solo practitioners who do give one client their whole mind."
+},
+"28": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Exception: many assistant actions need no correction at all."
+},
+"34": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some readers think of the scrub nurse, who also filters what the surgeon hears."
+},
+"40": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "\"Never get in\" sits awkwardly against \"until one day,\" and the line sounds aphoristic."
+},
+"56": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "The reader meets failures the excerpt never described, asserted as \"half.\""
+},
+"57": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"A remit\" is offered as the answer, a crisp label that settles little."
+},
+"65": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Some readers doubt that a model can do only these two things."
+},
+"71": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A tidy verdict that compresses the contrast more than the example supports."
+},
+"72": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "An aphorism that sounds deep, though the essay's examples show speaking briefly, not silence."
+},
+"78": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "It sets up a caricature of the chat assistant to knock down."
+},
+"81": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The reader meets a confident claim about what a fictional robot knew."
+},
+"86": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "It answers a charge of coincidence that nobody raised."
+},
+"87": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Exception: a steward's craft also includes managing staff and accounts, beyond these pillars."
+},
+"89": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Neat causation that sounds settled but is asserted rather than shown."
+},
+"91": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "\"Exactly our problem\" is a confident historical claim that is smoothed over."
+},
+"92": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "Some readers think of roles, such as the surgeon's team, that are not this one varied."
+},
+"93": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A tidy reduction that sounds settled and says little about buying."
+},
+"96": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A grand flourish that the argument leaves unsupported."
+},
+"97": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A quotable closing line carrying a large unargued claim."
+},
+"99": {
+"s": [
+0,
+2,
+0,
+0,
+0
+],
+"why": "It denies that knowledge is missing, which the reader had not assumed."
+},
+"102": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Exception: not every model's training data contains a 1942 Army memorandum."
+},
+"107": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "It is stated as a maxim with no support."
+},
+"110": {
+"s": [
+5,
+0,
+4,
+0,
+0
+],
+"why": "Exception: surgical and aviation checklists demonstrably change practitioners' habits of thought."
+},
+"112": {
+"s": [
+0,
+0,
+0,
+0,
+2
+],
+"why": "\"Harness\" is established usage, so presenting it as the author's own term reads naive."
+},
+"118": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Exception: models often consider a recipient's view unprompted when drafting outreach."
+},
+"119": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A neat closing image that sounds more decisive than the mechanism described."
+},
+"120": {
+"s": [
+0,
+0,
+0,
+0,
+3
+],
+"why": "The essay turns into a product pitch, and readers discount it for the commercial interest."
+},
+"121": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "\"Works out what the job is\" sounds substantial but is vague marketing."
+},
+"125": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Some readers wonder whether truly every money or staff matter is held for approval."
+},
+"128": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some readers think of existing executive-assistant agents claiming this role."
+},
+"129": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The essay showed instructions failing, not training, so the reference is overstated."
+},
+"131": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A reassuring closing line that settles more than it says."
+}
+},
+"secs": 42,
+"raw": "1.6\t3,0,2,0,0\tSome readers think of the anaesthetist, who adjusts the plan as conditions change.\n1.7\t4,0,2,0,0\tException: the anaesthetist manages the airway and drugs without waiting for the surgeon.\n1.8\t4,0,3,0,0\tException: anaesthetist and scrub nurse each make decisions; the closing line sounds neater than true.\n2.1\t0,0,3,0,0\tA sweeping claim about all of today's AI, stated as settled.\n2.5\t5,0,0,0,0\tException: agentic tools already act on schedules and triggers without being told.\n3.3\t0,3,0,0,0\tReads as heading off an unspoken charge that the author dislikes assistants.\n4.4\t0,0,4,0,0\tA neat antithesis that sounds conclusive but carries little argument.\n5.1\t3,0,2,0,0\tSome readers think of solo practitioners who do give one client their whole mind.\n5.6\t4,0,3,0,0\tException: many assistant actions need no correction at all.\n7.4\t3,0,0,0,0\tSome readers think of the scrub nurse, who also filters what the surgeon hears.\n8.5\t3,0,3,0,0\t\"Never get in\" sits awkwardly against \"until one day,\" and the line sounds aphoristic.\n12.3\t0,0,2,0,0\tThe reader meets failures the excerpt never described, asserted as \"half.\"\n12.4\t0,0,3,0,0\t\"A remit\" is offered as the answer, a crisp label that settles little.\n13.5\t3,0,2,0,0\tSome readers doubt that a model can do only these two things.\n13.11\t0,0,2,0,0\tA tidy verdict that compresses the contrast more than the example supports.\n14.1\t0,0,4,0,0\tAn aphorism that sounds deep, though the essay's examples show speaking briefly, not silence.\n15.1\t0,0,3,0,0\tIt sets up a caricature of the chat assistant to knock down.\n15.4\t0,0,3,0,0\tThe reader meets a confident claim about what a fictional robot knew.\n17.1\t0,3,0,0,0\tIt answers a charge of coincidence that nobody raised.\n17.2\t4,0,4,0,0\tException: a steward's craft also includes managing staff and accounts, beyond these pillars.\n17.4\t0,0,3,0,0\tNeat causation that sounds settled but is asserted rather than shown.\n17.6\t0,0,4,0,0\t\"Exactly our problem\" is a confident historical claim that is smoothed over.\n18.1\t3,0,3,0,0\tSome readers think of roles, such as the surgeon's team, that are not this one varied.\n18.2\t0,0,3,0,0\tA tidy reduction that sounds settled and says little about buying.\n18.5\t0,0,3,0,0\tA grand flourish that the argument leaves unsupported.\n18.6\t0,0,4,0,0\tA quotable closing line carrying a large unargued claim.\n19.2\t0,2,0,0,0\tIt denies that knowledge is missing, which the reader had not assumed.\n19.5\t4,0,0,0,0\tException: not every model's training data contains a 1942 Army memorandum.\n20.3\t0,0,3,0,0\tIt is stated as a maxim with no support.\n20.6\t5,0,4,0,0\tException: surgical and aviation checklists demonstrably change practitioners' habits of thought.\n21.2\t0,0,0,0,2\t\"Harness\" is established usage, so presenting it as the author's own term reads naive.\n22.6\t4,0,2,0,0\tException: models often consider a recipient's view unprompted when drafting outreach.\n22.7\t0,0,3,0,0\tA neat closing image that sounds more decisive than the mechanism described.\n23.1\t0,0,0,0,3\tThe essay turns into a product pitch, and readers discount it for the commercial interest.\n23.2\t0,0,4,0,0\t\"Works out what the job is\" sounds substantial but is vague marketing.\n23.6\t2,0,0,0,0\tSome readers wonder whether truly every money or staff matter is held for approval.\n24.2\t3,0,0,0,0\tSome readers think of existing executive-assistant agents claiming this role.\n24.3\t0,0,3,0,0\tThe essay showed instructions failing, not training, so the reference is overstated.\n24.5\t0,0,3,0,0\tA reassuring closing line that settles more than it says.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"5": {
+"s": [
+3,
+0,
+1,
+0,
+0
+],
+"why": "Surgical teams are now trained to challenge the plan aloud."
+},
+"6": {
+"s": [
+4,
+0,
+1,
+0,
+0
+],
+"why": "The anaesthetist acts on their own judgement, without waiting for the surgeon."
+},
+"7": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "The anaesthetist and scrub nurse do decide; the neat contrast oversells."
+},
+"13": {
+"s": [
+4,
+0,
+1,
+0,
+0
+],
+"why": "AI agents that act on their own already exist and are widely sold."
+},
+"16": {
+"s": [
+0,
+2,
+0,
+0,
+0
+],
+"why": "Personal use offered as a credential before anyone has doubted the author."
+},
+"20": {
+"s": [
+3,
+0,
+1,
+0,
+0
+],
+"why": "Anaesthetic and nursing decisions do not pass through the surgeon."
+},
+"22": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "Assistants do take whole tasks off people; the line sounds truer than it is."
+},
+"23": {
+"s": [
+5,
+0,
+2,
+0,
+0
+],
+"why": "A sole trader or one-client consultant; a surgical practice is itself a business."
+},
+"24": {
+"s": [
+3,
+0,
+1,
+0,
+0
+],
+"why": "Many small-business owners are on site all day."
+},
+"28": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Not every action needs correcting; \"the one thing\" is asserted rather than shown."
+},
+"34": {
+"s": [
+2,
+0,
+1,
+0,
+0
+],
+"why": "A theatre coordinator also decides what reaches the surgeon."
+},
+"41": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "The familiar urgent-versus-important line is presented as an insight."
+},
+"49": {
+"s": [
+2,
+0,
+1,
+0,
+0
+],
+"why": "A master often notices the servant's judgement."
+},
+"55": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "P1's nurse hands over the instrument before being asked."
+},
+"60": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A tidy closing line that adds little."
+},
+"65": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "A prompted model can weigh who gains and what the staff will think."
+},
+"71": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "Models can weigh the matter too; the contrast is asserted, not shown."
+},
+"72": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "An aphorism with no support behind it."
+},
+"78": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A strawman of the chat assistant is set up."
+},
+"79": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "A caricature of assistant verbosity stands in for evidence."
+},
+"81": {
+"s": [
+2,
+0,
+1,
+0,
+0
+],
+"why": "The captain could have used more than one instruction."
+},
+"86": {
+"s": [
+0,
+3,
+2,
+0,
+0
+],
+"why": "Denies a charge of coincidence that nobody made."
+},
+"87": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "\"Whole craft\" claims too much; a servant's craft also includes silver and cellar."
+},
+"88": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A wordplay explanation that explains nothing."
+},
+"89": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A neat causal claim with no support."
+},
+"90": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Several traits bundled under one confident \"because\"."
+},
+"91": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "Service was also shaped by class and deference, not only by this problem."
+},
+"92": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "A buyer or receptionist does more than a servant with one thing changed."
+},
+"96": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The CEO-and-king analogy is stretched further than it is argued."
+},
+"97": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A grand closing flourish that sounds settled and shows little."
+},
+"99": {
+"s": [
+0,
+2,
+1,
+0,
+0
+],
+"why": "Rebuts a claim of missing knowledge that nobody made."
+},
+"100": {
+"s": [
+2,
+0,
+2,
+0,
+0
+],
+"why": "A sweeping historical claim that is not supported."
+},
+"103": {
+"s": [
+5,
+0,
+2,
+0,
+0
+],
+"why": "Not every model was trained on this memo or on every butler novel."
+},
+"107": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A quotable distinction offered in place of evidence."
+},
+"110": {
+"s": [
+5,
+0,
+4,
+0,
+0
+],
+"why": "Aviation and surgical checklists do change ways of working; cf. the Army memo."
+},
+"118": {
+"s": [
+5,
+0,
+2,
+0,
+0
+],
+"why": "Models routinely imagine the recipient; P2 itself says assistants read intent."
+},
+"119": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A neat closing image."
+},
+"120": {
+"s": [
+0,
+0,
+1,
+0,
+3
+],
+"why": "The essay turns into a pitch for the author's own company."
+},
+"121": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Works out what the job is\" sounds like a slogan."
+},
+"125": {
+"s": [
+2,
+0,
+1,
+0,
+0
+],
+"why": "Some money-moving routine, like a small refund, may be settled without approval."
+},
+"128": {
+"s": [
+2,
+0,
+1,
+0,
+0
+],
+"why": "Some readers think of existing autonomous assistants."
+},
+"129": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "The essay argued about checklists, not training; the claim overstates what was said."
+},
+"130": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"Where attention is shortest\" is asserted, not shown."
+},
+"131": {
+"s": [
+0,
+3,
+2,
+0,
+0
+],
+"why": "Reassures against an AI-takeover fear that has not yet been raised."
+}
+},
+"secs": 53,
+"raw": "1.5\t3,0,1,0,0\tSurgical teams are now trained to challenge the plan aloud.\n1.6\t4,0,1,0,0\tThe anaesthetist acts on their own judgement, without waiting for the surgeon.\n1.7\t3,0,3,0,0\tThe anaesthetist and scrub nurse do decide; the neat contrast oversells.\n2.6\t4,0,1,0,0\tAI agents that act on their own already exist and are widely sold.\n3.3\t0,2,0,0,0\tPersonal use offered as a credential before anyone has doubted the author.\n4.4\t3,0,1,0,0\tAnaesthetic and nursing decisions do not pass through the surgeon.\n4.6\t2,0,3,0,0\tAssistants do take whole tasks off people; the line sounds truer than it is.\n5.1\t5,0,2,0,0\tA sole trader or one-client consultant; a surgical practice is itself a business.\n5.2\t3,0,1,0,0\tMany small-business owners are on site all day.\n5.6\t3,0,2,0,0\tNot every action needs correcting; \"the one thing\" is asserted rather than shown.\n7.4\t2,0,1,0,0\tA theatre coordinator also decides what reaches the surgeon.\n8.6\t2,0,3,0,0\tThe familiar urgent-versus-important line is presented as an insight.\n11.1\t2,0,1,0,0\tA master often notices the servant's judgement.\n12.2\t4,0,2,0,0\tP1's nurse hands over the instrument before being asked.\n12.7\t0,0,2,0,0\tA tidy closing line that adds little.\n13.5\t4,0,2,0,0\tA prompted model can weigh who gains and what the staff will think.\n13.11\t3,0,3,0,0\tModels can weigh the matter too; the contrast is asserted, not shown.\n14.1\t2,0,3,0,0\tAn aphorism with no support behind it.\n15.1\t0,0,2,0,0\tA strawman of the chat assistant is set up.\n15.2\t2,0,3,0,0\tA caricature of assistant verbosity stands in for evidence.\n15.4\t2,0,1,0,0\tThe captain could have used more than one instruction.\n17.1\t0,3,2,0,0\tDenies a charge of coincidence that nobody made.\n17.2\t3,0,4,0,0\t\"Whole craft\" claims too much; a servant's craft also includes silver and cellar.\n17.3\t0,0,4,0,0\tA wordplay explanation that explains nothing.\n17.4\t0,0,3,0,0\tA neat causal claim with no support.\n17.5\t0,0,3,0,0\tSeveral traits bundled under one confident \"because\".\n17.6\t2,0,3,0,0\tService was also shaped by class and deference, not only by this problem.\n18.1\t3,0,3,0,0\tA buyer or receptionist does more than a servant with one thing changed.\n18.5\t0,0,3,0,0\tThe CEO-and-king analogy is stretched further than it is argued.\n18.6\t0,0,4,0,0\tA grand closing flourish that sounds settled and shows little.\n19.2\t0,2,1,0,0\tRebuts a claim of missing knowledge that nobody made.\n19.3\t2,0,2,0,0\tA sweeping historical claim that is not supported.\n19.6\t5,0,2,0,0\tNot every model was trained on this memo or on every butler novel.\n20.3\t0,0,3,0,0\tA quotable distinction offered in place of evidence.\n20.6\t5,0,4,0,0\tAviation and surgical checklists do change ways of working; cf. the Army memo.\n22.6\t5,0,2,0,0\tModels routinely imagine the recipient; P2 itself says assistants read intent.\n22.7\t0,0,2,0,0\tA neat closing image.\n23.1\t0,0,1,0,3\tThe essay turns into a pitch for the author's own company.\n23.2\t0,0,3,0,0\t\"Works out what the job is\" sounds like a slogan.\n23.6\t2,0,1,0,0\tSome money-moving routine, like a small refund, may be settled without approval.\n24.2\t2,0,1,0,0\tSome readers think of existing autonomous assistants.\n24.3\t0,0,2,0,0\tThe essay argued about checklists, not training; the claim overstates what was said.\n24.4\t0,0,2,0,0\t\"Where attention is shortest\" is asserted, not shown.\n24.5\t0,3,2,0,0\tReassures against an AI-takeover fear that has not yet been raised.\nEND",
+"r": 2
+}
+]
 }
 ]
 }

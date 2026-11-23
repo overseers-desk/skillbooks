@@ -26,7 +26,11 @@ What it does not do:
 
 ## The faults reader
 
-Prompt 005 with format 016: five criteria, a total (a sentence allowing no exception) that the passage does not support, a defensive line answering a charge nobody made, a glib line, telling the reader what any adult knows, and the author lowering their own standing. Its prompt has no place for the line that tells the flow reader who reads the text. `matrix.py` shows its record on the essay's chapters V and VI and its introduction (`texts/013.md` to `texts/017.md`), where the expectations are the author's own objections to a first draft and his rewrite.
+Prompt 005 with format 032: five criteria, a total (a sentence allowing no exception) that the passage does not support, a defensive line answering a charge nobody made, a glib line, telling the reader what any adult knows, and the author lowering their own standing. Its prompt has no place for the line that tells the flow reader who reads the text. `matrix.py` shows its record on the essay's chapters V and VI and its introduction (`texts/013.md` to `texts/017.md`), where the expectations are the author's own objections to a first draft and his rewrite.
+
+Glib is criterion 047. Besides a line that says less than it seems to, it scores a pair of clauses joined by "and" or "so" and shaped as a saying, which the author calls sage-speak and ruled a case of glib; a quotation, a saying offered as one and verse are exempt. Its expectations are the author's rulings on four sentences in texts 015, 016, 017 and 019, and `texts/021.md` to `texts/026.md`. Under 047 the seven flagged sentences score 4 to 8 in three runs, six of them 6 or more in every run, and no quiet is broken in most runs; a proverb offered as a saying and an everyday "that is how I found" are each flagged in one run of three. Criterion 032, the wording before it, scored two of the ruled sentences 3 and 3, and 0 and 2 (`runs/005+016/`). Criteria 045 and 046 described the pair without the chained form, in which the second clause takes up a word of the first, and left the two chained sentences at 4 to 5 (`runs/005+030/`, `runs/005+031/`).
+
+Each of the three wordings moved the total criterion in the same call. Three of the author's totals that sat on the cut-off under format 016 (sentences 7 and 13 of text 013, and the title of 017) were flagged in 14 runs of 18 there and are flagged in 2 of 9 under 032. The author took 047 knowing this.
 
 ## Questions above the sentence
 

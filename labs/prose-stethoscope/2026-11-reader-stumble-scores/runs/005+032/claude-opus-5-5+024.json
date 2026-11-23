@@ -1,0 +1,79 @@
+{
+"prompt": "005",
+"format": "032",
+"model": "claude-opus-5-5",
+"text": "024",
+"sents": [
+"My grandfather kept a hardware shop for forty years.",
+"When a customer asked why he stocked so many sizes of screw, he would answer:",
+"\"The shelf is where a shop makes its promise, and the till is where it keeps it.\"",
+"I thought of him last week, when our supplier dropped half its range.",
+"As the saying goes, home is where the heart is, and for him the shop was home.",
+"We have ordered the missing sizes from a second supplier."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The text, each paragraph starting with its number:\n\n[P1] My grandfather kept a hardware shop for forty years. When a customer asked why he stocked so many sizes of screw, he would answer: \"The shelf is where a shop makes its promise, and the till is where it keeps it.\"\n\n[P2] I thought of him last week, when our supplier dropped half its range. As the saying goes, home is where the heart is, and for him the shop was home.\n\n[P3] We have ordered the missing sizes from a second supplier.\n\nScore each sentence on the five offences below. A score is roughly how many readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Total: for a sentence that allows no exception (no, nobody, none, never, always, every, all, cannot, only, the one, the whole), score 0 to 9 how likely a reader is to think at once of a plain exception and doubt the sentence for it.\n2. Defensive: score 0 to 9 how likely a reader is to wonder at this sentence whom it is answering, because it defends against or denies something nobody has said.\n3. Glib: score 0 to 9 how likely a reader is to find this sentence glib: a confident line that sounds settled and says less than it seems to, or a line shaped as a saying where a plain statement belongs: two clauses joined by \"and\" or \"so\", the second capping the first, as in \"The kitchen is where a restaurant is made, and the menu is how it is sold\" or \"A recipe is a list of steps, and steps are what a cook can follow\"; nearly every reader hears that shape, whatever the line says. A quotation, a saying offered as one, or verse does not count.\n4. Explained to: score 0 to 9 how likely a reader is to feel talked down to at this sentence, because it tells them what any adult already knows or can see for themselves.\n5. Lowered standing: score 0 to 9 how likely a reader is to take the author less seriously at this sentence because the author lowers their own standing to speak on the point.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the five scores comma-separated in the order above, TAB, why: what the reader meets at this sentence, in at most 15 words. Describe the stumble, not a way to fix it. Where total (1) scores 4 or more, the why names the exception the reader thinks of. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"5": {
+"s": [
+0,
+0,
+4,
+2,
+0
+],
+"why": "Cliché capped with \"and for him the shop was home\" sounds settled, says little."
+}
+},
+"secs": 20,
+"raw": "2.2\t0,0,4,2,0\tCliché capped with \"and for him the shop was home\" sounds settled, says little.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"5": {
+"s": [
+0,
+0,
+3,
+2,
+0
+],
+"why": "Familiar saying spelled out, then capped with the author's own \"shop was home\" clause."
+}
+},
+"secs": 16,
+"raw": "2.2\t0,0,3,2,0\tFamiliar saying spelled out, then capped with the author's own \"shop was home\" clause.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"5": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The author caps a stock saying with \"the shop was home\", which says little."
+}
+},
+"secs": 19,
+"raw": "2.2\t0,0,3,0,0\tThe author caps a stock saying with \"the shop was home\", which says little.\nEND",
+"r": 2
+}
+]
+}
+]
+}

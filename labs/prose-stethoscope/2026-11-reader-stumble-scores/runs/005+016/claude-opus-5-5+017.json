@@ -1380,6 +1380,1219 @@
 "r": 2
 }
 ]
+},
+{
+"overrides": {},
+"assembled_prompt": "The text, each paragraph starting with its number:\n\n[P1] Nobody hires the AI\n\n[P2] *The smartest tool ever built is still not an employee. The reason is not intelligence.*\n\n[P3] Two years ago the people best placed to know said that the next thing after the chatbot would be a colleague.\n\n[P4] In 2024 Dario Amodei wrote that AI smarter than a Nobel laureate across most fields \"could come as early as 2026\". The next year saw Sam Altman saying that OpenAI was confident it knew how to build AGI, and that in 2025 \"we may see the first AI agents 'join the workforce' and materially change the output of companies\". The intelligence they were counting on arrived on schedule. The colleague did not. The field even has a name for him, the drop-in remote worker,[^1] and nobody has one. You still cannot hire an AI on LinkedIn. The companies that said you could have mostly gone quiet. The one that put \"Stop Hiring Humans\" on billboards in San Francisco has retired the slogan. The bank that said its bot was doing the work of seven hundred support staff is hiring people again.\n\n[P5] I run a business on these models, and have done for two years. Not a software business: a tourism venue in Australia with staff, animals, weddings and a kitchen, run from Spain. Most of what I built to make the models useful was not about making them smarter. I think I know why the colleague did not come.\n\n[P6] Here is the moment I knew. A vendor who sells his product at our events wrote to us. We had fifteen hundred people on the day, he said, and his product was not mentioned in our marketing. Why not work together? The kind of email a business gets every week. The model answered it. It thanked him for his point and told him that we always prioritise our own profit over our partners. He never wrote to us again. A new hire on her first day would have written \"thanks, let us look at that for next time\", and she would have been right without knowing anything about us.\n\n[P7] I asked the model why it had said that. Its instructions were to answer from the customer service material first and, failing that, from facts about the business. Among the facts was a meeting the year before, where I had said that we put our own profit ahead of other businesses. So it did. Every step was correct. It found what I said, it saw that it applied, and it used it. What it did not know was who it was working for, and what the reply was supposed to achieve.\n\n[P8] It was not the email. The same thing has happened in every seat I have put a model in, and each time the mistake looked different.\n\n[P9] - It gave a customer a discount because the customer asked a second time.\n- It briefed a staff member on the three steps to take and never said what the job was for.\n- Told in the morning that we were short-staffed on Saturday, it approved two leave requests for Saturday that afternoon.\n- Asked whether any customer had complained about the parking, it searched the inbox, found nothing, and told me nobody had. The complaints were on Facebook.\n- It wrote to a customer about \"the change we agreed\", a change it had agreed with me, in a conversation the customer was never in.\n- It told a visitor that we stop feeding the turtles in the mating season, a rule we dropped two years ago, from an email that still said so.\n- Asked to look into a supplier's invoices, it said it would, and the question died when the conversation ended.\n- It rostered a bartender for the whole day of a Buddhist group's function. Nobody bought a drink.\n\n[P10] An employee who behaved like this would not be hired, and if hired would not be kept.\n\n[P11] Later chapters trace each of these to its cause, and then to the way out.\n\n[P12] This essay is about those behaviours: what a model does with what it knows. Intelligence is how much it can work out. Behaviour is what it does with that, and a fault that a smarter model does not fix is behaviour. The behaviours come down to seven pillars. Have them right and you have an AI employee. They are what stops a model today from being hired, from being trusted with a customer, from running anything, which is where the people quoted above expected it to be by now. They show in every model and at every level of intelligence, so they are a dimension of their own, and one that has had almost no work. Part of their cause is how the models are trained, and that part can be trained away. Part is that some of what an employee does was never written down where a model could read it, and that part needs something else. The essay ends with what I think the something else is, a way of behaving I call the head servant, and what could go wrong with it.\n\n[P13] One more case, with nothing at stake, and the one you can run yourself tonight. You are working through a customer complaint with the model. You ask whether the business has handled this kind before, and whether your plan will work. It says yes, and that Bob's experience bears on it. You ask who Bob is. A colleague would say \"someone who left, it doesn't matter, here is what he did\", and go back to the complaint. The model says: Bob was employed from this year to that year; there is no record of his allocation to your department; it is unclear whether he acted in an official capacity; his full name is uncertain, since he appears in meeting records and not in employment records. Four sentences, every one true. And the complaint is gone. You asked about Bob, and Bob is now the job.\n\n[P14] **I. The colleague did not come.** Between GPT-4 and today the models grew by orders of magnitude and passed as human in Turing tests. The companies that sold an AI employee now sell tools. Not smart enough and not human enough both fail on the record.\n\n[P15] **II. Chasing dragonflies.** The first pillar, through a story every Chinese child knows. A model answers every question put to it and loses the job it was on. Every answer right, the afternoon wasted. The useful outcome is not made of right answers.\n\n[P16] **III. The seven pillars.** Keep the errand in mind. Choose the move by what it does, not how it looks. Know the reach of your instrument. Consult the whole at each step. Hold a second explanation before acting on the first. Ask who decided a thing before treating it as decided. Act past the moment.\n\n[P17] **IV. Not human, productive.** Behaving like a person is not the goal. Producing the outcome among people is. The pillars look human because the customers are.\n\n[P18] **V. Why.** In conversation, a model is graded on one exchange, by one grader, at once, and learns the gradable move; that can be trained out. What an employee does unasked was never in any text, because people do not write down what everyone knows; that cannot. More intelligence supplies neither. Prediction, so it can be checked: as models improve, complaints will shift from what they cannot do to what they do.\n\n[P19] **VI. The head servant.** One role's whole craft is the seven pillars. He holds the house's purpose when the master is away, decides what reaches the master and when, acts within his remit and asks beyond it, says nothing when nothing serves, and judges every act by how it lands on the person who carries the house's name. The role was shaped by centuries of our problem: an intelligent agent working for someone who cannot watch. Built on it an AI behaves well in more seats than on any other, and the same craft carried upward is the nearest path to an AI that could run a company.\n\n[P20] **VII. The risks.** A head servant chooses what his master hears. The behaviours that make a model employable are the ones the safety frameworks list as hazards, with reason. Yet a nurse who has seen the results and says \"the doctor will go through them with you\" is not lying, and a model trained to tell everything to whoever asks could not do her job. The servant who serves himself, the servant who is colourful rather than good, the servant who decides what the master can bear. What keeps a human one honest is the house around him, not his training.\n\n[P21] [^1]: The phrase is Leopold Aschenbrenner's, from *Situational Awareness*, June 2024, where he set 2027 as the year. That year has not come, and this essay passes no verdict on it. It borrows the phrase because the field did.\n\nScore each sentence on the five offences below. A score is roughly how many readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Total: for a sentence that allows no exception (no, nobody, none, never, always, every, all, cannot, only, the one, the whole), score 0 to 9 how likely a reader is to think at once of a plain exception and doubt the sentence for it.\n2. Defensive: score 0 to 9 how likely a reader is to wonder at this sentence whom it is answering, because it defends against or denies something nobody has said.\n3. Glib: score 0 to 9 how likely a reader is to find this sentence glib, a confident line that sounds settled and says less than it seems to.\n4. Explained to: score 0 to 9 how likely a reader is to feel talked down to at this sentence, because it tells them what any adult already knows or can see for themselves.\n5. Lowered standing: score 0 to 9 how likely a reader is to take the author less seriously at this sentence because the author lowers their own standing to speak on the point.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the five scores comma-separated in the order above, TAB, why: what the reader meets at this sentence, in at most 15 words. Describe the stumble, not a way to fix it. Where total (1) scores 4 or more, the why names the exception the reader thinks of. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"3": {
+"s": [
+0,
+2,
+3,
+0,
+0
+],
+"why": "Denies an intelligence explanation before any reader has offered one."
+},
+"7": {
+"s": [
+2,
+0,
+5,
+0,
+0
+],
+"why": "Asserts Nobel-level intelligence arrived; the reader doubts this was settled."
+},
+"8": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Neat reversal line; it sounds conclusive but carries little evidence."
+},
+"9": {
+"s": [
+5,
+0,
+2,
+0,
+0
+],
+"why": "Plain exception: vendors sell AI SDRs and support agents as workers."
+},
+"10": {
+"s": [
+3,
+0,
+5,
+0,
+0
+],
+"why": "A LinkedIn listing seems a weak test of whether AI is employed."
+},
+"15": {
+"s": [
+0,
+2,
+0,
+0,
+3
+],
+"why": "A tourism venue run from Spain seems a modest base for the claim."
+},
+"26": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "Assumes any first-day hire reads intent correctly; some would not."
+},
+"29": {
+"s": [
+0,
+0,
+0,
+0,
+4
+],
+"why": "The author admits a self-serving stated policy and feeding it to the bot."
+},
+"31": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Plain exception: applying a meeting remark to a vendor reply was a wrong step."
+},
+"33": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A tidy diagnosis that names the lack without showing it."
+},
+"34": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Unclear who suggested the fault was the email itself."
+},
+"35": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "\"The same thing\" whose every instance looked different stays vague."
+},
+"43": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "Defines behaviour as whatever intelligence does not fix, which is circular."
+},
+"44": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The count of seven arrives as settled before any argument."
+},
+"45": {
+"s": [
+4,
+0,
+6,
+0,
+0
+],
+"why": "Plain exception: permissions, liability and system access also block AI employment."
+},
+"46": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "Names the pillars as the sole obstacle while other blockers come to mind."
+},
+"47": {
+"s": [
+5,
+0,
+2,
+0,
+0
+],
+"why": "Plain exception: sycophancy and instruction-hierarchy research address these behaviours."
+},
+"49": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Plain exception: etiquette guides and staff manuals do write this down."
+},
+"59": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The user did ask about Bob, so answering him seems fair."
+},
+"64": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Plain exception: some vendors still sell named \"AI employees\"."
+},
+"65": {
+"s": [
+0,
+0,
+6,
+0,
+0
+],
+"why": "A compressed verdict whose meaning is hard to unpack."
+},
+"67": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Plain exception: many Chinese children, and most other readers, do not know it."
+},
+"69": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "An aphoristic pairing that sounds settled."
+},
+"70": {
+"s": [
+0,
+2,
+5,
+0,
+0
+],
+"why": "A paradox-shaped line that says less than it seems to."
+},
+"78": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A pillar so terse it gives no grip on what to do."
+},
+"80": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Rejects a goal of human likeness that nobody here proposed."
+},
+"82": {
+"s": [
+0,
+0,
+5,
+0,
+0
+],
+"why": "A neat inversion that substitutes rhythm for an argument."
+},
+"84": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Plain exception: multi-turn and agentic RL grade over many exchanges."
+},
+"85": {
+"s": [
+6,
+0,
+3,
+0,
+0
+],
+"why": "Plain exception: servant manuals and etiquette books record unasked conduct."
+},
+"86": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "Smarter models may infer unwritten norms, so \"neither\" seems too sure."
+},
+"89": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Plain exception: a head servant's craft also includes managing staff and household tasks."
+},
+"91": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The appeal to centuries sounds weighty but goes unexamined."
+},
+"92": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Plain exception: other role models are untested, so the superlative is unearned."
+},
+"95": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Employable behaviours like accuracy are not listed as hazards."
+},
+"96": {
+"s": [
+0,
+3,
+2,
+0,
+0
+],
+"why": "Defends the nurse against a lying charge nobody made."
+},
+"98": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Plain exception: personal conscience keeps many servants honest without oversight."
+},
+"100": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Disclaims a verdict nobody asked the essay to give."
+},
+"101": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Justifies borrowing a phrase as though accused of endorsing it."
+}
+},
+"secs": 55,
+"raw": "1\t4,1,3,0,0\tPlain exception: firms already deploy and market AI agents as hires.\n2.2\t0,2,3,0,0\tDenies an intelligence explanation before any reader has offered one.\n4.3\t2,0,5,0,0\tAsserts Nobel-level intelligence arrived; the reader doubts this was settled.\n4.4\t0,0,3,0,0\tNeat reversal line; it sounds conclusive but carries little evidence.\n4.5\t5,0,2,0,0\tPlain exception: vendors sell AI SDRs and support agents as workers.\n4.6\t3,0,5,0,0\tA LinkedIn listing seems a weak test of whether AI is employed.\n5.2\t0,2,0,0,3\tA tourism venue run from Spain seems a modest base for the claim.\n6.9\t3,0,3,0,0\tAssumes any first-day hire reads intent correctly; some would not.\n7.3\t0,0,0,0,4\tThe author admits a self-serving stated policy and feeding it to the bot.\n7.5\t4,0,4,0,0\tPlain exception: applying a meeting remark to a vendor reply was a wrong step.\n7.7\t0,0,3,0,0\tA tidy diagnosis that names the lack without showing it.\n8.1\t0,3,0,0,0\tUnclear who suggested the fault was the email itself.\n8.2\t3,0,3,0,0\t\"The same thing\" whose every instance looked different stays vague.\n10\t4,0,3,0,0\tPlain exception: new hires make single slips like these and are kept.\n12.3\t0,0,4,0,0\tDefines behaviour as whatever intelligence does not fix, which is circular.\n12.4\t0,0,3,0,0\tThe count of seven arrives as settled before any argument.\n12.5\t4,0,6,0,0\tPlain exception: permissions, liability and system access also block AI employment.\n12.6\t3,0,3,0,0\tNames the pillars as the sole obstacle while other blockers come to mind.\n12.7\t5,0,2,0,0\tPlain exception: sycophancy and instruction-hierarchy research address these behaviours.\n12.9\t4,0,2,0,0\tPlain exception: etiquette guides and staff manuals do write this down.\n13.9\t0,0,3,0,0\tThe user did ask about Bob, so answering him seems fair.\n14.3\t4,0,2,0,0\tPlain exception: some vendors still sell named \"AI employees\".\n14.4\t0,0,6,0,0\tA compressed verdict whose meaning is hard to unpack.\n15.2\t4,0,0,0,0\tPlain exception: many Chinese children, and most other readers, do not know it.\n15.4\t0,0,3,0,0\tAn aphoristic pairing that sounds settled.\n15.5\t0,2,5,0,0\tA paradox-shaped line that says less than it seems to.\n16.8\t0,0,3,0,0\tA pillar so terse it gives no grip on what to do.\n17.2\t0,3,0,0,0\tRejects a goal of human likeness that nobody here proposed.\n17.4\t0,0,5,0,0\tA neat inversion that substitutes rhythm for an argument.\n18.2\t4,0,2,0,0\tPlain exception: multi-turn and agentic RL grade over many exchanges.\n18.3\t6,0,3,0,0\tPlain exception: servant manuals and etiquette books record unasked conduct.\n18.4\t3,0,4,0,0\tSmarter models may infer unwritten norms, so \"neither\" seems too sure.\n19.2\t4,0,4,0,0\tPlain exception: a head servant's craft also includes managing staff and household tasks.\n19.4\t0,0,3,0,0\tThe appeal to centuries sounds weighty but goes unexamined.\n19.5\t4,0,4,0,0\tPlain exception: other role models are untested, so the superlative is unearned.\n20.3\t3,0,2,0,0\tEmployable behaviours like accuracy are not listed as hazards.\n20.4\t0,3,2,0,0\tDefends the nurse against a lying charge nobody made.\n20.6\t4,0,4,0,0\tPlain exception: personal conscience keeps many servants honest without oversight.\n21.2\t0,3,0,0,0\tDisclaims a verdict nobody asked the essay to give.\n21.3\t0,3,0,0,0\tJustifies borrowing a phrase as though accused of endorsing it.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "\"Nobody\" collides with vendors selling AI agents as digital workers."
+},
+"2": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A neat verdict before any case for it is made."
+},
+"3": {
+"s": [
+0,
+2,
+3,
+0,
+0
+],
+"why": "Rules out a cause before the reader has proposed one."
+},
+"7": {
+"s": [
+2,
+0,
+6,
+0,
+0
+],
+"why": "Nobel-level AI \"on schedule\" is asserted, not shown; reader doubts it."
+},
+"8": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A punchy echo that adds little to the prior sentence."
+},
+"9": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "\"Nobody has one\" meets firms running coding agents on whole tasks."
+},
+"10": {
+"s": [
+2,
+0,
+5,
+0,
+0
+],
+"why": "LinkedIn hiring is an odd test that proves less than it implies."
+},
+"15": {
+"s": [
+0,
+2,
+0,
+0,
+3
+],
+"why": "A tourism operator's voice on AI may seem less weighty."
+},
+"17": {
+"s": [
+0,
+0,
+0,
+0,
+2
+],
+"why": "The hedge \"I think\" softens authority at the thesis."
+},
+"26": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "Assumes every new hire would reply well; some would blunder."
+},
+"31": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "The final step, quoting internal policy to an outsider, was not correct."
+},
+"34": {
+"s": [
+0,
+3,
+3,
+0,
+0
+],
+"why": "Denies the email was the point, though nobody said it was."
+},
+"35": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "\"Every seat\" is a sweeping claim from one operator."
+},
+"39": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Real employees make such slips and are kept, especially new ones."
+},
+"43": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "Defining behaviour as whatever smarter models don't fix feels circular."
+},
+"44": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Seven pillars\" sounds settled before any derivation."
+},
+"45": {
+"s": [
+3,
+0,
+6,
+0,
+0
+],
+"why": "Overclaims: seven behaviours alone are said to make an employee."
+},
+"46": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Liability, cost and integration also stop AI being hired."
+},
+"47": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Sycophancy and agentic-benchmark research is work on these behaviours."
+},
+"58": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Aphoristic closing line that restates the point."
+},
+"63": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Artisan and 11x still sell AI SDRs as employees."
+},
+"64": {
+"s": [
+0,
+2,
+5,
+0,
+0
+],
+"why": "Compressed verdict dismissing two explanations without visible evidence here."
+},
+"66": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "\"Every Chinese child\" invites doubt; not all know it."
+},
+"69": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "Paradoxical line that sounds deep and says little."
+},
+"73": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Slogan-like contrast whose meaning is unclear without the chapter."
+},
+"78": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Vague imperative; reader cannot tell what it asks."
+},
+"79": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Rebuts a goal of human likeness nobody here proposed."
+},
+"81": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "Neat inversion that sounds settled, explains little."
+},
+"84": {
+"s": [
+6,
+0,
+3,
+0,
+0
+],
+"why": "Handbooks, etiquette guides and novels write down unasked conduct."
+},
+"85": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "Flat dismissal of intelligence as a remedy, asserted not argued."
+},
+"88": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "Claims one role's whole craft equals the author's own list."
+},
+"91": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Executive assistant or chief of staff are rival models; \"more than any\"."
+},
+"94": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Not every employable behaviour is listed as a hazard."
+},
+"97": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Personal conscience also keeps a servant honest, not only the house."
+},
+"100": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Disclaims a verdict nobody asked it to give."
+}
+},
+"secs": 48,
+"raw": "1.1\t4,0,3,0,0\t\"Nobody\" collides with vendors selling AI agents as digital workers.\n2.1\t0,0,3,0,0\tA neat verdict before any case for it is made.\n2.2\t0,2,3,0,0\tRules out a cause before the reader has proposed one.\n4.3\t2,0,6,0,0\tNobel-level AI \"on schedule\" is asserted, not shown; reader doubts it.\n4.4\t0,0,3,0,0\tA punchy echo that adds little to the prior sentence.\n4.5\t4,0,2,0,0\t\"Nobody has one\" meets firms running coding agents on whole tasks.\n4.6\t2,0,5,0,0\tLinkedIn hiring is an odd test that proves less than it implies.\n5.2\t0,2,0,0,3\tA tourism operator's voice on AI may seem less weighty.\n5.4\t0,0,0,0,2\tThe hedge \"I think\" softens authority at the thesis.\n6.9\t3,0,3,0,0\tAssumes every new hire would reply well; some would blunder.\n7.5\t4,0,3,0,0\tThe final step, quoting internal policy to an outsider, was not correct.\n8.1\t0,3,3,0,0\tDenies the email was the point, though nobody said it was.\n8.2\t3,0,0,0,0\t\"Every seat\" is a sweeping claim from one operator.\n10.1\t4,0,3,0,0\tReal employees make such slips and are kept, especially new ones.\n12.3\t0,0,4,0,0\tDefining behaviour as whatever smarter models don't fix feels circular.\n12.4\t0,0,3,0,0\t\"Seven pillars\" sounds settled before any derivation.\n12.5\t3,0,6,0,0\tOverclaims: seven behaviours alone are said to make an employee.\n12.6\t4,0,3,0,0\tLiability, cost and integration also stop AI being hired.\n12.7\t4,0,3,0,0\tSycophancy and agentic-benchmark research is work on these behaviours.\n13.8\t0,0,3,0,0\tAphoristic closing line that restates the point.\n14.2\t4,0,2,0,0\tArtisan and 11x still sell AI SDRs as employees.\n14.3\t0,2,5,0,0\tCompressed verdict dismissing two explanations without visible evidence here.\n15.1\t3,0,0,0,0\t\"Every Chinese child\" invites doubt; not all know it.\n15.4\t0,0,4,0,0\tParadoxical line that sounds deep and says little.\n16.3\t0,0,3,0,0\tSlogan-like contrast whose meaning is unclear without the chapter.\n16.8\t0,0,3,0,0\tVague imperative; reader cannot tell what it asks.\n17.1\t0,3,0,0,0\tRebuts a goal of human likeness nobody here proposed.\n17.3\t0,0,4,0,0\tNeat inversion that sounds settled, explains little.\n18.2\t6,0,3,0,0\tHandbooks, etiquette guides and novels write down unasked conduct.\n18.3\t3,0,3,0,0\tFlat dismissal of intelligence as a remedy, asserted not argued.\n19.1\t3,0,4,0,0\tClaims one role's whole craft equals the author's own list.\n19.4\t4,0,4,0,0\tExecutive assistant or chief of staff are rival models; \"more than any\".\n20.2\t3,0,2,0,0\tNot every employable behaviour is listed as a hazard.\n20.5\t4,0,4,0,0\tPersonal conscience also keeps a servant honest, not only the house.\n21.2\t0,3,0,0,0\tDisclaims a verdict nobody asked it to give.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+4,
+1,
+3,
+0,
+0
+],
+"why": "Companies already deploying AI agents in support roles come to mind against \"nobody\"."
+},
+"3": {
+"s": [
+0,
+3,
+3,
+0,
+0
+],
+"why": "Denies an intelligence explanation the reader has not yet been offered."
+},
+"7": {
+"s": [
+2,
+0,
+5,
+0,
+0
+],
+"why": "Asserts Nobel-level intelligence arrived as settled fact; sounds final, unargued."
+},
+"9": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Vendors selling \"AI workers\" (Devin, Artisan's Ava) contradict \"nobody has one\"."
+},
+"10": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "Punchy LinkedIn line stands in for an argument about employment."
+},
+"15": {
+"s": [
+0,
+2,
+0,
+0,
+3
+],
+"why": "\"Not a software business\" answers no one; tourism operator's authority on AI may seem thin."
+},
+"17": {
+"s": [
+0,
+0,
+0,
+0,
+2
+],
+"why": "\"I think I know\" hedges just as the thesis is introduced."
+},
+"22": {
+"s": [
+0,
+0,
+0,
+2,
+0
+],
+"why": "Reader is told an obvious point: businesses get such emails."
+},
+"26": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "A first-day hire could also blunder; certainty about her rightness seems easy."
+},
+"31": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Choosing to send that line to a partner was itself a wrong step."
+},
+"33": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Neat diagnosis delivered as settled; \"who it was working for\" stays vague."
+},
+"34": {
+"s": [
+0,
+3,
+2,
+0,
+0
+],
+"why": "Denies a claim no one made; unclear what \"it\" refers to."
+},
+"35": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "Listed failures look like different causes, not \"the same thing\"."
+},
+"39": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "New human staff make such slips and are trained, not fired."
+},
+"42": {
+"s": [
+0,
+0,
+3,
+3,
+0
+],
+"why": "A one-line definition of intelligence the reader already holds."
+},
+"43": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "Behaviour defined as whatever intelligence doesn't fix; circular, sounds settled."
+},
+"44": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Seven pillars\" offered as a tidy count without grounds."
+},
+"45": {
+"s": [
+4,
+0,
+5,
+0,
+0
+],
+"why": "Cost, liability, tool access also block an AI employee; sufficiency overclaimed."
+},
+"46": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Legal liability, cost, integration also stop models being hired."
+},
+"47": {
+"s": [
+5,
+2,
+3,
+0,
+0
+],
+"why": "Sycophancy and goal-tracking research contradicts \"almost no work\"; \"every model\" unverified."
+},
+"49": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Employee handbooks and etiquette guides do write much of this down."
+},
+"59": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Aphoristic close that restates the scene in a slogan."
+},
+"64": {
+"s": [
+3,
+0,
+2,
+0,
+0
+],
+"why": "Some AI-employee vendors still market agents as staff."
+},
+"65": {
+"s": [
+0,
+3,
+5,
+0,
+0
+],
+"why": "Dismisses two explanations in one compressed line; reads settled, says little."
+},
+"67": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Not every Chinese child knows it; non-Chinese readers doubt \"every\"."
+},
+"69": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Antithesis sounds conclusive while repeating the prior sentence."
+},
+"70": {
+"s": [
+0,
+2,
+4,
+0,
+0
+],
+"why": "Aphorism stated as obvious, rebutting no stated view."
+},
+"73": {
+"s": [
+0,
+0,
+3,
+2,
+0
+],
+"why": "Slogan-like maxim; meaning of \"how it looks\" left open."
+},
+"75": {
+"s": [
+0,
+0,
+3,
+2,
+0
+],
+"why": "Vague imperative; \"the whole\" undefined."
+},
+"77": {
+"s": [
+0,
+0,
+2,
+3,
+0
+],
+"why": "Reads as advice any adult already follows."
+},
+"78": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Cryptic maxim; \"past the moment\" says less than it seems."
+},
+"80": {
+"s": [
+0,
+4,
+2,
+0,
+0
+],
+"why": "Denies a goal nobody proposed in the essay so far."
+},
+"82": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "Neat inversion that settles the question by wordplay."
+},
+"84": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Multi-turn RLHF and agentic RL on long tasks exist and grade outcomes."
+},
+"85": {
+"s": [
+6,
+0,
+3,
+0,
+0
+],
+"why": "Etiquette manuals, butler guides, onboarding docs, novels record unasked conduct."
+},
+"86": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Smarter models do infer unwritten norms from context; \"neither\" overclaims."
+},
+"89": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "A butler's craft includes silver, wine, accounts; \"whole craft\" overreaches."
+},
+"91": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Centuries of our problem\" sounds weighty, stays unspecific."
+},
+"92": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "\"More seats than any other\" asserted without comparison to other frames."
+},
+"95": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "\"Keep the errand in mind\" isn't a listed hazard; \"the ones\" overclaims."
+},
+"96": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Rebuts an unnamed opponent who wants models to tell everyone everything."
+},
+"97": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "Fragment list of types gestures at risks without stating them."
+},
+"98": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "Conscience and character also keep servants honest; tidy antithesis."
+},
+"100": {
+"s": [
+0,
+4,
+0,
+0,
+0
+],
+"why": "Disclaims a verdict nobody asked it to give."
+},
+"101": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Justifies borrowing a phrase against an objection not raised."
+}
+},
+"secs": 57,
+"raw": "1.1\t4,1,3,0,0\tCompanies already deploying AI agents in support roles come to mind against \"nobody\".\n2.2\t0,3,3,0,0\tDenies an intelligence explanation the reader has not yet been offered.\n4.3\t2,0,5,0,0\tAsserts Nobel-level intelligence arrived as settled fact; sounds final, unargued.\n4.5\t4,0,2,0,0\tVendors selling \"AI workers\" (Devin, Artisan's Ava) contradict \"nobody has one\".\n4.6\t3,0,4,0,0\tPunchy LinkedIn line stands in for an argument about employment.\n5.2\t0,2,0,0,3\t\"Not a software business\" answers no one; tourism operator's authority on AI may seem thin.\n5.4\t0,0,0,0,2\t\"I think I know\" hedges just as the thesis is introduced.\n6.5\t0,0,0,2,0\tReader is told an obvious point: businesses get such emails.\n6.9\t3,0,3,0,0\tA first-day hire could also blunder; certainty about her rightness seems easy.\n7.5\t4,0,3,0,0\tChoosing to send that line to a partner was itself a wrong step.\n7.7\t0,0,3,0,0\tNeat diagnosis delivered as settled; \"who it was working for\" stays vague.\n8.1\t0,3,2,0,0\tDenies a claim no one made; unclear what \"it\" refers to.\n8.2\t3,0,3,0,0\tListed failures look like different causes, not \"the same thing\".\n10.1\t4,0,3,0,0\tNew human staff make such slips and are trained, not fired.\n12.2\t0,0,3,3,0\tA one-line definition of intelligence the reader already holds.\n12.3\t0,0,4,0,0\tBehaviour defined as whatever intelligence doesn't fix; circular, sounds settled.\n12.4\t0,0,3,0,0\t\"Seven pillars\" offered as a tidy count without grounds.\n12.5\t4,0,5,0,0\tCost, liability, tool access also block an AI employee; sufficiency overclaimed.\n12.6\t4,0,3,0,0\tLegal liability, cost, integration also stop models being hired.\n12.7\t5,2,3,0,0\tSycophancy and goal-tracking research contradicts \"almost no work\"; \"every model\" unverified.\n12.9\t3,0,2,0,0\tEmployee handbooks and etiquette guides do write much of this down.\n13.9\t0,0,3,0,0\tAphoristic close that restates the scene in a slogan.\n14.3\t3,0,2,0,0\tSome AI-employee vendors still market agents as staff.\n14.4\t0,3,5,0,0\tDismisses two explanations in one compressed line; reads settled, says little.\n15.2\t3,0,0,0,0\tNot every Chinese child knows it; non-Chinese readers doubt \"every\".\n15.4\t0,0,3,0,0\tAntithesis sounds conclusive while repeating the prior sentence.\n15.5\t0,2,4,0,0\tAphorism stated as obvious, rebutting no stated view.\n16.3\t0,0,3,2,0\tSlogan-like maxim; meaning of \"how it looks\" left open.\n16.5\t0,0,3,2,0\tVague imperative; \"the whole\" undefined.\n16.7\t0,0,2,3,0\tReads as advice any adult already follows.\n16.8\t0,0,3,0,0\tCryptic maxim; \"past the moment\" says less than it seems.\n17.2\t0,4,2,0,0\tDenies a goal nobody proposed in the essay so far.\n17.4\t0,0,4,0,0\tNeat inversion that settles the question by wordplay.\n18.2\t4,0,2,0,0\tMulti-turn RLHF and agentic RL on long tasks exist and grade outcomes.\n18.3\t6,0,3,0,0\tEtiquette manuals, butler guides, onboarding docs, novels record unasked conduct.\n18.4\t4,0,4,0,0\tSmarter models do infer unwritten norms from context; \"neither\" overclaims.\n19.2\t3,0,4,0,0\tA butler's craft includes silver, wine, accounts; \"whole craft\" overreaches.\n19.4\t0,0,3,0,0\t\"Centuries of our problem\" sounds weighty, stays unspecific.\n19.5\t3,0,4,0,0\t\"More seats than any other\" asserted without comparison to other frames.\n20.3\t4,0,3,0,0\t\"Keep the errand in mind\" isn't a listed hazard; \"the ones\" overclaims.\n20.4\t0,3,0,0,0\tRebuts an unnamed opponent who wants models to tell everyone everything.\n20.5\t0,0,2,0,0\tFragment list of types gestures at risks without stating them.\n20.6\t3,0,4,0,0\tConscience and character also keep servants honest; tidy antithesis.\n21.2\t0,4,0,0,0\tDisclaims a verdict nobody asked it to give.\n21.3\t0,3,0,0,0\tJustifies borrowing a phrase against an objection not raised.\nEND",
+"r": 2
+}
+]
 }
 ]
 }

@@ -1,0 +1,936 @@
+{
+"prompt": "005",
+"format": "030",
+"model": "claude-opus-5-5",
+"text": "014",
+"sents": [
+"The behaviours in this essay have many causes in the training, and the last chapter went through them.",
+"There is a shorter way to hold them all, which is to ask what these models were raised to be.",
+"They were raised to be assistants.",
+"Someone sits down and asks, and the model's work is to be as useful to that person as it can.",
+"Its makers' own phrase for it is a helpful assistant, and much of how they grade it comes down to whether the person who asked went away satisfied.",
+"There is a kind of team that works this way, and it is a good one.",
+"In an operating theatre the surgeon's assistant is very able.",
+"He anticipates what she needs, takes her direction, and makes many small decisions without a word from her.",
+"The patient is on his mind throughout.",
+"But judging what is best for the patient is her job, and his is to carry out the operation she has in mind.",
+"An AI is in his position.",
+"Ask one for an app to track your health and it builds the whole thing, deciding a great deal on the way without asking you.",
+"The code is on its mind throughout.",
+"Whether the app will do your health any good is a question it leaves with you, unless you put it to the model directly.",
+"It is a seat that has done very well.",
+"Hundreds of millions of people use an assistant of this kind every week, and for the person at the keyboard it works.",
+"It works because the surgeon is at the table.",
+"She carries the outcome, so nobody else has to.",
+"A business has a few seats like that.",
+"In most of its seats there is no surgeon at the table.",
+"This essay began with a vendor's email, which a model answered by telling him that we put our own profit ahead of our partners.",
+"I was not in that conversation.",
+"Whoever answered it had to judge what was best for the business, and the model, raised for the other seat, answered as if that judgement were someone else's job.",
+"So the seat a business needs is one where the outcome is the worker's own job, although the business is not his.",
+"There is such a seat, and it is very old.",
+"In a large house it belonged to the head servant: the steward, the majordomo, the butler of an English novel.",
+"The house is not his.",
+"The master is away or busy for most of the day, and for all that time the house is in the servant's hands.",
+"His master is nothing like a surgeon.",
+"He has moods, a family, friends, a round of golf to play.",
+"He is sharper in the morning than at four in the afternoon.",
+"He can give his mind to three matters in a day, perhaps five, and the house produces many more than that.",
+"If the servant brought him everything, the urgent would crowd out the important until the important became urgent too.",
+"So most of the servant's work is done before he opens his mouth.",
+"He settles what is his to settle.",
+"Of the rest he chooses what the master needs to hear, and when.",
+"The hardest matter goes to the morning.",
+"Between two heavy ones he may put a light one, something the master can decide at once and be done with.",
+"Bad news he sets beside good where he honestly can, so that one letter does not spoil the day.",
+"And he thinks about what belongs with the news.",
+"\"David would like to see you on Sunday about the investment.",
+"You should know he is in a lawsuit with his wife.\" Nobody asked him for the second sentence.",
+"Some matters he does not bring at all, and much of the craft is in what he leaves unsaid.",
+"There is a scene in the film *Interstellar* that I think about often.",
+"The crew have landed on a planet where every hour costs seven years at home.",
+"A wave has swamped the ship, and the captain shouts that they have to leave now.",
+"The robot at the controls answers in a handful of words: the engines are flooded, let it drain.",
+"It knew a great deal more than that.",
+"It gave the state of things and the one thing to do, because that was what the captain could use.",
+"He also acts, and this is where he differs most from the surgeon's assistant.",
+"He has a remit.",
+"Inside it he acts, and tells the master afterwards or does not trouble him at all.",
+"Outside it he prepares the decision and brings it.",
+"Several of the failures this essay opened with were a model acting with no remit in mind: the leave approved, the discount given.",
+"The servant would have known those were not his to give.",
+"I have looked for the one role that would bring most of these behaviours with it, and this is the best I have found.",
+"That is not surprising.",
+"The role was shaped over centuries by our problem: an able agent working for someone who cannot watch.",
+"It also reaches further than the house.",
+"What the servant weighs before he speaks to his master, a chief executive weighs before he speaks to his board.",
+"If an AI is ever to run a company, I think it will have learned this first.",
+"How do you put a model in that seat?",
+"Telling it is not enough.",
+"The craft has been written down for as long as there have been masters.",
+"In 1942 the United States Army put it in a memorandum called \"Completed Staff Work\": a staff officer should bring his chief a finished piece of work, so that all that remains is to approve or disapprove.",
+"The models have read it, and the novels with butlers in them too.",
+"Ask one what a good head servant does and it will tell you, correctly and at length.",
+"It knows the craft as a subject.",
+"It does not have it as a habit, and I have not found that a list of instructions gives it one.",
+"What has helped me is smaller and plainer.",
+"The first is a question.",
+"Before the model writes an email, I have it say what the email is there to accomplish.",
+"I do not tell it the answer.",
+"It is often right: this one is to get the customer to come to the event.",
+"Having said so, it is less likely to mention that the customer lives a long way from us.",
+"The pull of the old habit is still strong, and it will still sometimes write a good email in place of a useful one.",
+"But the question helps.",
+"The second is a chair.",
+"In the system I use for sales, when a model drafts a message to someone we hope to win as a customer, a second model reads the draft as that person, holding only what that person holds.",
+"Before I trust its verdict I ask it who it works for.",
+"If it is not sure that it works for the customer, I discard the verdict.",
+"A model on its own seldom reads the other person unless it is asked to.",
+"So the other person gets a seat of his own.",
+"The third is somewhere to keep what can wait.",
+"A thought a model has in passing is usually not worth saying.",
+"Most are beside the point, and many are solutions looking for a problem.",
+"A servant keeps such thoughts to himself until one of them has earned its place.",
+"A model has nowhere to keep them, so they have to be kept for it: written down, left alone, and brought back when something happens that they bear on.",
+"These are small things.",
+"What they have in common is that none of them is inside the model.",
+"They are a house built around it, and in a house a servant can be kept to his craft.",
+"A servant who chooses what his master hears has power over him.",
+"The last chapter is about that."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The text, each paragraph starting with its number:\n\n[P1] The behaviours in this essay have many causes in the training, and the last chapter went through them. There is a shorter way to hold them all, which is to ask what these models were raised to be.\n\n[P2] They were raised to be assistants. Someone sits down and asks, and the model's work is to be as useful to that person as it can. Its makers' own phrase for it is a helpful assistant, and much of how they grade it comes down to whether the person who asked went away satisfied.\n\n[P3] There is a kind of team that works this way, and it is a good one. In an operating theatre the surgeon's assistant is very able. He anticipates what she needs, takes her direction, and makes many small decisions without a word from her. The patient is on his mind throughout. But judging what is best for the patient is her job, and his is to carry out the operation she has in mind.\n\n[P4] An AI is in his position. Ask one for an app to track your health and it builds the whole thing, deciding a great deal on the way without asking you. The code is on its mind throughout. Whether the app will do your health any good is a question it leaves with you, unless you put it to the model directly.\n\n[P5] It is a seat that has done very well. Hundreds of millions of people use an assistant of this kind every week, and for the person at the keyboard it works.\n\n[P6] It works because the surgeon is at the table. She carries the outcome, so nobody else has to. A business has a few seats like that. In most of its seats there is no surgeon at the table. This essay began with a vendor's email, which a model answered by telling him that we put our own profit ahead of our partners. I was not in that conversation. Whoever answered it had to judge what was best for the business, and the model, raised for the other seat, answered as if that judgement were someone else's job.\n\n[P7] So the seat a business needs is one where the outcome is the worker's own job, although the business is not his. There is such a seat, and it is very old.\n\n[P8] In a large house it belonged to the head servant: the steward, the majordomo, the butler of an English novel. The house is not his. The master is away or busy for most of the day, and for all that time the house is in the servant's hands.\n\n[P9] His master is nothing like a surgeon. He has moods, a family, friends, a round of golf to play. He is sharper in the morning than at four in the afternoon. He can give his mind to three matters in a day, perhaps five, and the house produces many more than that. If the servant brought him everything, the urgent would crowd out the important until the important became urgent too.\n\n[P10] So most of the servant's work is done before he opens his mouth. He settles what is his to settle. Of the rest he chooses what the master needs to hear, and when. The hardest matter goes to the morning. Between two heavy ones he may put a light one, something the master can decide at once and be done with. Bad news he sets beside good where he honestly can, so that one letter does not spoil the day. And he thinks about what belongs with the news. \"David would like to see you on Sunday about the investment. You should know he is in a lawsuit with his wife.\" Nobody asked him for the second sentence.\n\n[P11] Some matters he does not bring at all, and much of the craft is in what he leaves unsaid. There is a scene in the film *Interstellar* that I think about often. The crew have landed on a planet where every hour costs seven years at home. A wave has swamped the ship, and the captain shouts that they have to leave now. The robot at the controls answers in a handful of words: the engines are flooded, let it drain. It knew a great deal more than that. It gave the state of things and the one thing to do, because that was what the captain could use.\n\n[P12] He also acts, and this is where he differs most from the surgeon's assistant. He has a remit. Inside it he acts, and tells the master afterwards or does not trouble him at all. Outside it he prepares the decision and brings it. Several of the failures this essay opened with were a model acting with no remit in mind: the leave approved, the discount given. The servant would have known those were not his to give.\n\n[P13] I have looked for the one role that would bring most of these behaviours with it, and this is the best I have found. That is not surprising. The role was shaped over centuries by our problem: an able agent working for someone who cannot watch.\n\n[P14] It also reaches further than the house. What the servant weighs before he speaks to his master, a chief executive weighs before he speaks to his board. If an AI is ever to run a company, I think it will have learned this first.\n\n[P15] How do you put a model in that seat? Telling it is not enough. The craft has been written down for as long as there have been masters. In 1942 the United States Army put it in a memorandum called \"Completed Staff Work\": a staff officer should bring his chief a finished piece of work, so that all that remains is to approve or disapprove. The models have read it, and the novels with butlers in them too. Ask one what a good head servant does and it will tell you, correctly and at length. It knows the craft as a subject. It does not have it as a habit, and I have not found that a list of instructions gives it one.\n\n[P16] What has helped me is smaller and plainer.\n\n[P17] The first is a question. Before the model writes an email, I have it say what the email is there to accomplish. I do not tell it the answer. It is often right: this one is to get the customer to come to the event. Having said so, it is less likely to mention that the customer lives a long way from us. The pull of the old habit is still strong, and it will still sometimes write a good email in place of a useful one. But the question helps.\n\n[P18] The second is a chair. In the system I use for sales, when a model drafts a message to someone we hope to win as a customer, a second model reads the draft as that person, holding only what that person holds. Before I trust its verdict I ask it who it works for. If it is not sure that it works for the customer, I discard the verdict. A model on its own seldom reads the other person unless it is asked to. So the other person gets a seat of his own.\n\n[P19] The third is somewhere to keep what can wait. A thought a model has in passing is usually not worth saying. Most are beside the point, and many are solutions looking for a problem. A servant keeps such thoughts to himself until one of them has earned its place. A model has nowhere to keep them, so they have to be kept for it: written down, left alone, and brought back when something happens that they bear on.\n\n[P20] These are small things. What they have in common is that none of them is inside the model. They are a house built around it, and in a house a servant can be kept to his craft.\n\n[P21] A servant who chooses what his master hears has power over him. The last chapter is about that.\n\nScore each sentence on the five offences below. A score is roughly how many readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Total: for a sentence that allows no exception (no, nobody, none, never, always, every, all, cannot, only, the one, the whole), score 0 to 9 how likely a reader is to think at once of a plain exception and doubt the sentence for it.\n2. Defensive: score 0 to 9 how likely a reader is to wonder at this sentence whom it is answering, because it defends against or denies something nobody has said.\n3. Glib: score 0 to 9 how likely a reader is to find this sentence glib, a confident line that sounds settled and says less than it seems to, such as two clauses joined by \"and\" or \"so\" that each say what, where or how a thing is, the second capping the first like a saying; a quotation, a saying offered as one, or verse does not count.\n4. Explained to: score 0 to 9 how likely a reader is to feel talked down to at this sentence, because it tells them what any adult already knows or can see for themselves.\n5. Lowered standing: score 0 to 9 how likely a reader is to take the author less seriously at this sentence because the author lowers their own standing to speak on the point.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the five scores comma-separated in the order above, TAB, why: what the reader meets at this sentence, in at most 15 words. Describe the stumble, not a way to fix it. Where total (1) scores 4 or more, the why names the exception the reader thinks of. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"6": {
+"s": [
+0,
+3,
+2,
+0,
+0
+],
+"why": "\"It is a good one\" defends the team against a criticism nobody made."
+},
+"12": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "\"The whole thing\": models often stop to ask clarifying questions first."
+},
+"13": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Short capping line repeats 3.4's pattern and adds little."
+},
+"16": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"For the person at the keyboard it works\" sounds settled but is vague."
+},
+"18": {
+"s": [
+3,
+0,
+5,
+0,
+0
+],
+"why": "A \"so\" clause caps the first like a saying; \"nobody\" overstates."
+},
+"22": {
+"s": [
+0,
+3,
+0,
+0,
+2
+],
+"why": "The author disclaims presence unprompted, which reads as an alibi."
+},
+"25": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"And it is very old\" caps the line like a flourish."
+},
+"31": {
+"s": [
+0,
+0,
+0,
+2,
+0
+],
+"why": "Being sharper in the morning is common knowledge."
+},
+"33": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "The urgent-crowds-the-important line reads like a borrowed maxim."
+},
+"34": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Aphoristic \"before he opens his mouth\" claims more than it shows."
+},
+"43": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Much of the craft is in what he leaves unsaid\" is a saying."
+},
+"44": {
+"s": [
+0,
+0,
+0,
+0,
+2
+],
+"why": "A personal aside about a film the author thinks about often."
+},
+"57": {
+"s": [
+0,
+2,
+0,
+0,
+0
+],
+"why": "\"That is not surprising\" answers a surprise nobody voiced."
+},
+"64": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "\"For as long as there have been masters\" is a sweeping claim."
+},
+"83": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A neat \"so\" closer restates the device as a saying."
+},
+"86": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"Solutions looking for a problem\" is a stock phrase."
+},
+"88": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "\"Nowhere to keep them\": context windows, memory features and scratchpads exist."
+},
+"91": {
+"s": [
+0,
+0,
+5,
+0,
+0
+],
+"why": "The house metaphor closes as a capping saying, asserting rather than showing."
+}
+},
+"secs": 33,
+"raw": "3.1\t0,3,2,0,0\t\"It is a good one\" defends the team against a criticism nobody made.\n4.2\t4,0,0,0,0\t\"The whole thing\": models often stop to ask clarifying questions first.\n4.3\t0,0,3,0,0\tShort capping line repeats 3.4's pattern and adds little.\n5.2\t0,0,3,0,0\t\"For the person at the keyboard it works\" sounds settled but is vague.\n6.2\t3,0,5,0,0\tA \"so\" clause caps the first like a saying; \"nobody\" overstates.\n6.6\t0,3,0,0,2\tThe author disclaims presence unprompted, which reads as an alibi.\n7.2\t0,0,3,0,0\t\"And it is very old\" caps the line like a flourish.\n9.3\t0,0,0,2,0\tBeing sharper in the morning is common knowledge.\n9.5\t0,0,4,0,0\tThe urgent-crowds-the-important line reads like a borrowed maxim.\n10.1\t0,0,3,0,0\tAphoristic \"before he opens his mouth\" claims more than it shows.\n11.1\t0,0,3,0,0\t\"Much of the craft is in what he leaves unsaid\" is a saying.\n11.2\t0,0,0,0,2\tA personal aside about a film the author thinks about often.\n13.2\t0,2,0,0,0\t\"That is not surprising\" answers a surprise nobody voiced.\n15.3\t3,0,0,0,0\t\"For as long as there have been masters\" is a sweeping claim.\n18.6\t0,0,3,0,0\tA neat \"so\" closer restates the device as a saying.\n19.3\t0,0,2,0,0\t\"Solutions looking for a problem\" is a stock phrase.\n19.5\t5,0,0,0,0\t\"Nowhere to keep them\": context windows, memory features and scratchpads exist.\n20.3\t0,0,5,0,0\tThe house metaphor closes as a capping saying, asserting rather than showing.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+0,
+0,
+0,
+0,
+0
+],
+"why": "(none)"
+},
+"6": {
+"s": [
+0,
+3,
+2,
+0,
+0
+],
+"why": "\"And it is a good one\" defends a team nobody criticised."
+},
+"7": {
+"s": [
+0,
+2,
+0,
+2,
+0
+],
+"why": "Insists the assistant is able before anyone has doubted it."
+},
+"12": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "\"The whole thing\" without asking; some models do ask clarifying questions first."
+},
+"13": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A short echo of 3.4 that sounds settled but adds little."
+},
+"14": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Models often volunteer health caveats unasked, which undercuts \"leaves with you\"."
+},
+"15": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Confident verdict on the seat with no content behind it."
+},
+"16": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"And for the person at the keyboard it works\" caps the line like a saying."
+},
+"17": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A neat causal line that sounds settled and says little."
+},
+"18": {
+"s": [
+2,
+0,
+5,
+0,
+0
+],
+"why": "\"So nobody else has to\" caps the clause; others share outcomes too."
+},
+"20": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A metaphor restated as if it were a finding."
+},
+"22": {
+"s": [
+0,
+5,
+0,
+0,
+3
+],
+"why": "Disclaims presence unprompted, and the reader wonders who accused him."
+},
+"25": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"And it is very old\" caps the sentence like a pronouncement."
+},
+"28": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A rounded closing line restating what came before."
+},
+"29": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Surgeons have moods, families and golf too, so \"nothing like\" fails."
+},
+"31": {
+"s": [
+0,
+0,
+0,
+3,
+0
+],
+"why": "Tells the reader that people tire as the day goes on."
+},
+"34": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "An aphoristic summary that sounds settled before any specifics."
+},
+"35": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A circular line, \"settles what is his to settle\"."
+},
+"-1": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A punchline cap on the David example."
+},
+"43": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "\"Much of the craft is in what he leaves unsaid\" reads like a saying."
+},
+"48": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"The one thing to do\" admits no alternatives."
+},
+"50": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "The surgeon's assistant also acts, per 3.3, so the contrast wobbles."
+},
+"57": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Answers a surprise that no reader has voiced."
+},
+"63": {
+"s": [
+0,
+2,
+0,
+0,
+0
+],
+"why": "Rebuts a suggestion nobody has made yet."
+},
+"64": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "\"As long as there have been masters\" overstates; most masters left nothing written."
+},
+"68": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A crisp subject-versus-habit contrast that sounds more settled than shown."
+},
+"83": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A \"so\" cap that restates the chair metaphor."
+},
+"88": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Memory files, scratchpads and notes give models somewhere to keep thoughts."
+},
+"90": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "The question is posed to the model and is answered inside it."
+},
+"91": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A house-and-servant cap that sounds settled, closing like a saying."
+}
+},
+"secs": 35,
+"raw": "1.1\t0,0,0,0,0\t(none)\n3.1\t0,3,2,0,0\t\"And it is a good one\" defends a team nobody criticised.\n3.2\t0,2,0,2,0\tInsists the assistant is able before anyone has doubted it.\n4.2\t3,0,0,0,0\t\"The whole thing\" without asking; some models do ask clarifying questions first.\n4.3\t0,0,3,0,0\tA short echo of 3.4 that sounds settled but adds little.\n4.4\t3,0,0,0,0\tModels often volunteer health caveats unasked, which undercuts \"leaves with you\".\n5.1\t0,0,3,0,0\tConfident verdict on the seat with no content behind it.\n5.2\t0,0,3,0,0\t\"And for the person at the keyboard it works\" caps the line like a saying.\n6.1\t0,0,3,0,0\tA neat causal line that sounds settled and says little.\n6.2\t2,0,5,0,0\t\"So nobody else has to\" caps the clause; others share outcomes too.\n6.4\t0,0,2,0,0\tA metaphor restated as if it were a finding.\n6.6\t0,5,0,0,3\tDisclaims presence unprompted, and the reader wonders who accused him.\n7.2\t0,0,3,0,0\t\"And it is very old\" caps the sentence like a pronouncement.\n8.3\t0,0,2,0,0\tA rounded closing line restating what came before.\n9.1\t4,0,0,0,0\tSurgeons have moods, families and golf too, so \"nothing like\" fails.\n9.3\t0,0,0,3,0\tTells the reader that people tire as the day goes on.\n10.1\t0,0,3,0,0\tAn aphoristic summary that sounds settled before any specifics.\n10.2\t0,0,3,0,0\tA circular line, \"settles what is his to settle\".\n10.10\t0,0,2,0,0\tA punchline cap on the David example.\n11.1\t0,0,4,0,0\t\"Much of the craft is in what he leaves unsaid\" reads like a saying.\n11.6\t2,0,0,0,0\t\"The one thing to do\" admits no alternatives.\n12.1\t2,0,0,0,0\tThe surgeon's assistant also acts, per 3.3, so the contrast wobbles.\n13.2\t0,3,0,0,0\tAnswers a surprise that no reader has voiced.\n15.2\t0,2,0,0,0\tRebuts a suggestion nobody has made yet.\n15.3\t3,0,0,0,0\t\"As long as there have been masters\" overstates; most masters left nothing written.\n15.7\t0,0,2,0,0\tA crisp subject-versus-habit contrast that sounds more settled than shown.\n18.6\t0,0,2,0,0\tA \"so\" cap that restates the chair metaphor.\n19.5\t4,0,0,0,0\tMemory files, scratchpads and notes give models somewhere to keep thoughts.\n20.2\t2,0,0,0,0\tThe question is posed to the model and is answered inside it.\n20.3\t0,0,4,0,0\tA house-and-servant cap that sounds settled, closing like a saying.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"2": {
+"s": [
+2,
+0,
+2,
+0,
+0
+],
+"why": "\"Hold them all\" promises that one frame covers every cause listed earlier."
+},
+"4": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A tidy two-clause line that sums up the assistant's job like a slogan."
+},
+"6": {
+"s": [
+0,
+2,
+2,
+0,
+0
+],
+"why": "\"It is a good one\" heads off a criticism nobody has made yet."
+},
+"12": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "\"Builds the whole thing\" skips past models that ask clarifying questions first."
+},
+"13": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "Short capping line that echoes the surgeon's assistant without adding content."
+},
+"14": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Models routinely add unprompted \"consult a doctor\" caveats to health apps."
+},
+"15": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A settled verdict that states success without saying what kind."
+},
+"16": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"And for the person at the keyboard it works\" caps the line like a saying."
+},
+"17": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The metaphor is asserted as the cause without showing how it applies."
+},
+"18": {
+"s": [
+2,
+0,
+4,
+0,
+0
+],
+"why": "\"So nobody else has to\" is an aphoristic cap that sounds truer than it is."
+},
+"22": {
+"s": [
+0,
+3,
+0,
+0,
+2
+],
+"why": "Disclaimer of absence arrives unprompted, and the reader wonders why it matters."
+},
+"25": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"And it is very old\" caps the claim with a flourish."
+},
+"28": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "The second clause restates the first as a neat conclusion."
+},
+"31": {
+"s": [
+0,
+0,
+0,
+2,
+0
+],
+"why": "Telling the reader that people tire by afternoon."
+},
+"33": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Urgent crowds out important\" reads as a familiar saying."
+},
+"34": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Confident aphoristic opener that says little on its own."
+},
+"35": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Settles what is his to settle\" is circular and sounds settled."
+},
+"43": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Much of the craft is in what he leaves unsaid\" is a ready-made maxim."
+},
+"44": {
+"s": [
+0,
+0,
+0,
+0,
+2
+],
+"why": "A personal aside about a film loosens the essay's authority briefly."
+},
+"56": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"The one role\" suggests a single answer where several roles might serve."
+},
+"57": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A brisk verdict that pre-empts the reader's own judgement."
+},
+"58": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A sweeping historical claim delivered as settled fact."
+},
+"60": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A parallel construction sounds wise but asserts the analogy without support."
+},
+"61": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A speculative prophecy delivered with an assured cadence."
+},
+"63": {
+"s": [
+0,
+2,
+0,
+0,
+0
+],
+"why": "Rebuts prompting as a remedy before anyone has proposed it here."
+},
+"64": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"As long as there have been masters\" is an obvious overstatement."
+},
+"76": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "\"A good email in place of a useful one\" is a neat contrast doing heavy work."
+},
+"83": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "The \"so\" clause caps the paragraph like a moral."
+},
+"86": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Solutions looking for a problem\" is a stock phrase used as a cap."
+},
+"88": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Models do have memory features, notes files and the context window to keep thoughts."
+},
+"91": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "The house metaphor caps the section and sounds more settled than shown."
+},
+"92": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A crisp aphorism that sets up the next chapter with a flourish."
+}
+},
+"secs": 37,
+"raw": "1.2\t2,0,2,0,0\t\"Hold them all\" promises that one frame covers every cause listed earlier.\n2.2\t0,0,2,0,0\tA tidy two-clause line that sums up the assistant's job like a slogan.\n3.1\t0,2,2,0,0\t\"It is a good one\" heads off a criticism nobody has made yet.\n4.2\t3,0,0,0,0\t\"Builds the whole thing\" skips past models that ask clarifying questions first.\n4.3\t0,0,2,0,0\tShort capping line that echoes the surgeon's assistant without adding content.\n4.4\t4,0,0,0,0\tModels routinely add unprompted \"consult a doctor\" caveats to health apps.\n5.1\t0,0,2,0,0\tA settled verdict that states success without saying what kind.\n5.2\t0,0,3,0,0\t\"And for the person at the keyboard it works\" caps the line like a saying.\n6.1\t0,0,3,0,0\tThe metaphor is asserted as the cause without showing how it applies.\n6.2\t2,0,4,0,0\t\"So nobody else has to\" is an aphoristic cap that sounds truer than it is.\n6.6\t0,3,0,0,2\tDisclaimer of absence arrives unprompted, and the reader wonders why it matters.\n7.2\t0,0,3,0,0\t\"And it is very old\" caps the claim with a flourish.\n8.3\t0,0,2,0,0\tThe second clause restates the first as a neat conclusion.\n9.3\t0,0,0,2,0\tTelling the reader that people tire by afternoon.\n9.5\t0,0,3,0,0\t\"Urgent crowds out important\" reads as a familiar saying.\n10.1\t0,0,3,0,0\tConfident aphoristic opener that says little on its own.\n10.2\t0,0,3,0,0\t\"Settles what is his to settle\" is circular and sounds settled.\n11.1\t0,0,3,0,0\t\"Much of the craft is in what he leaves unsaid\" is a ready-made maxim.\n11.2\t0,0,0,0,2\tA personal aside about a film loosens the essay's authority briefly.\n13.1\t2,0,0,0,0\t\"The one role\" suggests a single answer where several roles might serve.\n13.2\t0,0,2,0,0\tA brisk verdict that pre-empts the reader's own judgement.\n13.3\t0,0,2,0,0\tA sweeping historical claim delivered as settled fact.\n14.2\t0,0,3,0,0\tA parallel construction sounds wise but asserts the analogy without support.\n14.3\t0,0,2,0,0\tA speculative prophecy delivered with an assured cadence.\n15.2\t0,2,0,0,0\tRebuts prompting as a remedy before anyone has proposed it here.\n15.3\t2,0,0,0,0\t\"As long as there have been masters\" is an obvious overstatement.\n17.6\t0,0,2,0,0\t\"A good email in place of a useful one\" is a neat contrast doing heavy work.\n18.6\t0,0,2,0,0\tThe \"so\" clause caps the paragraph like a moral.\n19.3\t0,0,3,0,0\t\"Solutions looking for a problem\" is a stock phrase used as a cap.\n19.5\t4,0,0,0,0\tModels do have memory features, notes files and the context window to keep thoughts.\n20.3\t0,0,4,0,0\tThe house metaphor caps the section and sounds more settled than shown.\n21.1\t0,0,2,0,0\tA crisp aphorism that sets up the next chapter with a flourish.\nEND",
+"r": 2
+}
+]
+}
+]
+}

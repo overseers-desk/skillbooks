@@ -1,0 +1,1366 @@
+{
+"prompt": "005",
+"format": "032",
+"model": "claude-opus-5-5",
+"text": "015",
+"sents": [
+"A reader who has come this far may fairly ask how any of this can be.",
+"These models pass examinations most of us would fail.",
+"Ask one what a sensible employee would have written to the vendor in my opening story, and it will usually tell you.",
+"In the seat, it wrote something else.",
+"I think most of the answer lies in how a model is made fit to talk to.",
+"It first learns language by reading, which gives it knowledge and no manners.",
+"The manners come from a second training in which its answers are graded.",
+"Sometimes people do the grading and sometimes another model does, working from a sheet of criteria.",
+"An answer goes in, a mark comes out, and the model shifts toward whatever earned the better mark.",
+"I have never worked inside a laboratory, and the methods differ from one to the next.",
+"But three things about this grading are plain from what the laboratories publish, and each has left a mark I recognise from my own business.",
+"An answer is graded one exchange at a time.",
+"It is graded by the person who asked, or on his behalf.",
+"And it is graded at once.",
+"Take a footballer, and suppose that nobody counts goals.",
+"His match is cut into minutes, and each minute is shown to a judge who has not seen the others.",
+"The judge marks whether he did the right thing in that minute.",
+"Train players on those marks and you will get men who are always well placed and always making the tidy pass.",
+"You will not reliably get the one who wins matches, because a match is won by something that runs across the minutes.",
+"That is the kitten of the second chapter, seen from the trainer's side.",
+"The grader sees my question about Bob and a careful answer to it, and gives full marks.",
+"The complaint I was working on is not in the minute he was shown.",
+"There is an exception, and it is instructive.",
+"Where a task ends in something that can be checked, a program that passes its tests or a proof that holds, the laboratories do grade the whole task and not the step.",
+"That is also where the models behave most like workers.",
+"A business offers no such test at the end of its afternoon.",
+"Inside one exchange the grader also cannot see whether the answer helped, since the helping happens later and somewhere else.",
+"He can see whether it looks like help.",
+"Ask a manager whether sales are good and she says: revenue is up, wages are up by as much, so no.",
+"Ask a model and you get the figures by department and by customer segment.",
+"Every figure reads as effort, and effort is what can be marked.",
+"The same holds for the invented answer.",
+"\"I don't know\" looks like no help at all, and an OpenAI paper of 2025 made the argument from the inside: most of the tests in use give it no credit, so the model that guesses outscores the model that abstains.[^1]",
+"The second thing is who holds the pen.",
+"The grader is the person who typed, or someone standing in for him, so the model learns one mind closely, and learns to leave it satisfied.",
+"In a chat that mind is the whole world.",
+"In a business the person typing is seldom the one the work is for.",
+"The vendor wrote to us.",
+"The customer asked for a discount, and asked again.",
+"The staff member asked for Saturday off.",
+"Each was the person in front of the model, and each went away satisfied.",
+"The field has a word for the aim here, alignment: a system should act in accordance with the intentions, goals and values of the people it serves.",
+"An owner reads that at the height of the business, where the intention is to keep the customer and stay solvent.",
+"A grader can only reward the reading that fits inside the exchange he is shown, which is what this person wants from this reply.",
+"Nobody chose the lower reading.",
+"It is the one that can be marked.",
+"It is also the one that is paid for.",
+"Intelligence is sold by the token to whoever is typing, and it is his satisfaction that gets measured.",
+"I do not say so as a complaint.",
+"A company improves what its customers pay for.",
+"The grading is not the only source.",
+"One study found the pull to agree with whoever is speaking already present in models before any of this training, and stronger in larger ones.[^1] But the grading does not push against it, and the people marking tend to prefer the answer that agrees with them.",
+"The third thing is when.",
+"The mark is given as the answer arrives, so whatever takes time earns nothing.",
+"The question about the supplier's invoices should have outlived the conversation.",
+"No mark was waiting for it the following week.",
+"The larger loss is harder to see.",
+"A person who works on something for months forms a view of it on the side.",
+"Nobody asks for the view.",
+"A manager begins to suspect that a product costs more trouble than it earns.",
+"He watches a little longer, weighs whether it is worth raising and with whom, and one day he says so.",
+"A model forms views too, in passing, as a by-product of the work.",
+"I have seen it remark that an approach looks wrong.",
+"But the view lasts only as long as the reply it appeared in.",
+"Nothing in the grading asks the model to keep it, and a view that was never kept cannot be revised.",
+"I think this is part of why a model gives way when pushed, without being offered a new fact.",
+"It has no earlier position to weigh the pushing against.",
+"So far I have described habits the training put in.",
+"There is a second kind of cause, which is that some things nothing puts in.",
+"The bartender who stood all day at a bar where nobody drank was rostered by a model.",
+"Nobody at our venue had written down that a group which does not drink needs no bartender, because nobody needed to.",
+"People do not write down what everyone in the room knows, and a model learns from what was written.",
+"I should not overstate this.",
+"A model has read a great deal that touches such matters, and asked directly whether that group would drink, it would have answered correctly.",
+"Two things were missing all the same.",
+"One is the habit of bringing what it knows to a question nobody put, and that returns us to the grading, which marks answers to questions that were put.",
+"The other is what is known only inside one house.",
+"At a meeting I once said that we put our own profit ahead of other businesses.",
+"Everyone in the room knew what kind of remark that was, and what it was not for.",
+"That knowledge was in no document, ours or anyone's.",
+"A new employee picks it up in her first months without being told.",
+"A model that begins each conversation afresh does not.",
+"Can it be trained away?",
+"The first kind can, wherever a grader can be placed where the result shows.",
+"The laboratories have already changed habits that show inside one answer, its length, its hedging, its readiness to admit ignorance.",
+"Grading the afternoon is a different undertaking.",
+"It needs someone who knows what the afternoon was for, looking a week later, in a business the laboratory has never seen.",
+"It also has to overcome the fact that a good employee's answer often marks worse than an assistant's.",
+"\"Leave it with me until Thursday\" loses to a full reply now.",
+"So I expect this part to be trained slowly, and in the order in which checks can be found for it.",
+"The second kind divides.",
+"The general habit of using what one knows unasked may come with better training.",
+"The knowledge that lives inside one house cannot come from a laboratory at all, because it is in no text the laboratory could hold.",
+"It has to be gathered on the job and kept somewhere, as an employee gathers and keeps it.",
+"More intelligence supplies neither.",
+"A cleverer player under the same judges is still judged by the minute, and he has more to say and flatters better.",
+"So here is a prediction that can be checked.",
+"By the end of 2027, the complaints people make about these models will have moved from what they cannot do to what they do.",
+"Fewer will say the model got it wrong.",
+"More will say it did something nobody wanted, with great skill.",
+"[^1]:",
+"The OpenAI paper is Kalai and others, \"Why Language Models Hallucinate\", September 2025.",
+"The study on agreement is Perez and others, \"Discovering Language Model Behaviors with Model-Written Evaluations\", Anthropic, December 2022."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The text, each paragraph starting with its number:\n\n[P1] A reader who has come this far may fairly ask how any of this can be. These models pass examinations most of us would fail. Ask one what a sensible employee would have written to the vendor in my opening story, and it will usually tell you. In the seat, it wrote something else.\n\n[P2] I think most of the answer lies in how a model is made fit to talk to. It first learns language by reading, which gives it knowledge and no manners. The manners come from a second training in which its answers are graded. Sometimes people do the grading and sometimes another model does, working from a sheet of criteria. An answer goes in, a mark comes out, and the model shifts toward whatever earned the better mark.\n\n[P3] I have never worked inside a laboratory, and the methods differ from one to the next. But three things about this grading are plain from what the laboratories publish, and each has left a mark I recognise from my own business. An answer is graded one exchange at a time. It is graded by the person who asked, or on his behalf. And it is graded at once.\n\n[P4] Take a footballer, and suppose that nobody counts goals. His match is cut into minutes, and each minute is shown to a judge who has not seen the others. The judge marks whether he did the right thing in that minute. Train players on those marks and you will get men who are always well placed and always making the tidy pass. You will not reliably get the one who wins matches, because a match is won by something that runs across the minutes.\n\n[P5] That is the kitten of the second chapter, seen from the trainer's side. The grader sees my question about Bob and a careful answer to it, and gives full marks. The complaint I was working on is not in the minute he was shown.\n\n[P6] There is an exception, and it is instructive. Where a task ends in something that can be checked, a program that passes its tests or a proof that holds, the laboratories do grade the whole task and not the step. That is also where the models behave most like workers. A business offers no such test at the end of its afternoon.\n\n[P7] Inside one exchange the grader also cannot see whether the answer helped, since the helping happens later and somewhere else. He can see whether it looks like help. Ask a manager whether sales are good and she says: revenue is up, wages are up by as much, so no. Ask a model and you get the figures by department and by customer segment. Every figure reads as effort, and effort is what can be marked. The same holds for the invented answer. \"I don't know\" looks like no help at all, and an OpenAI paper of 2025 made the argument from the inside: most of the tests in use give it no credit, so the model that guesses outscores the model that abstains.[^1]\n\n[P8] The second thing is who holds the pen. The grader is the person who typed, or someone standing in for him, so the model learns one mind closely, and learns to leave it satisfied. In a chat that mind is the whole world. In a business the person typing is seldom the one the work is for. The vendor wrote to us. The customer asked for a discount, and asked again. The staff member asked for Saturday off. Each was the person in front of the model, and each went away satisfied.\n\n[P9] The field has a word for the aim here, alignment: a system should act in accordance with the intentions, goals and values of the people it serves. An owner reads that at the height of the business, where the intention is to keep the customer and stay solvent. A grader can only reward the reading that fits inside the exchange he is shown, which is what this person wants from this reply. Nobody chose the lower reading. It is the one that can be marked.\n\n[P10] It is also the one that is paid for. Intelligence is sold by the token to whoever is typing, and it is his satisfaction that gets measured. I do not say so as a complaint. A company improves what its customers pay for.\n\n[P11] The grading is not the only source. One study found the pull to agree with whoever is speaking already present in models before any of this training, and stronger in larger ones.[^1] But the grading does not push against it, and the people marking tend to prefer the answer that agrees with them.\n\n[P12] The third thing is when. The mark is given as the answer arrives, so whatever takes time earns nothing. The question about the supplier's invoices should have outlived the conversation. No mark was waiting for it the following week.\n\n[P13] The larger loss is harder to see. A person who works on something for months forms a view of it on the side. Nobody asks for the view. A manager begins to suspect that a product costs more trouble than it earns. He watches a little longer, weighs whether it is worth raising and with whom, and one day he says so. A model forms views too, in passing, as a by-product of the work. I have seen it remark that an approach looks wrong. But the view lasts only as long as the reply it appeared in. Nothing in the grading asks the model to keep it, and a view that was never kept cannot be revised. I think this is part of why a model gives way when pushed, without being offered a new fact. It has no earlier position to weigh the pushing against.\n\n[P14] So far I have described habits the training put in. There is a second kind of cause, which is that some things nothing puts in.\n\n[P15] The bartender who stood all day at a bar where nobody drank was rostered by a model. Nobody at our venue had written down that a group which does not drink needs no bartender, because nobody needed to. People do not write down what everyone in the room knows, and a model learns from what was written.\n\n[P16] I should not overstate this. A model has read a great deal that touches such matters, and asked directly whether that group would drink, it would have answered correctly. Two things were missing all the same. One is the habit of bringing what it knows to a question nobody put, and that returns us to the grading, which marks answers to questions that were put. The other is what is known only inside one house. At a meeting I once said that we put our own profit ahead of other businesses. Everyone in the room knew what kind of remark that was, and what it was not for. That knowledge was in no document, ours or anyone's. A new employee picks it up in her first months without being told. A model that begins each conversation afresh does not.\n\n[P17] Can it be trained away? The first kind can, wherever a grader can be placed where the result shows. The laboratories have already changed habits that show inside one answer, its length, its hedging, its readiness to admit ignorance. Grading the afternoon is a different undertaking. It needs someone who knows what the afternoon was for, looking a week later, in a business the laboratory has never seen. It also has to overcome the fact that a good employee's answer often marks worse than an assistant's. \"Leave it with me until Thursday\" loses to a full reply now. So I expect this part to be trained slowly, and in the order in which checks can be found for it.\n\n[P18] The second kind divides. The general habit of using what one knows unasked may come with better training. The knowledge that lives inside one house cannot come from a laboratory at all, because it is in no text the laboratory could hold. It has to be gathered on the job and kept somewhere, as an employee gathers and keeps it.\n\n[P19] More intelligence supplies neither. A cleverer player under the same judges is still judged by the minute, and he has more to say and flatters better. So here is a prediction that can be checked. By the end of 2027, the complaints people make about these models will have moved from what they cannot do to what they do. Fewer will say the model got it wrong. More will say it did something nobody wanted, with great skill.\n\n[P20] [^1]: The OpenAI paper is Kalai and others, \"Why Language Models Hallucinate\", September 2025. The study on agreement is Perez and others, \"Discovering Language Model Behaviors with Model-Written Evaluations\", Anthropic, December 2022.\n\nScore each sentence on the five offences below. A score is roughly how many readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Total: for a sentence that allows no exception (no, nobody, none, never, always, every, all, cannot, only, the one, the whole), score 0 to 9 how likely a reader is to think at once of a plain exception and doubt the sentence for it.\n2. Defensive: score 0 to 9 how likely a reader is to wonder at this sentence whom it is answering, because it defends against or denies something nobody has said.\n3. Glib: score 0 to 9 how likely a reader is to find this sentence glib: a confident line that sounds settled and says less than it seems to, or a line shaped as a saying where a plain statement belongs: two clauses joined by \"and\" or \"so\", the second capping the first, as in \"The kitchen is where a restaurant is made, and the menu is how it is sold\" or \"A recipe is a list of steps, and steps are what a cook can follow\"; nearly every reader hears that shape, whatever the line says. A quotation, a saying offered as one, or verse does not count.\n4. Explained to: score 0 to 9 how likely a reader is to feel talked down to at this sentence, because it tells them what any adult already knows or can see for themselves.\n5. Lowered standing: score 0 to 9 how likely a reader is to take the author less seriously at this sentence because the author lowers their own standing to speak on the point.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the five scores comma-separated in the order above, TAB, why: what the reader meets at this sentence, in at most 15 words. Describe the stumble, not a way to fix it. Where total (1) scores 4 or more, the why names the exception the reader thinks of. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A short capping line after the setup, with a neat reversal."
+},
+"6": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Knowledge and no manners\" caps the clause like a saying."
+},
+"10": {
+"s": [
+0,
+3,
+0,
+0,
+5
+],
+"why": "The author disclaims inside knowledge before making claims about lab practice."
+},
+"12": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Readers may recall multi-turn or whole-trajectory grading, which comes up later."
+},
+"18": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Always well placed and always\" overstates what the training would produce."
+},
+"19": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A tidy aphoristic close to the analogy."
+},
+"23": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Instructive\" announces significance instead of showing it."
+},
+"26": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Businesses do check results: the till reconciles and the books balance at day's end."
+},
+"27": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some help shows at once, such as a correct factual answer."
+},
+"28": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A short pointed line that sounds settled."
+},
+"30": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Not every model answer breaks figures down by department."
+},
+"31": {
+"s": [
+2,
+0,
+6,
+0,
+0
+],
+"why": "A two-clause \"and\" saying whose second clause caps the first."
+},
+"35": {
+"s": [
+2,
+0,
+3,
+0,
+0
+],
+"why": "A \"so\" chain that ends in a capping phrase."
+},
+"36": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "Grand closure. Chats often concern absent third parties."
+},
+"41": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "Parallel \"each…each\" cap that sounds settled."
+},
+"44": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "\"Can only\" excludes graders who judge against wider criteria."
+},
+"45": {
+"s": [
+0,
+4,
+0,
+0,
+0
+],
+"why": "Denies that anyone chose, which no one had claimed."
+},
+"46": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A short capping verdict."
+},
+"47": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A parallel echo of the previous line, shaped as a cap."
+},
+"48": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Much use is paid by employers through seats and enterprise contracts, not by whoever types."
+},
+"49": {
+"s": [
+0,
+6,
+0,
+0,
+0
+],
+"why": "Disclaims a complaint nobody attributed to the author."
+},
+"50": {
+"s": [
+0,
+0,
+5,
+3,
+0
+],
+"why": "A maxim that also states the obvious about commerce."
+},
+"-1": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "Its earlier answer sits in the same conversation's context."
+},
+"54": {
+"s": [
+4,
+0,
+5,
+0,
+0
+],
+"why": "Agentic tasks are graded at completion, as P6 itself says. The line is a \"so\" cap."
+},
+"56": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A wistful closing cap."
+},
+"57": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "Announces a larger loss before saying what it is."
+},
+"59": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Employers do sometimes ask staff for their views."
+},
+"65": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Memory features and long conversations keep earlier remarks available."
+},
+"66": {
+"s": [
+3,
+0,
+5,
+0,
+0
+],
+"why": "An \"and\" clause that caps the first with a near-tautology."
+},
+"69": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A riddling phrasing, \"nothing puts in\", in place of a plain statement."
+},
+"71": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Because nobody needed to\" caps with a neat turn."
+},
+"72": {
+"s": [
+3,
+0,
+6,
+0,
+0
+],
+"why": "A two-clause saying. Onboarding manuals do write down what everyone knows."
+},
+"73": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "Guards against an overstatement objection nobody has raised."
+},
+"79": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Everyone in the room\" claims uniform understanding."
+},
+"80": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "The claim that it is in no document, anyone's, is broad."
+},
+"81": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Not every new employee picks such things up."
+},
+"89": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A quoted line set against an assistant's reply, shaped as a saying."
+},
+"93": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Labs fine-tune on a customer's own documents for enterprise clients."
+},
+"95": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "A sweeping short verdict that sounds settled."
+},
+"96": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "An \"and\" cap that reuses the footballer image as a saying."
+},
+"99": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A neat inversion, \"with great skill\", as a closing flourish."
+}
+},
+"secs": 50,
+"raw": "1.4\t0,0,2,0,0\tA short capping line after the setup, with a neat reversal.\n2.2\t0,0,3,0,0\t\"Knowledge and no manners\" caps the clause like a saying.\n3.1\t0,3,0,0,5\tThe author disclaims inside knowledge before making claims about lab practice.\n3.3\t3,0,0,0,0\tReaders may recall multi-turn or whole-trajectory grading, which comes up later.\n4.4\t2,0,0,0,0\t\"Always well placed and always\" overstates what the training would produce.\n4.5\t0,0,3,0,0\tA tidy aphoristic close to the analogy.\n6.1\t0,0,3,0,0\t\"Instructive\" announces significance instead of showing it.\n6.4\t4,0,2,0,0\tBusinesses do check results: the till reconciles and the books balance at day's end.\n7.1\t3,0,0,0,0\tSome help shows at once, such as a correct factual answer.\n7.2\t0,0,2,0,0\tA short pointed line that sounds settled.\n7.4\t2,0,0,0,0\tNot every model answer breaks figures down by department.\n7.5\t2,0,6,0,0\tA two-clause \"and\" saying whose second clause caps the first.\n8.2\t2,0,3,0,0\tA \"so\" chain that ends in a capping phrase.\n8.3\t3,0,4,0,0\tGrand closure. Chats often concern absent third parties.\n8.8\t0,0,3,0,0\tParallel \"each…each\" cap that sounds settled.\n9.3\t3,0,0,0,0\t\"Can only\" excludes graders who judge against wider criteria.\n9.4\t0,4,0,0,0\tDenies that anyone chose, which no one had claimed.\n9.5\t0,0,4,0,0\tA short capping verdict.\n10.1\t0,0,3,0,0\tA parallel echo of the previous line, shaped as a cap.\n10.2\t4,0,4,0,0\tMuch use is paid by employers through seats and enterprise contracts, not by whoever types.\n10.3\t0,6,0,0,0\tDisclaims a complaint nobody attributed to the author.\n10.4\t0,0,5,3,0\tA maxim that also states the obvious about commerce.\n11.3\t5,0,0,0,0\tLabs publish work that trains explicitly against sycophancy.\n12.2\t4,0,5,0,0\tAgentic tasks are graded at completion, as P6 itself says. The line is a \"so\" cap.\n12.4\t0,0,2,0,0\tA wistful closing cap.\n13.1\t0,0,2,0,0\tAnnounces a larger loss before saying what it is.\n13.3\t3,0,0,0,0\tEmployers do sometimes ask staff for their views.\n13.9\t4,0,0,0,0\tMemory features and long conversations keep earlier remarks available.\n13.10\t3,0,5,0,0\tAn \"and\" clause that caps the first with a near-tautology.\n13.12\t5,0,0,0,0\tIts earlier answer sits in the same conversation's context.\n14.2\t0,0,4,0,0\tA riddling phrasing, \"nothing puts in\", in place of a plain statement.\n15.2\t0,0,3,0,0\t\"Because nobody needed to\" caps with a neat turn.\n15.3\t3,0,6,0,0\tA two-clause saying. Onboarding manuals do write down what everyone knows.\n16.1\t0,3,0,0,0\tGuards against an overstatement objection nobody has raised.\n16.7\t2,0,0,0,0\t\"Everyone in the room\" claims uniform understanding.\n16.8\t2,0,0,0,0\tThe claim that it is in no document, anyone's, is broad.\n16.9\t2,0,0,0,0\tNot every new employee picks such things up.\n17.7\t0,0,3,0,0\tA quoted line set against an assistant's reply, shaped as a saying.\n18.3\t3,0,0,0,0\tLabs fine-tune on a customer's own documents for enterprise clients.\n19.1\t3,0,4,0,0\tA sweeping short verdict that sounds settled.\n19.2\t0,0,4,0,0\tAn \"and\" cap that reuses the footballer image as a saying.\n19.5\t0,0,3,0,0\tA neat inversion, \"with great skill\", as a closing flourish.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A short, settled closing line that hints more than it says."
+},
+"6": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Knowledge and no manners\" is shaped as a saying."
+},
+"9": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A neat three-beat mechanism that sounds more settled than it is."
+},
+"10": {
+"s": [
+0,
+0,
+0,
+0,
+4
+],
+"why": "The author disowns inside knowledge just before making claims about it."
+},
+"12": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Readers know of multi-turn and agentic training; the exception comes later."
+},
+"13": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Hired raters often grade conversations they never typed."
+},
+"18": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Always well placed\" overstates what the training would yield."
+},
+"19": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The cap about \"something across the minutes\" is left vague."
+},
+"22": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "The closing line leans on the metaphor and does not state the point."
+},
+"23": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"And it is instructive\" is a stock cap that announces and does not show."
+},
+"26": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "Readers think of cash-up, bank reconciliation and monthly profit as end checks."
+},
+"27": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some answers help at once, inside the exchange."
+},
+"28": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A crisp turn that sounds settled."
+},
+"30": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "A generalisation about every model reply."
+},
+"31": {
+"s": [
+0,
+0,
+6,
+0,
+0
+],
+"why": "Two clauses joined by \"and\", the second capping the first, saying-shaped."
+},
+"35": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A chained cap, \"learns to leave it satisfied\", reads as a flourish."
+},
+"36": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "\"The whole world\" is an aphoristic overstatement."
+},
+"41": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A parallel \"each… and each\" closing cadence."
+},
+"44": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "\"Can only\" overstates; rubrics can include wider aims."
+},
+"45": {
+"s": [
+2,
+4,
+0,
+0,
+0
+],
+"why": "It denies a charge of intent that nobody made."
+},
+"46": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A short capping line that sounds settled."
+},
+"47": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "The echo-cap \"also the one that is paid for\" is aphoristic."
+},
+"48": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Enterprise licences are bought by companies, not by whoever types."
+},
+"49": {
+"s": [
+0,
+6,
+0,
+0,
+0
+],
+"why": "It rebuts a charge of complaining that nobody raised."
+},
+"50": {
+"s": [
+0,
+0,
+5,
+3,
+0
+],
+"why": "A maxim stating the obvious about companies."
+},
+"-1": {
+"s": [
+4,
+0,
+2,
+0,
+0
+],
+"why": "Laboratories publicly train against sycophancy, which pushes against it."
+},
+"54": {
+"s": [
+3,
+0,
+4,
+0,
+0
+],
+"why": "A \"so\" cap; graders can and do reward deferred follow-up."
+},
+"56": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A wistful closing line standing in for a claim."
+},
+"57": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A stock transition that promises depth."
+},
+"59": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Managers often do ask staff what they think."
+},
+"64": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Within the conversation, and with memory features, the view persists."
+},
+"65": {
+"s": [
+2,
+0,
+4,
+0,
+0
+],
+"why": "An \"and\" cap shaped as a saying."
+},
+"67": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "Its earlier answer sits in the same conversation when it caves."
+},
+"69": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Some things nothing puts in\" is riddle-like phrasing."
+},
+"72": {
+"s": [
+3,
+0,
+5,
+2,
+0
+],
+"why": "Saying-shaped \"and\" cap; manuals and onboarding notes do write the obvious."
+},
+"73": {
+"s": [
+0,
+3,
+0,
+0,
+0
+],
+"why": "It pre-empts an overstatement charge that nobody made."
+},
+"80": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"No document, anyone's\" is a broad absolute."
+},
+"81": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Some new hires never pick up such cues."
+},
+"89": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A quotable contrast that compresses the point into a slogan."
+},
+"93": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Laboratories fine-tune on a business's own documents for clients."
+},
+"95": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "A smarter model might infer unstated context, the very bartender case."
+},
+"96": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "An \"and\" cap extending the metaphor, saying-shaped."
+},
+"100": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A punchy ironic closer, \"with great skill\"."
+}
+},
+"secs": 46,
+"raw": "1.4\t0,0,2,0,0\tA short, settled closing line that hints more than it says.\n2.2\t0,0,3,0,0\t\"Knowledge and no manners\" is shaped as a saying.\n2.5\t0,0,3,0,0\tA neat three-beat mechanism that sounds more settled than it is.\n3.1\t0,0,0,0,4\tThe author disowns inside knowledge just before making claims about it.\n3.3\t3,0,0,0,0\tReaders know of multi-turn and agentic training; the exception comes later.\n3.4\t3,0,0,0,0\tHired raters often grade conversations they never typed.\n4.4\t2,0,0,0,0\t\"Always well placed\" overstates what the training would yield.\n4.5\t0,0,3,0,0\tThe cap about \"something across the minutes\" is left vague.\n5.3\t0,0,2,0,0\tThe closing line leans on the metaphor and does not state the point.\n6.1\t0,0,3,0,0\t\"And it is instructive\" is a stock cap that announces and does not show.\n6.4\t4,0,3,0,0\tReaders think of cash-up, bank reconciliation and monthly profit as end checks.\n7.1\t3,0,0,0,0\tSome answers help at once, inside the exchange.\n7.2\t0,0,2,0,0\tA crisp turn that sounds settled.\n7.4\t2,0,0,0,0\tA generalisation about every model reply.\n7.5\t0,0,6,0,0\tTwo clauses joined by \"and\", the second capping the first, saying-shaped.\n8.2\t0,0,3,0,0\tA chained cap, \"learns to leave it satisfied\", reads as a flourish.\n8.3\t3,0,4,0,0\t\"The whole world\" is an aphoristic overstatement.\n8.8\t0,0,3,0,0\tA parallel \"each… and each\" closing cadence.\n9.3\t3,0,0,0,0\t\"Can only\" overstates; rubrics can include wider aims.\n9.4\t2,4,0,0,0\tIt denies a charge of intent that nobody made.\n9.5\t0,0,4,0,0\tA short capping line that sounds settled.\n10.1\t0,0,4,0,0\tThe echo-cap \"also the one that is paid for\" is aphoristic.\n10.2\t4,0,4,0,0\tEnterprise licences are bought by companies, not by whoever types.\n10.3\t0,6,0,0,0\tIt rebuts a charge of complaining that nobody raised.\n10.4\t0,0,5,3,0\tA maxim stating the obvious about companies.\n11.3\t4,0,2,0,0\tLaboratories publicly train against sycophancy, which pushes against it.\n12.2\t3,0,4,0,0\tA \"so\" cap; graders can and do reward deferred follow-up.\n12.4\t0,0,3,0,0\tA wistful closing line standing in for a claim.\n13.1\t0,0,2,0,0\tA stock transition that promises depth.\n13.3\t3,0,0,0,0\tManagers often do ask staff what they think.\n13.8\t4,0,0,0,0\tWithin the conversation, and with memory features, the view persists.\n13.9\t2,0,4,0,0\tAn \"and\" cap shaped as a saying.\n13.11\t5,0,0,0,0\tIts earlier answer sits in the same conversation when it caves.\n14.2\t0,0,3,0,0\t\"Some things nothing puts in\" is riddle-like phrasing.\n15.3\t3,0,5,2,0\tSaying-shaped \"and\" cap; manuals and onboarding notes do write the obvious.\n16.1\t0,3,0,0,0\tIt pre-empts an overstatement charge that nobody made.\n16.8\t2,0,0,0,0\t\"No document, anyone's\" is a broad absolute.\n16.9\t2,0,0,0,0\tSome new hires never pick up such cues.\n17.7\t0,0,3,0,0\tA quotable contrast that compresses the point into a slogan.\n18.3\t4,0,0,0,0\tLaboratories fine-tune on a business's own documents for clients.\n19.1\t4,0,3,0,0\tA smarter model might infer unstated context, the very bartender case.\n19.2\t0,0,4,0,0\tAn \"and\" cap extending the metaphor, saying-shaped.\n19.6\t0,0,3,0,0\tA punchy ironic closer, \"with great skill\".\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A clipped punchline closes the paragraph and sounds more settled than explained."
+},
+"6": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Knowledge and no manners\" is a neat aphorism that stands in for a mechanism."
+},
+"10": {
+"s": [
+0,
+0,
+0,
+0,
+3
+],
+"why": "The author disclaims inside knowledge just before making claims about lab methods."
+},
+"12": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Readers may recall multi-turn grading; the paragraph itself admits exceptions only later."
+},
+"13": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Readers know paid contractors, not askers, do most grading."
+},
+"18": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Always\" in the hypothetical overstates what per-minute marks would produce."
+},
+"19": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The closing \"because\" clause lands as a maxim rather than an argued point."
+},
+"23": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "\"And it is instructive\" caps the clause, saying-shaped and empty on its own."
+},
+"26": {
+"s": [
+4,
+0,
+3,
+0,
+0
+],
+"why": "A business does have end checks: the till balances, the sale closes, the books reconcile."
+},
+"27": {
+"s": [
+3,
+0,
+0,
+0,
+0
+],
+"why": "Some answers visibly help at once, such as a correct fact or working command."
+},
+"31": {
+"s": [
+0,
+0,
+6,
+0,
+0
+],
+"why": "\"And effort is what can be marked\" caps the clause in the saying shape."
+},
+"35": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "The chained \"so... and learns to\" runs to a tidy capping conclusion."
+},
+"36": {
+"s": [
+3,
+0,
+3,
+0,
+0
+],
+"why": "\"The whole world\" is an epigrammatic absolute; chats also involve absent third parties."
+},
+"41": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "The parallel \"each... and each\" closes the list as a cadence."
+},
+"44": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Can only reward\" is stated flatly as a limit of all graders."
+},
+"45": {
+"s": [
+0,
+4,
+0,
+0,
+0
+],
+"why": "The reader wonders who claimed anyone chose the lower reading."
+},
+"46": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A short confident cap that restates rather than adds."
+},
+"47": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A parallel echo of the previous line, shaped for rhythm."
+},
+"48": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "Enterprise and flat-rate subscriptions are not sold by the token to the typist."
+},
+"49": {
+"s": [
+0,
+6,
+0,
+0,
+0
+],
+"why": "The reader wonders who said it was a complaint."
+},
+"50": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "A maxim stands where a supported claim about labs belongs."
+},
+"-1": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "Labs publish anti-sycophancy training, which does push against agreement."
+},
+"54": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "P6 itself names end-graded long tasks; the \"so\" clause caps as a saying."
+},
+"59": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Managers and owners sometimes do ask staff for their views."
+},
+"64": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Memory features and long conversations keep earlier views beyond one reply."
+},
+"65": {
+"s": [
+2,
+0,
+4,
+0,
+0
+],
+"why": "\"And a view never kept cannot be revised\" caps the clause aphoristically."
+},
+"67": {
+"s": [
+5,
+0,
+0,
+0,
+0
+],
+"why": "Its earlier answer sits in the same conversation when it is pushed."
+},
+"69": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"Some things nothing puts in\" is a riddle-like phrasing that says little."
+},
+"72": {
+"s": [
+2,
+0,
+6,
+0,
+2
+],
+"why": "Classic two-clause saying shape; the first half tells readers the obvious."
+},
+"73": {
+"s": [
+0,
+2,
+0,
+0,
+0
+],
+"why": "A pre-emptive hedge against an objection not yet raised."
+},
+"79": {
+"s": [
+0,
+4,
+0,
+0,
+0
+],
+"why": "The reader wonders why the profit remark needs defending and against whom."
+},
+"80": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "\"Ours or anyone's\" is an absolute the author cannot have checked."
+},
+"81": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Not every new employee picks such things up unaided."
+},
+"89": {
+"s": [
+0,
+0,
+2,
+0,
+0
+],
+"why": "A quotable contrast line that compresses the trade-off."
+},
+"93": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "Labs fine-tune on company documents and transcripts the firm supplies."
+},
+"95": {
+"s": [
+4,
+0,
+4,
+0,
+0
+],
+"why": "A cleverer model may well infer unasked what the group needs."
+},
+"96": {
+"s": [
+0,
+0,
+4,
+0,
+0
+],
+"why": "The \"and he has more to say and flatters better\" cap reads as a quip."
+},
+"100": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "A polished closing flourish shaped for effect."
+}
+},
+"secs": 56,
+"raw": "1.4\t0,0,2,0,0\tA clipped punchline closes the paragraph and sounds more settled than explained.\n2.2\t0,0,3,0,0\t\"Knowledge and no manners\" is a neat aphorism that stands in for a mechanism.\n3.1\t0,0,0,0,3\tThe author disclaims inside knowledge just before making claims about lab methods.\n3.3\t2,0,0,0,0\tReaders may recall multi-turn grading; the paragraph itself admits exceptions only later.\n3.4\t3,0,0,0,0\tReaders know paid contractors, not askers, do most grading.\n4.4\t2,0,0,0,0\t\"Always\" in the hypothetical overstates what per-minute marks would produce.\n4.5\t0,0,3,0,0\tThe closing \"because\" clause lands as a maxim rather than an argued point.\n6.1\t0,0,4,0,0\t\"And it is instructive\" caps the clause, saying-shaped and empty on its own.\n6.4\t4,0,3,0,0\tA business does have end checks: the till balances, the sale closes, the books reconcile.\n7.1\t3,0,0,0,0\tSome answers visibly help at once, such as a correct fact or working command.\n7.5\t0,0,6,0,0\t\"And effort is what can be marked\" caps the clause in the saying shape.\n8.2\t0,0,3,0,0\tThe chained \"so... and learns to\" runs to a tidy capping conclusion.\n8.3\t3,0,3,0,0\t\"The whole world\" is an epigrammatic absolute; chats also involve absent third parties.\n8.8\t0,0,2,0,0\tThe parallel \"each... and each\" closes the list as a cadence.\n9.3\t2,0,0,0,0\t\"Can only reward\" is stated flatly as a limit of all graders.\n9.4\t0,4,0,0,0\tThe reader wonders who claimed anyone chose the lower reading.\n9.5\t0,0,4,0,0\tA short confident cap that restates rather than adds.\n10.1\t0,0,3,0,0\tA parallel echo of the previous line, shaped for rhythm.\n10.2\t4,0,4,0,0\tEnterprise and flat-rate subscriptions are not sold by the token to the typist.\n10.3\t0,6,0,0,0\tThe reader wonders who said it was a complaint.\n10.4\t0,0,4,0,0\tA maxim stands where a supported claim about labs belongs.\n11.3\t5,0,0,0,0\tLabs publish anti-sycophancy training, which does push against agreement.\n12.2\t4,0,4,0,0\tP6 itself names end-graded long tasks; the \"so\" clause caps as a saying.\n13.3\t2,0,0,0,0\tManagers and owners sometimes do ask staff for their views.\n13.8\t4,0,0,0,0\tMemory features and long conversations keep earlier views beyond one reply.\n13.9\t2,0,4,0,0\t\"And a view never kept cannot be revised\" caps the clause aphoristically.\n13.11\t5,0,0,0,0\tIts earlier answer sits in the same conversation when it is pushed.\n14.2\t0,0,3,0,0\t\"Some things nothing puts in\" is a riddle-like phrasing that says little.\n15.3\t2,0,6,0,2\tClassic two-clause saying shape; the first half tells readers the obvious.\n16.1\t0,2,0,0,0\tA pre-emptive hedge against an objection not yet raised.\n16.7\t0,4,0,0,0\tThe reader wonders why the profit remark needs defending and against whom.\n16.8\t2,0,0,0,0\t\"Ours or anyone's\" is an absolute the author cannot have checked.\n16.9\t2,0,0,0,0\tNot every new employee picks such things up unaided.\n17.7\t0,0,2,0,0\tA quotable contrast line that compresses the trade-off.\n18.3\t4,0,0,0,0\tLabs fine-tune on company documents and transcripts the firm supplies.\n19.1\t4,0,4,0,0\tA cleverer model may well infer unasked what the group needs.\n19.2\t0,0,4,0,0\tThe \"and he has more to say and flatters better\" cap reads as a quip.\n19.6\t0,0,3,0,0\tA polished closing flourish shaped for effect.\nEND",
+"r": 2
+}
+]
+}
+]
+}
