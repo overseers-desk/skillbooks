@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Listen to a prose draft: run each module on it as a pass of its own and print every sentence a reader
-scored, with the scores and the reader's reason.
+"""Listen to a prose draft: run each module on it as a pass of its own and print one table, a row for each
+sentence a reader scored and a column for each module, holding its scores in the order its header names.
 usage: stethoscope.py <draft.md> [--reader "who reads it and what they have read"] [--module M ...]
        [--fact name="..." ...] [--runs N] [--model M]
 A module is a file: front matter naming its columns, then the prompt, with {text} where the draft goes
@@ -97,15 +97,17 @@ def main():
     with ThreadPoolExecutor(6) as ex:
         replies = list(ex.map(run, jobs))
 
-    print("pass\trun\tsentence\tscores (2 or more; * marks 4 or more, a stumble)\twhy\ttext")
+    heads, rows = {name: cols for name, cols, _, _ in jobs}, {}
+    print("sentence\trun\t" + "\t".join(f"{n}:{','.join(c)}" for n, c in heads.items()) + "\twhy\ttext")
     for (name, cols, _, r), reply in zip(jobs, replies):
         if "END" not in reply or "API Error" in reply:
-            print(f"{name}\t{r}\t-\tno complete reply\t{reply.strip()[:200]}\t")
+            print(f"-\t{r}\t" + "\t".join("no complete reply" if n == name else "" for n in heads) + "\t" + " ".join(reply.split())[:200] + "\t")
             continue
         for p, s, sc, why in re.findall(r"^\s*P?(\d+)\.(\d+)\t([\d ,]+)\t(.*)$", reply, re.M):
-            v = [int(x) for x in re.findall(r"\d", sc)][:len(cols)]
-            marks = ", ".join(f"{c}={x}{'*' if x >= 4 else ''}" for c, x in zip(cols, v) if x >= 2)
-            print(f"{name}\t{r}\t{p}.{s}\t{marks}\t{why.strip()}\t{sents.get((int(p), int(s)), '(no sentence at this position)')}")
+            cell = ",".join(x + "*" * (x >= "4") for x in re.findall(r"\d", sc)[:len(cols)])
+            rows.setdefault((int(p), int(s), r), {})[name] = (cell, f"{name}: {' '.join(why.split())}")
+    for (p, s, r), row in sorted(rows.items()):
+        print(f"{p}.{s}\t{r}\t" + "\t".join(row.get(n, ("",))[0] for n in heads) + "\t" + "; ".join(w for _, w in row.values()) + f"\t{sents.get((p, s), '(no sentence at this position)')}")
 
 
 if __name__ == "__main__":
