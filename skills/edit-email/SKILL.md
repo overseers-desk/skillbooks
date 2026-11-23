@@ -55,9 +55,9 @@ Only the staff register is authored so far (`register-staff.md`). Others are add
    Then answer every ASSERTIONS line from the conversation, not from the draft, which is the thing under check:
    - D: one of four. The user decided it, and you quote his words. The user shared information and the draft wrote it as decided. You decided for him. It is your recommendation and the sentence says so. The second and third answers rewrite the sentence as information or drop it.
    - N: the cut stands. Reinstate only with a reason, and the reason is the answer.
-   - F: `courier list` names the identities; match the address and display name to the signer. A from line copied from the corpus is the commonest wrong answer.
+   - F: match the address and display name to the signer. A from line copied from the corpus is the commonest wrong answer.
 5. Show the user the polished body inline, and beneath it every GIVENS line you answered with the third answer, one line each with the phrase and what you introduced it from, then the exceptions among the answered assertions, one line each with the tag, the sentence's first words and the answer: a sentence written as decided from information, a decision or recommendation of your own, a cut reinstated, a from address that does not match. A line answered with the user's own words stays out of view; the answering is the check, and the view is for what he may need to overturn. Revise as requested by re-running the skill.
-6. Send via courier once approved. The skill does not send.
+6. Once approved, the skill's work ends; it does not send.
 
 ## Files
 

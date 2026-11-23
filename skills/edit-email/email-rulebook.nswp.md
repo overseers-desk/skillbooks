@@ -522,7 +522,7 @@ The header's from line carried the proprietor's address over a signature of "Wei
 
 > `03:30:34` If this email is not about yoga, you don't have to write this email is not about yoga. And if you advise to do not talk to Alice, you don't have to write We don't talk to Alice.
 
-The from address was found by the drafting agent itself at the send step (`03:32:59`), by matching the courier identities against the signature.
+The from address was found by the drafting agent itself at the send step (`03:32:59`), by matching the identities against the signature.
 
 **Abstraction into rule** (this session, 8 September 2026):
 
