@@ -45,16 +45,12 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 - **Sweep** discovers listings from campaign-defined sources (job boards, grant databases, company career pages). Casts wide without filtering. Every listing gets a registry row.
 - **Investigate** fetches each listing, archives the full description as a permanent dossier, and researches the source organisation. The dossier ensures that scores remain auditable even after the listing goes offline.
-- **Fit** scores each listing on two axes: value-to-us (stars, computed from campaign-defined dimensions) and likelihood-of-success (percentage, computed from requirement matching against the operator profile, with amplifiers for competitive advantages). The two axes together produce a prioritisation matrix.
-- **Target** decides disposition (respond, skip, watch, network-approach) and prepares response materials for listings worth pursuing.
+- **Fit** scores each listing on two axes: value-to-us (stars, computed from the campaign's dimensions) and likelihood-of-success (percentage, computed from requirement matching against the operator profile, with amplifiers for competitive advantages). The two axes together produce a prioritisation matrix.
+- **Target** decides disposition (respond, skip, watch, network-approach) and hands each listing worth a response to the method that prepares it.
 
-**Model allocation:** Sweep and Investigate are Sonnet-tier. Fit is Sonnet-tier (rubric application). Target is human judgment with Sonnet-tier response preparation.
+**Model allocation:** Sweep and Investigate are Sonnet-tier. Fit is Sonnet-tier (rubric application). Target is human judgment.
 
-**Procedure documents:** `listing-sift/sift-methodology.md`, `listing-sift/sift-registry-format.md`, `listing-sift/sift-campaign-directory.md`.
-
-#### SIFT use cases
-
-**Published job listings**. 180+ listings scored on four dimensions, with five amplifier tags.
+**Procedure documents:** `listing-sift/sift-methodology.md`, `listing-sift/sift-registry-format.md`, `listing-sift/sift-campaign-directory.md`, and one document per kind of listing in `listing-sift/domains/`.
 
 ### TEND — Correspondence Processing
 
@@ -245,7 +241,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 SPAR generates outbound messages. Those messages produce replies. The replies arrive in an inbox processed by TEND. TEND's thread assembly recognises the SPAR outreach message in the conversation history and can route the reply accordingly — flagging a positive response rather than filing it as unsolicited inbound.
 
-SIFT evaluates inbound listings. When SIFT's Target phase marks a listing as `network-approach` (pursue through a relationship rather than a direct application), that contact may enter a SPAR roster for outreach. A listing marked `respond` becomes a HIRE run, which writes the response.
+SIFT evaluates inbound listings. When SIFT's Target phase marks a listing as `network-approach` (pursue through a relationship rather than a direct application), that contact may enter a SPAR roster for outreach. A job listing marked `respond` becomes a HIRE run, which writes the candidacy.
 
 SAGE defines what there is to sell. Its Establish phase produces the numbered claims a SPAR campaign's approach messages cite by number, and its displacement offer runs naturally as a SPAR campaign over an owned roster, with replies arriving through TEND. SAGE's decisions table is also the bounding box those messages may not escape: an approach draft promising anything outside it is caught at review, not sent.
 
