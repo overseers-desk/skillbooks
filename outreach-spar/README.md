@@ -5,7 +5,7 @@ AI-executed outreach methodology for discovering contacts, researching them, and
 ## Directory layout
 
 ```
-outreach-spar/
+./
   INVARIANTS.md                Hard rules; the rest of the methodology may not contradict them
   arch.md                      Why the pipeline is built this way, and what each choice cost
   spar-methodology.md          Methodology overview (all four phases)

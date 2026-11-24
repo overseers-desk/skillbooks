@@ -1,4 +1,4 @@
-# Invariants — candidacy-hire
+# Invariants — HIRE
 
 Rules the rest of the methodology does not contradict. Where a procedure, a module or an example here disagrees with one, the invariant wins and the other is the bug.
 

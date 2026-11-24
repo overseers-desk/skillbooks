@@ -312,7 +312,7 @@ SIFT, SPAR, and TEND operate on different flows of the same professional activit
 The three methodologies intersect at defined handoff points:
 
 - **SIFT → SPAR**: A listing scored in SIFT may receive a `network-approach` disposition rather than a direct response. The listing becomes an approach target in SPAR — the operator builds a relationship with someone connected to the opportunity rather than submitting a cold application.
-- **SIFT → HIRE**: A listing marked `respond` whose response is a candidacy becomes a run of HIRE (`../candidacy-hire/hire-methodology.md`), which takes the dossier as its first source on the reader.
+- **SIFT → HIRE**: A listing marked `respond` whose response is a candidacy becomes a run of HIRE (`../career-hire/hire-methodology.md`), which takes the dossier as its first source on the reader.
 - **TEND → SIFT**: Inbound correspondence processed by TEND may surface listing-related messages — a recruiter email, a CFP invitation, a tender notification. TEND's evaluation identifies these and routes them to Sweep.
 - **SPAR → SIFT**: A contact engaged through SPAR may forward a listing or mention an opportunity. This enters SIFT's Sweep from a warm source.
 

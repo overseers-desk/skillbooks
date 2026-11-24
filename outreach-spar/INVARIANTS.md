@@ -1,4 +1,4 @@
-# Invariants — outreach-spar
+# Invariants — SPAR
 
 Hard rules the rest of the methodology must not contradict. When a procedure, template, prompt, field placement, or example here disagrees with an invariant, the invariant wins and the other is the bug to fix. These are stated once, here, because they have been re-violated by operational artifacts that drifted from the principle stated elsewhere.
 

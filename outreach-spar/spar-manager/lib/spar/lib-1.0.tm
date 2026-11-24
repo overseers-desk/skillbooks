@@ -465,7 +465,7 @@ proc spar::instance_root_for_yaml {yaml_path} {
 # time on a key with no module.
 
 # platform_modules — the platform key vocabulary: the {key} stems of
-# outreach-spar's platforms/{key}.md modules. The module file is what
+# SPAR's platforms/{key}.md modules. The module file is what
 # admits a key into segment.yaml's platforms: map, so the file set is the
 # vocabulary's single home.
 proc spar::platform_modules {} {

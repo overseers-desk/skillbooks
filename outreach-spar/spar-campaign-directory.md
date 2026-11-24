@@ -75,8 +75,8 @@ A `fact_sources` entry or an `antifacts` file shared by several campaigns descri
 ## What does not belong under `segments/` or `campaigns/`
 
 - **Raw data exports** (CSV dumps, CRM exports) — place in a `data/` directory at the instance root, excluded by `.gitignore`
-- **Scripts** — the SPAR batch tools live in `aesop/outreach-spar/spar-manager/`, not in the instance. Campaign-specific helper scripts may live at the instance root if they are not reusable.
-- **Methodology documents** — live in `aesop/outreach-spar/`, not duplicated per instance
+- **Scripts** — the SPAR batch tools live in `spar-manager/` beside this document, not in the instance. Campaign-specific helper scripts may live at the instance root if they are not reusable.
+- **Methodology documents** — live beside this one in the aesop repository, not duplicated per instance
 - **`README.md`** — the `campaign:` display-name field and the top-of-file banner comment in the campaign YAML already introduce the campaign for humans.
 - **Principles or policy prose that duplicates YAML content** — put the content into the campaign YAML's `prompt_appendices` block or the segment YAML's `discovery_criteria` first; the `campaign_principles:` path field is for content that genuinely cannot fit into the YAML.
 - **Grouping parents around segments** beyond `segments/` itself: no axis-named wrapper (`rosters/`, an industry parent) may wrap segment entries. A classification of segments by role or industry is a tag inside the segment file, not a directory layer.
