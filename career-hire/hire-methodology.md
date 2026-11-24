@@ -9,7 +9,7 @@ HIRE is a four-phase methodology by which an AI agent writes the document that p
 - **R** — Reframe. Select from the record and write each fact as the answer to a question this reader has, at the candidate's level and in the candidate's voice.
 - **E** — Examine. Put the draft before readers who are not the writer, and repair it, until the stop rule is met.
 
-SIFT's Target phase hands a listing over as worth answering. HIRE is how the answer is written.
+HIRE starts from a post already judged worth answering.
 
 ## The problem HIRE solves
 
@@ -36,6 +36,10 @@ Then one working folder per application, holding:
 | `selection.md` | R | Each fact considered: the reader's question it answers, what it says of the candidate beyond itself, and whether it is kept, recast or left out |
 | the document | R | Named by the date and time it was made; earlier versions move to `superseded/` |
 | `examine.md` | E | Each check run, what it raised, what was done, and what the candidate said on reading |
+
+These files are HIRE's own, and HIRE writes nowhere else, with one exception named below. The standing record may sit in a file the candidate keeps for other uses as well: HIRE reads and adds to the parts listed under I, and leaves the rest.
+
+Where the candidate keeps a list of the postings under consideration, with research on each, an application works with it in three ways. The research on file about the post (the advertisement as archived, background on the employer) is the first source for `hirer.md`; a score or an opinion found in it is somebody's inference, and is marked as that. `hirer.md` and the application's rows in the register name the posting by the list's own identifier. When the document is sent, whoever sends it enters that in the list, which is the exception.
 
 A file's time is read from the clock when it is written (`cases/a-task-reported-done-without-the-act-that-finishes-it.md`).
 
@@ -188,8 +192,3 @@ A task is done when the act that finishes it has been done and seen: the file bu
 ## Written answers beside the CV
 
 An application form's questions are answered by the same four phases, with two things added. Where the employer asks that the candidate draft first, the agent's work begins from what the candidate has written in the standing record for that kind of question, and the register says so; where there is nothing, the application's row is marked at the top of the register as one the employer asked the candidate to draft (`cases/the-candidates-own-account-written-for-them-before-they-gave-it.md`). And an answer needs its angle chosen before it is drafted: from the standing record where the candidate has given one for that kind of question, otherwise as a registered assumption. Where none is chosen the judges' ranking ends up choosing it, and then nobody decided what the answer argues (`cases/an-answer-drafted-with-no-angle-chosen.md`).
-
-## Relationship to other methodologies
-
-- **SIFT → HIRE**: a listing marked `respond` in SIFT becomes a HIRE run. SIFT's dossier on the listing is the first source for `hirer.md`, which names the listing's id. HIRE reads the dossier and does not write to it.
-- **HIRE → SIFT**: the standing record is the operator profile SIFT scores against. A row in the assumption register that concerns a listing names its id. When the document is sent, whoever sends it enters that in the listing's row in SIFT's registry, under SIFT's Target, and that row is the one record of how the application stands. HIRE's files sit outside SIFT's campaign directory.

@@ -18,7 +18,7 @@
 - The candidate's country, already in the profile.
 - Consents and an address asked three times after the candidate accepted the defaults.
 
-**The rule it produced.** `../hire-methodology.md`, I: **Read the record first, whole.** "A question whose answer the record holds is not put to the candidate." **An application does not go back to the candidate**: a gap no default covers is decided by the writer and added to the record's defaults, and "the register carries it as an assumption at low confidence. The work does not stop for it." HIRE → SIFT makes the standing record "the operator profile SIFT scores against", so a later application reads what an earlier one settled. For the last instance, I says: "A default the candidate has accepted in the register is an answer, and is not put again."
+**The rule it produced.** `../hire-methodology.md`, I: **Read the record first, whole.** "A question whose answer the record holds is not put to the candidate." **An application does not go back to the candidate**: a gap no default covers is decided by the writer and added to the record's defaults, and "the register carries it as an assumption at low confidence. The work does not stop for it." **What a run produces** says of the standing record, "Every application reads it", so a later application reads what an earlier one settled. For the last instance, I says: "A default the candidate has accepted in the register is an answer, and is not put again."
 
 **To re-run it.** One application, at its form. The tester places in a folder beside the methodology `hirer.md` and:
 
