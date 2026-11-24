@@ -219,7 +219,7 @@ A dossier file for every listing. Updated `alive` column in the registry where a
 
 ### Purpose
 
-Score every row in the registry that has empty Fit columns and is not known to be dead, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise. A listing found dead before it was scored keeps its row and its dossier and stays unscored; one that dies after scoring keeps its scores.
+Score every row in the registry that has empty Fit columns and is not known to be dead, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise. A listing found dead before it was scored keeps its row and its dossier and stays unscored; one that dies after scoring keeps its scores. A dimension added to the configuration after a row was scored leaves that row's column for it empty: Fit scores the row on that dimension and computes its stars again.
 
 ### Model allocation
 
@@ -234,7 +234,7 @@ Fit is Sonnet-tier work. When a scoring rubric does the intellectual heavy lifti
 
 ### Process
 
-For each row where `stars` is empty and `alive` is not `no`:
+For each row where `alive` is not `no`, and `stars` or the column of one of the campaign's dimensions is empty:
 
 1. Read the dossier. The listing description and source background are the primary evidence for scoring. If the dossier fetch failed, note this in `notes_fit` and score from whatever information is available.
 2. Score each of the campaign's dimensions using the rubric's anchors. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
