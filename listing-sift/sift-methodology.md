@@ -13,7 +13,7 @@ A "listing" in SIFT is a published statement of need: someone has declared that 
 
 The methodology applies to any domain where the universe of published listings exceeds the operator's capacity to pursue all of them, and where each listing has both variable desirability and variable probability of success.
 
-This document holds what is true of every listing. What is true of every listing of one kind (the columns a job posting or a grant call needs, the dimensions such listings are weighed on, how the response is prepared) is in that kind's domain document under `domains/`. What one operator chose (which dimensions count and their thresholds, the sources, the tags) is in the campaign configuration, in the campaign directory in the operator's own files. A kind of listing with no domain document defines its columns and dimensions in the campaign configuration too.
+This document holds what is true of every listing. What is true of every listing of one kind (the columns a job posting or a grant call needs, where such listings are found, how the response is prepared) is in that kind's domain document under `domains/`. What one operator chose (what the campaign weighs, the sources, the tags) is in the campaign configuration, in the campaign directory in the operator's own files. A kind of listing with no domain document defines its columns in the campaign configuration too.
 
 ## The problem SIFT solves
 
@@ -48,7 +48,7 @@ The star rating is a composite score computed from the campaign's dimensions. A 
 stars = clamp(sum-of-dimensions, 1.0, 5.0)
 ```
 
-The dimensions are defined outside this document. A domain document defines the ones campaigns of its kind choose from. The campaign configuration says which of them the campaign uses, sets their thresholds, and defines any of its own. SIFT prescribes the framework: a composite score from defined dimensions, clamped to 1.0–5.0.
+The dimensions are defined in the campaign configuration: what the operator cares about, each with its scale and anchors. A domain document may offer examples. SIFT prescribes the framework: a composite score from defined dimensions, clamped to 1.0–5.0.
 
 Example dimension families (not prescriptive — campaigns choose what applies):
 
@@ -229,7 +229,7 @@ Fit is Sonnet-tier work. When a scoring rubric does the intellectual heavy lifti
 - Registry (with Sweep columns filled)
 - Dossier files (from Investigate)
 - Operator profile
-- Scoring rubric: the dimensions, scales and anchors of the domain document and the campaign configuration
+- Scoring rubric: the dimensions, scales and anchors in the campaign configuration
 
 ### Process
 
@@ -297,7 +297,7 @@ Updated registry with Target columns filled. Listings marked `respond` are ready
 | Dossier files | Investigate (description + background); Fit (scoring section) | Fit, Target, human review | `dossiers/{id}.md` |
 | Operator profile | Pre-campaign (by the operator) | Fit (scoring against requirements) | Where the campaign configuration says |
 | Campaign configuration | Set up with the operator before the campaign; later gaps filled by the phase that meets them, marked unconfirmed | Sweep (sources), Fit (dimensions used, thresholds), Target (response method) | Campaign directory |
-| Domain document | Kept with this methodology; not made per campaign | Sweep (columns, kinds of source), Fit (dimensions), Target (hand-over) | `domains/` |
+| Domain document | Kept with this methodology; not made per campaign | Sweep (columns, kinds of source), Target (hand-over) | `domains/` |
 
 ## Model assignment
 
@@ -330,7 +330,7 @@ SIFT, SPAR and TEND share the model-tiering principle: rubric-following and stru
 
 SIFT applies to any domain where an external party publishes a need and invites responses. The following are the domains where the structure holds cleanly — where the listing is a genuine published want, the operator evaluates fit against a profile, and the response requires preparation.
 
-**Job listings.** The publisher is an employer. The listing is a job posting. The operator profile is the record of a person's career and what they are looking for. The response is a candidacy. The columns, dimensions and hand-over for this kind are in `domains/jobs.md`.
+**Job listings.** The publisher is an employer. The listing is a job posting. The operator profile is the record of a person's career and what they are looking for. The response is a candidacy. The sources, columns and hand-over for this kind are in `domains/jobs.md`.
 
 **Grant and funding calls.** The publisher is a funding body (government agency, foundation, research council). The listing is a call for proposals or expressions of interest. The operator profile is an organisation capability statement or researcher CV. The response is a grant proposal. The star dimensions might measure research alignment, funding amount, institutional prestige, and reporting burden.
 

@@ -36,14 +36,14 @@ Campaign directories are named `{name}.sift`, where `{name}` is the operator's l
 - **Operator profile**: its path
 - **Response method**: the name of the method that prepares responses, where there is one
 - **Search sources and queries**: the places Sweep looks, and what it searches for there
-- **Dimensions**: the domain document's dimensions the campaign uses, with what each leaves to the campaign and any examples added to their anchors; and any dimensions of the campaign's own, with scale and anchors
+- **Dimensions**: what the campaign weighs, each with its name, its scale and anchors, and which of them is the base of the sum
 - **Disposition thresholds**: the cut between high and low on stars, and on pct
 - **Amplifier tags**: the campaign's tags for percentage amplification, with definitions, and the factor where it is not the methodology's default
 - **ID format**: the prefix and numbering convention for listing IDs (e.g. `J001`, `G001`)
 - **The campaign's own registry columns**: with types and descriptions
 - **Whatever else the domain document leaves to the campaign**: a list of values for a column, the campaign's currency and the rates for converting others into it
 
-For a kind of listing with no domain document, the configuration defines the kind's columns and dimensions as the campaign's own.
+For a kind of listing with no domain document, the configuration defines the kind's columns as the campaign's own.
 
 A choice a phase needed and did not find in the configuration is added to it, marked as not yet confirmed by the operator.
 
@@ -72,4 +72,4 @@ Methodology documents stay in the aesop repository and are not copied per campai
 
 - `sift-methodology.md`: defines the four-phase pipeline and dossier format
 - `sift-registry-format.md`: defines the core registry column schema
-- `domains/`: one document per kind of listing, with its sources, columns, dimensions and hand-over to the response method
+- `domains/`: one document per kind of listing, with its sources, columns and hand-over to the response method
