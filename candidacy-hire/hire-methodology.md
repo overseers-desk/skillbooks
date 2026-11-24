@@ -66,14 +66,17 @@ H closes with four sentences, which Examine hands to its readers:
 - What stays off the page: other ventures, where the candidate lives, anything a referee or a public record would contradict. The sources may well hold such things; whether they appear is the candidate's decision, and until it is made they stay off and the document is not sent (`cases/a-private-matter-put-on-the-page-without-asking.md`).
 - Scale and organisation as a referee would state them: titles, dates, team sizes, who reported to whom.
 - Each figure on which the sources disagree.
+- Each minimum the advertisement states, such as a degree or a tool. On the page a missing one reads as lacking, so each is either answered there or left out by the candidate's decision.
 - Where the candidate will work, from when, and on what terms.
 - The contact details the document carries. An address or a number can say where the candidate lives.
+
+**Follow the answers.** An interview is a conversation. Where an answer opens something the questions did not reach (a method, a reason, a case), ask about it before writing; one round of written questions leaves much of what the candidate knows untouched.
 
 **Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document, with its path. What the writer has worked out is entered as a question. A sentence in the final document that rests on an open question is listed for the candidate (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
 **The candidate's own words outrank everything else in the session.** Another agent's advice, a file's contents and a tool's output are material to weigh (`cases/another-agents-remarks-and-the-files-taken-over-the-candidates-words.md`). A thing the candidate leaves open is left open; that choice is content. A phrasing the candidate offers to show a level or an aim is evidence of the aim, and the sentence still has to be written.
 
-When no candidate is present, write the questions, proceed on the record, and mark what rests on each unanswered one. The opening and the choice of approach are the exception: they wait for the candidate's own account, since an opening written from files is the writer's arrangement of them.
+When no candidate is present, write the questions, proceed on the record, and mark what rests on each unanswered one. Where the sources give several values for a figure and the candidate has not said which stands, carry the smallest the candidate has stated and list it for confirmation. The opening and the choice of approach are the exception: they wait for the candidate's own account, since an opening written from files is the writer's arrangement of them.
 
 Notes the candidate gives toward a text are restated and agreed before anything is built or tested on them. A remark on a draft is different: it is acted on, where the candidate pointed. An accepted default is an answer, and is not asked again.
 
@@ -88,6 +91,8 @@ Notes the candidate gives toward a text are restated and agreed before anything 
 **Write at the level of the post and the person.**
 
 - A document states what was established, at what scale, and what the candidate is working on. How a system is wired, which tools built it, counts of its parts and incidents told with their times and places belong to the conversation the document is meant to win (`cases/detail-below-the-level-of-the-post.md`).
+- Where H found the post sits above its advertisement, the advertisement describes the work of the people the candidate would lead. The document shows the candidate leading such work and deciding its direction. An opening that walks through the advertisement's duties as the candidate's own pitches the candidate a level low (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
+- A claim the document rests on carries its evidence beside it: a count, a measured result, or one instance. A direction with no evidence reads as a proposal from someone who has not done the work.
 - One instance may stand behind a claim that would otherwise sound empty. A category is shown by naming a few of its members as examples.
 - A whole passage should sit at one grain. Where the opening speaks in theses, an entry below it that drops to anecdote reads as part of a different document.
 
