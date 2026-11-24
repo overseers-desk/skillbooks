@@ -23,7 +23,7 @@ HIRE answers the first by fixing the reader and taking the candidate's own telli
 
 A candidate applies to a hundred posts or more in one search, and does not sit with each. So two things live above the single application, in the candidate's own repository:
 
-- **The standing record**: the candidate's own account of the work and the answers only the candidate holds, taken once and added to whenever the candidate corrects something. Every application reads it.
+- **The standing record**: the candidate's own account of the work and the answers only the candidate holds, taken once and added to whenever the candidate corrects something. Every application reads it. It also holds the search's defaults: what an application does where the record is silent, such as which of several figures stands or whether an unmentioned private matter goes on the page. These are the candidate's choices, so they live here and not in this method.
 - **The assumption register**: one table for the whole search, a row for each assumption an agent made in any application. Most rows are about the hirer ("the person who fills this post wants someone who has led at this size"); the rest are about the candidate, where the standing record was silent. Each row gives the application, the assumption, a confidence score, what it rests on, and what in the document depends on it. The candidate reads down the table across applications and marks each row agreed or not. A row marked wrong corrects the standing record, or becomes a standing assumption about that kind of hirer, so the same one is not made wrongly twice.
 
 Then one working folder per application, holding:
@@ -47,7 +47,7 @@ Establish, and mark each line with where it came from (the advertisement, the ca
 
 - **The post behind the advertisement.** An advertisement may be a template for a different level, or written before the post was defined. Its level, its reporting line and the size of what it leads come from the standing record and from anyone who passed the advertisement on; what neither gives is an assumption, scored and registered. Write for the post, and treat the advertisement's wording as a signal of the employer's vocabulary.
 - **The route.** Who reads first, who decides, in what language each reads, and in what form the document reaches each. A PDF forwarded inside an organisation travels alone; a form's other fields may not go with it. What a later reader will not see has to be in the document itself.
-- **What these readers have plenty of, and what they lack.** Picture the other applicants. A research group is not short of researchers, and an engineering organisation is not short of engineers. The document's argument is what this candidate brings that the others do not.
+- **What these readers have plenty of, and what they lack.** Picture the other applicants. A hospital is not short of clinicians, and a law firm is not short of lawyers. The document's argument is what this candidate brings that the others do not.
 - **The readers' own subject and terms.** Read what the employer has published on the matter the candidate will speak of. An expert reader expects the field's terms (`cases/terms-of-art-paraphrased-for-an-expert-reader.md`).
 - **The employer's rules for applicants**, such as who may draft what. They are read here, since they decide the order of work in the phases that follow (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
 
@@ -78,10 +78,9 @@ Follow the answers in that sitting: where one opens something the questions did 
 **An application does not go back to the candidate.** It reads the standing record and decides the rest, and every assumption it makes goes into the register with its confidence and its basis:
 
 - The account for this reader is built from the candidate's account to the nearest kind of reader, kept in the candidate's words where they fit. That it was adapted, and from which account, is a row in the register (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
-- What the record marks as off the page stays off. A private matter the record does not mention is treated the same way, and the row says so.
-- A figure with several values in the sources is carried at the smallest the candidate has stated.
-- A minimum the advertisement states and the record does not answer is left off the page, and the row says the advertisement asked for it.
-- A question only the candidate could answer is written into the register as an assumption at low confidence, with the default that was taken. The work does not stop for it.
+- What the record marks as off the page stays off.
+- A gap the record's defaults cover is decided by the default, and the row names it.
+- A gap no default covers is decided by the writer, who adds the choice to the record's defaults marked as not yet confirmed by the candidate, so the next application makes the same one. The register carries it as an assumption at low confidence. The work does not stop for it.
 
 **Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document, with its path. What the writer has worked out is entered as an assumption, in the register. A sentence in the final document that rests on a decision of the writer's has its row in the register (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
@@ -109,7 +108,7 @@ When the candidate does take part in an application, notes given toward a text a
 **Write in the voice of someone who knows.**
 
 - State what is the case. "The evidence is a catalogue of N failures" is a statement; "I catalogued N failures" is a report of homework, and "I found that" tells the reader the story of finding out (`cases/a-statement-of-fact-told-as-finding-out.md`).
-- Keep open what the candidate left open. "Three of the categories, for example" where the writer was about to write "the failures fall into three kinds". "Has helped most so far" where the writer was about to conclude (`cases/an-open-question-written-as-settled.md`).
+- Keep open what the candidate left open. "Some of the causes, for example" where the writer was about to write "the causes are three". "Has worked best so far" where the writer was about to name the best (`cases/an-open-question-written-as-settled.md`).
 - The subject of a sentence is what the candidate can do, and its verb says who directs whom. A figure that praises the venue, the team or the tool gives the achievement away (`cases/the-sentences-subject-gives-the-achievement-away.md`).
 - A quality is shown by a fact. A label for it ("strong leader") is the thing every applicant writes (`cases/a-quality-claimed-by-label.md`).
 - A defence against a charge the reader has not made plants the charge (`cases/a-denial-nobody-asked-for.md`).
