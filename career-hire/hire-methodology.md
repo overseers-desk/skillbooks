@@ -159,7 +159,7 @@ On a copy: speak-like with the identity `human`, for machine cadence, capping li
 
 ### 4. Sources
 
-Every figure and every claim of fact in the document is traced to an entry in `interview.md`. One that traces to the writer's inference is taken out. A low-confidence assumption about the candidate stays off the page; one about the hirer may shape the page, since that is what it is for. A superlative needs a source a reader could open, and a title or a date is given as the referee would give it. Check that the document carries the candidate's contact details from the standing record; a document without them is not complete, and its row says so.
+Every figure and every claim of fact in the document is traced to an entry in `interview.md`. One that traces to the writer's inference is taken out. Whether a low-confidence assumption about the candidate may go on the page is one of the standing record's defaults; one about the hirer may shape the page, since that is what it is for. A superlative needs a source a reader could open, and a title or a date is given as the referee would give it. Check that the document carries the candidate's contact details from the standing record; a document without them is not complete, and its row says so.
 
 A version in another language is examined in that language, by readers of it. A translation of an examined text has not itself been examined.
 
