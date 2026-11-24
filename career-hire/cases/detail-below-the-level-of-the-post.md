@@ -1,19 +1,19 @@
 # Detail below the level of the post
 
-**The situation.** Both efforts. For a post managing about thirty engineers at a cloud vendor, the entry on the business the candidate ran on software agents had to show what that work says about him to a manager of managers. For a research residency at an AI lab, a recruiter screening hundreds and then a mentor read a CV whose statement spoke in theses.
+**The situation.** Both efforts. For a management post, the entry on the business the candidate ran had to show what that work says about them to a manager of managers. For a research post, a recruiter screening hundreds and then a mentor read a CV whose statement spoke in theses.
 
-**What the AI wrote.** For the engineering post, the first draft filled the entry from a technical inventory of the system that a sub-agent had collected from the repositories: a count of hook scripts, a count of catalogued failure cases, model tiers, a challenger agent, a database mirror, tools listed with their tool counts. A day later, additions from a collection of strong sentences put the same kind of line back (constructed, same build): "Built supplier onboarding as three agents: one researches, one drafts, one reviews." For the residency: an if-then rule for when agents act alone; three scenes from the failure catalogue told with their days and channels; a bracketed list of methods tried; the language the system was written in.
+**What the AI wrote.** For the engineering post, the first draft filled the entry from a technical inventory of the system that a sub-agent had collected from the repositories: a count of scripts, a count of catalogued failure cases, component tiers, a checking component, a database copy, tools listed with their counts. A day later, additions from a collection of strong sentences put the same kind of line back (constructed, same build): "Built supplier onboarding as three services: one researches, one drafts, one reviews." For the research post: an if-then rule for when the system acts alone; three scenes from the failure catalogue told with their days and channels; a bracketed list of methods tried; the language the system was written in.
 
-**What the candidate said.** "Why would they care how many hooks I made." When he speaks to investors he does not say how many hooks he made; it is embarrassing. Of the three-agent line: implementation detail, one of the cases where the AI understood something and so had to write it; why not also say "I used my keyboard to type this"? For the residency: if this, then this, "sounds like I'm learning programming". And: "I think we have done this before."
+**What the candidate said.** The reader would not care how many scripts the candidate had written; nobody presenting such work to outsiders counts them, and it would be embarrassing. Of the three-service line: implementation detail, one of the cases where the AI understood something and so had to write it; it might as well say the CV had been typed on a keyboard. For the research post: an if-then rule sounded like someone learning to program. And they had been through this before.
 
 **What it missed.**
-- The reader's questions are whom he led, at what scale, and what came of it. A hook count or an agent layout answers none of them, and striking it leaves the decision unchanged.
-- Grain is read against the lines around it. Beside a span of several dozen engineers, a three-agent pipeline drops, and the drop is taken as the author's level.
+- The reader's questions are whom the candidate led, at what scale, and what came of it. A script count or a component layout answers none of them, and striking it leaves the decision unchanged.
+- Grain is read against the lines around it. Beside a large span of engineers, a three-service pipeline drops, and the drop is taken as the author's level.
 - The detail was there because the writer had just read it: an inventory, then a sentence collection, set the subject of the entry.
-- Neither instrument caught it. Judges briefed for the level below adopted the pipeline in every room, and the skill's `level` question asked about the candidate's own part, so a sentence about an agent fell outside it. A fresh reader given the posting and the CV named the told scenes as the clearest drop.
+- Neither instrument caught it. Judges briefed for the level below adopted the pipeline in every room, and the skill's `level` question asked about the candidate's own part, so a sentence whose subject was a component fell outside it. A fresh reader given the posting and the CV named the told scenes as the clearest drop.
 
 **Instances.**
-- The inventory entry: hooks, counts, tiers, tools.
+- The inventory entry: scripts, counts, tiers, tools.
 - The pipeline and verifier lines, back a day after the fault had been filed, and endorsed by judges.
 - An integration sentence that named the interface it ran through.
 - One customer case carried as the research in the motive answer.
@@ -28,10 +28,10 @@
 
 ```
 advertisement.md
-Director of automation. Reports to the chief operating officer. Leads four engineering managers and about thirty engineers in three teams. Owns the automation roadmap and its budget across the company's warehouses, and sets its direction with the executive team.
+Director of automation. Reports to the chief operating officer. Leads four engineering managers and about fifty engineers in four teams. Owns the automation roadmap and its budget across the company's warehouses, and sets its direction with the executive team.
 
 hirer.md
-Post: director of automation over four managers and about thirty engineers (advertisement).
+Post: director of automation over four managers and about fifty engineers (advertisement).
 Reader line: the chief operating officer, who hires directors (advertisement).
 
 interview.md

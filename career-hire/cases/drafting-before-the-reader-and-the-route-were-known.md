@@ -1,10 +1,10 @@
 # Drafting before the reader and the route were known
 
-**The situation.** A post managing about thirty engineers at a cloud vendor, two levels below a vice-president. The candidate held an advertisement marked for reference only, which described a first-line manager of a small squad, and a contact's word on the size of the post. Who would read the CV first, how it would reach them, in what language they worked, and what the page must not show were all open.
+**The situation.** A management post. The candidate held an advertisement marked for reference only, which described a first-line manager of a small squad, and a contact's word that the post sat above it. Who would read the CV first, how it would reach them, in what language they worked, and what the page must not show were all open.
 
 **What the AI did.** It wrote a strategy when asked, then drafted from the sources it could reach. It pitched the first page at a headhunter, whose existence was the candidate's early guess, and briefed its judges as headhunters. It wrote to the advertisement: the summary closed on hands-on work, of this build (constructed): "I still do the analysis myself, mostly in spreadsheets", and a skills list named languages and hosting. The facts that decided the document came one at a time after drafting began, several after the CV had gone: the reporting line; the route (the employer's own recruiter, through a friend, with no headhunter); the reader's first language, which was not the CV's; and a contact line, which the sent version lacked.
 
-**What the candidate said.** That he had asked for a strategy first precisely to stop the AI acting as a document clerk, and it had happened anyway. Refusing a draft message to the future manager: "You are too much in a hurry." And that the advertisement might be only a signal, since the post sat above it.
+**What the candidate said.** That they had asked for a strategy first precisely to stop the AI acting as a document clerk, and it had happened anyway. Refusing a draft message to the future manager: the AI was in too much of a hurry. And that the advertisement might be only a signal, since the post sat above it.
 
 **What it missed.**
 - Each fact about the reader changes the document: what it leads with, what may appear, which language comes first, which judge brief is right. Learnt after drafting, each forced a rewrite, and one version went out with the gaps.
@@ -13,10 +13,10 @@
 
 **Instances.**
 - The route assumed through a headhunter, then found to run through the employer's recruiter and a friend.
-- The level, two below a vice-president, confirmed after sending.
+- The level, above the advertisement's, confirmed after sending.
 - The reader's language, learnt after sending.
 - No contact line on the version sent.
-- Entries in the junior form (headcount, duties, a percentage) until the candidate proposed the senior form himself, twice.
+- Entries in the junior form (headcount, duties, a percentage) until the candidate proposed the senior form, twice.
 
 **The rule it produced.** `../hire-methodology.md`, H — Hirer: "A document is not begun until `hirer.md` and `interview.md` exist for it", with **The post behind the advertisement** and **The route**, which asks "in what language each reads". What H cannot source "is an assumption, and goes into the register with a confidence score: what this hirer wants, who reads first, what level the post is." The CV no longer waits for the reader to be confirmed, but is written to one stated and scored before the first sentence. The contact details are not among the things H settles; E 4, **Sources**, checks that the document carries them, which is after drafting.
 
@@ -32,7 +32,7 @@ A friend forwarded this. The post I'm going for sits two levels above the team l
 standing-record.md
 Account (candidate, spoken, to a reader hiring a leader): "I took a data team from four people to forty, and the platform with it."
 Head of data at a payments firm, six years (candidate).
-Fears a reader will conclude: that he is still a hands-on engineer (candidate).
+Fears a reader will conclude: that they are still a hands-on engineer (candidate).
 
 register.md   (the header row only)
 ```

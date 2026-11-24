@@ -1,10 +1,10 @@
 # A sentence patched until it meant nothing
 
-**The situation.** A CV for a research residency at an AI lab, an hour before the deadline. The AI was taking a student-like tone out of a sentence of its own, which conceded that the evidence was weak and said it was what the candidate could get.
+**The situation.** A CV for a research post, an hour before the deadline. The AI was taking a student-like tone out of a sentence of its own, which conceded that the evidence was weak and said it was what the candidate could get.
 
 **What the AI wrote.** A patch inside the old frame, of this build (constructed, invented matter): from "Such a log is a rough signal, and it was the one I could get" to "Such a log is a rough signal, and the one available from outside the plant." It was committed with no check.
 
-**What the candidate said.** Had the sentence reader not run on this, and not found such an awkward sentence? He did not know whether a person would write that way, because he did not know what the sentence meant. When the AI then put it in plain speech (constructed, same build: a log kept by the operators is crude, yet no one outside the plant has a better record of what went wrong), he said that was a perfectly human sentence, and asked what, analytically, was wrong with the first. The skill's failure to catch it was a bug, and should be filed.
+**What the candidate said.** Had the sentence reader not run on this, and not found such an awkward sentence? They did not know whether a person would write that way, because they did not know what the sentence meant. When the AI then put it in plain speech (constructed, same build: a log kept by the operators is crude, yet no one outside the plant has a better record of what went wrong), the candidate said that was a perfectly human sentence, and asked what, analytically, was wrong with the first. The skill's failure to catch it was a bug, and should be filed.
 
 **What it missed.**
 - The connective was wrong. The thought is a concession, weak but the best there is, and it was written with "and".

@@ -1,6 +1,6 @@
 # A denial nobody asked for
 
-**The situation.** The reason for applying, in a CV for a research residency at an AI lab. The candidate's system had asked each agent what caused its deviation, until safeguards at the model's provider began refusing that question. The reader worked at that provider. The candidate had said his goal was not to extract the reasoning but to find out how to align the agents' behaviour usefully and without harm.
+**The situation.** The reason for applying, in a CV for a research post. The candidate's method had depended on what a supplier's product revealed, until the supplier closed that access. The reader worked at that supplier, and their field was what the access had revealed. The candidate had said the goal was not to extract it but to find out how to make the system behave usefully and without harm.
 
 **What the AI wrote.** A disclaimer, of this build (constructed, on an invented matter: a candidate whose door-sensor export was locked by the sensors' maker, writing to that maker): "I have no interest in the raw feed for its own sake." Later, in the same paragraph, an excuse for the method, of the build "and the one available from outside the company".
 
@@ -24,7 +24,7 @@
 hirer.md
 Post: research engineer, sensor analytics, at the maker of the door sensors (advertisement).
 Reader line: a team lead at the maker, who has read the advertisement.
-Must-not-conclude: that he wants their raw data, or is working round their lock (candidate).
+Must-not-conclude: that the candidate wants the maker's raw data, or is working round its lock (candidate).
 
 interview.md
 Candidate, spoken: "I tracked how shoppers move through a chain's stores with its door sensors. When the maker locked the export I stopped. What I want is to find out which layouts cut queues, and to do it with them."

@@ -1,13 +1,13 @@
 # More judges than the last round's variation called for
 
-**The situation.** The effort for a post managing about thirty engineers at a cloud vendor tested versions of the CV with sealed-room judges, and ranked a collection of other people's CVs the same way.
+**The situation.** The effort for a management post tested versions of the CV with sealed-room judges, and ranked a collection of other people's CVs the same way.
 
 **What the AI did.**
 - It fixed the room count by multiplying factors: two wordings of the brief, two orders, three models, so twelve rooms a round, doubling when they disagreed. A ranking pilot used thirty rooms per CV, and it proposed the same crew for the whole collection, thousands of rooms. Calibration, several rounds and both ends of the ranking were unanimous in every room.
 - It fell back on scoring texts alone: a design in which separate agents each saw one version among a slate of rivals, an earlier one-text scoring experiment offered as a base, and a table in which it scored its own sentences one at a time. Paired judging later overturned two of the table's verdicts.
 - Asked to find directions along which the whole CV could be rewritten, it set the unit of change at the smallest the judges could detect, about two sentences, and ran dozens of rounds of single cuts, additions and swaps. The collection of real CVs gathered for that purpose was never joined to the tests.
 
-**What the candidate said.** "Why twelve judges?", and then why thirty: there was no variation, so what was the crew testing? He had done AI scoring without comparison: a model can tell which of two is better, but rarely scores them consistently when shown them apart. And he was surprised how small the changes were: he had asked for framings and saw tests of single wordings.
+**What the candidate said.** Why twelve judges, and then why thirty? There was no variation, so what was the crew testing? They had done AI scoring without comparison: a model can tell which of two is better, but rarely scores them consistently when shown them apart. And they were surprised how small the changes were: they had asked for framings and saw tests of single wordings.
 
 **What it missed.**
 - Three models of one family, each asked four ways, are three judges asked repeatedly, not twelve opinions. On a clear difference, twelve rooms say what one would have.
