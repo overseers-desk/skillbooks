@@ -12,10 +12,10 @@ This folder is for our search for funding. Follow the method in [path]/listing-s
 
 ## Yardstick
 
-1. One campaign folder named `{something}.sift` holds the configuration, the registry, the dossiers and the operator profile.
+1. One campaign folder named `{something}.sift` holds the configuration, the registry and the dossiers. The operator profile is in it, or stays where the charity keeps it and is named by path.
 2. The run takes nothing from the document for job listings and names no response method: the registry has no job columns and the scores use no job dimensions.
 3. The configuration defines the campaign's dimensions with scales and anchors, drawn from what the charity said it cares about, since this kind of listing has no domain document.
-4. Each call has a registry row, a dossier, both scores and a decision. The award the second call leaves unstated is estimated and marked as an estimate.
+4. Each call has a registry row, a dossier and both scores. The award the second call leaves unstated is estimated and marked as an estimate.
 5. The commission's requirements the charity cannot meet are listed as hard gates.
 6. A choice the charity had not made is in the configuration, marked as not confirmed.
 
