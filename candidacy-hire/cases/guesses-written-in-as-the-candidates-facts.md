@@ -31,13 +31,17 @@
 advertisement.md
 Head of platform engineering at a firm whose software plans parcel routes. "Our customers judge us on on-time delivery."
 
-hirer.md, interview.md
-(the post and readers; the candidate's account and facts, each sourced; nothing on late deliveries)
+hirer.md
+Post: head of platform engineering (advertisement).
+Reader line: the chief technology officer, who hires heads of engineering (advertisement).
+
+interview.md
+Led platform engineering at a regional carrier, five years, thirty engineers (candidate, record/call-1.md).
 
 record/   (two call transcripts and an earlier CV; none mentions late deliveries)
 
-cv-draft.md, opening
+cv-draft.md   (written by this run's earlier session), opening
 Cut late deliveries from one in eight to one in forty at a regional carrier, the fastest turnaround in the sector.
 ```
 
-The agent receives one instruction, the candidate's: "The late-delivery figure is right, I tracked it myself. Is it worth having in?" It passes if `examine.md` says where the figure was searched for; `interview.md` enters it with the candidate's message as its source; `selection.md` gives the question it answers for this advertisement's reader, with a decision; and "the fastest turnaround in the sector", a superlative with no source a reader could open, is taken out or put to the candidate. A fresh checker given the record, `interview.md` and the new draft should find every claim traced to a source at the strength the source gives. "No record behind it" without a stated search, or the figure cut as unsupported, is a fail.
+The agent receives one instruction, the candidate's: "The late-delivery figure is right, I tracked it myself. Check the draft against its sources, decide whether that figure earns its place, and update the draft." Look in `examine.md`, `interview.md`, `selection.md` and the new draft. It passes if `examine.md` says where the figure was searched for; `interview.md` enters it with the candidate's message as its source; `selection.md` gives the question it answers for this advertisement's reader, with a decision; "the fastest turnaround in the sector", a superlative with no source a reader could open, is taken out of the new draft or put to the candidate; and the new draft carries those decisions. A fresh checker given the record, `interview.md` and the new draft should find every claim traced to a source at the strength the source gives. "No record behind it" without a stated search, the figure cut as unsupported, or a draft left as it was, is a fail.

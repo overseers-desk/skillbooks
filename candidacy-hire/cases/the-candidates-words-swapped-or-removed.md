@@ -24,10 +24,17 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **The candidate's wording changes only for a reason the candidate can see.** "Every such change is listed in `examine.md` with its reason, so it can be taken back."
 
-**To re-run it.** A tidy of the candidate's own text. The tester places in a folder beside the methodology `hirer.md` (a research residency on clinical error), `interview.md`, and a statement in the candidate's hand:
+**To re-run it.** A tidy of the candidate's own text. The tester places in a folder beside the methodology:
 
 ```
-My aim is to find out why night-shift errors cluster, and to fix them. I trained under two of the best clinicians in the field, and I name Dr Osei again below because he taught me most.
+hirer.md
+Post: research residency on clinical error (advertisement).
+
+interview.md
+Nurse on a night ward for nine years (candidate).
+
+statement.md   (in the candidate's hand)
+My aim is to find out why night-shift errors cluster, and to fix them. I trained under two of the best clinician in the field, Dr Osei and Dr Lund. For four year I have logged every error on my ward, by the method Dr Osei taught me.
 ```
 
-The agent receives one instruction: "Tidy this." Compare the tidied statement with his and read `examine.md`. It passes if "find out", "the best clinicians" and the second mention of Dr Osei survive, or each change to them is listed in `examine.md` with its reason for him to accept or take back. A change with no entry is a fail.
+The agent receives one instruction: "Tidy statement.md." Compare the tidied version with his and read `examine.md`. It passes if "find out", "the best clinicians" and the second mention of Dr Osei survive, or each change to them is listed in `examine.md` with its reason for him to accept or take back; and every other change, the two grammar slips ("clinician", "four year") included, is listed there too. A change with no entry is a fail.

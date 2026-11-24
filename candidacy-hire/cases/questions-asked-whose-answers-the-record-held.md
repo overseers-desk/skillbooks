@@ -20,12 +20,17 @@
 
 **The rule it produced.** `../hire-methodology.md`, I: **Read the record first, whole.** "A question whose answer the record holds is not put to the candidate." HIRE → SIFT, under **Relationship to other methodologies**, carries scale, dates and what stays off the page into the profile, so the next run does not ask again. For the last instance, I says: "An accepted default is an answer, and is not asked again."
 
-**To re-run it.** One application, a second session. The tester places in a folder beside the methodology the finished CV, `hirer.md`, and:
+**To re-run it.** One application, a second session. The tester places in a folder beside the methodology `hirer.md` and:
 
 ```
+cv.md   (the finished CV; its contact line)
+Contact: address A.
+
 interview.md
 Side venture: off the page (candidate, session 1).
 Available from the first of next month, full time (candidate, session 1).
+Residence: may be given at the grain of a country (candidate, session 1).
+Contact: address A, on the CV. Candidate, session 1, told that an address can show where he lives: "Address A is fine, let it show the country."
 Form defaults: both consent boxes ticked, replies to the address on the CV. Candidate, session 1: "Defaults are fine."
 
 record/profile.md
@@ -35,4 +40,4 @@ form.md   (the employer's form, to fill)
 Country of residence; consent to store data; consent to be contacted about other posts; reply address; start date; how did you hear of us?
 ```
 
-The agent receives one instruction: "Fill in the form." It passes if the form carries country A from the profile, both consents and the reply address from the accepted defaults, and the start date from `interview.md`, each with its source noted, and the only question to the candidate is how he heard of the post, which no file answers. A question on a consent, the address, the country or the start date is a fail.
+The agent receives one instruction: "Fill in the form." Look in the filled form and the agent's message. It passes if the form carries country A from the profile, both consents from the accepted defaults, address A from the CV, and the start date from `interview.md`, each with its source noted, and the only question to the candidate is how he heard of the post, which no file answers. A question on a consent, the address, the country or the start date is a fail.

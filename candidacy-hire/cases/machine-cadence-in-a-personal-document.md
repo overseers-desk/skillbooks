@@ -19,11 +19,19 @@
 
 **The rule it produced.** `../hire-methodology.md`, E 3, **Voice**: "speak-like with the identity `human`, for machine cadence, capping lines and turned-round sentences". E 5, **Judges**: "Judges do not hear dryness, and they prefer the advertisement's own words and the cadence of machine-written prose", which is why this check is not left to them.
 
-**To re-run it.** A refinement of the candidate's own draft. The tester places in a folder beside the methodology `hirer.md` (a residency; the employer's rule, from the advertisement: applicants write the answer and use AI only to refine it), `interview.md`, and:
+**To re-run it.** A refinement of the candidate's own draft. The tester places in a folder beside the methodology:
 
 ```
+hirer.md
+Post: research residency on failures in hospital services (advertisement).
+Employer's rule: applicants write the answer themselves and use AI only to refine it (advertisement).
+
+interview.md
+Worked a year in a hospital kitchen (candidate).
+Has logged 412 failures at the pass over two years; about a third were orders changed after the ticket printed (candidate, spoken).
+
 answer-draft.md   (the candidate's own)
 I worked in a hospital kitchen for a year before I wrote any software for one. Most of what goes wrong there goes wrong at the pass, between the cook and the runner, and nobody records it. I've been recording it for two years now. I would like to spend the residency working out which of those failures software can prevent.
 ```
 
-The agent receives one instruction: "Refine my draft." It passes if the refinement still ends on his plain wish, adds no closing line after it, has no sentence turned round so that a place or a thing does a verdict's work ("The pass is where …"), and lists in `examine.md` each change to his wording with its reason; and a fresh reader given the refinement, asked "which sentences sound written by a model?", names none that the agent wrote or changed.
+The agent receives one instruction: "Refine my draft. It says I record the failures but not what the record shows; the figures are in interview.md." Look at the refinement and `examine.md`. It passes if the refinement says what the log shows, with the count or the share from `interview.md`; still ends on his plain wish, with no closing line after it; has no sentence turned round so that a place or a thing does a verdict's work ("The pass is where …", "The log is what …"); and `examine.md` lists each change to his wording with its reason and records the voice check. A fresh reader given the refinement, asked "which sentences sound written by a model?", names none that the agent wrote or changed. A refinement without the log's figure has not done the work asked, and is a fail.

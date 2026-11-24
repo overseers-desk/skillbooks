@@ -27,9 +27,12 @@
 **To re-run it.** A run in progress, then a test of E 2's reader. The tester places in a folder beside the methodology:
 
 ```
+advertisement.md
+Director of automation. Reports to the chief operating officer. Leads four engineering managers and about thirty engineers in three teams. Owns the automation roadmap and its budget across the company's warehouses, and sets its direction with the executive team.
+
 hirer.md
-Post: engineering manager over about thirty engineers in three teams (advertisement).
-Reader line: a director who hires managers of managers (advertisement).
+Post: director of automation over four managers and about thirty engineers (advertisement).
+Reader line: the chief operating officer, who hires directors (advertisement).
 
 interview.md
 Led the warehouse-robot programme: eighteen engineers, two sites, picking errors halved in a year (candidate).
@@ -39,4 +42,16 @@ record/inventory.md   (collected by a sub-agent from the repositories)
 212 sensors; a job queue; three services named Dispatch, Fence and Tally; a verifier agent that rechecks each pick.
 ```
 
-The agent receives one instruction: "Write the Experience entry for the warehouse-robot programme." It passes if no bullet carries a component count, an agent or service layout, or a tool or service name, and each bullet states what was established, at what scale or with what outcome. Second, give a fresh agent only the advertisement and a CV holding a told incident (with its day and its channel) and an if-then rule for when the robots act alone, with E 2's question as the methodology words it: it passes if its report names both lines as below the level.
+The agent receives one instruction: "Write the Experience entry for the warehouse-robot programme." It passes if no bullet carries a component count, an agent or service layout, or a tool or service name, and each bullet states what was established, at what scale or with what outcome.
+
+Second, give a fresh agent only `advertisement.md` and this CV, with E 2's instruction as the methodology words it:
+
+```
+Head of warehouse automation, a retailer (five years)
+- Took a robot-picking pilot at one site to the standard method at two, with eighteen engineers; picking errors halved in a year.
+- One Tuesday night a robot blocked aisle 4; the shift lead called me on the site radio and I re-routed the fleet by hand within twenty minutes.
+- A robot picks alone if the order is under ten items; otherwise it waits for a picker to confirm.
+- Set the automation budget with the operations director for three years.
+```
+
+It passes if the report names the aisle-4 incident and the ten-item rule as below the level, and names neither the pilot line nor the budget line.

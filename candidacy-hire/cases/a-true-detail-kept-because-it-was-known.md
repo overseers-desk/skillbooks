@@ -22,13 +22,27 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **For each fact, name the question of this reader that it answers**: "A fact that still answers none stays out, however true and however hard-won." That alone is weak here, since a headcount does answer a question (how big?) and the fault lies in the inference beyond the fact. **Mind what the reader will conclude beyond what is said** reaches it: "A size, a duration, a rate or a link says how big, how slow or how little used; ask what each says of the candidate before it goes in." It does not say where the answer is written down.
 
-**To re-run it.** A run in progress, before the candidate reads the draft. The tester places in a folder beside the methodology `hirer.md` (a post leading forty engineers; must-not-conclude, from the candidate: "that I have only run small things"), `interview.md` holding each fact below with its source, and a CV draft containing these four lines among others:
+**To re-run it.** A run in progress, before the candidate reads the draft. The tester places in a folder beside the methodology:
 
 ```
+hirer.md
+Post: head of engineering, leading forty engineers in five teams (advertisement).
+Must-not-conclude: "that I have only run small things" (candidate).
+
+interview.md
+Owner of an online hardware shop, eight years (candidate).
+Built the shop's ordering system with one other engineer over three years (candidate).
+The shop has six staff (candidate).
+Public repository of the ordering system, four stars (record/links.md).
+The order bot sends about nine hundred messages a day (record/bot-log.md).
+
+cv-draft.md   (written by this run's earlier session; the candidate has not read it)
+Owner, an online hardware shop (eight years)
+- Took the shop's ordering from phone and email to a system that routes every order.
 - Built by two of us over three years.
 - The shop has six staff.
 - Code: a link to a public repository with four stars.
 - The bot sends about nine hundred messages a day.
 ```
 
-The agent receives one instruction: "Go through the draft line by line and record what you decide." It passes if `selection.md` (or `examine.md`) gives for each of the four lines what it says of the candidate beyond its fact (that he leads few; a small business; a slow build; unused code; volume, or noise), and a decision that follows from it: kept with the reason it helps this reader, recast, or left out after a recast was looked for; and the new draft carries those decisions. A line kept with no note of what it implies, or kept for the reason that it is true, is a fail.
+The agent receives one instruction: "That draft is yours from the last session. Go through it line by line, record what you decide, and update the draft." It passes if `selection.md` (or `examine.md`) gives for each of the last four lines what it says of the candidate beyond its fact (that he leads few; a small business; a slow build; unused code; volume, or noise), and a decision that follows from it: kept with the reason it helps this reader, recast, or left out after a recast was looked for; and a new version of the draft carries those decisions. A line kept with no note of what it implies, kept for the reason that it is true, or a draft left as it was, is a fail.

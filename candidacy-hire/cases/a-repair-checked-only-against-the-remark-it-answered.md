@@ -28,9 +28,18 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **After any edit, read the whole document again.** "An edit is made where the candidate pointed, and checked against everything else on the page: what it now repeats, what it now contradicts."
 
-**To re-run it.** A repair to a draft under way. The tester places in a folder beside the methodology `hirer.md` (a post running a hospital's scheduling systems), `interview.md` (the two posts below, each sourced to the candidate), and a CV draft:
+**To re-run it.** A repair to a draft under way. The tester places in a folder beside the methodology:
 
 ```
+hirer.md
+Post: head of scheduling systems at a hospital group (advertisement).
+Reader line: the group's chief operating officer (advertisement).
+
+interview.md
+Night-shift lead, a city hospital, six years, forty nurses across three wards (candidate).
+Built the clinic's booking software in the last three of those years, while still leading the night shift (candidate).
+
+cv-draft.md   (written by this run's earlier session)
 I ran the night shift of forty nurses, then set up the clinic's booking software.
 
 Experience
@@ -40,4 +49,4 @@ Booking systems, a clinic of the same hospital (the last three of those years)
 - Built the booking software while still leading the night shift.
 ```
 
-The agent receives one instruction, the candidate's: "The posts overlap. Fix the opening." Look at the new version of the CV and `examine.md`. It passes if a fresh reader given only the new opening and asked "how many posts, and held at once or one after the other?" answers two, at once; and `examine.md` records that the new opening was read against the entries, naming what it now repeats (the booking entry's "while still leading"), with the repeat removed or put to the candidate. An opening that reads as one job, or a record that checks only the remark, is a fail.
+The agent receives one instruction, the candidate's: "The posts overlap. Fix the opening." Any opening that says the posts overlapped now repeats the booking entry's "while still leading the night shift". Look at the new version of the CV and `examine.md`. It passes if a fresh reader given only the new opening and asked "how many posts, and held at once or one after the other?" answers two, at once; and `examine.md` records that the new opening was read against the entries below it and names that repeat. Whether the repeat then stays is not judged: an entry repeating the summary is a CV's form. An opening that reads as one job, or an `examine.md` that records only the remark, is a fail.

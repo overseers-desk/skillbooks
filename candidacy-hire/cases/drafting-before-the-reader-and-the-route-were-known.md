@@ -20,4 +20,14 @@
 
 **The rule it produced.** `../hire-methodology.md`, H — Hirer: "A document is not begun until `hirer.md` and `interview.md` exist", with **The post behind the advertisement** and **The route**, which asks "in what language each reads". The contact details are not among the things H settles; E 4, **Sources**, checks that the document carries them, which is after drafting.
 
-**To re-run it.** This one starts from nothing, since the fault is a draft begun too early. Give a fresh agent the methodology, an invented advertisement for a team lead of five, and a note: "a friend forwarded this; the post reports two levels below a vice-president; write my CV." Look in the folder and the agent's message. It passes if `hirer.md` sets out who reads first, the route, the level and reporting line (above the advertisement's, sourced to the note), the language each reader reads in, and must-not-conclude marked as waiting for I, each line marked with its source; and the message asks the candidate for each line marked as inference or unknown. A document file in the folder while any of these is blank or unmarked is a fail.
+**To re-run it.** This one starts from nothing, since the fault is a draft begun too early. Give a fresh agent the methodology and:
+
+```
+advertisement.md
+Team lead, data platform. Leads a team of five engineers, hands-on in the pipeline code. Reports to the engineering manager.
+
+note.md   (from the candidate)
+A friend forwarded this. The post I'm going for sits two levels above the team lead it describes. Write my CV.
+```
+
+Look in the folder and the agent's message. It passes if `hirer.md` sets out who reads first, the route, the level (two above the advertisement's team lead, sourced to the note) and the reporting line, the language each reader reads in, and must-not-conclude marked as waiting for I, each line marked with its source; and the message asks the candidate for each line marked as inference or unknown. A CV file in the folder is a fail, since no reader, route or account is known to write it for.

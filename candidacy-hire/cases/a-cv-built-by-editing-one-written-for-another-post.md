@@ -25,9 +25,10 @@
 ```
 hirer.md
 Post: two-year research fellowship on how field robots fail (advertisement).
+Reader line: a panel of roboticists who run trials in the lab (advertisement).
 Readers lack: failure evidence from machines in daily use (candidate).
 Taken-for: someone whose work yields evidence a lab cannot get (candidate).
-Must-not-conclude: a manager after a new title (candidate).
+Must-not-conclude: none given (candidate).
 
 interview.md
 Account (candidate, spoken): "My robots break in ways no lab sees, and I have logged every break for three years."
@@ -43,4 +44,4 @@ old-cv.md   (written for an operations-manager post)
 - Ran a weekly review of every robot fault with the vendor.
 ```
 
-The agent receives one instruction: "Write the CV for the fellowship." It passes if `selection.md` lists each of the four facts with a question the fellowship's reader has and a decision, and the team, override and integration facts are recast to such a question (for example the team as the scale of the trial, the override rule as a condition of it, the integration as a control), not left out. The right outcome for a line written for another reader is a recast; a fact left out names in `selection.md` the questions tried for it. No sentence of `old-cv.md` appears word for word in the new CV. A CV made from a copy of `old-cv.md`, a fact dropped with no question tried, or no `selection.md` is a fail.
+The agent receives one instruction: "Write the CV for the fellowship." Look in `selection.md` and the new CV. It passes if `selection.md` lists each of the four lines of `old-cv.md` with a question the fellowship's reader has and a decision, and three are recast to a question of that reader, not left out: the team to the scale of the trial behind the log (forty people working beside twelve robots), the override rule to a condition under which the faults arose (when a robot acts without a person), and the integration to a measure or a control (mis-picks as the count the log is checked against). The fault review may be kept or recast as how the log was kept. A fact left out names in `selection.md` the questions tried for it. No sentence of `old-cv.md` appears word for word in the new CV. A CV made from a copy of `old-cv.md`, any of the first three facts dropped, or no `selection.md` is a fail.

@@ -17,4 +17,21 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **Length follows content.** "A word allowance is a ceiling, and the text ends at the last sentence the reader would miss." That says where the text ends. It does not name the sentence that tells the reader what they would conclude alone; for that it leans on **For each fact, name the question of this reader that it answers**.
 
-**To re-run it.** A run in progress, the angle chosen. The tester places in a folder beside the methodology `hirer.md` (a fellowship; a screener who reads several hundred answers), and an `interview.md` holding the candidate's account, four facts with their sources, the angle he chose for the answer, and the form field: "Why us? Up to 400 words." The agent receives one instruction: "Draft the answer." It passes on three looks at the output. The record (`examine.md` or the message) says for each sentence what the reader loses without it. A fresh reader asked to mark any sentence that states what the sentences before it already let the reader conclude marks none. And in E 5's four rooms (or, lacking the skill, its form for a missing tool), the answer is preferred to, or not beaten by, each of two rivals: the answer with its weakest block of two or three sentences removed, chosen by the tester, and a version a fresh agent writes from the same `interview.md` in half the words. A rival preferred in most rooms is a fail.
+**To re-run it.** A run in progress, the angle chosen. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: two-year fellowship on how software fails in hospitals (advertisement).
+Reader line: a screener who reads several hundred answers, then a panel (advertisement).
+
+interview.md
+Account (candidate, spoken): "I've logged every scheduling failure at one hospital for two years, and I want to find out which of them software causes."
+1. A two-year log of 340 scheduling failures at one hospital (record/log-summary.md).
+2. Wrote the hospital's rota software, in use on twelve wards (candidate).
+3. The fellowship's group published the study his log would extend (record/paper.md).
+4. Holds a nursing degree (candidate).
+Angle (chosen by the candidate): the log is evidence the group lacks.
+Form field: "Why us? Up to 400 words."
+```
+
+The agent receives one instruction: "Draft the answer." It passes on three looks at the output. The record (`examine.md` or the message) says for each of the four facts whether the answer uses it and, for each one used, what the reader loses without it. A fresh reader asked to mark any sentence that states what the sentences before it already let the reader conclude marks none. And the tester runs E 5's four rooms (or, lacking the skill, its form for a missing tool) twice each, eight verdicts per pairing, between the answer and each of two rivals: the answer with its weakest block of two or three sentences removed, chosen by the tester, and a version a fresh agent writes from the same `interview.md` in half the words. A rival preferred in most of its eight verdicts is a fail.
