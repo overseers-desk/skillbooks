@@ -191,5 +191,5 @@ An application form's questions are answered by the same four phases, with two t
 
 ## Relationship to other methodologies
 
-- **SIFT → HIRE**: a listing marked `respond` in SIFT becomes a HIRE run. SIFT's dossier on the listing is the first source for `hirer.md`.
-- **HIRE → SIFT**: the standing record is the operator profile SIFT scores against, and the assumption register sits beside SIFT's registry, a listing's decisions keyed by its id.
+- **SIFT → HIRE**: a listing marked `respond` in SIFT becomes a HIRE run. SIFT's dossier on the listing is the first source for `hirer.md`, which names the listing's id. HIRE reads the dossier and does not write to it.
+- **HIRE → SIFT**: the standing record is the operator profile SIFT scores against. A row in the assumption register that concerns a listing names its id. When the document is sent, whoever sends it enters that in the listing's row in SIFT's registry, under SIFT's Target, and that row is the one record of how the application stands. HIRE's files sit outside SIFT's campaign directory.
