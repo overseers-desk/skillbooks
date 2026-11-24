@@ -10,7 +10,7 @@ Every row must have an `id` and a `url`. A row without these is not a listing. T
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
-**Programmatic access:** Use `sqlite3` for SQL operations on registry files. Do not use `trdsql`, `q`, `csvq`, or Python's `csv` module — they apply CSV quoting rules to TSV output, corrupting fields that contain double quotes.
+**Programmatic access:** Use a tool that writes TSV without CSV quoting, such as `sqlite3`. A tool that applies CSV quoting to its output corrupts fields that contain double quotes.
 
 ## Core columns
 

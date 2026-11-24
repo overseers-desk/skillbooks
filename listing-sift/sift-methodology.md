@@ -19,7 +19,7 @@ This document holds what is true of every listing. What is true of every listing
 
 An operator facing 200 open listings cannot investigate all of them, and cannot score what has not been investigated. Without structure, two failure modes emerge.
 
-The first is premature filtering. The operator skims titles, discards anything that does not immediately appeal, and pursues a handful of familiar-looking listings. This is comfortable but leaves high-value opportunities undiscovered — the listing whose title was unremarkable but whose dossier would have revealed an unusual fit.
+The first is premature filtering. The operator skims titles, discards anything that does not immediately appeal, and pursues a handful of familiar-looking listings. This is comfortable but leaves high-value opportunities undiscovered — the listing whose title was unremarkable but whose dossier would have revealed a good fit.
 
 The second is orphaned judgment. The operator scores a listing based on the posting text alone, then the posting goes dead. The score cannot be audited because the evidence is gone. Three months later, a similar listing appears at the same organisation, and the operator cannot remember why the first one scored well or poorly.
 
@@ -55,7 +55,7 @@ Example dimension families (not prescriptive — campaigns choose what applies):
 - **Strategic value**: does the listing provide access, knowledge, network position, or influence that is scarce and transferable?
 - **Economic value**: what is the financial return (compensation, funding amount, prize, contract value)?
 - **Stepping-stone value**: does responding successfully open a category of future opportunities currently inaccessible?
-- **Effort compatibility**: is the work compatible with the operator's available capacity and concurrent commitments?
+- **Effort compatibility**: is the work within the operator's available capacity?
 
 A grant-seeking campaign might use research alignment, funding amount, institutional prestige and reporting burden. The methodology does not constrain which dimensions a campaign uses, only that they exist, are documented with anchors, and sum to a clamped star rating.
 
@@ -65,7 +65,7 @@ The percentage estimates how likely the operator is to be selected if they respo
 
 1. **Base estimate** (`pct_base`, 0–100). Compare the listing's stated requirements against the operator profile. Every unmet hard requirement reduces the base significantly.
 
-2. **Amplifiers**. The campaign defines tags for circumstances where the operator's profile is a competitive advantage rather than a legibility problem. Each applicable amplifier multiplies `pct_base` by a campaign-defined factor (default 1.15, compounding). The result is capped at 95.
+2. **Amplifiers**. The campaign defines tags for circumstances that raise the operator's odds beyond what matching the stated requirements shows. Each applicable amplifier multiplies `pct_base` by a campaign-defined factor (default 1.15, compounding). The result is capped at 95.
 
 3. **Hard gates**. Requirements that block candidacy entirely (credentials, certifications, years of specific experience). Listed explicitly so the operator can see them before investing effort.
 
@@ -171,7 +171,7 @@ Discover all potentially relevant listings. Cast wide. Do not score or filter �
 1. Read the operator profile to establish the scope of relevance
 2. Search across campaign-defined sources. The source mix varies by domain: job boards and company career pages for employment; grant databases and funder websites for funding; conference listings and academic networks for CFPs; procurement portals for tenders
 3. For each listing found:
-   - Verify it is alive (check the URL loads; if blocked by bot detection, use headless browser to verify)
+   - Verify it is alive (check the URL loads; where a plain request is refused, check it in a browser)
    - Extract core fields: source name, title, location, URL
    - Extract the fields of the campaign's kind of listing, and the campaign's own
    - Assign an `id` following the campaign's ID format
@@ -199,7 +199,7 @@ Investigate is Sonnet-tier work: structured fetch, conversion, and factual resea
 
 For each row in the registry that lacks a dossier file:
 
-1. **Fetch the listing.** Try WebFetch first. If it returns 403, Cloudflare challenge, or empty content, fall back to headless browser with flock serialisation to avoid concurrent user-data-dir collisions. Detect the available browser binary at runtime; do not hardcode a specific browser path.
+1. **Fetch the listing.** Try a plain fetch first. Where it is refused or comes back empty, fetch through a browser, with a skill for it where one is installed. Agents working in parallel take turns with the browser.
 2. **Convert HTML to markdown.** Strip navigation, footers, cookie banners, and other boilerplate if identifiable.
 3. **Research the source.** On a platform hosting many publishers' listings, the publisher is the account the listing is posted under; the name it displays is text that account's owner chose, and may be another organisation's. Record the account in `source_account`, and research the organisation that holds it. Where the listing's own description of its publisher and the research describe different organisations, the research is about someone else: say so in "Source background" and attach none of it. For publishers that are not household names, do a brief web search to establish: what the organisation does, its approximate size and standing, how it is funded, and any recent news relevant to the listing. Write findings into the "Source background" sections.
 4. **Write the dossier file** to `dossiers/{id}.md` using the format above. Leave the Fit section empty — Fit fills it in SOP 3.
