@@ -104,6 +104,7 @@ Dossiers are stored in the campaign directory at `dossiers/{id}.md`, where `{id}
 ---
 id: {id}
 source_name: {who published the listing}
+source_account: {the publisher's page or profile on the hosting platform, if any}
 title: {listing title}
 url: {primary URL}
 fetched: {ISO date}
@@ -193,7 +194,7 @@ For each row in the registry that lacks a dossier file:
 
 1. **Fetch the listing.** Try WebFetch first. If it returns 403, Cloudflare challenge, or empty content, fall back to headless browser with flock serialisation to avoid concurrent user-data-dir collisions. Detect the available browser binary at runtime; do not hardcode a specific browser path.
 2. **Convert HTML to markdown.** Strip navigation, footers, cookie banners, and other boilerplate if identifiable.
-3. **Research the source.** For publishers that are not household names, do a brief web search to establish: what the organisation does, approximate size, funding stage, regulatory status, and any recent news relevant to the listing. Write findings into the "Source background" sections.
+3. **Research the source.** On a platform hosting many publishers' listings, the publisher is the account the listing is posted under; the name it displays is text that account's owner chose, and may be another organisation's. Record the account in `source_account`, and research the organisation that holds it. Where the listing's own description of its publisher and the research describe different organisations, the research is about someone else: say so in "Source background" and attach none of it. For publishers that are not household names, do a brief web search to establish: what the organisation does, approximate size, funding stage, regulatory status, and any recent news relevant to the listing. Write findings into the "Source background" sections.
 4. **Write the dossier file** to `dossiers/{id}.md` using the format above. Leave the Fit section empty — Fit fills it in SOP 3.
 5. **Update `alive` in the registry** if the fetch reveals the listing is dead (404, "this position has been filled", "this call is closed", etc.).
 
