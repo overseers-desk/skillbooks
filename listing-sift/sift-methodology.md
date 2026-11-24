@@ -7,11 +7,13 @@ SIFT is a four-phase methodology for evaluating published listings and deciding 
 - **S** — Sweep. Discover listings from all available sources. Cast wide, do not filter.
 - **I** — Investigate. Fetch, archive, and research each listing into a permanent dossier.
 - **F** — Fit. Score each listing on two axes: value-to-us and likelihood-of-success.
-- **T** — Target. Decide disposition and prepare a response for each listing worth pursuing.
+- **T** — Target. Decide what to do with each listing (respond, skip, watch, or approach through a relationship) and, for each one worth answering, the channel and the method that prepares the answer.
 
 A "listing" in SIFT is a published statement of need: someone has declared that they want something and invited responses. A job posting is a listing. A grant call is a listing. A conference CFP, a government tender, a programme admission, a partnership call, and an open-source bounty are all listings. The common structure is that the publisher has a need, has described it, and is waiting for candidates to present themselves.
 
-The methodology applies to any domain where the universe of published listings exceeds the operator's capacity to pursue all of them, and where each listing has both variable desirability and variable probability of success. The domain-specific content — what columns the registry has, what dimensions compose the star rating, what the operator profile looks like, what "response preparation" means — lives in the campaign configuration, not in SIFT itself.
+The methodology applies to any domain where the universe of published listings exceeds the operator's capacity to pursue all of them, and where each listing has both variable desirability and variable probability of success.
+
+This document holds what is true of every listing. What is true of every listing of one kind (the columns a job posting or a grant call needs, the dimensions such listings are weighed on, how the response is prepared) is in that kind's domain document under `domains/`. What one operator chose (which dimensions count and their thresholds, the sources, the tags) is in the campaign configuration, in the campaign directory in the operator's own files. A kind of listing with no domain document defines its columns and dimensions in the campaign configuration too.
 
 ## The problem SIFT solves
 
@@ -32,7 +34,7 @@ The two-axis scoring framework addresses a subtler problem: the conflation of de
 | **Sweep** | Discover listings. Cast wide, do not filter. |
 | **Investigate** | Fetch, archive, and research each listing into a dossier. |
 | **Fit** | Score each listing against the operator profile on two axes. |
-| **Target** | Decide disposition and prepare a tailored response. |
+| **Target** | Decide what to do with each listing, and hand over each one worth a response. |
 
 The Investigate phase produces a permanent evidence base so that Fit ratings are auditable and reproducible even after listings go dead.
 
@@ -40,13 +42,13 @@ The Investigate phase produces a permanent evidence base so that Fit ratings are
 
 ### Value-to-us (stars, 1.0–5.0)
 
-The star rating is a composite score computed from campaign-defined dimensions. Each campaign defines 3–6 dimensions, each with a numerical scale and anchor descriptions. The formula is:
+The star rating is a composite score computed from the campaign's dimensions. A campaign uses 3–6 dimensions, each with a numerical scale and anchor descriptions. The formula is:
 
 ```
 stars = clamp(sum-of-dimensions, 1.0, 5.0)
 ```
 
-The dimensions and their scales are defined in the campaign configuration, not in this methodology. SIFT prescribes the framework (composite score from defined dimensions, clamped to 1.0–5.0); the campaign prescribes the substance.
+The dimensions are defined outside this document. A domain document defines the ones campaigns of its kind choose from. The campaign configuration says which of them the campaign uses, sets their thresholds, and defines any of its own. SIFT prescribes the framework: a composite score from defined dimensions, clamped to 1.0–5.0.
 
 Example dimension families (not prescriptive — campaigns choose what applies):
 
@@ -55,7 +57,7 @@ Example dimension families (not prescriptive — campaigns choose what applies):
 - **Stepping-stone value**: does responding successfully open a category of future opportunities currently inaccessible?
 - **Effort compatibility**: is the work compatible with the operator's available capacity and concurrent commitments?
 
-A job-seeking campaign might define four specific dimensions (influence/knowledge, compensation modifier, stepping-stone, labour fit). A grant-seeking campaign might define three (research alignment, funding amount, institutional prestige). The methodology does not constrain which dimensions a campaign uses, only that they exist, are documented with anchors, and sum to a clamped star rating.
+A grant-seeking campaign might use research alignment, funding amount, institutional prestige and reporting burden. The methodology does not constrain which dimensions a campaign uses, only that they exist, are documented with anchors, and sum to a clamped star rating.
 
 ### Likelihood-of-success (percentage, 0–100)
 
@@ -67,7 +69,7 @@ The percentage estimates how likely the operator is to be selected if they respo
 
 3. **Hard gates**. Requirements that block candidacy entirely (credentials, certifications, years of specific experience). Listed explicitly so the operator can see them before investing effort.
 
-The amplifier tags are campaign-specific. A job-seeking campaign might define `cross-culture`, `cross-domain`, `multilingual`. A grant campaign might define `interdisciplinary`, `industry-partnership`, `emerging-market`. The methodology defines the amplifier mechanics; the campaign defines the tags.
+The amplifier tags are the campaign's own. A grant campaign might define `interdisciplinary`, `industry-partnership`, `emerging-market`. The methodology defines the amplifier mechanics; the campaign defines the tags.
 
 ### The two axes together
 
@@ -80,17 +82,23 @@ Stars answer: "Is this worth pursuing if we could get it?" Percentage answers: "
 
 Target uses this matrix to assign dispositions. The thresholds for "high" and "low" are campaign-specific.
 
+## Campaign directory
+
+SIFT works from a campaign directory in the operator's own files: the configuration, the registry and the dossiers. `sift-campaign-directory.md` gives its layout and what the configuration holds. Every phase starts by reading the configuration.
+
+Where there is no campaign directory yet, the first act is to set one up, and the operator is asked for the choices the configuration holds. A choice that could not be put to the operator, because the operator is away or because it only came up in a later phase, is made by the phase that needs it and written into the configuration, marked as not yet confirmed by the operator.
+
 ## Registry concept
 
 The registry is a TSV file that accumulates data left-to-right as listings move through the pipeline. One row per listing. Columns are grouped by phase: Sweep columns are filled first, then Fit columns, then Target columns. A row with empty Fit columns has been discovered but not yet scored. A row with empty Target columns has been scored but not yet dispositioned.
 
-The registry has core columns (present in every campaign) and campaign-specific columns (appended after the core set). The core schema is defined in `sift-registry-format.md`. Campaign-specific columns are defined in the campaign configuration.
+The registry has core columns (present in every campaign), then the columns of the campaign's kind of listing, then the campaign's own. The core schema is defined in `sift-registry-format.md`, a kind's columns in its domain document, and the campaign's own in the campaign configuration.
 
 ## Operator profile
 
-Each campaign has an operator profile document: a structured description of the entity responding to listings. For a job-seeking campaign, this is a CV or career summary. For a grant campaign, it is an organisation capability statement. For a CFP campaign, it is a researcher or speaker profile.
+Each campaign has an operator profile: a description of the entity responding to listings. For a job-seeking campaign, this is the record of a person's career and what they are looking for. For a grant campaign, it is an organisation capability statement. For a CFP campaign, it is a researcher or speaker profile.
 
-The operator profile is what Fit scores against. Its structure is campaign-specific; SIFT does not prescribe its format, only that it exists and that Fit reads it.
+The operator profile is what Fit scores against. SIFT does not prescribe its format, only that it exists and that Fit reads it. Where the method that prepares the response keeps its own record of the operator, that record is the profile: the campaign configuration gives its path, and SIFT reads it without writing to it.
 
 ## Dossier concept
 
@@ -121,15 +129,14 @@ scored_by: {model that scored, if applicable}
 ## Source background
 
 ### Public
-(What any reader would know about the publishing entity:
- sector, size, regulatory status, headquarters, key products,
- funding stage. Brief for well-known names; essential research
- for unknowns.)
+(What any reader could learn of the publisher: what it does,
+ its size and standing, where it is based, how it is funded.
+ Brief for well-known names; essential research for unknowns.)
 
 ### Researcher notes
-(What the agent discovered beyond public knowledge:
- recent news, team size signals, funding rounds,
- regulatory actions, partnerships. Cite sources.)
+(What the research found beyond that and bearing on this
+ listing: recent news, signs of growth or trouble, who is
+ behind it. Cite sources.)
 
 ## Fit
 
@@ -137,7 +144,7 @@ scored_by: {model that scored, if applicable}
 
 | Dimension | Score | Rationale |
 |---|---|---|
-| {campaign-defined dimensions} | ... | ... |
+| {the campaign's dimensions} | ... | ... |
 | **stars** | **{value}** | (formula result) |
 | pct_base | {value} | (requirement-by-requirement) |
 | pct_amplifier | {tags} | (which apply and why) |
@@ -166,7 +173,7 @@ Discover all potentially relevant listings. Cast wide. Do not score or filter �
 3. For each listing found:
    - Verify it is alive (check the URL loads; if blocked by bot detection, use headless browser to verify)
    - Extract core fields: source name, title, location, URL
-   - Extract campaign-specific fields as defined in the campaign configuration
+   - Extract the fields of the campaign's kind of listing, and the campaign's own
    - Assign an `id` following the campaign's ID format
    - Write one row to the registry with all Sweep columns filled. Leave Fit and Target columns empty
 4. Deduplicate by URL. If the same listing appears on multiple sources, keep the primary source (publisher's own site preferred over aggregator mirrors)
@@ -194,7 +201,7 @@ For each row in the registry that lacks a dossier file:
 
 1. **Fetch the listing.** Try WebFetch first. If it returns 403, Cloudflare challenge, or empty content, fall back to headless browser with flock serialisation to avoid concurrent user-data-dir collisions. Detect the available browser binary at runtime; do not hardcode a specific browser path.
 2. **Convert HTML to markdown.** Strip navigation, footers, cookie banners, and other boilerplate if identifiable.
-3. **Research the source.** On a platform hosting many publishers' listings, the publisher is the account the listing is posted under; the name it displays is text that account's owner chose, and may be another organisation's. Record the account in `source_account`, and research the organisation that holds it. Where the listing's own description of its publisher and the research describe different organisations, the research is about someone else: say so in "Source background" and attach none of it. For publishers that are not household names, do a brief web search to establish: what the organisation does, approximate size, funding stage, regulatory status, and any recent news relevant to the listing. Write findings into the "Source background" sections.
+3. **Research the source.** On a platform hosting many publishers' listings, the publisher is the account the listing is posted under; the name it displays is text that account's owner chose, and may be another organisation's. Record the account in `source_account`, and research the organisation that holds it. Where the listing's own description of its publisher and the research describe different organisations, the research is about someone else: say so in "Source background" and attach none of it. For publishers that are not household names, do a brief web search to establish: what the organisation does, its approximate size and standing, how it is funded, and any recent news relevant to the listing. Write findings into the "Source background" sections.
 4. **Write the dossier file** to `dossiers/{id}.md` using the format above. Leave the Fit section empty — Fit fills it in SOP 3.
 5. **Update `alive` in the registry** if the fetch reveals the listing is dead (404, "this position has been filled", "this call is closed", etc.).
 
@@ -215,21 +222,21 @@ Score every row in the registry that has empty Fit columns, using the dossier as
 
 ### Model allocation
 
-Fit is Sonnet-tier work. When a scoring rubric does the intellectual heavy lifting — defines the dimensions, provides anchor examples, specifies the formula — Sonnet applies it reliably. This has been validated across multiple domains: job-listing scoring (four parallel Sonnet agents, 19 listings, no Opus-level corrections required), outreach profiling (SPAR S&P phase), and email classification (TEND E phase). The pattern is consistent: rubric-following is Sonnet-tier; rubric-generation and ambiguity resolution are Opus-tier.
+Fit is Sonnet-tier work. When a scoring rubric does the intellectual heavy lifting — defines the dimensions, provides anchor examples, specifies the formula — Sonnet applies it reliably. Rubric-following is Sonnet-tier; rubric-generation and ambiguity resolution are Opus-tier.
 
 ### Inputs
 
 - Registry (with Sweep columns filled)
 - Dossier files (from Investigate)
 - Operator profile
-- Campaign scoring rubric (dimensions, scales, anchors, formula)
+- Scoring rubric: the dimensions, scales and anchors of the domain document and the campaign configuration
 
 ### Process
 
 For each row where `stars` is empty:
 
 1. Read the dossier. The listing description and source background are the primary evidence for scoring. If the dossier fetch failed, note this in `notes_fit` and score from whatever information is available.
-2. Score each campaign-defined dimension using the rubric's anchors. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
+2. Score each of the campaign's dimensions using the rubric's anchors. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
 3. Compute `stars = clamp(sum-of-dimensions, 1.0, 5.0)`.
 4. Assess `pct_base` by comparing each stated requirement against the operator profile. List any `hard_gates`.
 5. Identify applicable amplifier tags from the campaign's amplifier list.
@@ -246,7 +253,7 @@ Updated registry with Fit columns filled. Updated dossier files with the Fit sec
 
 ### Purpose
 
-For each scored listing, decide whether to respond and how to prepare the response. This is the end of the funnel — only listings worth pursuing get response preparation.
+For each scored listing, decide whether to respond and how the response is to be prepared. This is the end of the funnel: only listings worth pursuing go on to a response.
 
 ### Inputs
 
@@ -260,13 +267,14 @@ For each row where `decision` is empty:
 
 1. Present the scored shortlist to the operator, sorted by `stars` descending, then `pct` descending.
 2. For each listing the operator marks as `respond` or `network-approach`:
-   - Determine the response variant: which version of the response materials to use or create. For job campaigns, this is a CV lane. For grant campaigns, a proposal template. For CFP campaigns, an abstract variant.
-   - Determine what to emphasise and deemphasise from the operator profile for this specific listing.
    - Determine the approach channel: direct application, warm introduction, intermediary, or network approach.
    - Note any known contacts or referral paths.
+   - The channel and the contacts go in the columns the kind or the campaign defines for them, and otherwise in `notes_target`.
+   - For `respond`, the response is prepared by the method the campaign configuration names, where it names one. A run of that method starts from the listing's id and dossier and works in its own files, and Target's work on the listing stops there until the response is submitted. Where no method is named, note in `notes_target` which version of the operator's response materials to use or create (a proposal template for a grant call, an abstract variant for a CFP), and what to emphasise from the operator profile for this listing.
 3. For listings marked `skip`: record the reason in `notes_target` (so future Sweep runs do not re-add them).
 4. For listings marked `watch`: no response preparation, but keep in the registry for periodic re-check.
 5. Update the row in the registry.
+6. When a response is submitted, enter `date_responded` and update `status`, whichever method prepared it.
 
 ### Dispositions
 
@@ -287,8 +295,9 @@ Updated registry with Target columns filled. Listings marked `respond` are ready
 |---|---|---|---|
 | Registry (TSV) | Sweep (rows); Fit (scores); Target (dispositions) | All phases | Campaign directory |
 | Dossier files | Investigate (description + background); Fit (scoring section) | Fit, Target, human review | `dossiers/{id}.md` |
-| Operator profile | Pre-campaign (by the operator) | Fit (scoring against requirements) | Campaign directory or external |
-| Campaign configuration | Pre-campaign (by the operator) | Sweep (sources), Fit (rubric), Target (response types) | Campaign directory |
+| Operator profile | Pre-campaign (by the operator) | Fit (scoring against requirements) | Campaign directory, or the record kept by the method that prepares responses |
+| Campaign configuration | Set up with the operator before the campaign; later gaps filled by the phase that meets them, marked unconfirmed | Sweep (sources), Fit (dimensions used, thresholds), Target (response method) | Campaign directory |
+| Domain document | Kept with this methodology; not made per campaign | Sweep (columns, kinds of source), Fit (dimensions), Target (hand-over) | `domains/` |
 
 ## Model assignment
 
@@ -296,10 +305,10 @@ Updated registry with Target columns filled. Listings marked `respond` are ready
 |---|---|---|
 | Sweep | Sonnet | High-volume search and data extraction. Pattern-following. |
 | Investigate | Sonnet | Structured fetch, HTML-to-markdown conversion, factual research. No judgment beyond "is this listing alive?" |
-| Fit | Sonnet | Rubric application. The rubric does the intellectual heavy lifting; Sonnet applies it. Validated across job-listing scoring, SPAR profiling, and TEND classification. |
-| Target | Human + Sonnet | Disposition is human judgment (which listings to pursue). Response preparation is Sonnet-tier (tailoring materials per the operator's instructions). |
+| Fit | Sonnet | Rubric application. The rubric does the intellectual heavy lifting; Sonnet applies it. |
+| Target | Human + Sonnet | Disposition is human judgment (which listings to pursue). Recording the channel, the contacts and the hand-over is Sonnet-tier. The response takes the tier of the method that prepares it. |
 
-## Relationship to SPAR and TEND
+## Relationship to other methodologies
 
 SIFT, SPAR, and TEND operate on different flows of the same professional activity.
 
@@ -307,22 +316,22 @@ SIFT, SPAR, and TEND operate on different flows of the same professional activit
 
 **TEND** processes inbound correspondence. It receives what arrives in the inbox and routes it: classify, assess stage, notify, dispatch. TEND's output is processed email and draft replies.
 
-**SIFT** evaluates published listings. It responds to declared needs: someone has published that they want something, and the operator decides whether to answer. SIFT's output is scored listings and prepared responses.
+**SIFT** evaluates published listings. It responds to declared needs: someone has published that they want something, and the operator decides whether to answer. SIFT's output is scored listings and a decision on each.
 
-The three methodologies intersect at defined handoff points:
+The methodologies intersect at defined handoff points:
 
 - **SIFT → SPAR**: A listing scored in SIFT may receive a `network-approach` disposition rather than a direct response. The listing becomes an approach target in SPAR — the operator builds a relationship with someone connected to the opportunity rather than submitting a cold application.
-- **SIFT → HIRE**: A listing marked `respond` whose response is a candidacy becomes a run of HIRE (`../career-hire/hire-methodology.md`), which takes the dossier as its first source on the reader.
+- **SIFT → HIRE**: A listing marked `respond` whose response is a candidacy becomes a run of HIRE (`../career-hire/hire-methodology.md`). HIRE takes the listing's id and dossier as its first source on the people who will read the candidacy, and reads the same record of the operator that Fit scored against. `domains/jobs.md` lists the points where the two methods meet.
 - **TEND → SIFT**: Inbound correspondence processed by TEND may surface listing-related messages — a recruiter email, a CFP invitation, a tender notification. TEND's evaluation identifies these and routes them to Sweep.
 - **SPAR → SIFT**: A contact engaged through SPAR may forward a listing or mention an opportunity. This enters SIFT's Sweep from a warm source.
 
-All three share the model-tiering principle: rubric-following and structured classification are Sonnet-tier; judgment requiring unstated trade-offs, relationship nuance, or strategic framing is Opus-tier; strategy revision and disposition decisions are human-tier.
+SIFT, SPAR and TEND share the model-tiering principle: rubric-following and structured classification are Sonnet-tier; judgment requiring unstated trade-offs, relationship nuance, or strategic framing is Opus-tier; strategy revision and disposition decisions are human-tier.
 
 ## Application areas
 
 SIFT applies to any domain where an external party publishes a need and invites responses. The following are the domains where the structure holds cleanly — where the listing is a genuine published want, the operator evaluates fit against a profile, and the response requires preparation.
 
-**Job listings.** The publisher is an employer. The listing is a job posting. The operator profile is a CV or career summary. The response is a tailored application (CV variant, cover letter, approach strategy). The star dimensions might measure influence/knowledge access, compensation, career trajectory value, and effort compatibility.
+**Job listings.** The publisher is an employer. The listing is a job posting. The operator profile is the record of a person's career and what they are looking for. The response is a candidacy. The columns, dimensions and hand-over for this kind are in `domains/jobs.md`.
 
 **Grant and funding calls.** The publisher is a funding body (government agency, foundation, research council). The listing is a call for proposals or expressions of interest. The operator profile is an organisation capability statement or researcher CV. The response is a grant proposal. The star dimensions might measure research alignment, funding amount, institutional prestige, and reporting burden.
 
