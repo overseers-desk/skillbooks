@@ -78,7 +78,7 @@ H closes with four sentences, which Examine hands to its readers:
 
 When no candidate is present, write the questions, proceed on the record, and mark what rests on each unanswered one. Where the sources give several values for a figure and the candidate has not said which stands, carry the smallest the candidate has stated and list it for confirmation. The opening and the choice of approach are the exception: they wait for the candidate's own account, since an opening written from files is the writer's arrangement of them.
 
-Notes the candidate gives toward a text are restated and agreed before anything is built or tested on them. A remark on a draft is different: it is acted on, where the candidate pointed. An accepted default is an answer, and is not asked again.
+Notes the candidate gives toward a text are first said back to the candidate in the writer's words, and built on once the candidate agrees that is what was meant. A remark on a draft is different: it is acted on, where the candidate pointed. An accepted default is an answer, and is not asked again.
 
 ## R — Reframe
 
@@ -86,7 +86,7 @@ Notes the candidate gives toward a text are restated and agreed before anything 
 
 **Choose the approach before writing sentences.** An approach is what the document opens on and what it argues. Set out at least three that differ in kind, in `approaches/`, each as an opening paragraph and an outline. One of them is the candidate's own account from I, tidied and otherwise untouched. Judges may narrow the field; the candidate chooses. Whatever is chosen, the opening answers the first question this reader has about any applicant for the post, such as whether the person has led at this size or has a direction of their own, before it turns to what the candidate finds most interesting in the record. A writer's drafts are variations on one approach, and ranking them against each other cannot find a better one (`cases/an-opening-that-indexes-the-career.md`, `cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
 
-**For each fact, name the question of this reader that it answers,** and write it as that answer. The same fact answers different questions for different readers: a team's size is span of control to one and the scale of a proof to another. Before leaving a fact out, look for the question it could answer for this reader and recast it to that; most facts written for another reader have one. A fact that still answers none stays out, however true and however hard-won. `selection.md` records each decision, so the candidate can see what was left out and why (`cases/a-true-detail-kept-because-it-was-known.md`).
+**For each fact, name the question of this reader that it answers,** and write it as that answer. The same fact answers different questions for different readers: a team's size is span of control to one and the scale of a proof to another. Before leaving a fact out, look for the question it could answer for this reader and recast it to that; most facts written for another reader have one. The question it answered in the document it came from is the old reader's and does not count. A fact that still answers none stays out, however true and however hard-won. `selection.md` records each decision, so the candidate can see what was left out and why (`cases/a-true-detail-kept-because-it-was-known.md`).
 
 **Write at the level of the post and the person.**
 
@@ -108,7 +108,7 @@ Notes the candidate gives toward a text are restated and agreed before anything 
 
 **Give the reader a thing before referring to it,** and make the opening tell the same story as the entries below it (`cases/a-thing-named-before-the-reader-has-it.md`).
 
-**The candidate's wording changes only for a reason the candidate can see.** Every such change is listed in `examine.md` with its reason, so it can be taken back (`cases/the-candidates-words-swapped-or-removed.md`).
+**The candidate's wording changes only for a reason the candidate can see.** This is about the candidate's own sentences. Putting the field's term where the writer had a plain word, and tidying spelling and grammar, are ordinary editing and are listed all the same. Every such change is listed in `examine.md` with its reason, so it can be taken back (`cases/the-candidates-words-swapped-or-removed.md`).
 
 **Edit by rewriting from the thought.** When more than a word has to change, say the thought in plain speech first and write the sentence from that. A sentence patched inside its old frame keeps the frame and loses the parts that made it mean something, and the writer, who holds the thought, reads the stump as whole (`cases/a-sentence-patched-until-it-meant-nothing.md`).
 
@@ -118,7 +118,7 @@ Notes the candidate gives toward a text are restated and agreed before anything 
 
 ## E — Examine
 
-Examine runs cheap readers before dear ones, and the candidate last. Every check and what came of it goes into `examine.md`.
+Examine runs cheap readers before dear ones, and the candidate last. Every check and what came of it goes into `examine.md`, a one-sentence repair included.
 
 ### 1. Sentence readers
 
