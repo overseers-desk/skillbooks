@@ -1,6 +1,6 @@
 # SIFT Registry Format
 
-**Applies to:** all SIFT campaigns. Campaign-specific columns are appended after the core set and documented in the campaign configuration, not here.
+**Applies to:** all SIFT campaigns. The columns of one kind of listing are in that kind's domain document, and a campaign's own are in its configuration. Both are appended after the core set.
 
 ## File format
 
@@ -35,7 +35,7 @@ Columns are ordered left-to-right by pipeline phase: discovery, scoring, then di
 
 | # | Field | Type | Written by | Read by | Purpose |
 |---|-------|------|------------|---------|---------|
-| 11 | stars | decimal 1.0–5.0 | Fit | Target, human review | Composite value-to-us score from campaign-defined dimensions |
+| 11 | stars | decimal 1.0–5.0 | Fit | Target, human review | Composite value-to-us score from the campaign's dimensions |
 | 12 | pct | integer 0–100 | Fit | Target, human review | Likelihood-of-success after amplification, capped at 95 |
 | 13 | pct_base | integer 0–100 | Fit | Human review (audit) | Raw fit before amplification |
 | 14 | hard_gates | text | Fit | Target, human review | Credential or requirement gates that block candidacy. Comma-separated. Empty if none. |
@@ -52,17 +52,15 @@ Columns are ordered left-to-right by pipeline phase: discovery, scoring, then di
 
 Columns 11–19 are empty during Sweep and populated progressively as the listing moves through Fit and Target. Empty columns are expected; not every listing reaches every phase.
 
-## Campaign-specific columns
+## Domain and campaign columns
 
-Campaigns append columns after column 19. The campaign configuration defines them. The specific columns depend on the domain. Examples:
-
-**Job-seeking campaigns** might add: `company`, `seniority`, `comp_estimate`, `work_mode`, `role_family`, plus star-dimension breakdown columns (`influence_knowledge`, `comp_modifier`, `stepping_stone`, `labour_fit`), plus response columns (`cv_lane`, `cv_emphasis`, `cv_deemphasis`, `approach_channel`, `contact_notes`).
+After column 19 come the columns of the campaign's kind of listing, as its domain document lists them, and then the campaign's own, as its configuration defines them. A kind with no domain document defines all of its appended columns in the campaign configuration. Examples for such kinds:
 
 **Grant campaigns** might add: `funder`, `programme`, `funding_amount`, `deadline`, `eligibility_region`, plus star-dimension columns, plus proposal columns.
 
 **CFP campaigns** might add: `conference`, `track`, `deadline`, `acceptance_rate`, `audience_size`, plus star-dimension columns.
 
-Campaign-specific columns must not duplicate core columns under different names. If a campaign needs a field that serves the same purpose as a core column, use the core column.
+Appended columns must not duplicate core columns under different names. If a campaign needs a field that serves the same purpose as a core column, use the core column.
 
 ## Phase notes vs full artefacts
 
@@ -71,7 +69,7 @@ Campaign-specific columns must not duplicate core columns under different names.
 | Sweep | Registry row (Sweep's primary output) | notes_sweep: why this listing was included |
 | Investigate | Dossier file (`dossiers/{id}.md`) | (no note column — the dossier is the artefact) |
 | Fit | Dossier Fit section (scores with rationale) | notes_fit: summary rationale for star and pct scores |
-| Target | Response materials (campaign-specific) | notes_target: disposition reasoning and progress |
+| Target | The response, in the files of the method that prepares it | notes_target: disposition reasoning and progress |
 
 ## Quality checklist
 
