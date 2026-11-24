@@ -73,7 +73,7 @@ Appended columns must not duplicate core columns under different names. If a cam
 
 ## Quality checklist
 
-These assertions apply to the core columns. Campaign-specific checks are defined by the campaign configuration.
+These assertions apply to the core columns. `tools/registry-check.py` runs them on a campaign directory, together with the checks that follow from the campaign's configuration: every id in the configuration's format, a column for each dimension holding a score on its scale, `stars` and `pct` agreeing with their formulas, amplifier tags among the campaign's, and a column whose values the configuration lists holding one of them.
 
 1. Every row has a non-empty `id` that is unique within the registry.
 2. Every row has a non-empty `url`.

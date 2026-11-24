@@ -1,0 +1,131 @@
+# =============================================================================
+# SIFT campaign configuration — YAML schema
+#
+# Defines the structure of `campaign.yaml`, the one file in a campaign
+# directory that holds what the campaign chose: the operator's choices, and any
+# a phase had to make while the operator could not be asked. What holds for
+# every listing is in sift-methodology.md. What holds for every listing of one
+# kind is in that kind's domain document under domains/. Neither is repeated in
+# a campaign's file.
+#
+# Every phase starts by reading the campaign's file. A phase that needs a choice
+# the file does not hold makes it, writes it under the key it belongs to, and
+# names that key under `unconfirmed`.
+#
+# Keys are shown with placeholder values. A key shown commented out is optional.
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# IDENTITY — what is being evaluated, and for whom
+# ---------------------------------------------------------------------------
+
+kind: ...                    # the kind of listing, named as its domain document is (`jobs` for
+                             # domains/jobs.md); the operator's own word where the kind has none
+
+operator_profile:            # where the description of the operator is kept, as paths from the
+  - ...                      # campaign directory; SIFT reads these files and writes to none
+
+id_format: ...               # one example id: a prefix and a zero-padded number (J001, G001)
+
+# response_method: ...       # the name of the method that prepares responses, where the operator
+                             # uses one
+
+# ---------------------------------------------------------------------------
+# SOURCES — where Sweep looks
+# ---------------------------------------------------------------------------
+
+sources:
+  - place: ...               # a site, a board, a register, a mailbox, a person
+    # search: ...            # what to look for there, where the place carries more than is wanted
+
+# ---------------------------------------------------------------------------
+# DIMENSIONS — what the operator cares about
+#
+# The star rating is the sum of the dimensions' scores, clamped to 1.0–5.0
+# (sift-methodology.md, "Value-to-us"). Each dimension is one thing the
+# operator weighs in a listing, with every score it can take and what that
+# score means. The scales set how much each dimension counts: one scored from
+# 1 to 5 carries the rating, and one scored from −1 to +1 moves it.
+#
+# A dimension's name is the name of its registry column, and the columns run in
+# the order the dimensions are given here. The operator says what matters and
+# how much; where the operator has said it only in passing, the dimensions are
+# drawn from those words and named under `unconfirmed`.
+# ---------------------------------------------------------------------------
+
+dimensions:
+  - name: ...                # lowercase, words joined by underscores
+    # guidance: |            # how to read a listing for this dimension, where the anchors
+    #   (Prose.)             # alone would not settle it
+    scale:                   # each score the dimension can take, with its anchor
+      ...: ...
+
+# ---------------------------------------------------------------------------
+# THRESHOLDS — where "high" begins on each axis
+#
+# Target places a scored listing in a cell of the matrix by these two figures
+# (sift-methodology.md, "The two axes together").
+# ---------------------------------------------------------------------------
+
+thresholds:
+  stars: ...                 # a star rating at or above this is high
+  pct: ...                   # a percentage at or above this is high
+
+# ---------------------------------------------------------------------------
+# AMPLIFIERS — circumstances that raise the operator's odds
+#
+# (sift-methodology.md, "Likelihood-of-success".)
+# ---------------------------------------------------------------------------
+
+amplifiers:
+  factor: ...                # what one tag multiplies pct_base by
+  tags:
+    ...: ...                 # the tag, and the circumstance it stands for
+
+# ---------------------------------------------------------------------------
+# REGISTRY — what the campaign settles in, or adds to, its registry
+# ---------------------------------------------------------------------------
+
+# values:                    # the values a column may take, where the registry format or the
+#   {column}:                # domain document leaves the list to the campaign
+#     ...: ...               # the value, and what it means; a plain list where the values
+#                            # explain themselves
+
+# columns:                   # the campaign's own columns, appended after the kind's; for a kind
+#   - name: ...              # with no domain document, every column after the core ones except
+#     type: ...              # the dimensions' columns
+#     written_by: ...        # the phase that fills it
+#     purpose: ...
+
+# ---------------------------------------------------------------------------
+# MONEY — for a campaign whose listings state amounts
+# ---------------------------------------------------------------------------
+
+# currency: ...              # the currency amounts are recorded in
+
+# rates:                     # what one unit of another currency is worth in it
+#   as_of: ...               # the date the rates were taken
+#   ...: ...
+
+# ---------------------------------------------------------------------------
+# OTHER CHOICES — whatever else the campaign had to decide
+#
+# A step of the methodology or of a domain document sometimes turns on a choice
+# of the operator's that no key above holds. It is written here under a name of
+# its own, so that the next run reads the same answer.
+# ---------------------------------------------------------------------------
+
+# other:
+#   {name}: ...              # the choice, in a sentence or two
+
+# ---------------------------------------------------------------------------
+# UNCONFIRMED — what the operator has not yet agreed to
+#
+# The keys of this file whose value a phase set because the operator could not
+# be asked: a top-level key, a dimension by its name, or a name under `other`.
+# The operator takes a key off this list on agreeing with its value or
+# correcting it.
+# ---------------------------------------------------------------------------
+
+# unconfirmed:
+#   - ...

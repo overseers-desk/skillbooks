@@ -12,14 +12,14 @@ What holds for every SIFT campaign whose listings are jobs. `../sift-methodology
 
 ## What the campaign configuration sets
 
-A job campaign's configuration holds these, beside what every configuration holds:
+A job campaign's configuration holds these, under the keys `../campaign-schema.yaml` defines:
 
-- the places of each kind of source the campaign searches, and what to search for there;
-- the campaign's currency, and the rates for converting other currencies into it;
-- the seniority ladder for the operator's occupation;
-- the list of role families;
-- the campaign's dimensions, in the order of their registry columns;
-- the method that prepares the candidacy, where the campaign uses one.
+- `sources`: the places of each kind of source the campaign searches, and what to search for there;
+- `dimensions`: what the campaign weighs, as every campaign's configuration does;
+- `currency` and `rates`: the currency pay is recorded in, and the rates for converting others into it;
+- `values`: the seniority ladder for the operator's occupation (`seniority`) and the list of role families (`role_family`);
+- `response_method`: the method that prepares the candidacy, where the campaign uses one;
+- `other`: what counts as pay beyond salary, and the hours and weeks by which a rate by the hour or the day is made an annual figure.
 
 ## Sources
 
@@ -42,16 +42,12 @@ A job campaign's registry carries these after the core columns, in this order. T
 |---|---|---|---|
 | work_mode | enum: remote/hybrid/onsite/unknown | Sweep | Where the work is done |
 | seniority | enum | Sweep | Level of the post, on the configuration's ladder |
-| comp_estimate | string | Sweep; Fit revises | Annual pay as the listing states it, in the campaign's currency. `45k-52k` is a stated range, `50k` a stated figure, `>60k` a stated floor, and `~50k` an estimate, made where the listing states no pay or states it by the hour or the day |
+| comp_estimate | string | Sweep; Fit revises | Annual pay as the listing states it, in the campaign's currency. `45k-52k` is a stated range, `50k` a stated figure, `>60k` a stated floor, and `~50k` an estimate, made where the listing states no pay, or worked out from a rate by the hour or the day as the configuration says |
 | role_family | enum | Sweep | The kind of work, from the configuration's list |
 | one column for each of the campaign's dimensions, in the configuration's order | number | Fit | The dimension's score, under the dimension's name |
 | pct_amplifier | text | Fit | The amplifier tags that apply, comma-separated |
 | approach_channel | enum: cold-apply/warm-intro/recruiter/network | Target | How the employer is to be reached: a direct application, an introduction by someone the operator knows, through a recruiter, or by building a relationship first (the `network-approach` disposition) |
 | contact_notes | text | Target | Contacts the operator has named, referral paths, recruiters' names |
-
-## Dimensions
-
-A job campaign defines what it weighs in its own configuration: each dimension with its name, its scale and what each score means, and which of them is the base of the sum. The operator says what matters and how much. As examples, job seekers weigh the pay against what they need, what a post would teach, what it would lead to, how far away it is, and whether its demands fit the time they have.
 
 ## Target and the response
 

@@ -8,7 +8,7 @@
 
 ```
 {name}.sift/
-  campaign-config.md          # the operator's choices, and where the operator profile is
+  campaign.yaml               # the operator's choices, and where the operator profile is
   registry.tsv                # SIFT registry (schema: sift-registry-format.md)
   dossiers/
     {id}.md                   # one per listing, named by its registry id (schema: sift-methodology.md dossier format)
@@ -30,22 +30,11 @@ Campaign directories are named `{name}.sift`, where `{name}` is the operator's l
 
 ## Campaign configuration
 
-`campaign-config.md` holds this campaign's choices: the operator's, and any a phase had to make (see the end of this section). What is true of every campaign of its kind is in the kind's domain document under `domains/` and is not repeated here.
+`campaign.yaml` holds this campaign's choices: the operator's, and any a phase had to make. Its keys are defined in `campaign-schema.yaml`, kept with the methodology. It says what kind of listing the campaign evaluates and for whom, where Sweep looks, what the operator weighs in a listing and on what scales, the figures Fit and Target work with, and what the campaign adds to the registry. What is true of every campaign of its kind is in the kind's domain document under `domains/` and is not repeated in it.
 
-- **Kind of listing**: named as its domain document is, where one exists (`jobs` for `domains/jobs.md`)
-- **Operator profile**: its path
-- **Response method**: the name of the method that prepares responses, where there is one
-- **Search sources and queries**: the places Sweep looks, and what it searches for there
-- **Dimensions**: what the campaign weighs, each with its name, its scale and anchors, and which of them is the base of the sum
-- **Disposition thresholds**: the cut between high and low on stars, and on pct
-- **Amplifier tags**: the campaign's tags for percentage amplification, with definitions, and the factor where it is not the methodology's default
-- **ID format**: the prefix and numbering convention for listing IDs (e.g. `J001`, `G001`)
-- **The campaign's own registry columns**: with types and descriptions
-- **Whatever else the domain document leaves to the campaign**: a list of values for a column, the campaign's currency and the rates for converting others into it
+A choice a phase needed and did not find in the configuration is written into it and named under its `unconfirmed` key, for the operator to agree with or correct.
 
-For a kind of listing with no domain document, the configuration defines the kind's columns as the campaign's own.
-
-A choice a phase needed and did not find in the configuration is added to it, marked as not yet confirmed by the operator.
+`tools/registry-check.py`, kept with the methodology, checks a campaign's registry against its configuration and the registry format.
 
 ## Operator profile
 
@@ -72,4 +61,5 @@ Methodology documents stay in the aesop repository and are not copied per campai
 
 - `sift-methodology.md`: defines the four-phase pipeline and dossier format
 - `sift-registry-format.md`: defines the core registry column schema
+- `campaign-schema.yaml`: defines the keys of the campaign configuration
 - `domains/`: one document per kind of listing, with its sources, columns and hand-over to the response method
