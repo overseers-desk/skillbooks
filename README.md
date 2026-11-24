@@ -231,7 +231,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 - **Hirer** establishes the post behind the advertisement, the route the document travels, and what its readers lack that this candidate brings.
 - **Interview** reads the candidate's own words on record, then takes the candidate's account told to that reader and the facts only the candidate holds, each with its source.
 - **Reframe** chooses among approaches that differ in kind, then writes each fact as the answer to a question this reader has, at the candidate's level and in the candidate's voice.
-- **Examine** puts the draft before readers who are not the writer (sentence readers, a common-sense reading, sealed-room judges, the candidate) and stops by a stated rule.
+- **Examine** puts the draft before readers who are not the writer (sentence readers, a common-sense reading, judges, the candidate) and stops by a stated rule.
 
 **Model allocation:** Reframe and the reading of Examine's rows are Opus-tier or above. The readers Examine calls choose their own models.
 

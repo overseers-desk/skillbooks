@@ -165,9 +165,9 @@ A version in another language is examined in that language, by readers of it. A 
 
 ### 5. Judges
 
-Sealed-room judges, through the undercover skill, are for choosing between versions. They are reliable when two versions differ by two sentences of substance or more, and they cannot decide a single line. Every verdict is a forced choice between two versions; a score given to one text alone moves from run to run and settles nothing.
+Judges are for choosing between versions. Each is a fresh agent that holds only its brief. They are reliable when two versions differ by two sentences of substance or more, and they cannot decide a single line. Every verdict is a forced choice between two versions; a score given to one text alone moves from run to run and settles nothing.
 
-- One model, two wordings of the brief, both orders: four rooms. Add rooms only when the two orders disagree (`cases/more-judges-than-the-last-rounds-variation-called-for.md`).
+- One model, two wordings of the brief, both orders: four judges. Add judges only when the two orders disagree (`cases/more-judges-than-the-last-rounds-variation-called-for.md`).
 - The brief holds the advertisement and what `hirer.md` marks as coming from the candidate or a named source. A judge told what the reader values will value it (`cases/judges-briefed-with-the-writers-own-inference.md`).
 - The brief tells the judge not to look the candidate up.
 - At least one version in any comparison of approaches was not written by this session: the candidate's own telling, or a real document of the same kind.
