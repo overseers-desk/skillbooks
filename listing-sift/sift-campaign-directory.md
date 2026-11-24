@@ -53,11 +53,11 @@ The configuration gives the profile's path. A description the operator already h
 
 ## Beside a response method
 
-A campaign directory may sit beside the files of the method that prepares responses, in one parent directory. SIFT's files stay inside `{name}.sift/` and the other method's files stay outside it. The two methods meet at these points:
+A campaign directory may sit beside the files of a method that prepares responses, in one parent directory. SIFT's files stay inside `{name}.sift/`, and nothing of another method's belongs there. What SIFT offers to anything outside the directory, and what it takes, is this:
 
-- **The operator's record.** The other method's record of the operator is SIFT's operator profile. SIFT reads it and does not write to it.
-- **The dossier.** The other method takes `dossiers/{id}.md` as its first source on the listing and its publisher. Only SIFT writes it.
-- **The listing's id.** The other method names the id in its own files wherever they concern that listing.
+- **The operator profile.** One file may serve as SIFT's operator profile and as another method's record of the operator. SIFT reads from it what the operator has done and what the operator is looking for, leaves the rest alone, and does not write to it.
+- **The dossier.** `dossiers/{id}.md` may be read from outside. Its listing description and source background are what was published and what research found. Its Fit section is SIFT's own judgement of the listing against the operator, and is not a source on the publisher. Only SIFT writes the dossier.
+- **The listing's id.** The id is how anything outside the campaign directory refers to a listing.
 - **Progress.** The registry row is the one record of a listing's progress. Whoever submits a response records the submission, and later progress, in that row, as Target's step on submission says.
 
 ## Dossier directory

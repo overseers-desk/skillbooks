@@ -98,7 +98,7 @@ The registry has core columns (present in every campaign), then the columns of t
 
 Each campaign has an operator profile: a description of the entity responding to listings. For a job-seeking campaign, this is the record of a person's career and what they are looking for. For a grant campaign, it is an organisation capability statement. For a CFP campaign, it is a researcher or speaker profile.
 
-The operator profile is what Fit scores against. SIFT does not prescribe its format, only that it exists and that Fit reads it. Where the method that prepares the response keeps its own record of the operator, that record is the profile: the campaign configuration gives its path, and SIFT reads it without writing to it.
+The operator profile is what Fit scores against. SIFT does not prescribe its format, only that it exists and that Fit reads it. The campaign configuration gives its path. SIFT reads from it what the operator has done and what the operator is looking for, and writes nothing to it. The profile may be a file the operator keeps for other uses too and may hold more; SIFT leaves the rest alone.
 
 ## Dossier concept
 
@@ -270,7 +270,7 @@ For each row where `decision` is empty:
    - Determine the approach channel: direct application, warm introduction, intermediary, or network approach.
    - Note any known contacts or referral paths.
    - The channel and the contacts go in the columns the kind or the campaign defines for them, and otherwise in `notes_target`.
-   - For `respond`, the response is prepared by the method the campaign configuration names, where it names one. A run of that method starts from the listing's id and dossier and works in its own files, and Target's work on the listing stops there until the response is submitted. Where no method is named, note in `notes_target` which version of the operator's response materials to use or create (a proposal template for a grant call, an abstract variant for a CFP), and what to emphasise from the operator profile for this listing.
+   - For `respond`, the response is prepared by the method the campaign configuration names, where it names one. The listing's id and its dossier are what SIFT offers that method, and Target's work on the listing stops there until the response is submitted. Where no method is named, note in `notes_target` which version of the operator's response materials to use or create (a proposal template for a grant call, an abstract variant for a CFP), and what to emphasise from the operator profile for this listing.
 3. For listings marked `skip`: record the reason in `notes_target` (so future Sweep runs do not re-add them).
 4. For listings marked `watch`: no response preparation, but keep in the registry for periodic re-check.
 5. Update the row in the registry.
@@ -295,7 +295,7 @@ Updated registry with Target columns filled. Listings marked `respond` are ready
 |---|---|---|---|
 | Registry (TSV) | Sweep (rows); Fit (scores); Target (dispositions) | All phases | Campaign directory |
 | Dossier files | Investigate (description + background); Fit (scoring section) | Fit, Target, human review | `dossiers/{id}.md` |
-| Operator profile | Pre-campaign (by the operator) | Fit (scoring against requirements) | Campaign directory, or the record kept by the method that prepares responses |
+| Operator profile | Pre-campaign (by the operator) | Fit (scoring against requirements) | Where the campaign configuration says |
 | Campaign configuration | Set up with the operator before the campaign; later gaps filled by the phase that meets them, marked unconfirmed | Sweep (sources), Fit (dimensions used, thresholds), Target (response method) | Campaign directory |
 | Domain document | Kept with this methodology; not made per campaign | Sweep (columns, kinds of source), Fit (dimensions), Target (hand-over) | `domains/` |
 
@@ -321,7 +321,6 @@ SIFT, SPAR, and TEND operate on different flows of the same professional activit
 The methodologies intersect at defined handoff points:
 
 - **SIFT → SPAR**: A listing scored in SIFT may receive a `network-approach` disposition rather than a direct response. The listing becomes an approach target in SPAR — the operator builds a relationship with someone connected to the opportunity rather than submitting a cold application.
-- **SIFT → HIRE**: A listing marked `respond` whose response is a candidacy becomes a run of HIRE (`../career-hire/hire-methodology.md`). HIRE takes the listing's id and dossier as its first source on the people who will read the candidacy, and reads the same record of the operator that Fit scored against. `domains/jobs.md` lists the points where the two methods meet.
 - **TEND → SIFT**: Inbound correspondence processed by TEND may surface listing-related messages — a recruiter email, a CFP invitation, a tender notification. TEND's evaluation identifies these and routes them to Sweep.
 - **SPAR → SIFT**: A contact engaged through SPAR may forward a listing or mention an opportunity. This enters SIFT's Sweep from a warm source.
 

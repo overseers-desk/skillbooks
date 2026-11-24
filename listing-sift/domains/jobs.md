@@ -7,7 +7,7 @@ What holds for every SIFT campaign whose listings are jobs. `../sift-methodology
 - **Post.** The position a listing offers.
 - **Employer.** The organisation the post is with. Where the employer publishes its own listing, it is the listing's publisher and its name is `source_name`. Where a recruiter or an agency publishes for an employer, the methodology's step on researching the source applies to that publisher, and what the listing says of the employer stays in the dossier's listing description.
 - **Sector.** The industry the post belongs to.
-- **Operator.** The person looking for a post. HIRE calls the same person the candidate.
+- **Operator.** The person looking for a post.
 - **Response.** A candidacy: a CV and the written answers that travel with it.
 
 ## What the campaign configuration sets
@@ -19,7 +19,7 @@ A job campaign's configuration holds these, beside what every configuration hold
 - the seniority ladder for the operator's occupation;
 - the list of role families;
 - the dimensions the campaign uses, in order, with the two pay thresholds, the operator's capacity, and any examples added to an anchor;
-- the response method.
+- the method that prepares the candidacy, where the campaign uses one.
 
 ## Sources
 
@@ -93,17 +93,10 @@ Whether the post's demands fit the time and attention the operator has for it. T
 | 0 | They fit in part: some of the work asks for more than the operator has |
 | −1 | The post asks for sustained time or attention the operator does not have |
 
-## Target and the hand-over to HIRE
+## Target and the response
 
 For a listing whose `decision` is `respond` or `network-approach`, Target records how the employer is to be reached (`approach_channel`) and the contacts the operator has named there (`contact_notes`).
 
-Where the configuration names HIRE (`../../career-hire/hire-methodology.md`) as the response method, Target's part for a listing marked `respond` ends with the decision. The candidacy is written by a run of HIRE for that listing, started by the operator or by the agent running the search. Target does not choose what the candidacy opens on and argues, or what it emphasises: HIRE decides those.
+Where the configuration names a method that prepares the candidacy, Target's part for a listing marked `respond` ends with the decision. Target does not choose what the candidacy opens on and argues, or what it emphasises. `../sift-campaign-directory.md` says how the campaign directory sits beside that method's files. When the candidacy is sent, whoever sends it records the sending in the listing's registry row (`date_responded`, `status`).
 
-The run and the campaign meet as `../sift-campaign-directory.md` describes for any response method. With HIRE:
-
-- HIRE's standing record is the campaign's operator profile, and the configuration gives its path.
-- The application's `hirer.md` takes the listing's dossier as its first source and names the listing's id.
-- Rows of HIRE's assumption register that concern the listing name its id.
-- When the candidacy is sent, whoever sends it records the sending in the listing's registry row (`date_responded`, `status`).
-
-Where the configuration names no response method, the methodology's general rule applies: Target notes in `notes_target` what the operator's CV should emphasise for this listing.
+Where the configuration names none, the methodology's general rule applies: Target notes in `notes_target` what the operator's CV should emphasise for this listing.
