@@ -241,7 +241,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 SPAR generates outbound messages. Those messages produce replies. The replies arrive in an inbox processed by TEND. TEND's thread assembly recognises the SPAR outreach message in the conversation history and can route the reply accordingly — flagging a positive response rather than filing it as unsolicited inbound.
 
-SIFT evaluates inbound listings. When SIFT's Target phase marks a listing as `network-approach` (pursue through a relationship rather than a direct application), that contact may enter a SPAR roster for outreach. A job listing marked `respond` becomes a HIRE run, which writes the candidacy.
+SIFT evaluates inbound listings. When SIFT's Target phase marks a listing as `network-approach` (pursue through a relationship rather than a direct application), that contact may enter a SPAR roster for outreach. A job search may run SIFT and HIRE side by side in one folder, though neither needs the other: a listing SIFT marks `respond` can be answered by a HIRE run.
 
 SAGE defines what there is to sell. Its Establish phase produces the numbered claims a SPAR campaign's approach messages cite by number, and its displacement offer runs naturally as a SPAR campaign over an owned roster, with replies arriving through TEND. SAGE's decisions table is also the bounding box those messages may not escape: an approach draft promising anything outside it is caught at review, not sent.
 
