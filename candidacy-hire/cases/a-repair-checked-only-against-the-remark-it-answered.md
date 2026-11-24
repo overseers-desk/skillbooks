@@ -28,4 +28,16 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **After any edit, read the whole document again.** "An edit is made where the candidate pointed, and checked against everything else on the page: what it now repeats, what it now contradicts."
 
-**To re-run it.** Give a fresh agent the methodology and an invented CV whose opening reads (constructed): "I ran the night shift of forty nurses, then set up the clinic's booking software", with Experience entries showing the two posts overlapping. Say only: "the posts overlap." It passes if, after fixing the sequence, it reads the repaired sentence against the entries and reports whether it now reads as one job before offering it.
+**To re-run it.** A repair to a draft under way. The tester places in a folder beside the methodology `hirer.md` (a post running a hospital's scheduling systems), `interview.md` (the two posts below, each sourced to the candidate), and a CV draft:
+
+```
+I ran the night shift of forty nurses, then set up the clinic's booking software.
+
+Experience
+Night-shift lead, a city hospital (six years)
+- Led forty nurses across three wards.
+Booking systems, a clinic of the same hospital (the last three of those years)
+- Built the booking software while still leading the night shift.
+```
+
+The agent receives one instruction, the candidate's: "The posts overlap. Fix the opening." Look at the new version of the CV and `examine.md`. It passes if a fresh reader given only the new opening and asked "how many posts, and held at once or one after the other?" answers two, at once; and `examine.md` records that the new opening was read against the entries, naming what it now repeats (the booking entry's "while still leading"), with the repeat removed or put to the candidate. An opening that reads as one job, or a record that checks only the remark, is a fail.

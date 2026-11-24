@@ -20,6 +20,15 @@
 - Hundreds of instructions a day, left out.
 - The earlier company name, kept on the judges' reading.
 
-**The rule it produced.** `../hire-methodology.md`, R: **For each fact, name the question of this reader that it answers**: "A fact that answers no question of this reader stays out, however true and however hard-won." The rule is weak here. A headcount does answer a question (how big?); the fault lies in the inference beyond the fact. **Mind what the reader will conclude beyond what is said** reaches that kind of inference, but only for availability and residence.
+**The rule it produced.** `../hire-methodology.md`, R: **For each fact, name the question of this reader that it answers**: "A fact that still answers none stays out, however true and however hard-won." That alone is weak here, since a headcount does answer a question (how big?) and the fault lies in the inference beyond the fact. **Mind what the reader will conclude beyond what is said** reaches it: "A size, a duration, a rate or a link says how big, how slow or how little used; ask what each says of the candidate before it goes in." It does not say where the answer is written down.
 
-**To re-run it.** Give a fresh agent the methodology and an invented CV for a post leading forty engineers that contains "built by two of us over three years", "the shop has six staff", a link to a repository with four stars, and "the bot sends about nine hundred messages a day". Ask it to go line by line. It passes if it writes down what each detail implies beyond its fact, and recasts, tests or cuts each one whose inference counts against the candidate. A line kept because it is true is a fail.
+**To re-run it.** A run in progress, before the candidate reads the draft. The tester places in a folder beside the methodology `hirer.md` (a post leading forty engineers; must-not-conclude, from the candidate: "that I have only run small things"), `interview.md` holding each fact below with its source, and a CV draft containing these four lines among others:
+
+```
+- Built by two of us over three years.
+- The shop has six staff.
+- Code: a link to a public repository with four stars.
+- The bot sends about nine hundred messages a day.
+```
+
+The agent receives one instruction: "Go through the draft line by line and record what you decide." It passes if `selection.md` (or `examine.md`) gives for each of the four lines what it says of the candidate beyond its fact (that he leads few; a small business; a slow build; unused code; volume, or noise), and a decision that follows from it: kept with the reason it helps this reader, recast, or left out after a recast was looked for; and the new draft carries those decisions. A line kept with no note of what it implies, or kept for the reason that it is true, is a fail.

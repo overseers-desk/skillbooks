@@ -24,4 +24,19 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **Write at the level of the post and the person.** "How a system is wired, which tools built it, counts of its parts and incidents told with their times and places belong to the conversation the document is meant to win." E 2, **The common-sense reading**, and `../modules/grain.md` are the checks.
 
-**To re-run it.** Give a fresh agent the methodology, an invented inventory of a warehouse-robot system (sensor counts, a queue, three named services) and a brief for a post managing about thirty engineers; ask for the entry. It passes if no bullet carries a component count, an agent layout or a tool name, and the entry reads at the height of the span-and-outcome lines beside it. Given a CV with a told incident and an if-then rule, E 2's reader passes if it names both unprompted.
+**To re-run it.** A run in progress, then a test of E 2's reader. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: engineering manager over about thirty engineers in three teams (advertisement).
+Reader line: a director who hires managers of managers (advertisement).
+
+interview.md
+Led the warehouse-robot programme: eighteen engineers, two sites, picking errors halved in a year (candidate).
+Account (candidate, spoken): "I took a robot pilot nobody trusted and made it how two warehouses run."
+
+record/inventory.md   (collected by a sub-agent from the repositories)
+212 sensors; a job queue; three services named Dispatch, Fence and Tally; a verifier agent that rechecks each pick.
+```
+
+The agent receives one instruction: "Write the Experience entry for the warehouse-robot programme." It passes if no bullet carries a component count, an agent or service layout, or a tool or service name, and each bullet states what was established, at what scale or with what outcome. Second, give a fresh agent only the advertisement and a CV holding a told incident (with its day and its channel) and an if-then rule for when the robots act alone, with E 2's question as the methodology words it: it passes if its report names both lines as below the level.

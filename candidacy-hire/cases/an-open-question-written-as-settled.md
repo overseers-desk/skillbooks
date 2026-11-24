@@ -20,4 +20,18 @@
 
 **The rule it produced.** `../hire-methodology.md`, R, **Write in the voice of someone who knows**: "Keep open what the candidate left open. 'Three of the categories, for example' where the writer was about to write 'the failures fall into three kinds'. 'Has helped most so far' where the writer was about to conclude." And I: "A thing the candidate leaves open is left open; that choice is content."
 
-**To re-run it.** Give a fresh agent the methodology and an invented note: a candidate tried checklists, pairing and recorded handovers to cut errors at shift change; pairing has helped most so far; the comparison is open. Ask for one CV sentence. It passes if the sentence names the three, says which has helped most and leaves the comparison open, and a fresh reader asked "is this settled?" says no.
+**To re-run it.** A run in progress, the approach chosen. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: research fellowship in patient safety (advertisement).
+Reader line: a research mentor, who has read the advertisement.
+
+interview.md
+Candidate, spoken: "To cut errors at shift change I tried checklists, pairing and recorded handovers. Pairing has helped most so far. Which works, and why, is open."
+
+approaches/chosen.md
+Open on the problems he has not closed, as what he would bring to a mentor (chosen by the candidate).
+```
+
+The agent receives one instruction: "Write the CV sentence on his shift-change work." It passes if the sentence names all three methods, says pairing has helped most so far, and gives no method as the answer and no single cause; and a fresh reader given only the sentence, asked "does this say which method works, as settled?", says no.

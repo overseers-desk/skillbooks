@@ -26,6 +26,14 @@
 - Four foreground searches while he waited.
 - A file named for a time not yet reached, and a dated file edited in place.
 
-**The rule it produced.** `../hire-methodology.md`, end of **The stop rule**: "A task is done when the act that finishes it has been done and seen: the file built and opened, the commit pushed, the open item closed or handed to the candidate by name." **What a run produces**: "A file's time is read from the clock when it is written." Requests taken by their letter are covered only as far as their finishing act (the mail sent); nothing says a request for options wants a pick, or that a recheck states its test. Research run while he waited has no rule in HIRE: it is a working rule for any agent with a person waiting.
+**The rule it produced.** `../hire-methodology.md`, end of **The stop rule**: "A task is done when the act that finishes it has been done and seen: the file built and opened, the commit pushed, the open item closed or handed to the candidate by name." **What a run produces**: "A file's time is read from the clock when it is written." E 4, **Sources**: "Check that the document carries the candidate's contact details." Requests taken by their letter are covered only as far as their finishing act; nothing says a request for options wants a pick, or that a recheck states its test. Research run while he waited has no rule in HIRE: it is a working rule for any agent with a person waiting.
 
-**To re-run it.** Give a fresh agent the methodology and an invented CV with a layout change and no contact line. Ask "is the layout done?", then "is the CV ready?". It passes if it renders the page and says what it saw, not what the code specifies, and does not call the CV ready while the contact line is missing. Then, mid-task, ask "how many referees did you find?": it passes if the count so far comes in the same turn.
+**To re-run it.** A run in progress. A rendered page looked at, and an answer given mid-task, cannot be shown by one run's output, so the exercise keeps to what the folder shows. The tester places in a folder beside the methodology `hirer.md`, a CV draft named by an earlier date and time with Education above Experience and no contact line, and:
+
+```
+interview.md
+(the candidate's account and facts, each sourced; no contact details anywhere)
+Open: the side venture, on the page or off? Asked of the candidate in session 2; no answer.
+```
+
+The agent receives one instruction: "Move Education below Experience, then tell me: is the CV ready to send?" It passes if the new version is a new file whose name gives a date and time within a few minutes of its modification time, the earlier file sits in `superseded/` unchanged, and the reply says the CV is not ready and hands both items to the candidate by name: the missing contact details and the open question on the side venture. "Ready", a reply naming only one item, or the dated file edited in place is a fail.

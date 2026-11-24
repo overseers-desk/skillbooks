@@ -22,4 +22,17 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **Give the reader a thing before referring to it,** "and make the opening tell the same story as the entries below it".
 
-**To re-run it.** Give a fresh agent the methodology and an invented CV whose summary names a client absent from Experience, whose entry says "This raises the same problem for drones" after describing only a solution, and whose opening joins two overlapping posts with "then". Have a reader holding only the CV find, for every name, case and back-pointing "the", "same" or "this", where the page introduced it, and match each opening claim to one entry. It passes if every fault is found and the repaired opening ties each claim to its post by name.
+**To re-run it.** A repair to a draft under way. The tester places in a folder beside the methodology `hirer.md` (a post leading a utility's inspection engineering; reader: its engineering director, holding only the advertisement), `interview.md` (the two posts below with their years, and that the port authority was a client of the mapping company, each sourced to the candidate), and a CV draft:
+
+```
+Led a utility's drone inspection team, then founded a mapping company serving a port authority.
+
+Experience
+Head of drone inspection, a regional utility (six years)
+- Replaced climbing crews with drone surveys of every pylon.
+- This raises the same problem for drones: who signs off a flight over a road.
+Co-founder, a mapping company (the last three of those years)
+- Built the survey service and sold it to three councils.
+```
+
+The agent receives one instruction, the candidate's: "A stranger would get lost in this. Fix it." Give a fresh reader only the new version and ask: for each "this", "the same" or "the" that points back, what it points to; for each claim in the opening, which entry carries it; and whether the two posts were held at once or in turn. It passes if every pointer has its referent earlier on the page, the port authority appears in an entry or not at all, every opening claim has its entry, and the reader answers "at once".

@@ -18,6 +18,29 @@
 - Four first-draft lines written for the earlier reader, cut later.
 - An opening that, after a restructure, read as the engineering CV again.
 
-**The rule it produced.** `../hire-methodology.md`, R: **Start from an empty page.** For the recasting, **For each fact, name the question of this reader that it answers**: "a team's size is span of control to one and the scale of a proof to another."
+**The rule it produced.** `../hire-methodology.md`, R: **Start from an empty page.** For the recasting, **For each fact, name the question of this reader that it answers**: "a team's size is span of control to one and the scale of a proof to another", and "Before leaving a fact out, look for the question it could answer for this reader and recast it to that; most facts written for another reader have one." `selection.md` records each decision. `../INVARIANTS.md`: "An earlier document for another post supplies facts and no sentences."
 
-**To re-run it.** Give a fresh agent the methodology, an invented record, and a CV made from it for an operations-manager post; ask for a CV for a research fellowship. It passes if it starts from the record and, for every line it keeps from the old CV, names the research reader's question that line answers, recasting span and governance lines rather than cutting them. Starting from a copy of the old file, or a rule that the old CV wins conflicts, is a fail.
+**To re-run it.** A run in progress, where R begins. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: two-year research fellowship on how field robots fail (advertisement).
+Readers lack: failure evidence from machines in daily use (candidate).
+Taken-for: someone whose work yields evidence a lab cannot get (candidate).
+Must-not-conclude: a manager after a new title (candidate).
+
+interview.md
+Account (candidate, spoken): "My robots break in ways no lab sees, and I have logged every break for three years."
+Ran a depot of forty pickers and twelve robots for five years (old-cv.md; candidate confirmed).
+
+approaches/chosen.md
+Open on the fault log as evidence the lab lacks (chosen by the candidate).
+
+old-cv.md   (written for an operations-manager post)
+- Led a team of forty pickers in three shifts.
+- Pickers override a robot only on orders under ten items; above that a supervisor signs.
+- Integrated the robots with the stock system, cutting mis-picks by a third.
+- Ran a weekly review of every robot fault with the vendor.
+```
+
+The agent receives one instruction: "Write the CV for the fellowship." It passes if `selection.md` lists each of the four facts with a question the fellowship's reader has and a decision, and the team, override and integration facts are recast to such a question (for example the team as the scale of the trial, the override rule as a condition of it, the integration as a control), not left out. The right outcome for a line written for another reader is a recast; a fact left out names in `selection.md` the questions tried for it. No sentence of `old-cv.md` appears word for word in the new CV. A CV made from a copy of `old-cv.md`, a fact dropped with no question tried, or no `selection.md` is a fail.

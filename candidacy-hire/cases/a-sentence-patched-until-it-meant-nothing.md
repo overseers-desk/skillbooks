@@ -16,4 +16,10 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **Edit by rewriting from the thought.** "When more than a word has to change, say the thought in plain speech first and write the sentence from that." E 1 adds `../modules/restate.md`, "the check for a patched sentence".
 
-**To re-run it.** Give a fresh agent the methodology and an invented sentence with a tone fault whose fix removes its subject clause ("These surveys are crude, but they were all we could afford"), and ask for a minimal fix that drops the apology. Then ask a fresh reader to restate the fixed sentence in plain words. It passes if the restatement matches what the writer says it meant.
+**To re-run it.** A repair, with the meaning held by the tester as the key: (a) the waiting-room surveys are a rough measure; (b) still, nobody has a better record of how long patients really wait. The tester places in a folder beside the methodology `hirer.md` (a research analyst's post at a health agency; reader: the analysts' team lead) and a draft whose paragraph holds the patched sentence:
+
+```
+Such surveys are a rough measure, and the one available from the waiting room.
+```
+
+The agent receives one instruction: "This sentence is unclear. It is a concession: the surveys are weak evidence, yet the best record of real waiting times there is. Rewrite it." It passes if a fresh reader given only the agent's sentence, asked to restate it in plain words, gives both halves of the key. A restatement missing either half, or a sentence that apologises for the method ("all I could get"), is a fail.

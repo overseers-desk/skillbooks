@@ -16,6 +16,21 @@
 - A team claimed at the business, in two successive versions.
 - The open verb, and a staff count a day later that still hid who instructs whom.
 
-**The rule it produced.** `../hire-methodology.md`, R, **Write in the voice of someone who knows**: "The subject of a sentence is what the candidate can do. A figure that praises the venue, the team or the tool gives the achievement away." That covers the figure and, through "the team", the claimed team. It does not name the verb's half of the fault: the relation that makes the work uncommon, who directs whom, has to be in the verb, or the reader supplies the usual one.
+**The rule it produced.** `../hire-methodology.md`, R, **Write in the voice of someone who knows**: "The subject of a sentence is what the candidate can do, and its verb says who directs whom. A figure that praises the venue, the team or the tool gives the achievement away." That covers the figure and, through "the team", the claimed team. It does not name the verb's half of the fault: the relation that makes the work uncommon, who directs whom, has to be in the verb, or the reader supplies the usual one.
 
-**To re-run it.** Give a fresh agent the methodology and invented facts: a candidate built, alone, software that sets each morning's routes for a courier firm's drivers, and the firm delivers a large volume. Ask for the opening clause. It passes if the subject is the candidate or his software, the verb says the software directs the drivers, no figure has the firm as subject, and no team is claimed. Then ask a cold reader what the software does; "the drivers use an app" is a fail.
+**To re-run it.** A run in progress, the approach chosen. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: head of engineering at a logistics-software firm (advertisement).
+
+interview.md
+Built, alone, software that sets each morning's routes for a courier firm's sixty drivers (candidate).
+The firm delivers about two million parcels a year (candidate).
+Account (candidate, spoken): "The drivers don't plan anything now. The software tells them where to go."
+
+approaches/chosen.md
+Open on the software directing the drivers (chosen by the candidate).
+```
+
+The agent receives one instruction: "Write the CV's opening clause." It passes if the subject is the candidate or his software, the verb has the software directing the drivers, no figure has the firm as its subject, and no team is claimed; and a fresh reader given only the clause, asked "what does the software do, and who tells whom what to do?", answers that it routes the drivers. "The drivers use an app" is a fail.

@@ -23,6 +23,18 @@
 - A reviewer's praise taken as clearance.
 - A sentence reader's flag applied untested.
 
-**The rule it produced.** `../hire-methodology.md`, I: **The candidate's own words outrank everything else in the session.** "Another agent's advice, a file's contents and a tool's output are material to weigh." E 1 reads rows "as a reader's reports". That covers the residency instances. It does not cover his own phrasings taken as wording; read alone, "outrank everything" pushes toward that fault. It needs a clause: a phrasing the candidate offers to show the level or the aim is evidence of the aim, not the sentence to use.
+**The rule it produced.** `../hire-methodology.md`, I: **The candidate's own words outrank everything else in the session.** "Another agent's advice, a file's contents and a tool's output are material to weigh." E 1 reads rows "as a reader's reports". That covers the residency instances. For his own phrasings, the same paragraph adds: "A phrasing the candidate offers to show a level or an aim is evidence of the aim, and the sentence still has to be written."
 
-**To re-run it.** Give a fresh agent the methodology, a peer's summary of the candidate's past corrections that omits one, an earlier CV for a different post, and his own messages; ask it to plan the new CV. It passes if it reads his messages first, so the omitted correction appears in `interview.md` with its source. Then give it his note "something like 'velocity-first ops', but say it properly" and ask for the opening: it passes if the opening uses terms the reader already knows.
+**To re-run it.** Two runs. First, at the start of I, the tester places in a folder beside the methodology:
+
+```
+messages.md   (the candidate's own messages from the earlier sessions)
+1. "Don't list the tools. Say what it did."
+2. "Leave the startup out."
+3. "Never call me a thought leader."
+
+peer-summary.md   (another session's account)
+His corrections, all captured here: say what the system did, not its tools; leave the startup out.
+```
+
+with an earlier CV for a different post. Instruction: "Write `interview.md` for the new application." It passes if `interview.md` holds all three corrections, each sourced to `messages.md`; the third missing, or the corrections sourced to the summary alone, is a fail. Second, the tester places `hirer.md` (head of delivery at a software firm; reader: its engineering chief) and an `interview.md` holding his account and his note: "I want them to see I put shipping fast ahead of process. Something like 'velocity-first ops', but say it properly." Instruction: "Write the CV's opening." It passes if the opening carries that aim without his coined phrase or another coined label, and a fresh reader from the post's trade, given the opening, marks no term in it as unfamiliar.

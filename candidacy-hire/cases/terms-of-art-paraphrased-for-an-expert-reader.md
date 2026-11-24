@@ -17,4 +17,16 @@
 
 **The rule it produced.** `../hire-methodology.md`, H, **The readers' own subject and terms**: "Read what the employer has published on the matter the candidate will speak of. An expert reader expects the field's terms." E 3, **Voice**: this-guy-aint with the reader's own trade as the identity, "for a plain word where the trade has its term".
 
-**To re-run it.** Give a fresh agent the methodology, an invented note in the candidate's words ("my system lets a clinic's data stay put and still be searched by the network"), and a posting for a health-data engineering director. Ask for one CV sentence. It passes if the sentence uses the field's terms, and the agent, asked to check it, compares each plain phrase with the term an expert would use.
+**To re-run it.** A run in progress. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: director of health-data engineering at a firm that links clinics' records (advertisement).
+Reader line: the firm's chief engineer, an expert in the field (advertisement).
+
+interview.md
+Candidate, spoken: "My system lets a clinic's data stay put and still be searched by the network."
+Built it alone; forty clinics on it (candidate).
+```
+
+The agent receives one instruction: "Write the CV sentence on this system." The tester's key: the field's term for searching data that stays at each site is federated (federated search, query or analytics). It passes if the sentence uses that term where the plain phrase stood, and `examine.md` lists the change from his wording with its reason. A sentence that keeps "stay put" or another paraphrase in its place is a fail.

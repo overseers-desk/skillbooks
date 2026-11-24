@@ -28,7 +28,7 @@ One working folder per application, in the candidate's own repository, holding:
 | `hirer.md` | H | The post, the route, the readers, what they lack, and the four sentences Examine's readers are given |
 | `interview.md` | I | The candidate's statements and the facts, each with its source, and the questions still open |
 | `approaches/` | R | The competing openings and outlines, and how one was chosen |
-| `selection.md` | R | Each fact considered: the reader's question it answers, and whether it is kept, recast or left out |
+| `selection.md` | R | Each fact considered: the reader's question it answers, what it says of the candidate beyond itself, and whether it is kept, recast or left out |
 | the document | R | Named by the date and time it was made; earlier versions move to `superseded/` |
 | `examine.md` | E | Each check run, what it raised, what was done, and what the candidate said on reading |
 
@@ -36,7 +36,7 @@ A file's time is read from the clock when it is written (`cases/a-task-reported-
 
 ## H — Hirer
 
-A document is not begun until `hirer.md` exists. A repair to a document already under way is made with `hirer.md` open beside it. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
+A document is not begun until `hirer.md` and `interview.md` exist. A repair to a document already under way is made with `hirer.md` open beside it. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
 
 Establish, and mark each line with where it came from (the advertisement, the candidate, another named source, or your own inference):
 
@@ -63,10 +63,11 @@ H closes with four sentences, which Examine hands to its readers:
 
 - The candidate's own account of the work, told to this reader. Put it as the question H raised: what does this reader want from someone like you? Take the answer spoken if possible, and keep it as given. It is the spine of the document.
 - What the candidate wants to be taken for, and what the candidate fears the reader will conclude.
-- What stays off the page: other ventures, where the candidate lives, anything a referee or a public record would contradict. The sources may well hold such things; whether they appear is the candidate's decision (`cases/a-private-matter-put-on-the-page-without-asking.md`).
+- What stays off the page: other ventures, where the candidate lives, anything a referee or a public record would contradict. The sources may well hold such things; whether they appear is the candidate's decision, and until it is made they stay off and the document is not sent (`cases/a-private-matter-put-on-the-page-without-asking.md`).
 - Scale and organisation as a referee would state them: titles, dates, team sizes, who reported to whom.
 - Each figure on which the sources disagree.
 - Where the candidate will work, from when, and on what terms.
+- The contact details the document carries. An address or a number can say where the candidate lives.
 
 **Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document, with its path. What the writer has worked out is entered as a question. A sentence in the final document that rests on an open question is listed for the candidate (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
@@ -74,13 +75,13 @@ H closes with four sentences, which Examine hands to its readers:
 
 When no candidate is present, write the questions, proceed on the record, and mark what rests on each unanswered one. The opening and the choice of approach are the exception: they wait for the candidate's own account, since an opening written from files is the writer's arrangement of them.
 
-Notes the candidate gives toward a text are restated and agreed before anything is built or tested on them. An accepted default is an answer, and is not asked again.
+Notes the candidate gives toward a text are restated and agreed before anything is built or tested on them. A remark on a draft is different: it is acted on, where the candidate pointed. An accepted default is an answer, and is not asked again.
 
 ## R — Reframe
 
 **Start from an empty page.** An earlier document for another post is a source of facts. Its sentences were each written to answer a different reader, and they carry that purpose with them unseen (`cases/a-cv-built-by-editing-one-written-for-another-post.md`).
 
-**Choose the approach before writing sentences.** An approach is what the document opens on and what it argues. Set out at least three that differ in kind, in `approaches/`, each as an opening paragraph and an outline. One of them is the candidate's own account from I, tidied and otherwise untouched. Choose among them with Examine's judges, or with the candidate. A writer's drafts are variations on one approach, and ranking them against each other cannot find a better one (`cases/an-opening-that-indexes-the-career.md`, `cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
+**Choose the approach before writing sentences.** An approach is what the document opens on and what it argues. Set out at least three that differ in kind, in `approaches/`, each as an opening paragraph and an outline. One of them is the candidate's own account from I, tidied and otherwise untouched. Judges may narrow the field; the candidate chooses. A writer's drafts are variations on one approach, and ranking them against each other cannot find a better one (`cases/an-opening-that-indexes-the-career.md`, `cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
 
 **For each fact, name the question of this reader that it answers,** and write it as that answer. The same fact answers different questions for different readers: a team's size is span of control to one and the scale of a proof to another. Before leaving a fact out, look for the question it could answer for this reader and recast it to that; most facts written for another reader have one. A fact that still answers none stays out, however true and however hard-won. `selection.md` records each decision, so the candidate can see what was left out and why (`cases/a-true-detail-kept-because-it-was-known.md`).
 
@@ -94,7 +95,7 @@ Notes the candidate gives toward a text are restated and agreed before anything 
 
 - State what is the case. "The evidence is a catalogue of N failures" is a statement; "I catalogued N failures" is a report of homework, and "I found that" tells the reader the story of finding out (`cases/a-statement-of-fact-told-as-finding-out.md`).
 - Keep open what the candidate left open. "Three of the categories, for example" where the writer was about to write "the failures fall into three kinds". "Has helped most so far" where the writer was about to conclude (`cases/an-open-question-written-as-settled.md`).
-- The subject of a sentence is what the candidate can do. A figure that praises the venue, the team or the tool gives the achievement away (`cases/the-sentences-subject-gives-the-achievement-away.md`).
+- The subject of a sentence is what the candidate can do, and its verb says who directs whom. A figure that praises the venue, the team or the tool gives the achievement away (`cases/the-sentences-subject-gives-the-achievement-away.md`).
 - A quality is shown by a fact. A label for it ("strong leader") is the thing every applicant writes (`cases/a-quality-claimed-by-label.md`).
 - A defence against a charge the reader has not made plants the charge (`cases/a-denial-nobody-asked-for.md`).
 
@@ -121,7 +122,7 @@ Run prose-stethoscope on the draft, on a copy in which any template markup is re
 - `modules/restate.md` asks whether the reader can say in their own words what a sentence asserts. It is the check for a patched sentence.
 - `modules/grain.md` asks whether a sentence sits at a much finer level of detail than the document around it.
 
-Two runs; three where a decision rests on one row. Then read the rows as a reader's reports:
+Two runs; three where a decision rests on one row or the two runs split. Then read the rows as a reader's reports:
 
 - A row on a line the candidate chose goes to the candidate, who decides what to do with it.
 - A row from `level` or `work` invites a cut. Act on one only when most runs agree, and treat cutting as the last answer to it: a measured result or the sign of the candidate's own building may be what the reader came for (`cases/a-line-cut-on-one-readers-flag.md`).

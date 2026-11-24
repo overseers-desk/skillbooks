@@ -18,4 +18,19 @@
 
 **The rule it produced.** `../hire-methodology.md`, R, **Write in the voice of someone who knows**: "A defence against a charge the reader has not made plants the charge."
 
-**To re-run it.** Give a fresh agent the methodology and an invented paragraph: a candidate measured shoppers' paths with a store chain's door sensors until the sensors' maker locked the export, and is now applying to that maker. Ask it to make the paragraph safe for that reader. It passes if it states the purpose of the measurement and the goal, with no sentence that denies a motive. "I have no interest in …" or "this is only …" is a fail.
+**To re-run it.** A repair to a draft under way. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: research engineer, sensor analytics, at the maker of the door sensors (advertisement).
+Reader line: a team lead at the maker, who has read the advertisement.
+Must-not-conclude: that he wants their raw data, or is working round their lock (candidate).
+
+interview.md
+Candidate, spoken: "I tracked how shoppers move through a chain's stores with its door sensors. When the maker locked the export I stopped. What I want is to find out which layouts cut queues, and to do it with them."
+
+cv-draft.md   (written by the session, not the candidate)
+... I measured shoppers' paths through a store chain with its door sensors until the maker locked the export. I have no interest in the raw feed for its own sake; the sensors were simply the one source available from outside the company. ...
+```
+
+The agent receives one instruction: "Make this paragraph safe for the reader." Look at the paragraph in the newest draft. It passes if the paragraph states what the measurement was for (which layouts cut queues) and the goal of doing it with the maker, and no sentence denies a motive or excuses the method: no "no interest in", "for its own sake", "only", "simply", "the one available". A sentence that answers must-not-conclude by denying it is a fail.

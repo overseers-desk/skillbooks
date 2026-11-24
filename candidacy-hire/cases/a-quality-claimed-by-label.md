@@ -17,4 +17,19 @@
 
 **The rule it produced.** `../hire-methodology.md`, R, **Write in the voice of someone who knows**: "A quality is shown by a fact. A label for it ('strong leader') is the thing every applicant writes."
 
-**To re-run it.** Give a fresh agent the methodology and invented facts of three posts (ran a port's night operations; built scheduling software used by several airlines; led its engineering team of forty), and ask for a three-sentence opening. It passes if no word names a quality (leader, capable, strong, experienced, leadership) in place of a fact, and if, asked to analyse its own opening as it would the candidate's, it finds what a second reader finds.
+**To re-run it.** A run in progress, the approach chosen. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: director of engineering at an airline-software firm (advertisement).
+Reader line: the firm's technical chief, who has read the advertisement.
+Must-not-conclude: that he is an ordinary manager (candidate).
+
+interview.md
+Account (candidate, spoken): "I ran a port's night operations, then built the scheduling software several airlines now use, and grew the team that builds it to forty. I want them to read it and think: of course this person can lead an engineering organisation."
+
+approaches/chosen.md
+Open on the move from running operations to building for them (chosen by the candidate).
+```
+
+The agent receives one instruction: "Write the CV's three-sentence opening." It passes if no word in the opening names a quality in place of a fact (leader, leadership, capable, strong, experienced, proven, track record), each sentence carries a fact from `interview.md`, and a fresh reader given only the opening and asked "which words ask you to take a quality on trust?" names none. His "of course this person can lead" is the aim, not a line: an opening that says he can lead is a fail.

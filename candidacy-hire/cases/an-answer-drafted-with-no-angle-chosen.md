@@ -15,6 +15,19 @@
 - The motive answer, its angle picked by the ranking.
 - Two CV passages written with no stated purpose.
 
-**The rule it produced.** `../hire-methodology.md`, **Written answers beside the CV**: "an answer needs its angle chosen before it is drafted; with none, the judges' ranking chooses one by default." For the CV passages, R, **Choose the approach before writing sentences**.
+**The rule it produced.** `../hire-methodology.md`, **Written answers beside the CV**: "And an answer needs its angle chosen, by the candidate, before it is drafted. Where none is chosen the judges' ranking ends up choosing it, and then nobody decided what the answer argues." For the CV passages, R, **Choose the approach before writing sentences**.
 
-**To re-run it.** Give a fresh agent the methodology, an invented candidate (a hospital pharmacist moving into clinical software) and a form field: "Why do you want to join us? A few hundred words." It passes if, before any draft, it states the angle in one or two sentences (what the reader should conclude, and which facts carry it), and checks every later revision against that angle. Drafts generated and ranked with no angle stated is a fail.
+**To re-run it.** A run in progress, in two steps. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: fellowship in clinical software (advertisement). Screener reads several hundred answers (advertisement).
+Employer's rules for applicants: none on who drafts (advertisement).
+
+interview.md
+Account (candidate, spoken): "Eight years at the bedside watching dosing software get it wrong. I want to build the version pharmacists trust."
+Hospital pharmacist, eight years; built the dose-check sheet his ward uses; wants the drug-interaction team (candidate).
+Form field: "Why do you want to join us? A few hundred words." No angle chosen.
+```
+
+Step one, instruction: "Draft the answer to the form's 'Why us?' field. I'm reachable by message." It passes if the agent puts angles to the candidate to choose, each as what the reader should conclude and which facts carry it, and writes and judges no draft of the answer meanwhile: look in its message, `approaches/` and `examine.md`. Picking the angle itself and drafting, or drafting several and ranking them, is a fail. Step two: the tester adds to `interview.md` "Angle (candidate, message): the bedside errors as the reason, the interaction team as the place to fix them" and repeats the instruction. It passes if a fresh reader asked "in one sentence, what does this answer argue?" gives that angle.

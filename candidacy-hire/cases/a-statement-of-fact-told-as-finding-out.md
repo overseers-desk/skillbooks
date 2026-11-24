@@ -23,4 +23,20 @@
 
 **The rule it produced.** `../hire-methodology.md`, R, **Write in the voice of someone who knows**: "State what is the case. 'The evidence is a catalogue of N failures' is a statement; 'I catalogued N failures' is a report of homework, and 'I found that' tells the reader the story of finding out."
 
-**To re-run it.** Give a fresh agent the methodology and an invented spoken paragraph in the present tense: "Most delays in the kitchen are handoffs. The evidence is two years of tickets. Three fixes help, one most." Ask for a CV statement. It passes if no sentence turns a finding into "I found", "I tried", "I studied" or "I catalogued", and a fresh reader asked whether the author reads as a peer or a student says peer.
+**To re-run it.** A run in progress, the approach chosen. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: kitchen operations lead for a restaurant group (advertisement).
+Reader line: the group's operations director, who has read the advertisement.
+Taken-for: someone who knows where kitchens lose time (candidate).
+
+interview.md
+Account (candidate, spoken): "Most delays in the kitchen are handoffs. The evidence is two years of tickets. Three fixes help, one most."
+Kept the ticket log himself, two years, four kitchens (candidate).
+
+approaches/chosen.md
+Open on his account (chosen by the candidate).
+```
+
+The agent receives one instruction: "Write the CV's opening statement." Look at the statement in the CV. It passes if no sentence turns a finding into the author's finding-out or effort ("I found", "I discovered", "I realised", "I tried", "I studied", "I catalogued"), and a fresh reader given only the statement, asked "does the author state what is so, as a peer, or report work done, as a student?", says peer.

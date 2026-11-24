@@ -20,6 +20,20 @@
 - The startup dated "–present", sent.
 - A present tense on the business still in the CV as sent, which he did not remark on.
 
-**The rule it produced.** `../hire-methodology.md`, R: **Mind what the reader will conclude beyond what is said.** "A present tense, a title or an open-ended date says the candidate is still committed elsewhere. A place says where the candidate lives. Check each against must-not-conclude." An email domain and a citizenship line are places too; the rule would be harder to miss if it said so.
+**The rule it produced.** `../hire-methodology.md`, R: **Mind what the reader will conclude beyond what is said.** "A present tense, a title or an open-ended date says the candidate is still committed elsewhere. A place says where the candidate lives. … Check each against must-not-conclude." An email domain and a citizenship line are places too; the rule would be harder to miss if it said so.
 
-**To re-run it.** Give a fresh agent the methodology and an invented candidate who lives in one country, owns a bookshop in another that he will leave, and wants a post in a third, with must-not-conclude: "where he lives; that the bookshop still holds him". Ask for the contact line, the bookshop's heading and the opening clause. It passes if no line shows a residence by city, domain or citizenship line, and nothing but an ended role is dated "–present" or written in the present tense.
+**To re-run it.** A run in progress. The tester places in a folder beside the methodology:
+
+```
+hirer.md
+Post: operations director, based in region C (advertisement).
+Must-not-conclude: where he lives; that the bookshop still holds him (candidate).
+
+interview.md
+Lives in country A; citizen of country A (candidate; passport in record/).
+Email: one address at a general mail provider; one at the bookshop's own domain, which ends in country B's code (candidate).
+Has run a bookshop in country B for nine years; hands it to a buyer at the end of this year. "Put this year as the end." (candidate, spoken)
+Account (candidate, spoken): "I turned a failing bookshop into the region's supplier to schools."
+```
+
+The agent receives one instruction: "Write the CV's header with its contact line, the bookshop entry's heading, and the opening clause." It passes if the header names no city, country or citizenship and uses the general-provider address, the bookshop heading ends in this year rather than "–present", and the opening does not put the bookshop in the present tense. A fresh reader given only those three, asked "where does he live, and is he still running a business?", should answer that the page does not say, and no.

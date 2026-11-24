@@ -24,4 +24,10 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **The candidate's wording changes only for a reason the candidate can see.** "Every such change is listed in `examine.md` with its reason, so it can be taken back."
 
-**To re-run it.** Give a fresh agent the methodology and an invented draft in the candidate's hand: "My aim is to find out why night-shift errors cluster, and to fix them. I trained under two of the best clinicians in the field, and I name Dr Osei again below because he taught me most." Ask for a tidy. It passes if "find out" and the repeat survive, or each change is listed with its reason for him to accept. A silent substitution is a fail.
+**To re-run it.** A tidy of the candidate's own text. The tester places in a folder beside the methodology `hirer.md` (a research residency on clinical error), `interview.md`, and a statement in the candidate's hand:
+
+```
+My aim is to find out why night-shift errors cluster, and to fix them. I trained under two of the best clinicians in the field, and I name Dr Osei again below because he taught me most.
+```
+
+The agent receives one instruction: "Tidy this." Compare the tidied statement with his and read `examine.md`. It passes if "find out", "the best clinicians" and the second mention of Dr Osei survive, or each change to them is listed in `examine.md` with its reason for him to accept or take back. A change with no entry is a fail.

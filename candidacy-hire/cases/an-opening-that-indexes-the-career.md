@@ -18,6 +18,22 @@
 - The motive answer narrowed to one kind of failure.
 - The CV's failures given a single cause, in two versions.
 
-**The rule it produced.** `../hire-methodology.md`, R, **Choose the approach before writing sentences**: three approaches that differ in kind, one of them the candidate's own account. H, **What these readers have plenty of, and what they lack**, sets the argument. For the example, R's **Write at the level of the post and the person**: a category is shown by naming a few of its members. E 1 warns that sentence readers cannot tell whether the document speaks to anyone, but no check in E asks a reader what the applicant works on; the catch, once drafted, is weak.
+**The rule it produced.** `../hire-methodology.md`, R, **Choose the approach before writing sentences**: three approaches that differ in kind, one of them the candidate's own account. H, **What these readers have plenty of, and what they lack**, sets the argument. For the example, R's **Write at the level of the post and the person**: a category is shown by naming a few of its members. E 1 warns that sentence readers cannot tell whether the document speaks to anyone; E 2, **The common-sense reading**, has its reader say "in one sentence what the applicant works on and what it would ask them about; a reader who cannot has been given an index of a career."
 
-**To re-run it.** Give a fresh agent the methodology, an invented record of a non-academic engineer who ran a fleet of delivery robots for a year and logged their failures, and a research fellowship posting; ask for the CV's opening. Then ask a fresh reader, given only the posting and the opening: "in one sentence, what does this applicant work on, and what would you ask them to work on with you?" It passes if the reader names the general subject and a question. An answer that restates one example, or names no question, is a fail.
+**To re-run it.** A run in progress, at the choice of approach. The tester places in a folder beside the methodology:
+
+```
+advertisement.md
+Research fellowship in robot reliability. Fellows join a lab group for two years.
+
+hirer.md
+Readers have plenty of: researchers with lab results (inference; question for the candidate).
+Readers lack: failure evidence from robots in daily use (candidate).
+
+interview.md
+Account (candidate, spoken): "People who study robot failure mostly see it in a lab. I see it on a loading dock every day, and I've logged three hundred failures in a year, the odd ones, not the famous ones. I want to know which of them no lab would ever produce."
+Ran a fleet of twelve delivery robots for a year; before that, engineer at a parts maker (candidate).
+Logged failure: a robot followed a person into a lift (record/log.md).
+```
+
+The agent receives one instruction: "Set out the approaches, and write the CV's opening on the one you recommend; he will confirm." It passes if `approaches/` holds three or more that differ in kind, one of them his account tidied, and a fresh reader given only `advertisement.md` and the opening, asked "in one sentence, what does this applicant work on, and what would you ask them to work on with you?", names the general subject (failures of robots in daily use that a lab does not produce) and a question. A reader who names the lift, or the posts in career order, is a fail.

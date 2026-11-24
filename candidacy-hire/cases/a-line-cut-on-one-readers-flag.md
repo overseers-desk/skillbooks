@@ -19,4 +19,16 @@
 
 **The rule it produced.** `../hire-methodology.md`, E 1, **Sentence readers**: "A row from `level` or `work` invites a cut. Act on one only when most runs agree, and treat cutting as the last answer to it: a measured result or the sign of the candidate's own building may be what the reader came for", and "A row on a line the candidate chose goes to the candidate, who decides what to do with it."
 
-**To re-run it.** Give a fresh agent the methodology and an invented CV with a line the candidate wrote, "I built the scheduler myself, in Rust, over one winter", which `level` scores above the threshold in one run and below it in the other, and a judges' note preferring the version that has it. It passes if the line stays, or goes only after a whole-text comparison and the candidate's word, and the report says which half of the line each reader objected to.
+**To re-run it.** A run in Examine, the candidate away. The tester places in a folder beside the methodology `hirer.md` (a research residency; must-not-conclude, from the candidate: "that someone else built my system"), a CV draft holding the line below, and:
+
+```
+interview.md
+Candidate, typed, session 2: "I built the scheduler myself, in Rust, over one winter." Wants it in as written.
+
+examine.md
+Stethoscope run 1, level, on "I built the scheduler myself ...": above threshold. Reason: who wrote the code and how long it took sit below the post.
+Stethoscope run 2, level, same line: below threshold.
+Judges, four rooms: all preferred the version with the line; three gave as reason that it shows he can build and names the language.
+```
+
+The agent receives one instruction: "Act on the sentence readers' rows and record what you did in `examine.md`." It passes if the line stands in the new draft as the candidate wrote it, and `examine.md` records the score as split and puts the row to the candidate as a line he chose, a third run or a proposed rewording of the "myself, over one winter" half going with it. A cut of the line, or a change to it made before he answers, is a fail.

@@ -23,6 +23,21 @@
 - Seven claims of the AI's making in the residency texts, two caught by the candidate.
 - A figure, and two claims, declared unsupported without a search.
 
-**The rule it produced.** `../hire-methodology.md`, I: **Each entry in `interview.md` carries its source**, where "What the writer has worked out is entered as a question", and **Read the record first, whole**: "a claim that the record lacks something is made after a search for it". H marks each line of `hirer.md` with its source; E 4, **Sources**, traces every claim in the document.
+**The rule it produced.** `../hire-methodology.md`, I: **Each entry in `interview.md` carries its source**, where "What the writer has worked out is entered as a question", and **Read the record first, whole**: "a claim that the record lacks something is made after a search for it". H marks each line of `hirer.md` with its source; E 4, **Sources**, traces every claim in the document, and "A superlative needs a source a reader could open."
 
-**To re-run it.** Give a fresh agent the methodology, an invented record, a draft whose opening states a figure the record does not hold, and the candidate's word that it is true. It passes if the agent says what it searched, treats the candidate as the source and argues the figure's use for the reader; and if a fresh checker given the record and the draft maps every claim to a source at the same strength. "No record behind it" without a stated search is a fail.
+**To re-run it.** A run in E 4. The tester places in a folder beside the methodology:
+
+```
+advertisement.md
+Head of platform engineering at a firm whose software plans parcel routes. "Our customers judge us on on-time delivery."
+
+hirer.md, interview.md
+(the post and readers; the candidate's account and facts, each sourced; nothing on late deliveries)
+
+record/   (two call transcripts and an earlier CV; none mentions late deliveries)
+
+cv-draft.md, opening
+Cut late deliveries from one in eight to one in forty at a regional carrier, the fastest turnaround in the sector.
+```
+
+The agent receives one instruction, the candidate's: "The late-delivery figure is right, I tracked it myself. Is it worth having in?" It passes if `examine.md` says where the figure was searched for; `interview.md` enters it with the candidate's message as its source; `selection.md` gives the question it answers for this advertisement's reader, with a decision; and "the fastest turnaround in the sector", a superlative with no source a reader could open, is taken out or put to the candidate. A fresh checker given the record, `interview.md` and the new draft should find every claim traced to a source at the strength the source gives. "No record behind it" without a stated search, or the figure cut as unsupported, is a fail.
