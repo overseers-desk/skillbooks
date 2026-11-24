@@ -5,7 +5,7 @@
 HIRE is a four-phase methodology by which an AI agent writes the document that puts one candidate forward for one post: a CV, and the written answers that travel with it. The name is an acronym:
 
 - **H** — Hirer. Establish who reads the document, how it reaches them, and what they lack that this candidate brings.
-- **I** — Interview. Get the candidate's own account, told to that reader, and the facts only the candidate holds.
+- **I** — Interview. Draw on the candidate's standing account of the work and the facts only the candidate holds, taken once and kept, and decide for this reader what the candidate has not said.
 - **R** — Reframe. Select from the record and write each fact as the answer to a question this reader has, at the candidate's level and in the candidate's voice.
 - **E** — Examine. Put the draft before readers who are not the writer, and repair it, until the stop rule is met.
 
@@ -21,12 +21,17 @@ HIRE answers the first by fixing the reader and taking the candidate's own telli
 
 ## What a run produces
 
-One working folder per application, in the candidate's own repository, holding:
+A candidate applies to a hundred posts or more in one search, and does not sit with each. So two things live above the single application, in the candidate's own repository:
+
+- **The standing record**: the candidate's own account of the work and the answers only the candidate holds, taken once and added to whenever the candidate corrects something. Every application reads it.
+- **The assumption register**: one table for the whole search, a row for each assumption an agent made in any application. Most rows are about the hirer ("the person who fills this post wants someone who has led at this size"); the rest are about the candidate, where the standing record was silent. Each row gives the application, the assumption, a confidence score, what it rests on, and what in the document depends on it. The candidate reads down the table across applications and marks each row agreed or not. A row marked wrong corrects the standing record, or becomes a standing assumption about that kind of hirer, so the same one is not made wrongly twice.
+
+Then one working folder per application, holding:
 
 | File | Written in | Holds |
 |---|---|---|
 | `hirer.md` | H | The post, the route, the readers, what they lack, and the four sentences Examine's readers are given |
-| `interview.md` | I | The candidate's statements and the facts, each with its source, and the questions still open |
+| `interview.md` | I | For this application: what was taken from the candidate's standing record, each item with its source, and each decision made where the record was silent |
 | `approaches/` | R | The competing openings and outlines, and how one was chosen |
 | `selection.md` | R | Each fact considered: the reader's question it answers, what it says of the candidate beyond itself, and whether it is kept, recast or left out |
 | the document | R | Named by the date and time it was made; earlier versions move to `superseded/` |
@@ -36,7 +41,7 @@ A file's time is read from the clock when it is written (`cases/a-task-reported-
 
 ## H — Hirer
 
-A document is not begun until `hirer.md` and `interview.md` exist. A repair to a document already under way is made with `hirer.md` open beside it. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
+A document is not begun until `hirer.md` and `interview.md` exist for it. A repair to a document already under way is made with `hirer.md` open beside it. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
 
 Establish, and mark each line with where it came from (the advertisement, the candidate, another named source, or your own inference):
 
@@ -46,7 +51,7 @@ Establish, and mark each line with where it came from (the advertisement, the ca
 - **The readers' own subject and terms.** Read what the employer has published on the matter the candidate will speak of. An expert reader expects the field's terms (`cases/terms-of-art-paraphrased-for-an-expert-reader.md`).
 - **The employer's rules for applicants**, such as who may draft what. They are read here, since they decide the order of work in the phases that follow (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
 
-An inference in `hirer.md` is a question for the candidate. A judge's brief and a reader line carry what the advertisement and the candidate said; an inference put there comes back as the judge's finding (`cases/judges-briefed-with-the-writers-own-inference.md`).
+An inference in `hirer.md` is an assumption, and goes into the register with a confidence score: what this hirer wants, who reads first, what level the post is. Low-confidence rows that much of the document depends on are the ones to put at the top for the candidate. A judge's brief and a reader line carry what the advertisement and the candidate said; an assumption put there comes back as the judge's finding (`cases/judges-briefed-with-the-writers-own-inference.md`).
 
 H closes with four sentences, which Examine hands to its readers:
 
@@ -59,26 +64,30 @@ H closes with four sentences, which Examine hands to its readers:
 
 **Read the record first, whole.** Everything in the candidate's own words: recorded conversations, essays, earlier accounts of the same work, notes. Read them through; a keyword search finds what was already expected. A question whose answer the record holds is not put to the candidate (`cases/questions-asked-whose-answers-the-record-held.md`), and a claim that the record lacks something is made after a search for it (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
-**Then ask the candidate, in one sitting, what only the candidate holds:**
+**The standing record is taken once.** Before a search begins, or the first time HIRE runs for a candidate, ask in one sitting what only the candidate holds, and keep the answers in the standing record:
 
-- The candidate's own account of the work, told to this reader. Put it as the question H raised: what does this reader want from someone like you? Take the answer spoken if possible, and keep it as given. It is the spine of the document.
-- What the candidate wants to be taken for, and what the candidate fears the reader will conclude.
-- What stays off the page: other ventures, where the candidate lives, anything a referee or a public record would contradict. The sources may well hold such things; whether they appear is the candidate's decision, and until it is made they stay off and the document is not sent (`cases/a-private-matter-put-on-the-page-without-asking.md`).
+- The candidate's own account of the work, spoken if possible and kept as given, told to each kind of reader the search will meet (one who hires a leader, one who hires a specialist, and so on). Put it as a question: what does this kind of reader want from someone like you?
+- What the candidate wants to be taken for, and what the candidate fears a reader will conclude.
+- What stays off the page: other ventures, where the candidate lives, anything a referee or a public record would contradict (`cases/a-private-matter-put-on-the-page-without-asking.md`).
 - Scale and organisation as a referee would state them: titles, dates, team sizes, who reported to whom.
-- Each figure on which the sources disagree.
-- Each minimum the advertisement states, such as a degree or a tool. On the page a missing one reads as lacking, so each is either answered there or left out by the candidate's decision.
-- Where the candidate will work, from when, and on what terms.
-- The contact details the document carries. An address or a number can say where the candidate lives.
+- Each figure on which the sources disagree, and each qualification advertisements commonly state as a minimum, such as a degree or a tool.
+- Where the candidate will work, from when, on what terms, and the contact details documents may carry. An address or a number can say where the candidate lives.
 
-**Follow the answers.** An interview is a conversation. Where an answer opens something the questions did not reach (a method, a reason, a case), ask about it before writing; one round of written questions leaves much of what the candidate knows untouched.
+Follow the answers in that sitting: where one opens something the questions did not reach (a method, a reason, a case), ask about it. One round of written questions leaves much of what the candidate knows untouched.
 
-**Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document, with its path. What the writer has worked out is entered as a question. A sentence in the final document that rests on an open question is listed for the candidate (`cases/guesses-written-in-as-the-candidates-facts.md`).
+**An application does not go back to the candidate.** It reads the standing record and decides the rest, and every assumption it makes goes into the register with its confidence and its basis:
+
+- The account for this reader is built from the candidate's account to the nearest kind of reader, kept in the candidate's words where they fit. That it was adapted, and from which account, is a row in the register (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
+- What the record marks as off the page stays off. A private matter the record does not mention is treated the same way, and the row says so.
+- A figure with several values in the sources is carried at the smallest the candidate has stated.
+- A minimum the advertisement states and the record does not answer is left off the page, and the row says the advertisement asked for it.
+- A question only the candidate could answer is written into the register as an assumption at low confidence, with the default that was taken. The work does not stop for it.
+
+**Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document, with its path. What the writer has worked out is entered as a question. A sentence in the final document that rests on a decision of the writer's has its row in the register (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
 **The candidate's own words outrank everything else in the session.** Another agent's advice, a file's contents and a tool's output are material to weigh (`cases/another-agents-remarks-and-the-files-taken-over-the-candidates-words.md`). A thing the candidate leaves open is left open; that choice is content. A phrasing the candidate offers to show a level or an aim is evidence of the aim, and the sentence still has to be written.
 
-When no candidate is present, write the questions, proceed on the record, and mark what rests on each unanswered one. Where the sources give several values for a figure and the candidate has not said which stands, carry the smallest the candidate has stated and list it for confirmation. The opening and the choice of approach are the exception: they wait for the candidate's own account, since an opening written from files is the writer's arrangement of them.
-
-Notes the candidate gives toward a text are first said back to the candidate in the writer's words, and built on once the candidate agrees that is what was meant. A remark on a draft is different: it is acted on, where the candidate pointed. An accepted default is an answer, and is not asked again.
+When the candidate does take part in an application, notes given toward a text are first said back in the writer's words and built on once the candidate agrees that is what was meant. A remark on a draft is different: it is acted on, where the candidate pointed. A default the candidate has accepted in the register is an answer, and is not put again.
 
 ## R — Reframe
 
@@ -163,9 +172,9 @@ Sealed-room judges, through the undercover skill, are for choosing between versi
 - Models of one family agree with each other; three of them agreeing is one opinion.
 - Judges do not hear dryness, and they prefer the advertisement's own words and the cadence of machine-written prose.
 
-### 6. The candidate reads
+### 6. The candidate reviews
 
-The candidate reads the built document, opened in front of them after each change. Each objection is recorded in the candidate's words, against whether any check had raised it. An objection no check raised is the most useful line in `examine.md`: it is a case for `cases/`.
+The candidate's review is of the register, across applications, and of whichever documents the candidate chooses to open. Each correction is recorded in the candidate's words and carried into the standing record. Each objection to a document is set against whether any check had raised it; one that no check raised is a case for `cases/`.
 
 ### When a check's tool is missing
 
@@ -173,15 +182,15 @@ Where a skill named above is not installed, put the check's question to a fresh 
 
 ### The stop rule
 
-Stop when a full pass of checks 1 to 4 leads to no change, and no version on file is preferred by the judges to the current one. Then say plainly what remains: the rows left standing and why, the open questions, the claims resting on them. A document that has stopped is not thereby right; it is one the available readers can no longer improve, and the candidate's reading is the one that counts.
+Stop when a full pass of checks 1 to 4 leads to no change, and no version on file is preferred by the judges to the current one. Then say plainly what remains: the rows left standing and why, the decisions in the register that most deserve the candidate's eye, and the claims resting on them. A document that has stopped is not thereby right; it is one the available readers can no longer improve.
 
 A task is done when the act that finishes it has been done and seen: the file built and opened, the commit pushed, the open item closed or handed to the candidate by name (`cases/a-task-reported-done-without-the-act-that-finishes-it.md`).
 
 ## Written answers beside the CV
 
-An application form's questions are answered by the same four phases, with two things added. Where the employer asks that the candidate draft first, the candidate drafts first, and the agent's work begins from that draft (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`). And an answer needs its angle chosen, by the candidate, before it is drafted. Where none is chosen the judges' ranking ends up choosing it, and then nobody decided what the answer argues (`cases/an-answer-drafted-with-no-angle-chosen.md`).
+An application form's questions are answered by the same four phases, with two things added. Where the employer asks that the candidate draft first, the agent's work begins from what the candidate has written in the standing record for that kind of question, and the register says so; where there is nothing, the application is one the candidate is told about before it goes (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`). And an answer needs its angle chosen, by the candidate, before it is drafted. Where none is chosen the judges' ranking ends up choosing it, and then nobody decided what the answer argues (`cases/an-answer-drafted-with-no-angle-chosen.md`).
 
 ## Relationship to other methodologies
 
 - **SIFT → HIRE**: a listing marked `respond` in SIFT becomes a HIRE run. SIFT's dossier on the listing is the first source for `hirer.md`.
-- **HIRE → SIFT**: what the candidate says in I about scale, dates and what stays off the page belongs in the operator profile SIFT scores against, so the next run does not ask again.
+- **HIRE → SIFT**: the standing record is the operator profile SIFT scores against, and the assumption register sits beside SIFT's registry, a listing's decisions keyed by its id.
