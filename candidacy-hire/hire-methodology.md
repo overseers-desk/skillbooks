@@ -28,6 +28,7 @@ One working folder per application, in the candidate's own repository, holding:
 | `hirer.md` | H | The post, the route, the readers, what they lack, and the four sentences Examine's readers are given |
 | `interview.md` | I | The candidate's statements and the facts, each with its source, and the questions still open |
 | `approaches/` | R | The competing openings and outlines, and how one was chosen |
+| `selection.md` | R | Each fact considered: the reader's question it answers, and whether it is kept, recast or left out |
 | the document | R | Named by the date and time it was made; earlier versions move to `superseded/` |
 | `examine.md` | E | Each check run, what it raised, what was done, and what the candidate said on reading |
 
@@ -35,7 +36,7 @@ A file's time is read from the clock when it is written (`cases/a-task-reported-
 
 ## H — Hirer
 
-The document waits for `hirer.md`. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
+A document is not begun until `hirer.md` exists. A repair to a document already under way is made with `hirer.md` open beside it. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
 
 Establish, and mark each line with where it came from (the advertisement, the candidate, another named source, or your own inference):
 
@@ -81,7 +82,7 @@ Notes the candidate gives toward a text are restated and agreed before anything 
 
 **Choose the approach before writing sentences.** An approach is what the document opens on and what it argues. Set out at least three that differ in kind, in `approaches/`, each as an opening paragraph and an outline. One of them is the candidate's own account from I, tidied and otherwise untouched. Choose among them with Examine's judges, or with the candidate. A writer's drafts are variations on one approach, and ranking them against each other cannot find a better one (`cases/an-opening-that-indexes-the-career.md`, `cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
 
-**For each fact, name the question of this reader that it answers,** and write it as that answer. The same fact answers different questions for different readers: a team's size is span of control to one and the scale of a proof to another. A fact that answers no question of this reader stays out, however true and however hard-won (`cases/a-true-detail-kept-because-it-was-known.md`).
+**For each fact, name the question of this reader that it answers,** and write it as that answer. The same fact answers different questions for different readers: a team's size is span of control to one and the scale of a proof to another. Before leaving a fact out, look for the question it could answer for this reader and recast it to that; most facts written for another reader have one. A fact that still answers none stays out, however true and however hard-won. `selection.md` records each decision, so the candidate can see what was left out and why (`cases/a-true-detail-kept-because-it-was-known.md`).
 
 **Write at the level of the post and the person.**
 
@@ -152,11 +153,16 @@ Sealed-room judges, through the undercover skill, are for choosing between versi
 - The brief tells the judge not to look the candidate up.
 - At least one version in any comparison of approaches was not written by this session: the candidate's own telling, or a real document of the same kind.
 - A judge made to name one thing to fix will name one whether or not anything needs fixing. Such an answer is a prompt to look, and what it asks for is weighed against the level of the document before anything is added.
+- Models of one family agree with each other; three of them agreeing is one opinion.
 - Judges do not hear dryness, and they prefer the advertisement's own words and the cadence of machine-written prose.
 
 ### 6. The candidate reads
 
 The candidate reads the built document, opened in front of them after each change. Each objection is recorded in the candidate's words, against whether any check had raised it. An objection no check raised is the most useful line in `examine.md`: it is a case for `cases/`.
+
+### When a check's tool is missing
+
+Where a skill named above is not installed, put the check's question to a fresh agent that holds only the document and the reader line, and record in `examine.md` that the check ran in that form. A check that could not be run at all is named when the work stops.
 
 ### The stop rule
 
@@ -166,7 +172,7 @@ A task is done when the act that finishes it has been done and seen: the file bu
 
 ## Written answers beside the CV
 
-An application form's questions are answered by the same four phases, with two things added. Where the employer asks that the candidate draft first, the candidate drafts first, and the agent's work begins from that draft (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`). And an answer needs its angle chosen before it is drafted; with none, the judges' ranking chooses one by default (`cases/an-answer-drafted-with-no-angle-chosen.md`).
+An application form's questions are answered by the same four phases, with two things added. Where the employer asks that the candidate draft first, the candidate drafts first, and the agent's work begins from that draft (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`). And an answer needs its angle chosen, by the candidate, before it is drafted. Where none is chosen the judges' ranking ends up choosing it, and then nobody decided what the answer argues (`cases/an-answer-drafted-with-no-angle-chosen.md`).
 
 ## Relationship to other methodologies
 
