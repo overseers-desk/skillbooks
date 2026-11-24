@@ -49,7 +49,7 @@ A choice a phase needed and did not find in the configuration is added to it, ma
 
 ## Operator profile
 
-A profile that no other method keeps, and that serves this campaign alone, lives in the campaign directory as `operator-profile.md`. Where another method keeps a record of the operator, or one profile serves several campaigns, it lives outside the campaign directory and the configuration gives its path. Do not duplicate the profile.
+The configuration gives the profile's path. A description the operator already has, a record another method keeps of the operator, and a profile that serves several campaigns each stay where they are, outside the campaign directory. A profile written for this campaign alone is `operator-profile.md` in the campaign directory. Do not duplicate the profile.
 
 ## Beside a response method
 
