@@ -229,7 +229,7 @@ Fit is Sonnet-tier work. When a scoring rubric does the intellectual heavy lifti
 For each row where `stars` is empty:
 
 1. Read the dossier. The listing description and source background are the primary evidence for scoring. If the dossier fetch failed, note this in `notes_fit` and score from whatever information is available.
-2. Score each campaign-defined dimension using the rubric's anchors.
+2. Score each campaign-defined dimension using the rubric's anchors. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
 3. Compute `stars = clamp(sum-of-dimensions, 1.0, 5.0)`.
 4. Assess `pct_base` by comparing each stated requirement against the operator profile. List any `hard_gates`.
 5. Identify applicable amplifier tags from the campaign's amplifier list.
