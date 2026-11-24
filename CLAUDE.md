@@ -1,7 +1,7 @@
 # Aesop — notes for AI sessions
 
-This repo holds the **AESOP methodologies** (SPAR/SIFT/TEND/SAGE/SCOPE/PLACE/LAMP/MIND/MOVE/CART) and their working data, in
-the top-level dirs (almanac, articles, brandreview-mind, contact-graph, correspondence-tend, events,
+This repo holds the **AESOP methodologies** (SPAR/SIFT/TEND/SAGE/SCOPE/PLACE/LAMP/MIND/MOVE/CART/HIRE) and their working data, in
+the top-level dirs (almanac, articles, brandreview-mind, candidacy-hire, contact-graph, correspondence-tend, events,
 listing-sift, market-place, matter-cart, outreach-spar, pmf-sage, presence-move, scatter-scope, seo-lamp, travel, tests, webworks). These are SOPs written for AI
 agents to execute.
 

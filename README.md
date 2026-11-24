@@ -224,11 +224,28 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **Procedure documents:** `matter-cart/cart-methodology.md`.
 
+### HIRE — Writing a Candidacy
+
+**Phases:** Hirer, Interview, Reframe, Examine
+
+**Direction:** Outbound-reactive. A listing has been judged worth answering, and one candidate has to be put forward to its reader in a CV and the written answers beside it.
+
+**What each phase does:**
+
+- **Hirer** establishes the post behind the advertisement, the route the document travels, and what its readers lack that this candidate brings.
+- **Interview** reads the candidate's own words on record, then takes the candidate's account told to that reader and the facts only the candidate holds, each with its source.
+- **Reframe** chooses among approaches that differ in kind, then writes each fact as the answer to a question this reader has, at the candidate's level and in the candidate's voice.
+- **Examine** puts the draft before readers who are not the writer (sentence readers, a common-sense reading, sealed-room judges, the candidate) and stops by a stated rule.
+
+**Model allocation:** Reframe and the reading of Examine's rows are Opus-tier or above. The readers Examine calls choose their own models.
+
+**Procedure documents:** `candidacy-hire/hire-methodology.md`, with the faults its rules came from in `candidacy-hire/cases/`.
+
 ### How the methodologies relate
 
 SPAR generates outbound messages. Those messages produce replies. The replies arrive in an inbox processed by TEND. TEND's thread assembly recognises the SPAR outreach message in the conversation history and can route the reply accordingly — flagging a positive response rather than filing it as unsolicited inbound.
 
-SIFT evaluates inbound listings. When SIFT's Target phase marks a listing as `network-approach` (pursue through a relationship rather than a direct application), that contact may enter a SPAR roster for outreach.
+SIFT evaluates inbound listings. When SIFT's Target phase marks a listing as `network-approach` (pursue through a relationship rather than a direct application), that contact may enter a SPAR roster for outreach. A listing marked `respond` becomes a HIRE run, which writes the response.
 
 SAGE defines what there is to sell. Its Establish phase produces the numbered claims a SPAR campaign's approach messages cite by number, and its displacement offer runs naturally as a SPAR campaign over an owned roster, with replies arriving through TEND. SAGE's decisions table is also the bounding box those messages may not escape: an approach draft promising anything outside it is caught at review, not sent.
 
