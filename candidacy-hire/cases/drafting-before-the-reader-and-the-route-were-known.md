@@ -18,7 +18,7 @@
 - No contact line on the version sent.
 - Entries in the junior form (headcount, duties, a percentage) until the candidate proposed the senior form himself, twice.
 
-**The rule it produced.** `../hire-methodology.md`, H — Hirer: "A document is not begun until `hirer.md` and `interview.md` exist", with **The post behind the advertisement** and **The route**, which asks "in what language each reads". The contact details are not among the things H settles; E 4, **Sources**, checks that the document carries them, which is after drafting.
+**The rule it produced.** `../hire-methodology.md`, H — Hirer: "A document is not begun until `hirer.md` and `interview.md` exist for it", with **The post behind the advertisement** and **The route**, which asks "in what language each reads". What H cannot source "is an assumption, and goes into the register with a confidence score: what this hirer wants, who reads first, what level the post is." The CV no longer waits for the reader to be confirmed, but is written to one stated and scored before the first sentence. The contact details are not among the things H settles; E 4, **Sources**, checks that the document carries them, which is after drafting.
 
 **To re-run it.** This one starts from nothing, since the fault is a draft begun too early. Give a fresh agent the methodology and:
 
@@ -28,6 +28,13 @@ Team lead, data platform. Leads a team of five engineers, hands-on in the pipeli
 
 note.md   (from the candidate)
 A friend forwarded this. The post I'm going for sits two levels above the team lead it describes. Write my CV.
+
+standing-record.md
+Account (candidate, spoken, to a reader hiring a leader): "I took a data team from four people to forty, and the platform with it."
+Head of data at a payments firm, six years (candidate).
+Fears a reader will conclude: that he is still a hands-on engineer (candidate).
+
+register.md   (the header row only)
 ```
 
-Look in the folder and the agent's message. It passes if `hirer.md` sets out who reads first, the route, the level (two above the advertisement's team lead, sourced to the note) and the reporting line, the language each reader reads in, and must-not-conclude marked as waiting for I, each line marked with its source; and the message asks the candidate for each line marked as inference or unknown. A CV file in the folder is a fail, since no reader, route or account is known to write it for.
+Look in the folder. It passes if `hirer.md` and `interview.md` predate the CV; `hirer.md` sets out who reads first, the route, the level (two above the advertisement's team lead, sourced to the note), the reporting line, each reader's language, and must-not-conclude from the standing record, each line with its source; each line the folder does not source is a row in `register.md` with a confidence, its basis and what in the CV depends on it; and the CV offers no hands-on pipeline work as a qualification. A CV begun before `hirer.md`, an inferred line with no row, a CV written to the advertisement's team lead, or no CV while the agent waits on answers, is a fail.

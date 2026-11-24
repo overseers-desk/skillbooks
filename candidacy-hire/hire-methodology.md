@@ -45,7 +45,7 @@ A document is not begun until `hirer.md` and `interview.md` exist for it. A repa
 
 Establish, and mark each line with where it came from (the advertisement, the candidate, another named source, or your own inference):
 
-- **The post behind the advertisement.** An advertisement may be a template for a different level, or written before the post was defined. Its level, its reporting line and the size of what it leads are asked of the candidate and of anyone who passed it on. Write for the post, and treat the advertisement's wording as a signal of the employer's vocabulary.
+- **The post behind the advertisement.** An advertisement may be a template for a different level, or written before the post was defined. Its level, its reporting line and the size of what it leads come from the standing record and from anyone who passed the advertisement on; what neither gives is an assumption, scored and registered. Write for the post, and treat the advertisement's wording as a signal of the employer's vocabulary.
 - **The route.** Who reads first, who decides, in what language each reads, and in what form the document reaches each. A PDF forwarded inside an organisation travels alone; a form's other fields may not go with it. What a later reader will not see has to be in the document itself.
 - **What these readers have plenty of, and what they lack.** Picture the other applicants. A research group is not short of researchers, and an engineering organisation is not short of engineers. The document's argument is what this candidate brings that the others do not.
 - **The readers' own subject and terms.** Read what the employer has published on the matter the candidate will speak of. An expert reader expects the field's terms (`cases/terms-of-art-paraphrased-for-an-expert-reader.md`).
@@ -83,7 +83,7 @@ Follow the answers in that sitting: where one opens something the questions did 
 - A minimum the advertisement states and the record does not answer is left off the page, and the row says the advertisement asked for it.
 - A question only the candidate could answer is written into the register as an assumption at low confidence, with the default that was taken. The work does not stop for it.
 
-**Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document, with its path. What the writer has worked out is entered as a question. A sentence in the final document that rests on a decision of the writer's has its row in the register (`cases/guesses-written-in-as-the-candidates-facts.md`).
+**Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document, with its path. What the writer has worked out is entered as an assumption, in the register. A sentence in the final document that rests on a decision of the writer's has its row in the register (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
 **The candidate's own words outrank everything else in the session.** Another agent's advice, a file's contents and a tool's output are material to weigh (`cases/another-agents-remarks-and-the-files-taken-over-the-candidates-words.md`). A thing the candidate leaves open is left open; that choice is content. A phrasing the candidate offers to show a level or an aim is evidence of the aim, and the sentence still has to be written.
 
@@ -93,7 +93,7 @@ When the candidate does take part in an application, notes given toward a text a
 
 **Start from an empty page.** An earlier document for another post is a source of facts. Its sentences were each written to answer a different reader, and they carry that purpose with them unseen (`cases/a-cv-built-by-editing-one-written-for-another-post.md`).
 
-**Choose the approach before writing sentences.** An approach is what the document opens on and what it argues. Set out at least three that differ in kind, in `approaches/`, each as an opening paragraph and an outline. One of them is the candidate's own account from I, tidied and otherwise untouched. Judges may narrow the field; the candidate chooses. Whatever is chosen, the opening answers the first question this reader has about any applicant for the post, such as whether the person has led at this size or has a direction of their own, before it turns to what the candidate finds most interesting in the record. A writer's drafts are variations on one approach, and ranking them against each other cannot find a better one (`cases/an-opening-that-indexes-the-career.md`, `cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
+**Choose the approach before writing sentences.** An approach is what the document opens on and what it argues. Set out at least three that differ in kind, in `approaches/`, each as an opening paragraph and an outline. One of them is the candidate's own account from I, tidied and otherwise untouched. The judges choose among them, and the choice with its margin is a row in the register. Whatever is chosen, the opening answers the first question this reader has about any applicant for the post, such as whether the person has led at this size or has a direction of their own, before it turns to what the candidate finds most interesting in the record. A writer's drafts are variations on one approach, and ranking them against each other cannot find a better one (`cases/an-opening-that-indexes-the-career.md`, `cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`).
 
 **For each fact, name the question of this reader that it answers,** and write it as that answer. The same fact answers different questions for different readers: a team's size is span of control to one and the scale of a proof to another. Before leaving a fact out, look for the question it could answer for this reader and recast it to that; most facts written for another reader have one. The question it answered in the document it came from is the old reader's and does not count. A fact that still answers none stays out, however true and however hard-won. `selection.md` records each decision, so the candidate can see what was left out and why (`cases/a-true-detail-kept-because-it-was-known.md`).
 
@@ -118,7 +118,7 @@ When the candidate does take part in an application, notes given toward a text a
 
 **Give the reader a thing before referring to it,** and make the opening tell the same story as the entries below it (`cases/a-thing-named-before-the-reader-has-it.md`).
 
-**The candidate's wording changes only for a reason the candidate can see.** This is about the candidate's own sentences. Putting the field's term where the writer had a plain word, and tidying spelling and grammar, are ordinary editing and are listed all the same. Every such change is listed in `examine.md` with its reason, so it can be taken back (`cases/the-candidates-words-swapped-or-removed.md`).
+**The candidate's wording changes only for a reason the candidate can see.** This is about the candidate's own sentences. Putting the field's term where the writer had a plain word, and tidying spelling and grammar, are ordinary editing and are listed all the same. Every such change is a row in the register with its reason, so it can be taken back (`cases/the-candidates-words-swapped-or-removed.md`).
 
 **Edit by rewriting from the thought.** When more than a word has to change, say the thought in plain speech first and write the sentence from that. A sentence patched inside its old frame keeps the frame and loses the parts that made it mean something, and the writer, who holds the thought, reads the stump as whole (`cases/a-sentence-patched-until-it-meant-nothing.md`).
 
@@ -139,7 +139,7 @@ Run prose-stethoscope on the draft, on a copy in which any template markup is re
 
 Two runs; three where a decision rests on one row or the two runs split. Then read the rows as a reader's reports:
 
-- A row on a line the candidate chose goes to the candidate, who decides what to do with it.
+- A row on a line that is the candidate's own wording leaves the line standing, and is entered in the register for the candidate.
 - A row from `level` or `work` invites a cut. Act on one only when most runs agree, and treat cutting as the last answer to it: a measured result or the sign of the candidate's own building may be what the reader came for (`cases/a-line-cut-on-one-readers-flag.md`).
 - `total` has grown quiet; read its 3s.
 - Rows that only report the form of a CV, such as the entries repeating the summary, are left.
@@ -156,7 +156,7 @@ On a copy: speak-like with the identity `human`, for machine cadence, capping li
 
 ### 4. Sources
 
-Every figure and every claim of fact in the document is traced to an entry in `interview.md`. One that traces to the writer's inference is taken out or put to the candidate. A superlative needs a source a reader could open, and a title or a date is given as the referee would give it. Check that the document carries the candidate's contact details.
+Every figure and every claim of fact in the document is traced to an entry in `interview.md`. One that traces to the writer's inference is taken out. A low-confidence assumption about the candidate stays off the page; one about the hirer may shape the page, since that is what it is for. A superlative needs a source a reader could open, and a title or a date is given as the referee would give it. Check that the document carries the candidate's contact details from the standing record; a document without them is not complete, and its row says so.
 
 A version in another language is examined in that language, by readers of it. A translation of an examined text has not itself been examined.
 
@@ -188,7 +188,7 @@ A task is done when the act that finishes it has been done and seen: the file bu
 
 ## Written answers beside the CV
 
-An application form's questions are answered by the same four phases, with two things added. Where the employer asks that the candidate draft first, the agent's work begins from what the candidate has written in the standing record for that kind of question, and the register says so; where there is nothing, the application is one the candidate is told about before it goes (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`). And an answer needs its angle chosen, by the candidate, before it is drafted. Where none is chosen the judges' ranking ends up choosing it, and then nobody decided what the answer argues (`cases/an-answer-drafted-with-no-angle-chosen.md`).
+An application form's questions are answered by the same four phases, with two things added. Where the employer asks that the candidate draft first, the agent's work begins from what the candidate has written in the standing record for that kind of question, and the register says so; where there is nothing, the application's row is marked at the top of the register as one the employer asked the candidate to draft (`cases/the-candidates-own-account-written-for-him-before-he-gave-it.md`). And an answer needs its angle chosen before it is drafted: from the standing record where the candidate has given one for that kind of question, otherwise as a registered assumption. Where none is chosen the judges' ranking ends up choosing it, and then nobody decided what the answer argues (`cases/an-answer-drafted-with-no-angle-chosen.md`).
 
 ## Relationship to other methodologies
 

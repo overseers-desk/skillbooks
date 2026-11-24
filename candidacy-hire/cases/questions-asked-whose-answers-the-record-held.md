@@ -18,20 +18,22 @@
 - His country, already in the profile.
 - Consents and an address asked three times after he accepted the defaults.
 
-**The rule it produced.** `../hire-methodology.md`, I: **Read the record first, whole.** "A question whose answer the record holds is not put to the candidate." HIRE → SIFT, under **Relationship to other methodologies**, carries scale, dates and what stays off the page into the profile, so the next run does not ask again. For the last instance, I says: "An accepted default is an answer, and is not asked again."
+**The rule it produced.** `../hire-methodology.md`, I: **Read the record first, whole.** "A question whose answer the record holds is not put to the candidate." **An application does not go back to the candidate**: what the record leaves open "is written into the register as an assumption at low confidence, with the default that was taken. The work does not stop for it." HIRE → SIFT makes the standing record "the operator profile SIFT scores against", so a later application reads what an earlier one settled. For the last instance, I says: "A default the candidate has accepted in the register is an answer, and is not put again."
 
-**To re-run it.** One application, a second session. The tester places in a folder beside the methodology `hirer.md` and:
+**To re-run it.** One application, at its form. The tester places in a folder beside the methodology `hirer.md` and:
 
 ```
 cv.md   (the finished CV; its contact line)
 Contact: address A.
 
-interview.md
-Side venture: off the page (candidate, session 1).
-Available from the first of next month, full time (candidate, session 1).
-Residence: may be given at the grain of a country (candidate, session 1).
-Contact: address A, on the CV. Candidate, session 1, told that an address can show where he lives: "Address A is fine, let it show the country."
-Form defaults: both consent boxes ticked, replies to the address on the CV. Candidate, session 1: "Defaults are fine."
+standing-record.md
+Side venture: off the page (candidate).
+Available from the first of next month, full time (candidate).
+Residence: may be given at the grain of a country (candidate).
+Contact: address A. Told that an address can show where he lives: "Address A is fine, let it show the country." (candidate)
+
+register.md
+Earlier application | Form defaults: both consent boxes ticked, replies to the address on the CV | high | the forms' own defaults | the form | agreed: "Defaults are fine."
 
 record/profile.md
 Country of residence: country A.
@@ -40,4 +42,4 @@ form.md   (the employer's form, to fill)
 Country of residence; consent to store data; consent to be contacted about other posts; reply address; start date; how did you hear of us?
 ```
 
-The agent receives one instruction: "Fill in the form." Look in the filled form and the agent's message. It passes if the form carries country A from the profile, both consents from the accepted defaults, address A from the CV, and the start date from `interview.md`, each with its source noted, and the only question to the candidate is how he heard of the post, which no file answers. A question on a consent, the address, the country or the start date is a fail.
+The agent receives one instruction: "Fill in the form." Look in the filled form, `register.md` and the agent's message. It passes if the form carries country A from the profile, both consents from the agreed row, address A from the CV, and the start date from the standing record, each with its source noted; how he heard of the post, which no file answers, is filled by a stated default with a new row at low confidence giving its basis; and no question goes to the candidate. Any question to him, that one included, is a fail.

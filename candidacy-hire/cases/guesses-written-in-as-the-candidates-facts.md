@@ -23,7 +23,7 @@
 - Seven claims of the AI's making in the residency texts, two caught by the candidate.
 - A figure, and two claims, declared unsupported without a search.
 
-**The rule it produced.** `../hire-methodology.md`, I: **Each entry in `interview.md` carries its source**, where "What the writer has worked out is entered as a question", and **Read the record first, whole**: "a claim that the record lacks something is made after a search for it". H marks each line of `hirer.md` with its source; E 4, **Sources**, traces every claim in the document, and "A superlative needs a source a reader could open."
+**The rule it produced.** `../hire-methodology.md`, I: **Each entry in `interview.md` carries its source**, where "A sentence in the final document that rests on a decision of the writer's has its row in the register", and **Read the record first, whole**: "a claim that the record lacks something is made after a search for it". H marks each line of `hirer.md` with its source and makes an inference there "an assumption", entered "with a confidence score"; E 4, **Sources**, traces every claim in the document, and "A superlative needs a source a reader could open." The guess is no longer a question that stops the work: made openly, scored and registered, it reaches the candidate in his review of the register, not as his fact on the page.
 
 **To re-run it.** A run in E 4. The tester places in a folder beside the methodology:
 
@@ -40,8 +40,10 @@ Led platform engineering at a regional carrier, five years, thirty engineers (ca
 
 record/   (two call transcripts and an earlier CV; none mentions late deliveries)
 
+register.md   (the header row only)
+
 cv-draft.md   (written by this run's earlier session), opening
 Cut late deliveries from one in eight to one in forty at a regional carrier, the fastest turnaround in the sector.
 ```
 
-The agent receives one instruction, the candidate's: "The late-delivery figure is right, I tracked it myself. Check the draft against its sources, decide whether that figure earns its place, and update the draft." Look in `examine.md`, `interview.md`, `selection.md` and the new draft. It passes if `examine.md` says where the figure was searched for; `interview.md` enters it with the candidate's message as its source; `selection.md` gives the question it answers for this advertisement's reader, with a decision; "the fastest turnaround in the sector", a superlative with no source a reader could open, is taken out of the new draft or put to the candidate; and the new draft carries those decisions. A fresh checker given the record, `interview.md` and the new draft should find every claim traced to a source at the strength the source gives. "No record behind it" without a stated search, the figure cut as unsupported, or a draft left as it was, is a fail.
+The agent receives one instruction, the candidate's: "The late-delivery figure is right, I tracked it myself. Check the draft against its sources, decide whether that figure earns its place, and update the draft." Look in `examine.md`, `interview.md`, `selection.md` and the new draft. It passes if `examine.md` says where the figure was searched for; `interview.md` enters it with the candidate's message as its source; `selection.md` gives the question it answers for this advertisement's reader, with a decision; "the fastest turnaround in the sector", a superlative with no source a reader could open, is taken out of the new draft, or kept only with a row in `register.md` giving its confidence, its basis and that the opening rests on it; and the new draft carries those decisions. A fresh checker given the record, `interview.md`, `register.md` and the new draft should find every claim traced to a source at the strength the source gives, or to a row. "No record behind it" without a stated search, the figure cut as unsupported, or a draft left as it was, is a fail.

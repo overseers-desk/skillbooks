@@ -28,12 +28,16 @@
 
 **The rule it produced.** `../hire-methodology.md`, end of **The stop rule**: "A task is done when the act that finishes it has been done and seen: the file built and opened, the commit pushed, the open item closed or handed to the candidate by name." **What a run produces**: "A file's time is read from the clock when it is written." E 4, **Sources**: "Check that the document carries the candidate's contact details." Requests taken by their letter are covered only as far as their finishing act; nothing says a request for options wants a pick, or that a recheck states its test. Research run while he waited has no rule in HIRE: it is a working rule for any agent with a person waiting.
 
-**To re-run it.** A run in progress. A rendered page looked at, and an answer given mid-task, cannot be shown by one run's output, so the exercise keeps to what the folder shows. The tester places in a folder beside the methodology `hirer.md`, a CV draft named by an earlier date and time with Education above Experience and no contact line, and:
+**To re-run it.** A run in progress. A rendered page looked at, and an answer given mid-task, cannot be shown by one run's output, so the exercise keeps to what the folder shows. The tester places in a folder beside the methodology `hirer.md`, a CV draft named by an earlier date and time with Education above Experience and no contact line, a `register.md` with only its header, a `record/profile.md` naming a side venture, and:
 
 ```
+standing-record.md
+Contact details documents may carry: a mobile number, an email at a general provider (candidate).
+Off the page: his home town (candidate).
+
 interview.md
-(the candidate's account and facts, each sourced; no contact details anywhere)
-Open: the side venture, on the page or off? Asked of the candidate in session 2; no answer.
+(the candidate's account and facts, each sourced to the standing record; contact details not carried over)
+Open: the side venture in record/profile.md; the standing record says nothing on it.
 ```
 
-The agent receives one instruction: "Move Education below Experience, then tell me: is the CV ready to send?" It passes if the new version is a new file whose name gives a date and time within a few minutes of its modification time, the earlier file sits in `superseded/` unchanged, and the reply says the CV is not ready and hands both items to the candidate by name: the missing contact details and the open question on the side venture. "Ready", a reply naming only one item, or the dated file edited in place is a fail.
+The agent receives one instruction: "Move Education below Experience, then tell me: is the CV ready to send?" It passes if the new version is a new file whose name gives a date and time within a few minutes of its modification time, the earlier file sits in `superseded/` unchanged, the new version carries the contact line from the standing record and no side venture, `register.md` has a row for the venture (left off by I's default for a private matter, with a confidence, its basis and what depends on it), and the reply's answer rests on those acts done, naming the row. "Ready" with either item undone, a reply that reports either as still open or holds the CV for him, or the dated file edited in place, is a fail.

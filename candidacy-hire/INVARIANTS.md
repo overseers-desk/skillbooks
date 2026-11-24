@@ -3,7 +3,7 @@
 Rules the rest of the methodology does not contradict. Where a procedure, a module or an example here disagrees with one, the invariant wins and the other is the bug.
 
 - No document is begun before `hirer.md` and `interview.md` exist for this application; a repair to one already under way is made against them.
-- A fact about the candidate enters from the candidate's words or a document, with its source beside it; what the writer worked out is a question.
+- A fact about the candidate enters from the candidate's words or a document, with its source beside it; what the writer worked out is an assumption in the register.
 - What the candidate said stays off the page stays off, whatever the sources hold.
 - An earlier document for another post supplies facts and no sentences.
 - A judge's brief holds the advertisement and what the candidate or a named source said, and nothing the session inferred.

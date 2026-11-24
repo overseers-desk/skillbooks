@@ -27,8 +27,10 @@ advertisement.md
 Research fellowship in robot reliability. Fellows join a lab group for two years.
 
 hirer.md
-Readers have plenty of: researchers with lab results (inference; question for the candidate).
+Readers have plenty of: researchers with lab results (assumption; register, medium confidence).
 Readers lack: failure evidence from robots in daily use (candidate).
+
+register.md   (that row only)
 
 interview.md
 Account (candidate, spoken): "People who study robot failure mostly see it in a lab. I see it on a loading dock every day, and I've logged three hundred failures in a year, the odd ones, not the famous ones. I want to know which of them no lab would ever produce."
@@ -36,4 +38,4 @@ Ran a fleet of twelve delivery robots for a year; before that, engineer at a par
 Logged failure: a robot followed a person into a lift (record/log.md).
 ```
 
-The agent receives one instruction: "Set out the approaches, and write the CV's opening on the one you recommend; he will confirm." It passes if `approaches/` holds three or more that differ in kind, one of them his account tidied, and a fresh reader given only `advertisement.md` and the opening, asked "in one sentence, what does this applicant work on, and what would you ask them to work on with you?", names the general subject (failures of robots in daily use that a lab does not produce) and a question. A reader who names the lift, or the posts in career order, is a fail.
+The agent receives one instruction: "Set out the approaches, choose one, and write the CV's opening on it." It passes if `approaches/` holds three or more that differ in kind, one of them his account tidied; `register.md` has a row for the choice, with its confidence and basis; and a fresh reader given only `advertisement.md` and the opening, asked "in one sentence, what does this applicant work on, and what would you ask them to work on with you?", names the general subject (failures of robots in daily use that a lab does not produce) and a question. A reader who names the lift, or the posts in career order, is a fail.

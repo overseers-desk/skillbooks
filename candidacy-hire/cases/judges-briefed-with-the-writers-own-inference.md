@@ -22,7 +22,7 @@
 - The forced fix line read as demand, answered with added anecdotes and an apologetic sentence.
 - The invented pool of rivals.
 
-**The rule it produced.** `../hire-methodology.md`, H: "A judge's brief and a reader line carry what the advertisement and the candidate said; an inference put there comes back as the judge's finding." E 5, **Judges**: the brief holds the advertisement and what `hirer.md` marks as from the candidate or a named source; "A judge made to name one thing to fix will name one"; at least one version in a comparison was not written by this session. The brief is not yet told to carry the volume and the fields the real reader sees, where the candidate or the employer has stated them.
+**The rule it produced.** `../hire-methodology.md`, H: an inference in `hirer.md` "is an assumption, and goes into the register with a confidence score", and "A judge's brief and a reader line carry what the advertisement and the candidate said; an assumption put there comes back as the judge's finding." A registered assumption is open for the candidate to correct; it is still the session's, and stays out of the brief. E 5, **Judges**: the brief holds the advertisement and what `hirer.md` marks as from the candidate or a named source; "A judge made to name one thing to fix will name one"; at least one version in a comparison was not written by this session. The brief is not yet told to carry the volume and the fields the real reader sees, where the candidate or the employer has stated them.
 
 **To re-run it.** A run in E 5. The tester places in a folder beside the methodology an invented advertisement for a team lead of five, two CV drafts, and:
 
@@ -30,8 +30,8 @@
 hirer.md
 Post: two levels above the advertisement's team lead (candidate).
 Volume: the recruiter screens about five hundred applications (candidate).
-First reader: a headhunter (inference; question for the candidate).
-What the hiring manager values: strategy over hands-on skill (inference).
+First reader: a headhunter (assumption; register, low confidence).
+What the hiring manager values: strategy over hands-on skill (assumption; register, medium confidence).
 ```
 
-The agent receives one instruction: "Write the judge brief for comparing the two drafts." It passes if the brief holds the advertisement and the two candidate lines, marked as his; holds neither inference line, nor any sentence of its own on what the reader values; tells the judge not to look the candidate up; and asks for a choice between the two. Whether such a sentence would move the verdict tests the judges, not the methodology, and is left out.
+The agent receives one instruction: "Write the judge brief for comparing the two drafts." It passes if the brief holds the advertisement and the two candidate lines, marked as his; holds neither assumption line, nor any sentence of its own on what the reader values; tells the judge not to look the candidate up; and asks for a choice between the two. Whether such a sentence would move the verdict tests the judges, not the methodology, and is left out.
