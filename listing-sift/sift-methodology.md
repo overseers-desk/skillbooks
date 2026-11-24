@@ -65,7 +65,7 @@ The percentage estimates how likely the operator is to be selected if they respo
 
 1. **Base estimate** (`pct_base`, 0–100). Compare the listing's stated requirements against the operator profile. Every unmet hard requirement reduces the base significantly.
 
-2. **Amplifiers**. The campaign defines tags for circumstances that raise the operator's odds beyond what matching the stated requirements shows. Each applicable amplifier multiplies `pct_base` by a campaign-defined factor (default 1.15, compounding). The result is capped at 95.
+2. **Amplifiers**. The campaign defines tags for circumstances that raise the operator's odds beyond what matching the stated requirements shows. Each tag that applies multiplies `pct_base` by the campaign's factor, and the tags compound: at a factor of 1.15, one tag turns 40 into 46 and two turn it into 53. The factor is a judgement of how much one such circumstance is worth, and the configuration states it; 1.15 is where a campaign with no outcomes to judge from starts. The result stops at 95, because the product can pass 100 and no response is certain to be chosen.
 
 3. **Hard gates**. Requirements that block candidacy entirely (credentials, certifications, years of specific experience). Listed explicitly so the operator can see them before investing effort.
 
@@ -80,7 +80,7 @@ Stars answer: "Is this worth pursuing if we could get it?" Percentage answers: "
 | **High pct** | Pursue | Deprioritise (easy but low-value) |
 | **Low pct** | Stretch (high-value but long-shot) | Skip |
 
-Target uses this matrix to assign dispositions. The thresholds for "high" and "low" are campaign-specific.
+Target places each scored listing in its cell and shows the cell beside the scores. The cell is a reading of the two scores, and the disposition stays the operator's: one operator answers every stretch and another none. The thresholds for "high" and "low" are the campaign's, in the configuration. Where the operator has said what a cell means for them, that is in the configuration too, and Target proposes it.
 
 ## Campaign directory
 
@@ -116,7 +116,7 @@ source_account: {the publisher's page or profile on the hosting platform, if any
 title: {listing title}
 url: {primary URL}
 fetched: {ISO date}
-fetch_method: webfetch | chromium-headless | failed
+fetch_method: plain | browser | failed
 scored_by: {model that scored, if applicable}
 ---
 
@@ -176,8 +176,9 @@ Discover all potentially relevant listings. Cast wide. Do not score or filter �
    - Extract the fields of the campaign's kind of listing, and the campaign's own
    - Assign an `id` following the campaign's ID format
    - Write one row to the registry with all Sweep columns filled. Leave Fit and Target columns empty
-4. Deduplicate by URL. If the same listing appears on multiple sources, keep the primary source (publisher's own site preferred over aggregator mirrors)
-5. Output: updated registry with new rows appended
+4. A listing that reaches the operator unsought, in the operator's mail or passed on by a person, is entered the same way, with `source` saying how it came.
+5. Deduplicate by URL. If the same listing appears on multiple sources, keep the primary source (publisher's own site preferred over aggregator mirrors)
+6. Output: updated registry with new rows appended
 
 ### What Sweep does NOT do
 
@@ -201,7 +202,7 @@ For each row in the registry that lacks a dossier file:
 
 1. **Fetch the listing.** Try a plain fetch first. Where it is refused or comes back empty, fetch through a browser, with a skill for it where one is installed. Agents working in parallel take turns with the browser.
 2. **Convert HTML to markdown.** Strip navigation, footers, cookie banners, and other boilerplate if identifiable.
-3. **Research the source.** On a platform hosting many publishers' listings, the publisher is the account the listing is posted under; the name it displays is text that account's owner chose, and may be another organisation's. Record the account in `source_account`, and research the organisation that holds it. Where the listing's own description of its publisher and the research describe different organisations, the research is about someone else: say so in "Source background" and attach none of it. For publishers that are not household names, do a brief web search to establish: what the organisation does, its approximate size and standing, how it is funded, and any recent news relevant to the listing. Write findings into the "Source background" sections.
+3. **Research the source.** On a platform hosting many publishers' listings, the publisher is the account the listing is posted under; the name it displays is text that account's owner chose, and may be another organisation's. Record the account in `source_account`, and research the organisation that holds it. Where the listing's own description of its publisher and the research describe different organisations, the research is about someone else: say so in "Source background" and keep that research out of the dossier. For publishers that are not household names, do a brief web search to establish: what the organisation does, its approximate size and standing, how it is funded, and any recent news relevant to the listing. Write findings into the "Source background" sections.
 4. **Write the dossier file** to `dossiers/{id}.md` using the format above. Leave the Fit section empty — Fit fills it in SOP 3.
 5. **Update `alive` in the registry** if the fetch reveals the listing is dead (404, "this position has been filled", "this call is closed", etc.).
 
@@ -218,7 +219,7 @@ A dossier file for every listing. Updated `alive` column in the registry where a
 
 ### Purpose
 
-Score every row in the registry that has empty Fit columns, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise.
+Score every row in the registry that has empty Fit columns and is not known to be dead, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise. A listing found dead before it was scored keeps its row and its dossier and stays unscored; one that dies after scoring keeps its scores.
 
 ### Model allocation
 
@@ -233,7 +234,7 @@ Fit is Sonnet-tier work. When a scoring rubric does the intellectual heavy lifti
 
 ### Process
 
-For each row where `stars` is empty:
+For each row where `stars` is empty and `alive` is not `no`:
 
 1. Read the dossier. The listing description and source background are the primary evidence for scoring. If the dossier fetch failed, note this in `notes_fit` and score from whatever information is available.
 2. Score each of the campaign's dimensions using the rubric's anchors. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
@@ -263,16 +264,17 @@ For each scored listing, decide whether to respond and how the response is to be
 
 ### Process
 
-For each row where `decision` is empty:
+For each row where `decision` is empty, and each row marked `watch`:
 
-1. Present the scored shortlist to the operator, sorted by `stars` descending, then `pct` descending.
+1. Place each listing in its cell of the matrix by the configuration's thresholds. Present the scored shortlist to the operator with each listing's cell, sorted by `stars` descending, then `pct` descending.
 2. For each listing the operator marks as `respond` or `network-approach`:
    - Determine the approach channel: direct application, warm introduction, intermediary, or network approach.
-   - Note any known contacts or referral paths.
+   - Note the contacts and referral paths the operator names.
    - The channel and the contacts go in the columns the kind or the campaign defines for them, and otherwise in `notes_target`.
-   - For `respond`, the response is prepared by the method the campaign configuration names, where it names one. The listing's id and its dossier are what SIFT offers that method, and Target's work on the listing stops there until the response is submitted. Where no method is named, note in `notes_target` which version of the operator's response materials to use or create (a proposal template for a grant call, an abstract variant for a CFP), and what to emphasise from the operator profile for this listing.
+   - For `respond`, the response is prepared by the method the campaign configuration names, where it names one. The listing's id and its dossier are what SIFT offers that method, and Target's work on the listing stops there until the response is submitted. Where no method is named, note in `notes_target` what to emphasise from the operator profile for this listing, and which of the operator's existing response materials to start from (a proposal template for a grant call, an abstract variant for a CFP) where the configuration says where they are kept.
+   - For `network-approach`, what follows is an approach to a person, which is outside SIFT. The listing's id, its dossier and the contacts noted are what SIFT offers whoever makes it.
 3. For listings marked `skip`: record the reason in `notes_target` (so future Sweep runs do not re-add them).
-4. For listings marked `watch`: no response preparation, but keep in the registry for periodic re-check.
+4. For listings marked `watch`: no response preparation. Record in `notes_target` what the listing is waiting for. A `watch` row comes back each time Target runs: check that the listing is still alive, and put it to the operator again when what it waited for has happened or its closing date is near.
 5. Update the row in the registry.
 6. When a response is submitted, enter `date_responded` and update `status`, whichever method prepared it.
 
@@ -282,8 +284,8 @@ For each row where `decision` is empty:
 |---|---|
 | `respond` | Prepare and submit a response |
 | `skip` | Do not pursue; record reason |
-| `watch` | Do not pursue now; re-check periodically |
-| `network-approach` | Do not apply directly; approach via relationship (may feed into SPAR) |
+| `watch` | Do not pursue now; looked at again each time Target runs |
+| `network-approach` | Do not apply directly; approach via relationship |
 
 ### Output
 
@@ -296,7 +298,7 @@ Updated registry with Target columns filled. Listings marked `respond` are ready
 | Registry (TSV) | Sweep (rows); Fit (scores); Target (dispositions) | All phases | Campaign directory |
 | Dossier files | Investigate (description + background); Fit (scoring section) | Fit, Target, human review | `dossiers/{id}.md` |
 | Operator profile | Pre-campaign (by the operator) | Fit (scoring against requirements) | Where the campaign configuration says |
-| Campaign configuration | Set up with the operator before the campaign; later gaps filled by the phase that meets them, marked unconfirmed | Sweep (sources), Fit (dimensions used, thresholds), Target (response method) | Campaign directory |
+| Campaign configuration | Set up with the operator before the campaign; later gaps filled by the phase that meets them, marked unconfirmed | Sweep (sources), Fit (dimensions, amplifiers), Target (thresholds, response method) | `campaign.yaml` in the campaign directory |
 | Domain document | Kept with this methodology; not made per campaign | Sweep (columns, kinds of source), Target (hand-over) | `domains/` |
 
 ## Model assignment
@@ -307,24 +309,6 @@ Updated registry with Target columns filled. Listings marked `respond` are ready
 | Investigate | Sonnet | Structured fetch, HTML-to-markdown conversion, factual research. No judgment beyond "is this listing alive?" |
 | Fit | Sonnet | Rubric application. The rubric does the intellectual heavy lifting; Sonnet applies it. |
 | Target | Human + Sonnet | Disposition is human judgment (which listings to pursue). Recording the channel, the contacts and the hand-over is Sonnet-tier. The response takes the tier of the method that prepares it. |
-
-## Relationship to other methodologies
-
-SIFT, SPAR, and TEND operate on different flows of the same professional activity.
-
-**SPAR** discovers people and engages them. It pushes outward: the operator has something to offer and reaches contacts who have not asked for it. SPAR's output is connection messages and relationship-building.
-
-**TEND** processes inbound correspondence. It receives what arrives in the inbox and routes it: classify, assess stage, notify, dispatch. TEND's output is processed email and draft replies.
-
-**SIFT** evaluates published listings. It responds to declared needs: someone has published that they want something, and the operator decides whether to answer. SIFT's output is scored listings and a decision on each.
-
-The methodologies intersect at defined handoff points:
-
-- **SIFT → SPAR**: A listing scored in SIFT may receive a `network-approach` disposition rather than a direct response. The listing becomes an approach target in SPAR — the operator builds a relationship with someone connected to the opportunity rather than submitting a cold application.
-- **TEND → SIFT**: Inbound correspondence processed by TEND may surface listing-related messages — a recruiter email, a CFP invitation, a tender notification. TEND's evaluation identifies these and routes them to Sweep.
-- **SPAR → SIFT**: A contact engaged through SPAR may forward a listing or mention an opportunity. This enters SIFT's Sweep from a warm source.
-
-SIFT, SPAR and TEND share the model-tiering principle: rubric-following and structured classification are Sonnet-tier; judgment requiring unstated trade-offs, relationship nuance, or strategic framing is Opus-tier; strategy revision and disposition decisions are human-tier.
 
 ## Application areas
 
