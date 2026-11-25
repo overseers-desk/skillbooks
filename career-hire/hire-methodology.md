@@ -151,7 +151,7 @@ What these readers cannot tell you is whether the document speaks to anyone. A d
 
 ### 2. The common-sense reading
 
-A fresh agent gets the advertisement and the document, and nothing else. It is asked to say who this applicant is and what the post is, then to go through the document paragraph by paragraph with one question: for this post and this person, is this the level of detail a reader would expect here? It reports where the text drops below that, where a claim is too general to hold, and what is right as it stands. It also says in one sentence what the applicant works on and what it would ask them about; a reader who cannot has been given an index of a career (`cases/an-opening-that-indexes-the-career.md`). This is the check that finds grain and inherited sentences, and it costs one call.
+A fresh agent gets the advertisement and the document, and nothing else. It is asked to say who this applicant is and what the post is, then to go through the document paragraph by paragraph, asked both ways by name: for this post and this person, which lines are finer than a reader would expect here, and which claims are too general to hold? It reports both, and what is right as it stands. Asked only where the text falls short of the expected level, a reader lists detail it wants more of and never names a line too fine (`cases/detail-below-the-level-of-the-post.md`). It also says in one sentence what the applicant works on and what it would ask them about; a reader who cannot has been given an index of a career (`cases/an-opening-that-indexes-the-career.md`). This is the check that finds grain and inherited sentences, and it costs one call.
 
 ### 3. Voice
 

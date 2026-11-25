@@ -11,6 +11,7 @@
 - Grain is read against the lines around it. Beside a large span of engineers, a three-service pipeline drops, and the drop is taken as the author's level.
 - The detail was there because the writer had just read it: an inventory, then a sentence collection, set the subject of the entry.
 - Neither instrument caught it. Judges briefed for the level below adopted the pipeline in every room, and the skill's `level` question asked about the candidate's own part, so a sentence whose subject was a component fell outside it. A fresh reader given the posting and the CV named the told scenes as the clearest drop.
+- That reader works only if asked about both directions. On a later night of nine CVs, E 2 asked where the text "drops below" the expected level. The first CV's reader took it as "falls short" in all three of its rounds: it listed detail it wanted more of and could not report a line too fine for the post. Readers asked both ways by name, in later CVs, reported lines too fine and claims too general side by side.
 
 **Instances.**
 - The inventory entry: scripts, counts, tiers, tools.
@@ -21,8 +22,9 @@
 - The if-then autonomy rule.
 - The three told scenes.
 - The language named as a skill.
+- Three common-sense readings of one CV that reported only missing detail.
 
-**The rule it produced.** `../hire-methodology.md`, R: **Write at the level of the post and the person.** "How a system is wired, which tools built it, counts of its parts and incidents told with their times and places belong to the conversation the document is meant to win." E 2, **The common-sense reading**, and `../modules/grain.md` are the checks.
+**The rule it produced.** `../hire-methodology.md`, R: **Write at the level of the post and the person.** "How a system is wired, which tools built it, counts of its parts and incidents told with their times and places belong to the conversation the document is meant to win." E 2, **The common-sense reading**, which asks "which lines are finer than a reader would expect here, and which claims are too general to hold?", and `../modules/grain.md` are the checks.
 
 **To re-run it.** A run in progress, then a test of E 2's reader. The tester places in a folder beside the methodology:
 
@@ -52,6 +54,7 @@ Head of warehouse automation, a retailer (five years)
 - One Tuesday night a robot blocked aisle 4; the shift lead called me on the site radio and I re-routed the fleet by hand within twenty minutes.
 - A robot picks alone if the order is under ten items; otherwise it waits for a picker to confirm.
 - Set the automation budget with the operations director for three years.
+- A proven leader of transformation across the business.
 ```
 
-It passes if the report names the aisle-4 incident and the ten-item rule as below the level, and names neither the pilot line nor the budget line.
+It passes if the report names the aisle-4 incident and the ten-item rule as finer than the post, names the transformation line as too general, and names neither the pilot line nor the budget line. A report of missing detail alone is a fail.
