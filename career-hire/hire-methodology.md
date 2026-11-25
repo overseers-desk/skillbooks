@@ -169,12 +169,12 @@ A version in another language is examined in that language, by readers of it. A 
 
 Judges are for choosing between versions. Each is a fresh agent that holds only its brief. They are reliable when two versions differ by two sentences of substance or more, and they cannot decide a single line. Every verdict is a forced choice between two versions; a score given to one text alone moves from run to run and settles nothing.
 
-- One model, two wordings of the brief, both orders: four judges. Add judges only when the two orders disagree (`cases/more-judges-than-the-last-rounds-variation-called-for.md`).
+- One model, two wordings of the brief, both orders: four judges. Add judges only when the two orders disagree, as further wordings, run before anything is concluded; a round whose judges chose by reading order shows no preference (`cases/more-judges-than-the-last-rounds-variation-called-for.md`, `cases/judges-whose-verdict-followed-the-model-or-the-order.md`).
+- The same model judges every comparison in a search, and `examine.md` names it. Two models can reverse each other on the same pair, so their verdicts are not set side by side, and three models agreeing is still one opinion.
 - The brief holds the advertisement and what `hirer.md` marks as coming from the candidate or a named source. A judge told what the reader values will value it (`cases/judges-briefed-with-the-writers-own-inference.md`).
 - The brief tells the judge not to look the candidate up.
 - At least one version in any comparison of approaches was not written by this session: the candidate's own telling, or a real document of the same kind.
 - A judge made to name one thing to fix will name one whether or not anything needs fixing. Such an answer is a prompt to look, and what it asks for is weighed against the level of the document before anything is added.
-- Models of one family agree with each other; three of them agreeing is one opinion.
 - Judges do not hear dryness, and they prefer the advertisement's own words and the cadence of machine-written prose.
 
 ### 6. The candidate reviews
