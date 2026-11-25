@@ -121,7 +121,8 @@ Wording 048, with a fact naming whom the text presents its author as. The author
   - The venue's heading, "Owner", scored 5 to 7 in all 18 runs. The screeners' pictures named that heading in every version, with the reason "most recent title is Owner of a tourism venue".
   - The added line scored 4 to 6 in all 12 runs where it stood, read as the author admitting he had left engineering leadership.
   - Under the venue's heading the line reached 4 of the 8 screeners' pictures, and one CV's shortlist fell from 4 of 4 to 2 of 4. At the end of the summary it reached none.
-  - So frame names the line that moves the picture, but scores it the same wherever it stands. Which placement a screener notices is outside what it hears.
+  - A second reason line, reworded from the author's own account, was placed the same two ways. frame scored it 3 to 5: at 4 or more in 2, 2, 3 and 0 of the four sets of three runs. Its reasons read it as a founder seeking backing, a drifter, or semi-retirement. Every screener shortlisted every version, and the line reached no picture in either place.
+  - So frame names the line that moves the picture, but scores a line the same wherever it stands, and at 4 or 5 it also flags lines screeners pass over. Which line a screener acts on is outside what it hears.
   - The runs hold the CVs' text and sit outside this repository.
 - The texts made for the lab are easy cases, written knowing the expectation, so these runs show the wording separates a line written against the frame from one written for it, and no more.
 
