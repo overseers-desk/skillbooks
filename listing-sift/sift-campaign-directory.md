@@ -38,7 +38,7 @@ A choice a phase needed and did not find in the configuration is written into it
 
 ## Operator profile
 
-The configuration gives the profile's path, or the paths of the files that make it up. A description the operator already has, a record another method keeps of the operator, and a profile that serves several campaigns each stay where they are, outside the campaign directory. A profile written for this campaign alone is `operator-profile.md` in the campaign directory. Do not duplicate the profile.
+The configuration gives the profile's path, or the paths of the files that make it up. Before writing one, look for a description of the operator that already exists: reference data about the operator that the agent's own instructions point to, a description the operator already keeps, a record another method keeps of the operator, or a profile that serves several campaigns. Each is named by its path and stays where it is, outside the campaign directory, and what it lacks is asked of the operator rather than written into a second profile. Only where none exists is a profile written for this campaign alone, as `operator-profile.md` in the campaign directory.
 
 ## Beside a response method
 
