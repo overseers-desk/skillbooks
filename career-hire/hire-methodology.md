@@ -143,7 +143,7 @@ Run prose-stethoscope on the draft, on a copy in which any template markup is re
 Two runs; three where a decision rests on one row or the two runs split. Then read the rows as a reader's reports:
 
 - A row on a line that is the candidate's own wording leaves the line standing, and is entered in the register for the candidate.
-- A row from `level` or `work` invites a cut. Act on one only when most runs agree, and treat cutting as the last answer to it: a measured result or the sign of the candidate's own building may be what the reader came for (`cases/a-line-cut-on-one-readers-flag.md`).
+- A row from `level` or `work` invites a cut. Act on one only when most runs agree, and treat cutting as the last answer to it: a measured result or the sign of the candidate's own building may be what the reader came for. A fact that stands in a document the candidate approved needs more than these readers, who never see the advertisement: it stays, its row goes to the register, and it comes out only where judges prefer the version without it (`cases/a-line-cut-on-one-readers-flag.md`).
 - `total` has grown quiet; read its 3s.
 - Rows that only report the form of a CV, such as the entries repeating the summary, are left.
 
