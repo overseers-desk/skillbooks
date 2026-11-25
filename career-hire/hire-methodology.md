@@ -34,7 +34,7 @@ Then one working folder per application, holding:
 | `approaches/` | R | The competing openings and outlines, and how one was chosen |
 | `selection.md` | R | Each fact considered: the reader's question it answers, what it says of the candidate beyond itself, and whether it is kept, recast or left out |
 | the document | R | Named by the date and time it was made; earlier versions move to `superseded/` |
-| `examine.md` | E | Each check run, what it raised, what was done, and what the candidate said on reading |
+| `examine.md`, with `examine/` | E | Each check run, what it raised, what was done, and what the candidate said on reading; the evidence of each check, the judges' rounds included, in `examine/` |
 
 These files are HIRE's own, and HIRE writes nowhere else, with one exception named below. The candidate file may be one the candidate keeps for other uses as well: HIRE reads and adds to the parts listed under I, and leaves the rest.
 
