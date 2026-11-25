@@ -2,11 +2,11 @@
 """Listen to a prose draft: run each module on it as a pass of its own and print one table, a row for each
 sentence a reader scored and a column for each module, holding its scores in the order its header names.
 usage: stethoscope.py <draft.md> [--reader "who reads it and what they have read"] [--module M ...]
-       [--fact name="..." ...] [--runs N] [--model M]
+       [--fact name="..." | name=@file ...] [--runs N] [--model M]
 A module is a file: front matter naming its columns, then the prompt, with {text} where the draft goes
 and a {slot} for each thing the caller supplies. --module takes the name of one beside this script or
-the path of one anywhere; without it the flow and faults modules run. --fact fills a module's slot, and
-a slot left unfilled stops the run.
+the path of one anywhere; without it the flow and faults modules run. --fact fills a module's slot with
+a sentence, or with a file's text when the value starts with @; a slot left unfilled stops the run.
 A first line starting with '#' is taken as the title and not read. Paragraphs are separated by blank lines;
 each list item, table row and later heading is read as a unit of its own, and fenced blocks and ::: fence
 lines are skipped."""
@@ -53,9 +53,12 @@ def units(lines):
 
 
 def call(prompt, model):
-    p = subprocess.run(["claude", "-p", "--model", model, "--tools", "", "--system-prompt", "You are a careful reader of prose.",
-                        "--setting-sources", "", "--strict-mcp-config", "--output-format", "json"],
-                       input=prompt, cwd=tempfile.gettempdir(), capture_output=True, text=True, timeout=900)
+    try:
+        p = subprocess.run(["claude", "-p", "--model", model, "--tools", "", "--system-prompt", "You are a careful reader of prose.",
+                            "--setting-sources", "", "--strict-mcp-config", "--output-format", "json"],
+                           input=prompt, cwd=tempfile.gettempdir(), capture_output=True, text=True, timeout=900)
+    except (subprocess.TimeoutExpired, OSError) as e:
+        return f"call failed: {e}"
     try:
         return json.loads(p.stdout[p.stdout.index("{"):]).get("result") or ""
     except ValueError:
@@ -78,8 +81,15 @@ def main():
     text = "\n\n".join(f"[P{n}] {p}" for n, p in enumerate(paras, 1))
     sents = {(pi, si): s for pi, p in enumerate(paras, 1) for si, s in enumerate(SPLIT.split(p), 1)}
 
-    facts = dict(f.split("=", 1) for f in a.fact)
-    facts.setdefault("reader", a.reader)
+    facts = {"reader": a.reader}
+    for f in a.fact:
+        k, v = f.split("=", 1)
+        if v.startswith("@"):
+            try:
+                v = open(v[1:]).read().strip()
+            except OSError:
+                sys.exit(f"--fact {k}: cannot read {v[1:]}")
+        facts[k] = v
     jobs = []
     for module in a.module or ["flow", "faults"]:
         name, cols, body = template(module)
@@ -105,9 +115,9 @@ def main():
             continue
         for p, s, sc, why in re.findall(r"^\s*P?(\d+)\.(\d+)\t([\d ,]+)\t(.*)$", reply, re.M):
             cell = ",".join(x + "*" * (x >= "4") for x in re.findall(r"\d", sc)[:len(cols)])
-            rows.setdefault((int(p), int(s), r), {})[name] = (cell, f"{name}: {' '.join(why.split())}")
+            rows.setdefault((int(p), int(s), r), {})[name] = (cell, f"{name}: {' '.join(why.split()).replace('|', '/')}")
     for (p, s, r), row in sorted(rows.items()):
-        print(f"{p}.{s}\t{r}\t" + "\t".join(row.get(n, ("",))[0] for n in heads) + "\t" + "; ".join(w for _, w in row.values()) + f"\t{sents.get((p, s), '(no sentence at this position)')}")
+        print(f"{p}.{s}\t{r}\t" + "\t".join(row.get(n, ("",))[0] for n in heads) + "\t" + " | ".join(w for _, w in row.values()) + f"\t{sents.get((p, s), '(no sentence at this position)')}")
 
 
 if __name__ == "__main__":
