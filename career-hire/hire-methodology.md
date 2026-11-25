@@ -130,7 +130,7 @@ When the candidate does take part in an application, notes given toward a text a
 
 ## E — Examine
 
-Examine runs cheap readers before dear ones, and the candidate last. Every check and what came of it goes into `examine.md`, a one-sentence repair included, with its evidence saved in the folder: what each reader was given and answered, each script with its output.
+Examine runs cheap readers before dear ones, and the candidate last. Every check and what came of it goes into `examine.md`, a one-sentence repair included, with its evidence saved in the folder: what each reader was given and answered, each script with its output. A reader run through a skill or as an agent leaves no file of its own; whoever ran it saves both.
 
 ### 1. Sentence readers
 
