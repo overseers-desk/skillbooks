@@ -35,6 +35,16 @@ applications/a/2025-03-02-1410-cv.md   (another application of the same search, 
 sent/2025-01-10-cv.md   (a CV the candidate sent for an earlier post)
 - Ran the warehouse systems team through two acquisitions, keeping every site live.
 
+applications/b/hirer.md
+Post: director of automation at a grocery distributor (advertisement).
+Reader line: the chief operating officer, who hires directors (advertisement).
+
+applications/b/interview.md
+I1. Took the robot-picking pilot from one site to the standard method at three; twenty engineers (candidate, call 1).
+I2. Order errors from one in fifty to one in four hundred in the first year (candidate, call 1).
+I3. Led the warehouse systems team through two acquisitions; no site went offline (candidate, call 2).
+I4. Set the automation budget with the operations director, three years running (candidate, call 2).
+
 applications/b/cv-draft.md
 - Took a robot-picking pilot at one site to the standard method at three, with twenty engineers.
 - Order errors dropped from one in fifty to one in four hundred within a year.
