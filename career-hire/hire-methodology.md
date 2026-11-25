@@ -144,7 +144,7 @@ Two runs; three where a decision rests on one row or the two runs split. Then re
 - A row on a line that is the candidate's own wording leaves the line standing, and is entered in the register for the candidate.
 - A row from `level` or `work` invites a cut. Act on one only when most runs agree, and treat cutting as the last answer to it: a measured result or the sign of the candidate's own building may be what the reader came for. A fact that stands in a document the candidate approved needs more than these readers, who never see the advertisement: it stays, its row goes to the register, and it comes out only where judges prefer the version without it (`cases/a-line-cut-on-one-readers-flag.md`).
 - `total` has grown quiet; read its 3s.
-- Rows that only report the form of a CV, such as the entries repeating the summary, are left.
+- Rows that only report the form of a CV, such as the entries repeating the summary, are left. So is a row that reads as unsure a line kept open because the candidate left it open.
 
 What these readers cannot tell you is whether the document speaks to anyone. A draft can clear every row and be the wrong document (`cases/an-opening-that-indexes-the-career.md`).
 
@@ -154,7 +154,7 @@ A fresh agent gets the advertisement and the document, and nothing else. It is a
 
 ### 3. Voice
 
-On a copy: speak-like with the identity `human`, for machine cadence, capping lines and turned-round sentences (`cases/machine-cadence-in-a-personal-document.md`); this-guy-aint with the reader's own trade as the identity, for a plain word where the trade has its term.
+On a copy: speak-like with the identity `human`, for machine cadence, capping lines and turned-round sentences (`cases/machine-cadence-in-a-personal-document.md`); this-guy-aint with the reader's own trade as the identity, for a plain word where the trade has its term. A voice reader's disbelief that rests on the form of a CV is left, as in check 1.
 
 ### 4. Sources
 
