@@ -67,7 +67,7 @@ The percentage estimates how likely the applicant is to be selected if they resp
 
 2. **Amplifiers**. The campaign defines tags for circumstances that raise the applicant's odds beyond what matching the stated requirements shows. Each tag that applies multiplies `pct_base` by the campaign's factor, and the tags compound: at a factor of 1.15, one tag turns 40 into 46 and two turn it into 53. The factor is a judgement of how much one such circumstance is worth, and the configuration states it; 1.15 is where a campaign with no outcomes to judge from starts. The result stops at 95, because the product can pass 100 and no response is certain to be chosen.
 
-3. **Hard gates**. Requirements that block candidacy entirely (credentials, certifications, years of specific experience). Listed explicitly so the applicant can see them before investing effort.
+3. **Hard gates**. Requirements the listing states as required, which the applicant does not meet, and which block candidacy entirely (credentials, certifications, years of specific experience). A requirement the listing only prefers is not a gate, and neither is one the configuration rules out as a gate for this applicant. Listed explicitly so the applicant can see them before investing effort.
 
 The amplifier tags are the campaign's own. A grant campaign might define `interdisciplinary`, `industry-partnership`, `emerging-market`. The methodology defines the amplifier mechanics; the campaign defines the tags.
 
@@ -239,7 +239,7 @@ For each row where `alive` is not `no`, and `stars` is empty or the column of a 
 1. Read the dossier. The listing description and source background are the primary evidence for scoring. If the dossier fetch failed, note this in `notes_fit` and score from whatever information is available.
 2. Score each of the campaign's dimensions the row has no score for, using the rubric's anchors. A row scored before is scored only on dimensions the applicant has agreed to. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
 3. Compute `stars = clamp(sum-of-dimensions, 1.0, 5.0)`, over the dimensions the row has a score for.
-4. Assess `pct_base` by comparing each stated requirement against the applicant profile. List any `hard_gates`.
+4. Assess `pct_base` by comparing each stated requirement against the applicant profile. List any `hard_gates`, after reading what the configuration rules on gates.
 5. Identify applicable amplifier tags from the campaign's amplifier list.
 6. Compute `pct = round(pct_base × factor^(number of amplifiers))`, capped at 95.
 7. Write `notes_fit` explaining the key judgments.
