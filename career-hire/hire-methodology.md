@@ -166,7 +166,7 @@ A version in another language is examined in that language, by readers of it. A 
 
 ### 5. Judges
 
-Judges are for choosing between versions. Each is a fresh agent that holds only its brief. They are reliable when two versions differ by two sentences of substance or more, and they cannot decide a single line. Every verdict is a forced choice between two versions; a score given to one text alone moves from run to run and settles nothing.
+Judges are for choosing between versions. Each is a fresh agent that holds only its brief. When you use judges, have them compare directions, not single words. A sentence that reads better usually points to a change that belongs in several places, so test that set of changes together, all going the same way. Make the test as big as what the candidate, or the framing, is actually about: no smaller, no bigger. If the set is large, test half of it first, to see whether the direction helps. Every verdict is a forced choice between two versions; a score given to one text alone moves from run to run and settles nothing.
 
 - One model, two wordings of the judges' brief, both orders: four judges. Add judges only when the two orders disagree, as further wordings run before anything is concluded; a round that follows the reading order shows no preference (`cases/more-judges-than-the-last-rounds-variation-called-for.md`, `cases/judges-whose-verdict-followed-the-model-or-the-order.md`).
 - The same model judges every comparison in a search, and `examine.md` names it. Two models can reverse each other on the same pair, so their verdicts are not set side by side, and three models agreeing is still one opinion.
