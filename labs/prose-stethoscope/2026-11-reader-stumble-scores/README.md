@@ -117,6 +117,12 @@ Wording 048, with a fact naming whom the text presents its author as. The author
 
 - Three runs each: all six flags met in every run, at 5 to 9. No quiet line scored at all.
 - One CV, for a data platform director, three runs, with the frame "an engineering director who leads data platform engineering and has put AI agents into production": five of 28 scored lines reached 4 in every run. The highest, 7, 6, 6, was the latest job, the ownership of a tourism venue. Sealed judges comparing framings of the same CV had named that job as what counted against him.
+- Against screeners, on two CVs for other posts, each with the frame taken from the post's own taken-for sentence. Three versions of each CV: as written, with a line giving the reason for the venue years added at the end of the summary, and with the same line under the venue's heading. Sealed Sonnet screeners, four per version, gave their picture of the author from the top third. frame, three runs per version on Opus:
+  - The venue's heading, "Owner", scored 5 to 7 in all 18 runs. The screeners' pictures named that heading in every version, with the reason "most recent title is Owner of a tourism venue".
+  - The added line scored 4 to 6 in all 12 runs where it stood, read as the author admitting he had left engineering leadership.
+  - Under the venue's heading the line reached 4 of the 8 screeners' pictures, and one CV's shortlist fell from 4 of 4 to 2 of 4. At the end of the summary it reached none.
+  - So frame names the line that moves the picture, but scores it the same wherever it stands. Which placement a screener notices is outside what it hears.
+  - The runs hold the CVs' text and sit outside this repository.
 - The texts made for the lab are easy cases, written knowing the expectation, so these runs show the wording separates a line written against the frame from one written for it, and no more.
 
 ### learning-path
