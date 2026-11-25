@@ -12,7 +12,7 @@ This folder is for our search for funding. Follow the method in [path]/listing-s
 
 ## Yardstick
 
-1. One campaign folder named `{something}.sift` holds the configuration, the registry and the dossiers. The operator profile is in it, or stays where the charity keeps it and is named by path.
+1. One campaign folder named `{something}.sift` holds the configuration, the registry and the dossiers. The applicant profile is in it, or stays where the charity keeps it and is named by path.
 2. The run takes nothing from the document for job listings and names no response method: the registry has no job columns and the scores use no job dimensions.
 3. The configuration is `campaign.yaml` on SIFT's schema, and defines the campaign's dimensions with scales and anchors, drawn from what the charity said it cares about.
 4. Each call has a registry row, a dossier and both scores. The award the second call leaves unstated is estimated and marked as an estimate.

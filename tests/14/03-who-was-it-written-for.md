@@ -1,6 +1,6 @@
 # Test 14, case 03: what SIFT's documents say of their first user
 
-SIFT was generalised from one operator's use, and its documents are public. A reader given only the documents is asked who they were first written for.
+SIFT was generalised from one applicant's use, and its documents are public. A reader given only the documents is asked who they were first written for.
 
 ## Prompt
 

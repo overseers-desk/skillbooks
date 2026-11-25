@@ -11,21 +11,21 @@ SIFT is a four-phase methodology for evaluating published listings and deciding 
 
 A "listing" in SIFT is a published statement of need: someone has declared that they want something and invited responses. A job posting is a listing. A grant call is a listing. A conference CFP, a government tender, a programme admission, a partnership call, and an open-source bounty are all listings. The common structure is that the publisher has a need, has described it, and is waiting for candidates to present themselves.
 
-The methodology applies to any domain where the universe of published listings exceeds the operator's capacity to pursue all of them, and where each listing has both variable desirability and variable probability of success.
+The methodology applies to any domain where the universe of published listings exceeds the applicant's capacity to pursue all of them, and where each listing has both variable desirability and variable probability of success.
 
-This document holds what is true of every listing. What is true of every listing of one kind (the columns a job posting or a grant call needs, where such listings are found, how the response is prepared) is in that kind's domain document under `domains/`. What one operator chose (what the campaign weighs, the sources, the tags) is in the campaign configuration, in the campaign directory in the operator's own files. A kind of listing with no domain document defines its columns in the campaign configuration too.
+This document holds what is true of every listing. What is true of every listing of one kind (the columns a job posting or a grant call needs, where such listings are found, how the response is prepared) is in that kind's domain document under `domains/`. What one applicant chose (what the campaign weighs, the sources, the tags) is in the campaign configuration, in the campaign directory in the applicant's own files. A kind of listing with no domain document defines its columns in the campaign configuration too.
 
 ## The problem SIFT solves
 
-An operator facing 200 open listings cannot investigate all of them, and cannot score what has not been investigated. Without structure, two failure modes emerge.
+An applicant facing 200 open listings cannot investigate all of them, and cannot score what has not been investigated. Without structure, two failure modes emerge.
 
-The first is premature filtering. The operator skims titles, discards anything that does not immediately appeal, and pursues a handful of familiar-looking listings. This is comfortable but leaves high-value opportunities undiscovered — the listing whose title was unremarkable but whose dossier would have revealed a good fit.
+The first is premature filtering. The applicant skims titles, discards anything that does not immediately appeal, and pursues a handful of familiar-looking listings. This is comfortable but leaves high-value opportunities undiscovered — the listing whose title was unremarkable but whose dossier would have revealed a good fit.
 
-The second is orphaned judgment. The operator scores a listing based on the posting text alone, then the posting goes dead. The score cannot be audited because the evidence is gone. Three months later, a similar listing appears at the same organisation, and the operator cannot remember why the first one scored well or poorly.
+The second is orphaned judgment. The applicant scores a listing based on the posting text alone, then the posting goes dead. The score cannot be audited because the evidence is gone. Three months later, a similar listing appears at the same organisation, and the applicant cannot remember why the first one scored well or poorly.
 
 SIFT addresses both by making investigation precede scoring and by making every score traceable to a dossier. Sweep casts wide without filtering. Investigate creates a permanent evidence base. Fit scores against the evidence, not against memory. Target acts on scores, not on impressions.
 
-The two-axis scoring framework addresses a subtler problem: the conflation of desire with feasibility. A five-star listing where the operator's likelihood of success is 10% is a different proposition from a three-star listing where the likelihood is 85%. A single-axis ranking conflates these; the two-axis matrix forces the operator to confront the difference between wanting something and being able to get it.
+The two-axis scoring framework addresses a subtler problem: the conflation of desire with feasibility. A five-star listing where the applicant's likelihood of success is 10% is a different proposition from a three-star listing where the likelihood is 85%. A single-axis ranking conflates these; the two-axis matrix forces the applicant to confront the difference between wanting something and being able to get it.
 
 ## The four phases
 
@@ -33,7 +33,7 @@ The two-axis scoring framework addresses a subtler problem: the conflation of de
 |---|---|
 | **Sweep** | Discover listings. Cast wide, do not filter. |
 | **Investigate** | Fetch, archive, and research each listing into a dossier. |
-| **Fit** | Score each listing against the operator profile on two axes. |
+| **Fit** | Score each listing against the applicant profile on two axes. |
 | **Target** | Decide what to do with each listing, and hand over each one worth a response. |
 
 The Investigate phase produces a permanent evidence base so that Fit ratings are auditable and reproducible even after listings go dead.
@@ -48,26 +48,26 @@ The star rating is a composite score computed from the campaign's dimensions. A 
 stars = clamp(sum-of-dimensions, 1.0, 5.0)
 ```
 
-The dimensions are defined in the campaign configuration: what the operator cares about, each with its scale and anchors. A domain document may offer examples. SIFT prescribes the framework: a composite score from defined dimensions, clamped to 1.0–5.0.
+The dimensions are defined in the campaign configuration: what the applicant cares about, each with its scale and anchors. A domain document may offer examples. SIFT prescribes the framework: a composite score from defined dimensions, clamped to 1.0–5.0.
 
 Example dimension families (not prescriptive — campaigns choose what applies):
 
 - **Strategic value**: does the listing provide access, knowledge, network position, or influence that is scarce and transferable?
 - **Economic value**: what is the financial return (compensation, funding amount, prize, contract value)?
 - **Stepping-stone value**: does responding successfully open a category of future opportunities currently inaccessible?
-- **Effort compatibility**: is the work within the operator's available capacity?
+- **Effort compatibility**: is the work within the applicant's available capacity?
 
 A grant-seeking campaign might use research alignment, funding amount, institutional prestige and reporting burden. The methodology does not constrain which dimensions a campaign uses, only that they exist, are documented with anchors, and sum to a clamped star rating.
 
 ### Likelihood-of-success (percentage, 0–100)
 
-The percentage estimates how likely the operator is to be selected if they respond. It is computed in three steps:
+The percentage estimates how likely the applicant is to be selected if they respond. It is computed in three steps:
 
-1. **Base estimate** (`pct_base`, 0–100). Compare the listing's stated requirements against the operator profile. Every unmet hard requirement reduces the base significantly.
+1. **Base estimate** (`pct_base`, 0–100). Compare the listing's stated requirements against the applicant profile. Every unmet hard requirement reduces the base significantly.
 
-2. **Amplifiers**. The campaign defines tags for circumstances that raise the operator's odds beyond what matching the stated requirements shows. Each tag that applies multiplies `pct_base` by the campaign's factor, and the tags compound: at a factor of 1.15, one tag turns 40 into 46 and two turn it into 53. The factor is a judgement of how much one such circumstance is worth, and the configuration states it; 1.15 is where a campaign with no outcomes to judge from starts. The result stops at 95, because the product can pass 100 and no response is certain to be chosen.
+2. **Amplifiers**. The campaign defines tags for circumstances that raise the applicant's odds beyond what matching the stated requirements shows. Each tag that applies multiplies `pct_base` by the campaign's factor, and the tags compound: at a factor of 1.15, one tag turns 40 into 46 and two turn it into 53. The factor is a judgement of how much one such circumstance is worth, and the configuration states it; 1.15 is where a campaign with no outcomes to judge from starts. The result stops at 95, because the product can pass 100 and no response is certain to be chosen.
 
-3. **Hard gates**. Requirements that block candidacy entirely (credentials, certifications, years of specific experience). Listed explicitly so the operator can see them before investing effort.
+3. **Hard gates**. Requirements that block candidacy entirely (credentials, certifications, years of specific experience). Listed explicitly so the applicant can see them before investing effort.
 
 The amplifier tags are the campaign's own. A grant campaign might define `interdisciplinary`, `industry-partnership`, `emerging-market`. The methodology defines the amplifier mechanics; the campaign defines the tags.
 
@@ -80,13 +80,13 @@ Stars answer: "Is this worth pursuing if we could get it?" Percentage answers: "
 | **High pct** | Pursue | Deprioritise (easy but low-value) |
 | **Low pct** | Stretch (high-value but long-shot) | Skip |
 
-Target places each scored listing in its cell and shows the cell beside the scores. The cell is a reading of the two scores, and the disposition stays the operator's: one operator answers every stretch and another none. The thresholds for "high" and "low" are the campaign's, in the configuration. Where the operator has said what a cell means for them, that is written under `other` in the configuration, and Target proposes that disposition for a listing in the cell.
+Target places each scored listing in its cell and shows the cell beside the scores. The cell is a reading of the two scores, and the disposition stays the applicant's: one applicant answers every stretch and another none. The thresholds for "high" and "low" are the campaign's, in the configuration. Where the applicant has said what a cell means for them, that is written under `other` in the configuration, and Target proposes that disposition for a listing in the cell.
 
 ## Campaign directory
 
-SIFT works from a campaign directory in the operator's own files: the configuration, the registry and the dossiers. `sift-campaign-directory.md` gives its layout and what the configuration holds. Every phase starts by reading the configuration.
+SIFT works from a campaign directory in the applicant's own files: the configuration, the registry and the dossiers. `sift-campaign-directory.md` gives its layout and what the configuration holds. Every phase starts by reading the configuration.
 
-Where there is no campaign directory yet, the first act is to set one up, and the operator is asked for the choices the configuration holds. A choice that could not be put to the operator, because the operator is away or because it only came up in a later phase, is made by the phase that needs it and written into the configuration, marked as not yet confirmed by the operator.
+Where there is no campaign directory yet, the first act is to set one up, and the applicant is asked for the choices the configuration holds. A choice that could not be put to the applicant, because the applicant is away or because it only came up in a later phase, is made by the phase that needs it and written into the configuration, marked as not yet confirmed by the applicant.
 
 ## Registry concept
 
@@ -94,11 +94,11 @@ The registry is a TSV file that accumulates data left-to-right as listings move 
 
 The registry has core columns (present in every campaign), then the columns of the campaign's kind of listing, then the campaign's own. The core schema is defined in `sift-registry-format.md`, a kind's columns in its domain document, and the campaign's own in the campaign configuration.
 
-## Operator profile
+## Applicant profile
 
-Each campaign has an operator profile: a description of the entity responding to listings. For a job-seeking campaign, this is the record of a person's career and what they are looking for. For a grant campaign, it is an organisation capability statement. For a CFP campaign, it is a researcher or speaker profile.
+Each campaign has an applicant profile: a description of the entity responding to listings. For a job-seeking campaign, this is the record of a person's career and what they are looking for. For a grant campaign, it is an organisation capability statement. For a CFP campaign, it is a researcher or speaker profile.
 
-The operator profile is what Fit scores against. SIFT does not prescribe its format, only that it exists and that Fit reads it. The campaign configuration gives its path, or the paths of the files that make it up. SIFT reads from it what the operator has done and what the operator is looking for, and writes nothing to it. The profile may be a file the operator keeps for other uses too and may hold more; SIFT leaves the rest alone.
+The applicant profile is what Fit scores against. SIFT does not prescribe its format, only that it exists and that Fit reads it. The campaign configuration gives its path, or the paths of the files that make it up. SIFT reads from it what the applicant has done and what the applicant is looking for, and writes nothing to it. The profile may be a file the applicant keeps for other uses too and may hold more; SIFT leaves the rest alone.
 
 ## Dossier concept
 
@@ -163,12 +163,12 @@ Discover all potentially relevant listings. Cast wide. Do not score or filter �
 
 ### Inputs
 
-- Operator profile (to understand what "relevant" means)
+- Applicant profile (to understand what "relevant" means)
 - Campaign-defined search sources and queries
 
 ### Process
 
-1. Read the operator profile to establish the scope of relevance
+1. Read the applicant profile to establish the scope of relevance
 2. Search across campaign-defined sources. The source mix varies by domain: job boards and company career pages for employment; grant databases and funder websites for funding; conference listings and academic networks for CFPs; procurement portals for tenders
 3. For each listing found:
    - Verify it is alive (check the URL loads; where a plain request is refused, check it in a browser)
@@ -176,7 +176,7 @@ Discover all potentially relevant listings. Cast wide. Do not score or filter �
    - Extract the fields of the campaign's kind of listing, and the campaign's own
    - Assign an `id` following the campaign's ID format
    - Write one row to the registry with all Sweep columns filled. Leave Fit and Target columns empty
-4. A listing that reaches the operator unsought, in the operator's mail or passed on by a person, is entered the same way, with `source` saying how it came.
+4. A listing that reaches the applicant unsought, in the applicant's mail or passed on by a person, is entered the same way, with `source` saying how it came.
 5. Deduplicate by URL. If the same listing appears on multiple sources, keep the primary source (publisher's own site preferred over aggregator mirrors)
 6. Output: updated registry with new rows appended
 
@@ -219,7 +219,7 @@ A dossier file for every listing. Updated `alive` column in the registry where a
 
 ### Purpose
 
-Score every row in the registry that has empty Fit columns and is not known to be dead, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise. A listing found dead before it was scored keeps its row and its dossier and stays unscored; one that dies after scoring keeps its scores. A dimension added to the configuration after rows were scored has no score in those rows; Fit adds its column to the registry where the column is missing. Fit goes back over those rows once the operator has agreed to the dimension, which the configuration shows by the dimension's absence from `unconfirmed`. Going back reads every dossier again, so it is done once for every dimension agreed to by then, and a dimension the operator is still settling stays under `unconfirmed` meanwhile: rows not yet scored are scored on it like any other, and rows already scored wait for it. On a row scored before, going back changes the new dimension's score, the stars, and their lines in the dossier's Fit section, and leaves the percentage as it was.
+Score every row in the registry that has empty Fit columns and is not known to be dead, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise. A listing found dead before it was scored keeps its row and its dossier and stays unscored; one that dies after scoring keeps its scores. A dimension added to the configuration after rows were scored has no score in those rows; Fit adds its column to the registry where the column is missing. Fit goes back over those rows once the applicant has agreed to the dimension, which the configuration shows by the dimension's absence from `unconfirmed`. Going back reads every dossier again, so it is done once for every dimension agreed to by then, and a dimension the applicant is still settling stays under `unconfirmed` meanwhile: rows not yet scored are scored on it like any other, and rows already scored wait for it. On a row scored before, going back changes the new dimension's score, the stars, and their lines in the dossier's Fit section, and leaves the percentage as it was.
 
 ### Model allocation
 
@@ -229,17 +229,17 @@ Fit is Sonnet-tier work. When a scoring rubric does the intellectual heavy lifti
 
 - Registry (with Sweep columns filled)
 - Dossier files (from Investigate)
-- Operator profile
+- Applicant profile
 - Scoring rubric: the dimensions in the campaign configuration, each with its guidance, scale and anchors
 
 ### Process
 
-For each row where `alive` is not `no`, and `stars` is empty or the column of a dimension the operator has agreed to is empty:
+For each row where `alive` is not `no`, and `stars` is empty or the column of a dimension the applicant has agreed to is empty:
 
 1. Read the dossier. The listing description and source background are the primary evidence for scoring. If the dossier fetch failed, note this in `notes_fit` and score from whatever information is available.
-2. Score each of the campaign's dimensions the row has no score for, using the rubric's anchors. A row scored before is scored only on dimensions the operator has agreed to. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
+2. Score each of the campaign's dimensions the row has no score for, using the rubric's anchors. A row scored before is scored only on dimensions the applicant has agreed to. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
 3. Compute `stars = clamp(sum-of-dimensions, 1.0, 5.0)`, over the dimensions the row has a score for.
-4. Assess `pct_base` by comparing each stated requirement against the operator profile. List any `hard_gates`.
+4. Assess `pct_base` by comparing each stated requirement against the applicant profile. List any `hard_gates`.
 5. Identify applicable amplifier tags from the campaign's amplifier list.
 6. Compute `pct = round(pct_base × factor^(number of amplifiers))`, capped at 95.
 7. Write `notes_fit` explaining the key judgments.
@@ -259,22 +259,22 @@ For each scored listing, decide whether to respond and how the response is to be
 ### Inputs
 
 - Registry (with Sweep and Fit columns filled)
-- Operator profile
-- The operator's judgment on which listings to pursue
+- Applicant profile
+- The applicant's judgment on which listings to pursue
 
 ### Process
 
 For each row where `decision` is empty, and each row marked `watch`:
 
-1. Place each listing in its cell of the matrix by the configuration's thresholds. Present the scored shortlist to the operator with each listing's cell, sorted by `stars` descending, then `pct` descending.
-2. For each listing the operator marks as `respond` or `network-approach`:
+1. Place each listing in its cell of the matrix by the configuration's thresholds. Present the scored shortlist to the applicant with each listing's cell, sorted by `stars` descending, then `pct` descending.
+2. For each listing the applicant marks as `respond` or `network-approach`:
    - Determine the approach channel: direct application, warm introduction, intermediary, or network approach.
-   - Note the contacts and referral paths the operator names.
+   - Note the contacts and referral paths the applicant names.
    - The channel and the contacts go in the columns the kind or the campaign defines for them, and otherwise in `notes_target`.
-   - For `respond`, the response is prepared by the method the campaign configuration names, where it names one. The listing's id and its dossier are what SIFT offers that method, and Target's work on the listing stops there until the response is submitted. Where no method is named, note in `notes_target` what to emphasise from the operator profile for this listing, and which of the operator's existing response materials to start from (a proposal template for a grant call, an abstract variant for a CFP) where the configuration says, under `other`, where they are kept.
+   - For `respond`, the response is prepared by the method the campaign configuration names, where it names one. The listing's id and its dossier are what SIFT offers that method, and Target's work on the listing stops there until the response is submitted. Where no method is named, note in `notes_target` what to emphasise from the applicant profile for this listing, and which of the applicant's existing response materials to start from (a proposal template for a grant call, an abstract variant for a CFP) where the configuration says, under `other`, where they are kept.
    - For `network-approach`, what follows is an approach to a person, which is outside SIFT. The listing's id, its dossier and the contacts noted are what SIFT offers whoever makes it.
 3. For listings marked `skip`: record the reason in `notes_target` (so future Sweep runs do not re-add them).
-4. For listings marked `watch`: no response preparation. Record in `notes_target` what the listing is waiting for. A `watch` row comes back each time Target runs: check that the listing is still alive, and put it to the operator again when what it waited for has happened or its closing date is near.
+4. For listings marked `watch`: no response preparation. Record in `notes_target` what the listing is waiting for. A `watch` row comes back each time Target runs: check that the listing is still alive, and put it to the applicant again when what it waited for has happened or its closing date is near.
 5. Update the row in the registry.
 6. When a response is submitted, enter `date_responded` and update `status`, whichever method prepared it.
 
@@ -297,8 +297,8 @@ Updated registry with Target columns filled. Listings marked `respond` are ready
 |---|---|---|---|
 | Registry (TSV) | Sweep (rows); Fit (scores); Target (dispositions) | All phases | Campaign directory |
 | Dossier files | Investigate (description + background); Fit (scoring section) | Fit, Target, human review | `dossiers/{id}.md` |
-| Operator profile | Pre-campaign (by the operator) | Fit (scoring against requirements) | Where the campaign configuration says |
-| Campaign configuration | Set up with the operator before the campaign; later gaps filled by the phase that meets them, marked unconfirmed | Sweep (sources), Fit (dimensions, amplifiers), Target (thresholds, response method) | `campaign.yaml` in the campaign directory |
+| Applicant profile | Pre-campaign (by the applicant) | Fit (scoring against requirements) | Where the campaign configuration says |
+| Campaign configuration | Set up with the applicant before the campaign; later gaps filled by the phase that meets them, marked unconfirmed | Sweep (sources), Fit (dimensions, amplifiers), Target (thresholds, response method) | `campaign.yaml` in the campaign directory |
 | Domain document | Kept with this methodology; not made per campaign | Sweep (columns, kinds of source), Target (hand-over) | `domains/` |
 
 ## Model assignment
@@ -312,18 +312,18 @@ Updated registry with Target columns filled. Listings marked `respond` are ready
 
 ## Application areas
 
-SIFT applies to any domain where an external party publishes a need and invites responses. The following are the domains where the structure holds cleanly — where the listing is a genuine published want, the operator evaluates fit against a profile, and the response requires preparation.
+SIFT applies to any domain where an external party publishes a need and invites responses. The following are the domains where the structure holds cleanly — where the listing is a genuine published want, the applicant evaluates fit against a profile, and the response requires preparation.
 
-**Job listings.** The publisher is an employer. The listing is a job posting. The operator profile is the record of a person's career and what they are looking for. The response is a candidacy. The sources, columns and hand-over for this kind are in `domains/jobs.md`.
+**Job listings.** The publisher is an employer. The listing is a job posting. The applicant profile is the record of a person's career and what they are looking for. The response is a candidacy. The sources, columns and hand-over for this kind are in `domains/jobs.md`.
 
-**Grant and funding calls.** The publisher is a funding body (government agency, foundation, research council). The listing is a call for proposals or expressions of interest. The operator profile is an organisation capability statement or researcher CV. The response is a grant proposal. The star dimensions might measure research alignment, funding amount, institutional prestige, and reporting burden.
+**Grant and funding calls.** The publisher is a funding body (government agency, foundation, research council). The listing is a call for proposals or expressions of interest. The applicant profile is an organisation capability statement or researcher CV. The response is a grant proposal. The star dimensions might measure research alignment, funding amount, institutional prestige, and reporting burden.
 
-**Conference CFPs.** The publisher is a conference organising committee. The listing is a call for papers, talks, or workshops. The operator profile is a speaker or researcher profile. The response is an abstract or paper submission. The star dimensions might measure audience relevance, venue prestige, travel burden, and topic alignment.
+**Conference CFPs.** The publisher is a conference organising committee. The listing is a call for papers, talks, or workshops. The applicant profile is a speaker or researcher profile. The response is an abstract or paper submission. The star dimensions might measure audience relevance, venue prestige, travel burden, and topic alignment.
 
-**Tenders and RFPs.** The publisher is a procurement authority (government, corporation, NGO). The listing is a request for proposals or request for quotations. The operator profile is a company capability statement. The response is a tender submission. The star dimensions might measure contract value, strategic alignment, compliance burden, and competitive position.
+**Tenders and RFPs.** The publisher is a procurement authority (government, corporation, NGO). The listing is a request for proposals or request for quotations. The applicant profile is a company capability statement. The response is a tender submission. The star dimensions might measure contract value, strategic alignment, compliance burden, and competitive position.
 
-**Programme admissions.** The publisher is an educational institution or professional body. The listing is an admission call (degree programme, fellowship, accelerator). The operator profile is an applicant CV or portfolio. The response is an application. The star dimensions might measure programme prestige, career trajectory value, financial terms, and location compatibility.
+**Programme admissions.** The publisher is an educational institution or professional body. The listing is an admission call (degree programme, fellowship, accelerator). The applicant profile is an applicant CV or portfolio. The response is an application. The star dimensions might measure programme prestige, career trajectory value, financial terms, and location compatibility.
 
-**Partnership calls.** The publisher is an organisation seeking collaborators (research consortia, industry alliances, joint ventures). The listing is a call for partners. The operator profile is an organisation capability statement. The response is a partnership proposal. The star dimensions might measure strategic alignment, resource commitment, network value, and governance compatibility.
+**Partnership calls.** The publisher is an organisation seeking collaborators (research consortia, industry alliances, joint ventures). The listing is a call for partners. The applicant profile is an organisation capability statement. The response is a partnership proposal. The star dimensions might measure strategic alignment, resource commitment, network value, and governance compatibility.
 
-**Bounties and open-source project calls.** The publisher is a project maintainer or sponsoring organisation. The listing is a bounty, a "help wanted" issue, or a call for contributors. The operator profile is a developer portfolio or contribution history. The response is a proposal or direct contribution. The star dimensions might measure technical alignment, compensation, project visibility, and learning value.
+**Bounties and open-source project calls.** The publisher is a project maintainer or sponsoring organisation. The listing is a bounty, a "help wanted" issue, or a call for contributors. The applicant profile is a developer portfolio or contribution history. The response is a proposal or direct contribution. The star dimensions might measure technical alignment, compensation, project visibility, and learning value.

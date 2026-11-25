@@ -7,7 +7,7 @@ Reads campaign.yaml and registry.tsv in the directory. Prints one line per findi
 there is a finding.
 The checks are the registry format's quality checklist and what follows from the configuration.
 A scored row may lack a score for a dimension that `unconfirmed` names, by its own name or by the
-`dimensions` key, since Fit goes back over scored rows only for dimensions the operator has agreed to.
+`dimensions` key, since Fit goes back over scored rows only for dimensions the applicant has agreed to.
 """
 import math, re, sys
 from collections import Counter
@@ -45,15 +45,15 @@ def plain(value):
 
 
 def check_configuration(cfg, directory, scored, decided):
-    needed = ["kind", "operator_profile", "id_format", "sources", "dimensions"]
+    needed = ["kind", "applicant_profile", "id_format", "sources", "dimensions"]
     needed += ["amplifiers"] if scored else []
     needed += ["thresholds"] if decided else []
     for key in needed:
         if not cfg.get(key):
             find("configuration", "-", f"`{key}` is missing or empty")
-    for path in cfg.get("operator_profile") or []:
+    for path in cfg.get("applicant_profile") or []:
         if not (directory / path).exists():
-            find("configuration", "-", f"operator_profile names {path}, which is not there")
+            find("configuration", "-", f"applicant_profile names {path}, which is not there")
     names = []
     for dim in cfg.get("dimensions") or []:
         name = dim.get("name", "")
