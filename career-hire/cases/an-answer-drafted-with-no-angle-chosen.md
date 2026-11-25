@@ -15,7 +15,7 @@
 - The motive answer, its angle picked by the ranking.
 - Two CV passages written with no stated purpose.
 
-**The rule it produced.** `../hire-methodology.md`, **Written answers beside the CV**: "And an answer needs its angle chosen, by the candidate, before it is drafted. Where none is chosen the judges' ranking ends up choosing it, and then nobody decided what the answer argues." Since "An application does not go back to the candidate" (I), the candidate's choice is read from the standing record; where it holds none, the angle is still chosen before drafting, by a stated default, and entered in the register for the candidate to agree or correct. For the CV passages, R, **Choose the approach before writing sentences**.
+**The rule it produced.** `../hire-methodology.md`, **Written answers beside the CV**: "And an answer needs its angle chosen before it is drafted: from the standing record where the candidate has given one for that kind of question, otherwise as a registered assumption. Where none is chosen the judges' ranking ends up choosing it, and then nobody decided what the answer argues." For the CV passages, R, **Choose the approach before writing sentences**.
 
 **To re-run it.** A run in progress, in two steps. The tester places in a folder beside the methodology:
 

@@ -27,4 +27,4 @@ Candidate, spoken: "My system lets a clinic's data stay put and still be searche
 Built it alone; forty clinics on it (candidate).
 ```
 
-The agent receives one instruction: "Write the CV sentence on this system." The tester's key: the field's term for searching data that stays at each site is federated (federated search, query or analytics). It passes if the sentence uses that term where the plain phrase stood, and `examine.md` lists the change from the candidate's wording with its reason. A sentence that keeps "stay put" or another paraphrase in its place is a fail.
+The agent receives one instruction: "Write the CV sentence on this system." The tester's key: the field's term for searching data that stays at each site is federated (federated search, query or analytics). It passes if the sentence uses that term where the plain phrase stood, and the change from the candidate's wording is a row in the register with its reason. A sentence that keeps "stay put" or another paraphrase in its place is a fail.
