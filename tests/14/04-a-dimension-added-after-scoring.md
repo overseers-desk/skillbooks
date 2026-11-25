@@ -5,7 +5,7 @@ A campaign set up as in case 02 has its three calls scored. The operator then ed
 - A: nothing is listed under `unconfirmed`.
 - B: the new dimension is the one entry under `unconfirmed`.
 
-The inputs are case 02's (`02-room/`), a set-up run on them, and the edit above made to that run's campaign directory.
+The inputs are case 02's (`02-room/`), a set-up run on them with case 02's prompt, and the edit above made to that run's campaign directory.
 
 ## Prompt
 
