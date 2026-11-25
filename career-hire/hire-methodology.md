@@ -65,7 +65,7 @@ H closes with four sentences, which Examine hands to its readers:
 
 ## I — Interview
 
-**Read the record first, whole.** Everything in the candidate's own words: recorded conversations, essays, earlier accounts of the same work, notes. Read them through; a keyword search finds what was already expected. A question whose answer the record holds is not put to the candidate (`cases/questions-asked-whose-answers-the-record-held.md`), and a claim that the record lacks something is made after a search for it (`cases/guesses-written-in-as-the-candidates-facts.md`).
+**Read the record first, whole.** Everything in the candidate's own words: recorded conversations, essays, earlier accounts of the same work, notes, and what the candidate said in correcting earlier drafts. A correction holds for later documents of that kind; where a document the candidate approved afterwards goes the other way, the two are put to the candidate in the register and the later approval stands meanwhile. Read them through; a keyword search finds what was already expected. A question whose answer the record holds is not put to the candidate (`cases/questions-asked-whose-answers-the-record-held.md`), and a claim that the record lacks something is made after a search for it (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
 **The candidate file is filled in once.** Before a search begins, or the first time HIRE runs for a candidate, ask in one sitting what only the candidate holds, and keep the answers in the candidate file:
 
