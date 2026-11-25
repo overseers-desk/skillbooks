@@ -38,7 +38,7 @@ Then one working folder per application, holding:
 
 These files are HIRE's own, and HIRE writes nowhere else.
 
-Where the candidate keeps a list of the postings under consideration, with research on each, an application works with it in three ways. The research on file about the post (the advertisement as archived, background on the employer) is the first source for `brief.md`; a score or an opinion found in it is somebody's inference, and is marked as that. `brief.md` and the application's rows in the register name the posting by the list's own identifier. When the document is sent, whoever sends it enters that in the list, which is the exception.
+Where research about the post is already on file (the advertisement as archived, background on the employer), it is the first source for `brief.md`; a score or an opinion found in it is somebody's inference, and is marked as that. `brief.md` and the application's rows in the register name the posting by the identifier that research gives it. When the document is sent, that is recorded in the application's `examine.md`.
 
 A file's time is read from the clock when it is written (`cases/a-task-reported-done-without-the-act-that-finishes-it.md`).
 
