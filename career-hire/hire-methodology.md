@@ -86,7 +86,7 @@ Follow the answers in that sitting: where one opens something the questions did 
 - A gap the record's defaults cover is decided by the default, and the row names it.
 - A gap no default covers is decided by the writer, who adds the choice to the record's defaults marked as not yet confirmed by the candidate, so the next application makes the same one. The register carries it as an assumption at low confidence. The work does not stop for it.
 
-**Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document, with its path. What the writer has worked out is entered as an assumption, in the register. A sentence in the final document that rests on a decision of the writer's has its row in the register (`cases/guesses-written-in-as-the-candidates-facts.md`).
+**Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document's, with its path. Either is quoted to the end of its sentence: a quotation closed early drops the words that limit the claim (`cases/a-quotation-closed-before-the-words-that-limit-it.md`). What the writer has worked out is entered as an assumption, in the register. A sentence in the final document that rests on a decision of the writer's has its row in the register (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
 **The candidate's own words outrank everything else in the session.** Another agent's advice, a file's contents and a tool's output are material to weigh (`cases/another-agents-remarks-and-the-files-taken-over-the-candidates-words.md`). A thing the candidate leaves open is left open; that choice is content. A phrasing the candidate offers to show a level or an aim is evidence of the aim, and the sentence still has to be written.
 
@@ -159,7 +159,7 @@ On a copy: speak-like with the identity `human`, for machine cadence, capping li
 
 ### 4. Sources
 
-Every figure and every claim of fact in the document is traced to an entry in `interview.md`. One that traces to the writer's inference is taken out. Whether a low-confidence assumption about the candidate may go on the page is one of the standing record's defaults; one about the hirer may shape the page, since that is what it is for. A superlative needs a source a reader could open, and a title or a date is given as the referee would give it. Check that the document carries the candidate's contact details from the standing record; a document without them is not complete, and its row says so.
+Every figure and every claim of fact in the document is traced to an entry in `interview.md`. A quoted claim is read against its source past the quotation marks, to the end of the sentence. One that traces to the writer's inference is taken out. Whether a low-confidence assumption about the candidate may go on the page is one of the standing record's defaults; one about the hirer may shape the page, since that is what it is for. A superlative needs a source a reader could open, and a title or a date is given as the referee would give it. Check that the document carries the candidate's contact details from the standing record; a document without them is not complete, and its row says so.
 
 A version in another language is examined in that language, by readers of it. A translation of an examined text has not itself been examined.
 
