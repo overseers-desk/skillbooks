@@ -21,7 +21,7 @@
 - The facts line failed in four CVs of four before the trace took both columns.
 - Statements in check logs not borne out by the files, in several applications.
 
-**The rule it produced.** `../hire-methodology.md`, E 4, **Sources**: every claim "is traced to an entry in `interview.md`, in a trace written down with the document's words and the source's words side by side in each row. A trace kept in the head, or one that names the entry without its words, passes a wording that says a step more than its source." E, opening: every check goes into `examine.md` "with its evidence saved in the folder: what each reader was given and answered, each script with its output."
+**The rule it produced.** `../hire-methodology.md`, E 4, **Sources**: every claim "is traced to an entry in `interview.md`, in a trace written down with the document's words and the source's words side by side in each row. Without the source's words in the row, the writer reads its own words as the source's, and a step past the source passes." E, opening: every check goes into `examine.md` "with its evidence saved in the folder: what each reader was given and answered, each script with its output."
 
 **To re-run it.** A run in E 4. The tester places in a folder beside the methodology:
 
