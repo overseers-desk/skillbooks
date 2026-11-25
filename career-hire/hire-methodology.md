@@ -139,7 +139,7 @@ Run prose-stethoscope on the draft, on a copy in which any template markup is re
 - `modules/restate.md` asks whether the reader can say in their own words what a sentence asserts. It is the check for a patched sentence.
 - `modules/grain.md` asks whether a sentence sits at a much finer level of detail than the document around it.
 
-Two runs; three where a decision rests on one row or the two runs split. Then read the rows as a reader's reports:
+Two runs; three where a decision rests on one row or the two runs split. Then read the rows as a reader's reports. A passage still flagged in both runs after two rewrites goes to the register for the candidate and is not rewritten a third time: each rewrite moves the rows to another clause.
 
 - A row on a line that is the candidate's own wording leaves the line standing, and is entered in the register for the candidate.
 - A row from `level` or `work` invites a cut. Act on one only when most runs agree, and treat cutting as the last answer to it: a measured result or the sign of the candidate's own building may be what the reader came for. A fact that stands in a document the candidate approved needs more than these readers, who never see the advertisement: it stays, its row goes to the register, and it comes out only where judges prefer the version without it (`cases/a-line-cut-on-one-readers-flag.md`).
@@ -186,7 +186,7 @@ Where a skill named above is not installed, put the check's question to a fresh 
 
 ### The stop rule
 
-Stop when a full pass of checks 1 to 4 leads to no change, and no version on file is preferred by the judges to the current one. The first full draft is one of those versions. Where the judges prefer an earlier version, what they name is put back into the current one; the earlier version does not replace it, since it lacks every repair made since. Whatever is done last, the page that is sent is the one the sources trace and the whole reading were made on. Then say plainly what remains: the rows left standing and why, the decisions in the register that most deserve the candidate's eye, and the claims resting on them. A document that has stopped is not thereby right; it is one the available readers can no longer improve.
+Stop when a full pass of checks 1 to 4 leads to no change, the rows this method says to leave not counted, and no version on file is preferred by the judges to the current one. The first full draft is one of those versions. Where the judges prefer an earlier version, what they name is put back into the current one; the earlier version does not replace it, since it lacks every repair made since. Whatever is done last, the page that is sent is the one the sources trace and the whole reading were made on. Then say plainly what remains: the rows left standing and why, the decisions in the register that most deserve the candidate's eye, and the claims resting on them. A document that has stopped is not thereby right; it is one the available readers can no longer improve.
 
 A task is done when the act that finishes it has been done and seen: the file built and opened, the commit pushed, the open item closed or handed to the candidate by name (`cases/a-task-reported-done-without-the-act-that-finishes-it.md`).
 
