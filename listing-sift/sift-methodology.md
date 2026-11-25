@@ -80,7 +80,7 @@ Stars answer: "Is this worth pursuing if we could get it?" Percentage answers: "
 | **High pct** | Pursue | Deprioritise (easy but low-value) |
 | **Low pct** | Stretch (high-value but long-shot) | Skip |
 
-Target places each scored listing in its cell and shows the cell beside the scores. The cell is a reading of the two scores, and the disposition stays the operator's: one operator answers every stretch and another none. The thresholds for "high" and "low" are the campaign's, in the configuration. Where the operator has said what a cell means for them, that is in the configuration too, and Target proposes it.
+Target places each scored listing in its cell and shows the cell beside the scores. The cell is a reading of the two scores, and the disposition stays the operator's: one operator answers every stretch and another none. The thresholds for "high" and "low" are the campaign's, in the configuration. Where the operator has said what a cell means for them, that is written under `other` in the configuration, and Target proposes that disposition for a listing in the cell.
 
 ## Campaign directory
 
@@ -98,7 +98,7 @@ The registry has core columns (present in every campaign), then the columns of t
 
 Each campaign has an operator profile: a description of the entity responding to listings. For a job-seeking campaign, this is the record of a person's career and what they are looking for. For a grant campaign, it is an organisation capability statement. For a CFP campaign, it is a researcher or speaker profile.
 
-The operator profile is what Fit scores against. SIFT does not prescribe its format, only that it exists and that Fit reads it. The campaign configuration gives its path. SIFT reads from it what the operator has done and what the operator is looking for, and writes nothing to it. The profile may be a file the operator keeps for other uses too and may hold more; SIFT leaves the rest alone.
+The operator profile is what Fit scores against. SIFT does not prescribe its format, only that it exists and that Fit reads it. The campaign configuration gives its path, or the paths of the files that make it up. SIFT reads from it what the operator has done and what the operator is looking for, and writes nothing to it. The profile may be a file the operator keeps for other uses too and may hold more; SIFT leaves the rest alone.
 
 ## Dossier concept
 
@@ -219,7 +219,7 @@ A dossier file for every listing. Updated `alive` column in the registry where a
 
 ### Purpose
 
-Score every row in the registry that has empty Fit columns and is not known to be dead, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise. A listing found dead before it was scored keeps its row and its dossier and stays unscored; one that dies after scoring keeps its scores. A dimension added to the configuration after a row was scored leaves that row's column for it empty. Fit goes back over such rows once the operator has agreed to the dimension, which the configuration shows by the dimension's absence from `unconfirmed`. Going back reads every dossier again, and one pass serves every dimension agreed to since the last. A dimension the operator is still settling therefore stays under `unconfirmed` until the set is agreed: rows not yet scored are scored on it like any other, and rows already scored wait.
+Score every row in the registry that has empty Fit columns and is not known to be dead, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise. A listing found dead before it was scored keeps its row and its dossier and stays unscored; one that dies after scoring keeps its scores. A dimension added to the configuration after rows were scored has no score in those rows; Fit adds its column to the registry where the column is missing. Fit goes back over those rows once the operator has agreed to the dimension, which the configuration shows by the dimension's absence from `unconfirmed`. Going back reads every dossier again, so it is done once for every dimension agreed to by then, and a dimension the operator is still settling stays under `unconfirmed` meanwhile: rows not yet scored are scored on it like any other, and rows already scored wait for it. On a row scored before, going back changes the new dimension's score, the stars, and their lines in the dossier's Fit section, and leaves the percentage as it was.
 
 ### Model allocation
 
@@ -230,14 +230,14 @@ Fit is Sonnet-tier work. When a scoring rubric does the intellectual heavy lifti
 - Registry (with Sweep columns filled)
 - Dossier files (from Investigate)
 - Operator profile
-- Scoring rubric: the dimensions, scales and anchors in the campaign configuration
+- Scoring rubric: the dimensions in the campaign configuration, each with its guidance, scale and anchors
 
 ### Process
 
 For each row where `alive` is not `no`, and `stars` is empty or the column of a dimension the operator has agreed to is empty:
 
 1. Read the dossier. The listing description and source background are the primary evidence for scoring. If the dossier fetch failed, note this in `notes_fit` and score from whatever information is available.
-2. Score each of the campaign's dimensions the row has no score for, using the rubric's anchors. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
+2. Score each of the campaign's dimensions the row has no score for, using the rubric's anchors. A row scored before is scored only on dimensions the operator has agreed to. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
 3. Compute `stars = clamp(sum-of-dimensions, 1.0, 5.0)`, over the dimensions the row has a score for.
 4. Assess `pct_base` by comparing each stated requirement against the operator profile. List any `hard_gates`.
 5. Identify applicable amplifier tags from the campaign's amplifier list.
@@ -271,7 +271,7 @@ For each row where `decision` is empty, and each row marked `watch`:
    - Determine the approach channel: direct application, warm introduction, intermediary, or network approach.
    - Note the contacts and referral paths the operator names.
    - The channel and the contacts go in the columns the kind or the campaign defines for them, and otherwise in `notes_target`.
-   - For `respond`, the response is prepared by the method the campaign configuration names, where it names one. The listing's id and its dossier are what SIFT offers that method, and Target's work on the listing stops there until the response is submitted. Where no method is named, note in `notes_target` what to emphasise from the operator profile for this listing, and which of the operator's existing response materials to start from (a proposal template for a grant call, an abstract variant for a CFP) where the configuration says where they are kept.
+   - For `respond`, the response is prepared by the method the campaign configuration names, where it names one. The listing's id and its dossier are what SIFT offers that method, and Target's work on the listing stops there until the response is submitted. Where no method is named, note in `notes_target` what to emphasise from the operator profile for this listing, and which of the operator's existing response materials to start from (a proposal template for a grant call, an abstract variant for a CFP) where the configuration says, under `other`, where they are kept.
    - For `network-approach`, what follows is an approach to a person, which is outside SIFT. The listing's id, its dossier and the contacts noted are what SIFT offers whoever makes it.
 3. For listings marked `skip`: record the reason in `notes_target` (so future Sweep runs do not re-add them).
 4. For listings marked `watch`: no response preparation. Record in `notes_target` what the listing is waiting for. A `watch` row comes back each time Target runs: check that the listing is still alive, and put it to the operator again when what it waited for has happened or its closing date is near.

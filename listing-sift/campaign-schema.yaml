@@ -10,7 +10,7 @@
 #
 # Every phase starts by reading the campaign's file. A phase that needs a choice
 # the file does not hold makes it, writes it under the key it belongs to, and
-# names that key under `unconfirmed`.
+# names that key under `unconfirmed`, the last key of this file.
 #
 # Keys are shown with placeholder values. A key shown commented out is optional.
 # =============================================================================
@@ -44,8 +44,8 @@ sources:
 # The star rating is the sum of the dimensions' scores, clamped to 1.0–5.0
 # (sift-methodology.md, "Value-to-us"). Each dimension is one thing the
 # operator weighs in a listing, with every score it can take and what that
-# score means. The scales set how much each dimension counts: one scored from
-# 1 to 5 carries the rating, and one scored from −1 to +1 moves it.
+# score means. The scales set how much each dimension counts: the wider a
+# dimension's scale, the more of the rating it decides.
 #
 # A dimension's name is the name of its registry column, and the columns run in
 # the order the dimensions are given here. The operator says what matters and
@@ -74,7 +74,7 @@ thresholds:
 # ---------------------------------------------------------------------------
 # AMPLIFIERS — circumstances that raise the operator's odds
 #
-# (sift-methodology.md, "Likelihood-of-success".)
+# (sift-methodology.md, "Likelihood-of-success")
 # ---------------------------------------------------------------------------
 
 amplifiers:

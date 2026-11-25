@@ -2,7 +2,7 @@
 
 **Applies to:** setting up a new SIFT campaign for an operator
 
-**Prerequisite reading:** `sift-methodology.md`, `sift-registry-format.md`, and the domain document for the campaign's kind of listing, where one exists (`domains/`)
+**Prerequisite reading:** `sift-methodology.md`, `sift-registry-format.md`, `campaign-schema.yaml`, and the domain document for the campaign's kind of listing, where one exists (`domains/`)
 
 ## Layout
 
@@ -30,15 +30,15 @@ Campaign directories are named `{name}.sift`, where `{name}` is the operator's l
 
 ## Campaign configuration
 
-`campaign.yaml` holds this campaign's choices: the operator's, and any a phase had to make. Its keys are defined in `campaign-schema.yaml`, kept with the methodology. It says what kind of listing the campaign evaluates and for whom, where Sweep looks, what the operator weighs in a listing and on what scales, the figures Fit and Target work with, and what the campaign adds to the registry. What is true of every campaign of its kind is in the kind's domain document under `domains/` and is not repeated in it.
+`campaign.yaml` holds this campaign's choices: the operator's, and any a phase had to make. Its keys are defined in `campaign-schema.yaml`, kept with the methodology. It says what kind of listing the campaign evaluates and for whom, where Sweep looks, what the operator weighs in a listing and on what scales, the figures Fit and Target work with, and what the campaign adds to the registry. What is true of every campaign of its kind is in the kind's domain document under `domains/` and is not repeated in `campaign.yaml`.
 
 A choice a phase needed and did not find in the configuration is written into it and named under its `unconfirmed` key, for the operator to agree with or correct.
 
-`tools/registry-check.py`, kept with the methodology, checks a campaign's registry against its configuration and the registry format.
+`tools/registry-check.py`, kept with the methodology, checks a campaign's registry against its configuration and the registry format. It runs on Python with PyYAML and takes the campaign directory as its argument. Run it after a phase has written to the registry.
 
 ## Operator profile
 
-The configuration gives the profile's path. A description the operator already has, a record another method keeps of the operator, and a profile that serves several campaigns each stay where they are, outside the campaign directory. A profile written for this campaign alone is `operator-profile.md` in the campaign directory. Do not duplicate the profile.
+The configuration gives the profile's path, or the paths of the files that make it up. A description the operator already has, a record another method keeps of the operator, and a profile that serves several campaigns each stay where they are, outside the campaign directory. A profile written for this campaign alone is `operator-profile.md` in the campaign directory. Do not duplicate the profile.
 
 ## Beside a response method
 

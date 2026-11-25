@@ -50,7 +50,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **Model allocation:** Sweep and Investigate are Sonnet-tier. Fit is Sonnet-tier (rubric application). Target is human judgment.
 
-**Procedure documents:** `listing-sift/sift-methodology.md`, `listing-sift/sift-registry-format.md`, `listing-sift/sift-campaign-directory.md`, and one document per kind of listing in `listing-sift/domains/`.
+**Procedure documents:** `listing-sift/sift-methodology.md`, `listing-sift/sift-registry-format.md`, `listing-sift/sift-campaign-directory.md`, `listing-sift/campaign-schema.yaml`, and one document per kind of listing in `listing-sift/domains/`.
 
 ### TEND — Correspondence Processing
 
