@@ -1,0 +1,85 @@
+{
+"prompt": "003",
+"format": "033",
+"model": "claude-opus-5-5",
+"text": "029",
+"sents": [
+"I prepare tax returns and quarterly accounts for about sixty small businesses in the county.",
+"Before setting up on my own I spent nine years at a regional accounting practice.",
+"Clients reach me by phone or email, and I answer within a working day.",
+"I am currently looking for a permanent position in a large firm.",
+"Most of my work these days is building websites for local shops.",
+"My fees are fixed for each return and agreed before I start."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader is deciding whether to invite this person, and has read nothing else about them.\n\nThe text, each paragraph starting with its number:\n\n[P1] I prepare tax returns and quarterly accounts for about sixty small businesses in the county. Before setting up on my own I spent nine years at a regional accounting practice. Clients reach me by phone or email, and I answer within a working day.\n\n[P2] I am currently looking for a permanent position in a large firm. Most of my work these days is building websites for local shops.\n\n[P3] My fees are fixed for each return and agreed before I start.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Frame: The author is to be taken for an independent tax adviser to small businesses. Score 0 to 9 how likely the intended reader is, at this sentence, to take the author for someone other than that, in another line of work or at another stage of it, because of what the sentence tells about them.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why: in at most 15 words, what the reader meets at this sentence. Describe the stumble, not a way to fix it. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+8
+],
+"why": "Says they seek a permanent job at a large firm, unlike an independent adviser."
+},
+"5": {
+"s": [
+9
+],
+"why": "Says most of their work is building websites, another line of work."
+}
+},
+"secs": 9,
+"raw": "2.1\t8\tSays they seek a permanent job at a large firm, unlike an independent adviser.\n2.2\t9\tSays most of their work is building websites, another line of work.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+8
+],
+"why": "Says they seek a permanent large-firm job, so not an independent adviser."
+},
+"5": {
+"s": [
+9
+],
+"why": "Says most current work is building websites, suggesting a web developer."
+}
+},
+"secs": 8,
+"raw": "2.1\t8\tSays they seek a permanent large-firm job, so not an independent adviser.\n2.2\t9\tSays most current work is building websites, suggesting a web developer.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+8
+],
+"why": "Says they seek a permanent job in a large firm, not independent practice."
+},
+"5": {
+"s": [
+9
+],
+"why": "Says most current work is building websites, a different line of work."
+}
+},
+"secs": 7,
+"raw": "2.1\t8\tSays they seek a permanent job in a large firm, not independent practice.\n2.2\t9\tSays most current work is building websites, a different line of work.\nEND",
+"r": 2
+}
+]
+}
+]
+}

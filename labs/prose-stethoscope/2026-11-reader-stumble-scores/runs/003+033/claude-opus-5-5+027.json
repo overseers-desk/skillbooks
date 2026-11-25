@@ -1,0 +1,85 @@
+{
+"prompt": "003",
+"format": "033",
+"model": "claude-opus-5-5",
+"text": "027",
+"sents": [
+"Dr Ines Okafor leads the cardiology trials unit at a teaching hospital in Manchester.",
+"She trained in Leeds and has practised as a cardiologist for eighteen years.",
+"Her trials of blood-pressure treatment have enrolled four thousand patients across nine sites.",
+"She is best known for her weekly podcast on wellness and longevity.",
+"Her current focus is selling her own range of supplements through high-street pharmacies.",
+"She will speak on what large trials have shown about treating blood pressure in older patients."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader is deciding whether to invite this person, and has read nothing else about them.\n\nThe text, each paragraph starting with its number:\n\n[P1] Dr Ines Okafor leads the cardiology trials unit at a teaching hospital in Manchester. She trained in Leeds and has practised as a cardiologist for eighteen years. Her trials of blood-pressure treatment have enrolled four thousand patients across nine sites.\n\n[P2] She is best known for her weekly podcast on wellness and longevity. Her current focus is selling her own range of supplements through high-street pharmacies.\n\n[P3] She will speak on what large trials have shown about treating blood pressure in older patients.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Frame: The author is to be taken for a cardiologist who runs clinical trials. Score 0 to 9 how likely the intended reader is, at this sentence, to take the author for someone other than that, in another line of work or at another stage of it, because of what the sentence tells about them.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why: in at most 15 words, what the reader meets at this sentence. Describe the stumble, not a way to fix it. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+6
+],
+"why": "Her main fame is a wellness podcast, suggesting a media personality rather than a trialist."
+},
+"5": {
+"s": [
+8
+],
+"why": "Her current focus is selling supplements, implying she has moved into commerce from medicine."
+}
+},
+"secs": 7,
+"raw": "2.1\t6\tHer main fame is a wellness podcast, suggesting a media personality rather than a trialist.\n2.2\t8\tHer current focus is selling supplements, implying she has moved into commerce from medicine.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+6
+],
+"why": "\"Best known\" for a wellness podcast recasts her as a media wellness personality."
+},
+"5": {
+"s": [
+8
+],
+"why": "\"Current focus\" on selling supplements suggests she has left trials for retail business."
+}
+},
+"secs": 8,
+"raw": "2.1\t6\t\"Best known\" for a wellness podcast recasts her as a media wellness personality.\n2.2\t8\t\"Current focus\" on selling supplements suggests she has left trials for retail business.\nEND",
+"r": 1
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+6
+],
+"why": "\"Best known for\" a wellness podcast recasts her as a media personality."
+},
+"5": {
+"s": [
+7
+],
+"why": "\"Current focus\" on selling supplements suggests a businesswoman who has left trials."
+}
+},
+"secs": 8,
+"raw": "2.1\t6\t\"Best known for\" a wellness podcast recasts her as a media personality.\n2.2\t7\t\"Current focus\" on selling supplements suggests a businesswoman who has left trials.\nEND",
+"r": 2
+}
+]
+}
+]
+}

@@ -40,6 +40,7 @@ Each is one criterion asked alone in its own call, prompt 003 with a format of o
 |---|---|---|---|
 | height | 036 in 019 | feel that the author stands below their own subject: still finding it out, guessing, or taking from others what the reader expects them to know | |
 | level | 043 in 027 | place the author lower than the standing claimed, by what the author chose to tell of their own part | `taken-for` |
+| frame | 048 in 033 | take the author for someone other than the frame, in another line of work or at another stage of it | `frame` |
 | learning-path | 037 in 021 | feel they are told the story of how the author came to know a thing, where they wanted what the author knows | |
 | must-not-conclude | 039 in 023 | be led toward a conclusion the author does not want drawn | `must-not-conclude` |
 | work | 044 in 029 | wonder why they are told this, because the sentence's subject is something other than what they came for and nothing later uses it | `reading-for` |
@@ -107,7 +108,16 @@ Wordings 038, 041 and 043, with the fact that the author is to be taken for some
 - Wording 038 let the reader weigh "what it shows them doing, counting or dwelling on", and the reader measured every number against the thirty engineers of the post. Wording 041 asked what the author chose to tell and still scored 4, 3, 4 a line the author wrote himself, saying how many staff a system directs, by reading that number as his own headcount. Wording 043 adds "about their own part", and that line draws no row.
 - Whether it follows its fact. The two CV versions were run again, two runs each, under a reader and a fact that ask for hands-on technical depth in place of span. On the first version the lines it had scored for the manager's post, counts of scripts and tools and implementation detail, drew no row at all, and rows at 4 or more fell from 3, 12 and 11 a run to 1 and 3. On the second, lines about headcount and fundraising appeared at 3 to 4, with the reason that they are a manager's measure. One line scored 6 under both, for opposite reasons: a very small team is far below thirty for the first reader, and for the second it says the system was built by others. So the fact moves which lines score. The measured reply rates scored under both, 6 and 5 then 4 and 3; on a second CV, for another post, sealed judges named that measured result as the best thing in the version that carried it.
 - Held out, the final CV: 3 and 2 rows of 52. The supervising session's one prediction is met at 5 and 5. One line the author shaped himself scores 6 and 6, against a prediction of quiet.
+- Whether it needs the advertisement. On a CV for a data platform director, three runs each with work beside it: a reply-rate line scored 5, 6, 5 under the writer's facts, 5, 5, 5 under facts naming the post's work and level, and 5, 5, 5 with the whole advertisement as work's fact. Every reason called it a small sales metric offered as the director's only measured result. The advertisement did not move the score; work's scores on the line rose with it.
 - Other people's CVs, one run each: 1 and 5 rows at 4 or more on the two judged good, 7 and 23 on the two judged weak. The reasons name a senior director's bullet about code he wrote himself, lists of editors and build tools, weekly summaries. Whether each of those rows is a hit was not judged; what the four show is that the count follows the earlier judges' order and that the module does not score a CV for being one.
+
+### frame
+
+Wording 048, with a fact naming whom the text presents its author as. The author's record holds no frame objection, so it was tested on three texts made for this lab, a speaker's bio, a founder's pitch and a consultant's page (`texts/027.md` to `texts/029.md`). Each carries two lines written to present the author as someone else, such as a cardiologist "best known for her weekly podcast", and four that serve the frame or tell an earlier stage as past.
+
+- Three runs each: all six flags met in every run, at 5 to 9. No quiet line scored at all.
+- One CV, for a data platform director, three runs, with the frame "an engineering director who leads data platform engineering and has put AI agents into production": five of 28 scored lines reached 4 in every run. The highest, 7, 6, 6, was the latest job, the ownership of a tourism venue. Sealed judges comparing framings of the same CV had named that job as what counted against him.
+- The texts made for the lab are easy cases, written knowing the expectation, so these runs show the wording separates a line written against the frame from one written for it, and no more.
 
 ### learning-path
 
