@@ -31,11 +31,9 @@
 **To re-run it.** A repair to a draft under way. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: head of scheduling systems at a hospital group (advertisement).
 Reader line: the group's chief operating officer (advertisement).
-
-interview.md
 Night-shift lead, a city hospital, six years, forty nurses across three wards (candidate).
 Built the clinic's booking software in the last three of those years, while still leading the night shift (candidate).
 

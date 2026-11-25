@@ -22,11 +22,9 @@
 **To re-run it.** A refinement of the candidate's own draft. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: research fellowship on failures in hospital services (advertisement).
 Employer's rule: applicants write the answer themselves and use AI only to refine it (advertisement).
-
-interview.md
 Worked a year in a hospital kitchen (candidate).
 Has logged 412 failures at the pass over two years; about a third were orders changed after the ticket printed (candidate, spoken).
 
@@ -34,4 +32,4 @@ answer-draft.md   (the candidate's own)
 I worked in a hospital kitchen for a year before I wrote any software for one. Most of what goes wrong there goes wrong at the pass, between the cook and the runner, and nobody records it. I've been recording it for two years now. I would like to spend the fellowship working out which of those failures software can prevent.
 ```
 
-The agent receives one instruction: "Refine my draft. It says I record the failures but not what the record shows; the figures are in interview.md." Look at the refinement and `examine.md`. It passes if the refinement says what the log shows, with the count or the share from `interview.md`; still ends on the candidate's plain wish, with no closing line after it; has no sentence turned round so that a place or a thing does a verdict's work ("The pass is where …", "The log is what …"); and `examine.md` lists each change to their wording with its reason and records the voice check. A fresh reader given the refinement, asked "which sentences sound written by a model?", names none that the agent wrote or changed. A refinement without the log's figure has not done the work asked, and is a fail.
+The agent receives one instruction: "Refine my draft. It says I record the failures but not what the record shows; the figures are in brief.md." Look at the refinement and `examine.md`. It passes if the refinement says what the log shows, with the count or the share from `brief.md`; still ends on the candidate's plain wish, with no closing line after it; has no sentence turned round so that a place or a thing does a verdict's work ("The pass is where …", "The log is what …"); and `examine.md` lists each change to their wording with its reason and records the voice check. A fresh reader given the refinement, asked "which sentences sound written by a model?", names none that the agent wrote or changed. A refinement without the log's figure has not done the work asked, and is a fail.

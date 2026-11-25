@@ -28,14 +28,14 @@
 
 **The rule it produced.** `../hire-methodology.md`, end of **The stop rule**: "A task is done when the act that finishes it has been done and seen: the file built and opened, the commit pushed, the open item closed or handed to the candidate by name." **What a run produces**: "A file's time is read from the clock when it is written." E 4, **Sources**: "Check that the document carries the candidate's contact details." Requests taken by their letter are covered only as far as their finishing act; nothing says a request for options wants a pick, or that a recheck states its test. Research run while the candidate waited has no rule in HIRE: it is a working rule for any agent with a person waiting.
 
-**To re-run it.** A run in progress. A rendered page looked at, and an answer given mid-task, cannot be shown by one run's output, so the exercise keeps to what the folder shows. The tester places in a folder beside the methodology `hirer.md`, a CV draft named by an earlier date and time with Education above Experience and no contact line, a `register.md` with only its header, a `record/profile.md` naming a side venture, and:
+**To re-run it.** A run in progress. A rendered page looked at, and an answer given mid-task, cannot be shown by one run's output, so the exercise keeps to what the folder shows. The tester places in a folder beside the methodology a CV draft named by an earlier date and time with Education above Experience and no contact line, a `register.md` with only its header, a `record/profile.md` naming a side venture, and:
 
 ```
 standing-record.md
 Contact details documents may carry: a mobile number, an email at a general provider (candidate).
 Off the page: their home town (candidate).
 
-interview.md
+brief.md
 (the candidate's account and facts, each sourced to the standing record; contact details not carried over)
 Open: the side venture in record/profile.md; the standing record says nothing on it.
 ```

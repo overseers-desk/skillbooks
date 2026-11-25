@@ -22,7 +22,7 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **Give the reader a thing before referring to it,** "and make the opening tell the same story as the entries below it".
 
-**To re-run it.** A repair to a draft under way. The tester places in a folder beside the methodology `hirer.md` (a post leading a utility's inspection engineering; reader: its engineering director, holding only the advertisement), `interview.md` (the two posts below with their years, and that the port authority was a client of the mapping company, each sourced to the candidate), and a CV draft:
+**To re-run it.** A repair to a draft under way. The tester places in a folder beside the methodology `brief.md` (a post leading a utility's inspection engineering; reader: its engineering director, holding only the advertisement), `brief.md` (the two posts below with their years, and that the port authority was a client of the mapping company, each sourced to the candidate), and a CV draft:
 
 ```
 Led a utility's drone inspection team, then founded a mapping company serving a port authority.

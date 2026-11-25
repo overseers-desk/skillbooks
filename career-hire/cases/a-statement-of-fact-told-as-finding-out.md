@@ -26,12 +26,10 @@
 **To re-run it.** A run in progress, the approach chosen. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: kitchen operations lead for a restaurant group (advertisement).
 Reader line: the group's operations director, who has read the advertisement.
 Taken-for: someone who knows where kitchens lose time (candidate).
-
-interview.md
 Account (candidate, spoken): "Most delays in the kitchen are handoffs. The evidence is two years of tickets. Three fixes help, one most."
 Kept the ticket log themselves, two years, four kitchens (candidate).
 

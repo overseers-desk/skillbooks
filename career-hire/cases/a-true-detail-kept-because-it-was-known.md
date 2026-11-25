@@ -25,11 +25,9 @@
 **To re-run it.** A run in progress, before the candidate reads the draft. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: head of engineering, leading forty engineers in five teams (advertisement).
 Must-not-conclude: "that I have only run small things" (candidate).
-
-interview.md
 Owner of an online hardware shop, eight years (candidate).
 Built the shop's ordering system with one other engineer over three years (candidate).
 The shop has six staff (candidate).

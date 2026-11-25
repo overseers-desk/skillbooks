@@ -21,12 +21,10 @@
 **To re-run it.** A repair to a draft under way. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: research engineer, sensor analytics, at the maker of the door sensors (advertisement).
 Reader line: a team lead at the maker, who has read the advertisement.
 Must-not-conclude: that the candidate wants the maker's raw data, or is working round its lock (candidate).
-
-interview.md
 Candidate, spoken: "I tracked how shoppers move through a chain's stores with its door sensors. When the maker locked the export I stopped. What I want is to find out which layouts cut queues, and to do it with them."
 
 cv-draft.md   (written by the session, not the candidate)

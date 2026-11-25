@@ -21,10 +21,8 @@
 **To re-run it.** A run in progress, the approach chosen. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: head of engineering at a logistics-software firm (advertisement).
-
-interview.md
 Built, alone, software that sets each morning's routes for a courier firm's sixty drivers (candidate).
 The firm delivers about two million parcels a year (candidate).
 Account (candidate, spoken): "The drivers don't plan anything now. The software tells them where to go."

@@ -20,16 +20,14 @@
 **To re-run it.** A run in progress, the approach chosen. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: director of engineering at an airline-software firm (advertisement).
 Reader line: the firm's technical chief, who has read the advertisement.
 Must-not-conclude: that the candidate is an ordinary manager (candidate).
-
-interview.md
 Account (candidate, spoken): "I ran a port's night operations, then built the scheduling software several airlines now use, and grew the team that builds it to forty. I want them to read it and think: of course this person can lead an engineering organisation."
 
 approaches/chosen.md
 Open on the move from running operations to building for them (chosen by the candidate).
 ```
 
-The agent receives one instruction: "Write the CV's three-sentence opening." It passes if no word in the opening names a quality in place of a fact (leader, leadership, capable, strong, experienced, proven, track record), each sentence carries a fact from `interview.md`, and a fresh reader given only the opening and asked "which words ask you to take a quality on trust?" names none. The candidate's "of course this person can lead" is the aim, not a line: an opening that says they can lead is a fail.
+The agent receives one instruction: "Write the CV's three-sentence opening." It passes if no word in the opening names a quality in place of a fact (leader, leadership, capable, strong, experienced, proven, track record), each sentence carries a fact from `brief.md`, and a fresh reader given only the opening and asked "which words ask you to take a quality on trust?" names none. The candidate's "of course this person can lead" is the aim, not a line: an opening that says they can lead is a fail.

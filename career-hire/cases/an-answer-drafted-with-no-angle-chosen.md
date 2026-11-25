@@ -20,16 +20,14 @@
 **To re-run it.** A run in progress, in two steps. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: fellowship in clinical software (advertisement). Screener reads several hundred answers (advertisement).
 Employer's rules for applicants: none on who drafts (advertisement).
+Form field: "Why do you want to join us? A few hundred words."
 
 standing-record.md
 Account (candidate, spoken, to a reader hiring a specialist): "Eight years at the bedside watching dosing software get it wrong. I want to build the version pharmacists trust."
 Hospital pharmacist, eight years; built the dose-check sheet their ward uses; would want the drug-interaction work wherever a firm has it (candidate).
-
-interview.md
-Form field: "Why do you want to join us? A few hundred words."
 
 register.md   (the header row only)
 ```

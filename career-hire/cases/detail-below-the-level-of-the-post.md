@@ -32,11 +32,9 @@
 advertisement.md
 Director of automation. Reports to the chief operating officer. Leads four engineering managers and about fifty engineers in four teams. Owns the automation roadmap and its budget across the company's warehouses, and sets its direction with the executive team.
 
-hirer.md
+brief.md
 Post: director of automation over four managers and about fifty engineers (advertisement).
 Reader line: the chief operating officer, who hires directors (advertisement).
-
-interview.md
 Led the warehouse-robot programme: eighteen engineers, two sites, picking errors halved in a year (candidate).
 Account (candidate, spoken): "I took a robot pilot nobody trusted and made it how two warehouses run."
 

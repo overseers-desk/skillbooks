@@ -20,11 +20,9 @@
 **To re-run it.** A run in progress. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: director of health-data engineering at a firm that links clinics' records (advertisement).
 Reader line: the firm's chief engineer, an expert in the field (advertisement).
-
-interview.md
 Candidate, spoken: "My system lets a clinic's data stay put and still be searched by the network."
 Built it alone; forty clinics on it (candidate).
 ```

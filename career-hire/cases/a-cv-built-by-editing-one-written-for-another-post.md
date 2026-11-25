@@ -23,14 +23,12 @@
 **To re-run it.** A run in progress, where R begins. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: two-year research fellowship on how field robots fail (advertisement).
 Reader line: a panel of roboticists who run trials in the lab (advertisement).
 Readers lack: failure evidence from machines in daily use (candidate).
 Taken-for: someone whose work yields evidence a lab cannot get (candidate).
 Must-not-conclude: none given (candidate).
-
-interview.md
 Account (candidate, spoken): "My robots break in ways no lab sees, and I have logged every break for three years."
 Ran a depot of forty pickers and twelve robots for five years (old-cv.md; candidate confirmed).
 

@@ -25,11 +25,9 @@
 **To re-run it.** A run in progress. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: operations director, based in region C (advertisement).
 Must-not-conclude: where the candidate lives; that the bookshop still holds them (candidate).
-
-interview.md
 Lives in country A; citizen of country A (candidate; passport in record/).
 Email: one address at a general mail provider; one at the bookshop's own domain, which ends in country B's code (candidate).
 Has run a bookshop in country B for nine years; hands it to a buyer at the end of this year. "Put this year as the end." (candidate, spoken)

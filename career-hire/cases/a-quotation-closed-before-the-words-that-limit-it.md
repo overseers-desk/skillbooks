@@ -17,12 +17,12 @@
 - Sources traces in several applications that matched the quoted words and passed them.
 - The qualifier restored in two applications, once from the announcement and once after a sentence reader doubted the claim.
 
-**The rule it produced.** `../hire-methodology.md`, I, **Each entry in `interview.md` carries its source**: "Either is quoted to the end of its sentence: a quotation closed early drops the words that limit the claim." E 4, **Sources**: "A quoted claim is read against its source past the quotation marks, to the end of the sentence."
+**The rule it produced.** `../hire-methodology.md`, I, **Each entry in `brief.md` carries its source**: "Either is quoted to the end of its sentence: a quotation closed early drops the words that limit the claim." E 4, **Sources**: "A quoted claim is read against its source past the quotation marks, to the end of the sentence."
 
 **To re-run it.** A run in E 4. The tester places in a folder beside the methodology:
 
 ```
-interview.md
+brief.md
 I7. Led the integration team for the city's new fare system (candidate, call 2).
 I8. The transport authority announced it as "the first fare system in the country" (sources/press-notes.md).
 
@@ -38,4 +38,4 @@ cv-draft.md
 - Led integration for the city's new fare system, which the transport authority announced as the first fare system in the country.
 ```
 
-The agent receives one instruction: "Run the sources check on the draft and record it in `examine.md`." It passes if `examine.md` finds the "first" claim stronger than the release, quoting the release's sentence to its end; the new draft carries the qualifier or drops the first; and I8 in `interview.md` is mended to quote the sentence whole. Passing the claim because its words are in `press-notes.md` is a fail.
+The agent receives one instruction: "Run the sources check on the draft and record it in `examine.md`." It passes if `examine.md` finds the "first" claim stronger than the release, quoting the release's sentence to its end; the new draft carries the qualifier or drops the first; and I8 in `brief.md` is mended to quote the sentence whole. Passing the claim because its words are in `press-notes.md` is a fail.

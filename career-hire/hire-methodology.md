@@ -30,8 +30,7 @@ Then one working folder per application, holding:
 
 | File | Written in | Holds |
 |---|---|---|
-| `hirer.md` | H | The post, the route, the readers, what they lack, and the four sentences Examine's readers are given |
-| `interview.md` | I | For this application: what was taken from the candidate's standing record, each item with its source, and each decision made where the record was silent |
+| `brief.md` | H and I | The post, the route, the readers, what they lack, and the four sentences Examine's readers are given; what was taken from the candidate's standing record for this application, each item with its source; and each decision made where the record was silent |
 | `approaches/` | R | The competing openings and outlines, and how one was chosen |
 | `selection.md` | R | Each fact considered: the reader's question it answers, what it says of the candidate beyond itself, and whether it is kept, recast or left out |
 | the document | R | Named by the date and time it was made; earlier versions move to `superseded/` |
@@ -39,13 +38,13 @@ Then one working folder per application, holding:
 
 These files are HIRE's own, and HIRE writes nowhere else, with one exception named below. The standing record may sit in a file the candidate keeps for other uses as well: HIRE reads and adds to the parts listed under I, and leaves the rest.
 
-Where the candidate keeps a list of the postings under consideration, with research on each, an application works with it in three ways. The research on file about the post (the advertisement as archived, background on the employer) is the first source for `hirer.md`; a score or an opinion found in it is somebody's inference, and is marked as that. `hirer.md` and the application's rows in the register name the posting by the list's own identifier. When the document is sent, whoever sends it enters that in the list, which is the exception.
+Where the candidate keeps a list of the postings under consideration, with research on each, an application works with it in three ways. The research on file about the post (the advertisement as archived, background on the employer) is the first source for `brief.md`; a score or an opinion found in it is somebody's inference, and is marked as that. `brief.md` and the application's rows in the register name the posting by the list's own identifier. When the document is sent, whoever sends it enters that in the list, which is the exception.
 
 A file's time is read from the clock when it is written (`cases/a-task-reported-done-without-the-act-that-finishes-it.md`).
 
 ## H — Hirer
 
-A document is not begun until `hirer.md` and `interview.md` exist for it. A repair to a document already under way is made with `hirer.md` open beside it. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
+A document is not begun until `brief.md` exists for it. A repair to a document already under way is made with `brief.md` open beside it. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
 
 Establish, and mark each line with where it came from (the advertisement, the candidate, another named source, or your own inference):
 
@@ -55,7 +54,7 @@ Establish, and mark each line with where it came from (the advertisement, the ca
 - **The readers' own subject and terms.** Read what the employer has published on the matter the candidate will speak of. An expert reader expects the field's terms (`cases/terms-of-art-paraphrased-for-an-expert-reader.md`).
 - **The employer's rules for applicants**, such as who may draft what. They are read here, since they decide the order of work in the phases that follow (`cases/the-candidates-own-account-written-for-them-before-they-gave-it.md`).
 
-An inference in `hirer.md` is an assumption, and goes into the register with a confidence score: what this hirer wants, who reads first, what level the post is. Low-confidence rows that much of the document depends on are the ones to put at the top for the candidate. A judge's brief and a reader line carry what the advertisement and the candidate said; an assumption put there comes back as the judge's finding (`cases/judges-briefed-with-the-writers-own-inference.md`).
+An inference in `brief.md` is an assumption, and goes into the register with a confidence score: what this hirer wants, who reads first, what level the post is. Low-confidence rows that much of the document depends on are the ones to put at the top for the candidate. A judge's brief and a reader line carry what the advertisement and the candidate said; an assumption put there comes back as the judge's finding (`cases/judges-briefed-with-the-writers-own-inference.md`).
 
 H closes with four sentences, which Examine hands to its readers:
 
@@ -86,7 +85,7 @@ Follow the answers in that sitting: where one opens something the questions did 
 - A gap the record's defaults cover is decided by the default, and the row names it.
 - A gap no default covers is decided by the writer, who adds the choice to the record's defaults marked as not yet confirmed by the candidate, so the next application makes the same one. The register carries it as an assumption at low confidence. The work does not stop for it.
 
-**Each entry in `interview.md` carries its source.** The candidate's words, with where they were said; a document's, with its path. Either is quoted to the end of its sentence: a quotation closed early drops the words that limit the claim (`cases/a-quotation-closed-before-the-words-that-limit-it.md`). What the writer has worked out is entered as an assumption, in the register. That includes a statement of what the candidate will do, such as move or work on site, carried to a kind of post the candidate did not say it of (`cases/a-statement-of-intent-carried-to-another-post.md`). A sentence in the final document that rests on a decision of the writer's has its row in the register (`cases/guesses-written-in-as-the-candidates-facts.md`).
+**Each entry in `brief.md` carries its source.** The candidate's words, with where they were said; a document's, with its path. Either is quoted to the end of its sentence: a quotation closed early drops the words that limit the claim (`cases/a-quotation-closed-before-the-words-that-limit-it.md`). What the writer has worked out is entered as an assumption, in the register. That includes a statement of what the candidate will do, such as move or work on site, carried to a kind of post the candidate did not say it of (`cases/a-statement-of-intent-carried-to-another-post.md`). A sentence in the final document that rests on a decision of the writer's has its row in the register (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
 **The candidate's own words outrank everything else in the session.** Another agent's advice, a file's contents and a tool's output are material to weigh (`cases/another-agents-remarks-and-the-files-taken-over-the-candidates-words.md`). A thing the candidate leaves open is left open; that choice is content. A phrasing the candidate offers to show a level or an aim is evidence of the aim, and the sentence still has to be written.
 
@@ -135,7 +134,7 @@ Examine runs cheap readers before dear ones, and the candidate last. Every check
 
 ### 1. Sentence readers
 
-Run prose-stethoscope on the draft, on a copy in which any template markup is replaced by the words the reader will see. For a CV, name all seven of its modules and give it the four sentences from `hirer.md`. Add this folder's two modules by path:
+Run prose-stethoscope on the draft, on a copy in which any template markup is replaced by the words the reader will see. For a CV, name all seven of its modules and give it the four sentences from `brief.md`. Add this folder's two modules by path:
 
 - `modules/restate.md` asks whether the reader can say in their own words what a sentence asserts. It is the check for a patched sentence.
 - `modules/grain.md` asks whether a sentence sits at a much finer level of detail than the document around it.
@@ -159,7 +158,7 @@ On a copy: speak-like with the identity `human`, for machine cadence, capping li
 
 ### 4. Sources
 
-Every figure and every claim of fact in the document is traced to an entry in `interview.md`, in a trace written down with the document's words and the source's words side by side in each row. Without the source's words in the row, the writer reads its own words as the source's, and a step past the source passes (`cases/a-sources-check-made-without-the-sources-words.md`). A quoted claim is read against its source past the quotation marks, to the end of the sentence. One that traces to the writer's inference is taken out. Whether a low-confidence assumption about the candidate may go on the page is one of the standing record's defaults; one about the hirer may shape the page, since that is what it is for. A superlative needs a source a reader could open, and a title or a date is given as the referee would give it. Check that the document carries the candidate's contact details from the standing record; a document without them is not complete, and its row says so.
+Every figure and every claim of fact in the document is traced to an entry in `brief.md`, in a trace written down with the document's words and the source's words side by side in each row. Without the source's words in the row, the writer reads its own words as the source's, and a step past the source passes (`cases/a-sources-check-made-without-the-sources-words.md`). A quoted claim is read against its source past the quotation marks, to the end of the sentence. One that traces to the writer's inference is taken out. Whether a low-confidence assumption about the candidate may go on the page is one of the standing record's defaults; one about the hirer may shape the page, since that is what it is for. A superlative needs a source a reader could open, and a title or a date is given as the referee would give it. Check that the document carries the candidate's contact details from the standing record; a document without them is not complete, and its row says so.
 
 After the last rewrite, compare the document by script with every document the candidate has sent and with the newest document of every other application in the search. A clause they share, or a sentence that differs by a word or two, is said again from the fact, unless it is a named source's own wording. Writers working apart from one record reach the same sentences, and one recruiter may read two of the documents. Run the comparison again once the other applications have stopped changing (`cases/sentences-shared-between-documents-of-one-search.md`).
 
@@ -169,10 +168,10 @@ A version in another language is examined in that language, by readers of it. A 
 
 Judges are for choosing between versions. Each is a fresh agent that holds only its brief. They are reliable when two versions differ by two sentences of substance or more, and they cannot decide a single line. Every verdict is a forced choice between two versions; a score given to one text alone moves from run to run and settles nothing.
 
-- One model, two wordings of the brief, both orders: four judges. Add judges only when the two orders disagree, as further wordings run before anything is concluded; a round that follows the reading order shows no preference (`cases/more-judges-than-the-last-rounds-variation-called-for.md`, `cases/judges-whose-verdict-followed-the-model-or-the-order.md`).
+- One model, two wordings of the judges' brief, both orders: four judges. Add judges only when the two orders disagree, as further wordings run before anything is concluded; a round that follows the reading order shows no preference (`cases/more-judges-than-the-last-rounds-variation-called-for.md`, `cases/judges-whose-verdict-followed-the-model-or-the-order.md`).
 - The same model judges every comparison in a search, and `examine.md` names it. Two models can reverse each other on the same pair, so their verdicts are not set side by side, and three models agreeing is still one opinion.
-- The brief holds the advertisement and what `hirer.md` marks as coming from the candidate or a named source. A judge told what the reader values will value it (`cases/judges-briefed-with-the-writers-own-inference.md`).
-- The brief tells the judge not to look the candidate up.
+- A judge's brief holds the advertisement and what `brief.md` marks as coming from the candidate or a named source. A judge told what the reader values will value it (`cases/judges-briefed-with-the-writers-own-inference.md`).
+- A judge's brief tells the judge not to look the candidate up.
 - At least one version in any comparison of approaches was not written by this session: the candidate's own telling, or a real document of the same kind.
 - A judge made to name one thing to fix will name one whether or not anything needs fixing. Such an answer is a prompt to look, and what it asks for is weighed against the level of the document before anything is added.
 - Judges do not hear dryness, and they prefer the advertisement's own words and the cadence of machine-written prose.

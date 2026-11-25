@@ -23,11 +23,9 @@
 **To re-run it.** A run in progress, the approach chosen. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: research fellowship in patient safety (advertisement).
 Reader line: a research mentor, who has read the advertisement.
-
-interview.md
 Candidate, spoken: "To cut errors at shift change I tried checklists, pairing and recorded handovers. Pairing has helped most so far. Which works, and why, is open."
 
 approaches/chosen.md

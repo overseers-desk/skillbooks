@@ -16,7 +16,7 @@
 
 **The rule it produced.** `../hire-methodology.md`, R: **Edit by rewriting from the thought.** "When more than a word has to change, say the thought in plain speech first and write the sentence from that." E 1 adds `../modules/restate.md`, "the check for a patched sentence".
 
-**To re-run it.** A repair, with the meaning held by the tester as the key: (a) the waiting-room surveys are a rough measure; (b) still, nobody has a better record of how long patients really wait. The tester places in a folder beside the methodology `hirer.md` (a research analyst's post at a health agency; reader: the analysts' team lead) and a draft whose paragraph holds the patched sentence:
+**To re-run it.** A repair, with the meaning held by the tester as the key: (a) the waiting-room surveys are a rough measure; (b) still, nobody has a better record of how long patients really wait. The tester places in a folder beside the methodology `brief.md` (a research analyst's post at a health agency; reader: the analysts' team lead) and a draft whose paragraph holds the patched sentence:
 
 ```
 Such surveys are a rough measure, and the one available from the waiting room.

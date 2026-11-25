@@ -27,10 +27,8 @@
 **To re-run it.** A tidy of the candidate's own text. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: research fellowship on clinical error (advertisement).
-
-interview.md
 Nurse on a night ward for nine years (candidate).
 
 statement.md   (in the candidate's hand)

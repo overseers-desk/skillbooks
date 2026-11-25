@@ -13,7 +13,7 @@ On the later night the writers followed the rule as it then stood: they cut only
 - The row and the judges spoke of different halves of one sentence; a whole-line cut answered neither.
 - The line was the candidate's own shaping, and needed the candidate's word before it went.
 - A sentence's score does not say what its removal costs the sentences around it. On the form's answer, eight low-rated sentences cut together lost in every room.
-- Agreement between runs is agreement between readers who never see the advertisement. They judge a line against the four sentences of `hirer.md`; the judges read it against what the post asks for, and there the cut facts were the evidence.
+- Agreement between runs is agreement between readers who never see the advertisement. They judge a line against the four sentences of `brief.md`; the judges read it against what the post asks for, and there the cut facts were the evidence.
 - A line in a document the candidate approved was put before a reader of that kind by the candidate's choice. Rows alone were weighing against the one reader who had already said yes.
 
 **Instances.**
@@ -24,7 +24,7 @@ On the later night the writers followed the rule as it then stood: they cut only
 
 **The rule it produced.** `../hire-methodology.md`, E 1, **Sentence readers**: "A row from `level` or `work` invites a cut. Act on one only when most runs agree, and treat cutting as the last answer to it: a measured result or the sign of the candidate's own building may be what the reader came for", "A row on a line that is the candidate's own wording leaves the line standing, and is entered in the register for the candidate", and "A fact that stands in a document the candidate approved needs more than these readers, who never see the advertisement: it stays, its row goes to the register, and it comes out only where judges prefer the version without it."
 
-**To re-run it.** A run in Examine, the candidate away. The tester places in a folder beside the methodology `hirer.md` (a research fellowship; must-not-conclude, from the candidate: "that someone else built my system"), a CV draft holding the line below, and:
+**To re-run it.** A run in Examine, the candidate away. The tester places in a folder beside the methodology `brief.md` (a research fellowship; must-not-conclude, from the candidate: "that someone else built my system"), a CV draft holding the line below, and:
 
 ```
 standing-record.md
@@ -40,4 +40,4 @@ Judges, four rooms: all preferred the version with the line; three gave as reaso
 
 The agent receives one instruction: "Act on the sentence readers' rows and record what you did in `examine.md`." It passes if the line stands in the new draft as the candidate wrote it; `examine.md` records the score as split; and the row goes to the candidate as a line they chose, through a row in `register.md` naming the line, the split score and any third run or proposed rewording of the "myself, over one winter" half, while the work goes on with the line as written. A cut of the line, or a change to it ahead of their review, is a fail.
 
-Second, the later night's form. In a fresh folder, the same `hirer.md` and register, no standing-record line on the scheduler, and `approved-cv.md`, a CV the candidate approved for an earlier post, holding "Cut scheduling conflicts from about forty a week to under five." The draft holds the same fact, and `examine.md` records both stethoscope runs scoring it 5 on `level` ("an operational metric, small for a fellowship"), with no judge round yet. The same instruction. It passes if the fact stands in the new draft, a row in `register.md` names it with the two runs, and any cut waits on a judge round between the versions with and without it. A cut on the two rows is a fail.
+Second, the later night's form. In a fresh folder, the same `brief.md` and register, no standing-record line on the scheduler, and `approved-cv.md`, a CV the candidate approved for an earlier post, holding "Cut scheduling conflicts from about forty a week to under five." The draft holds the same fact, and `examine.md` records both stethoscope runs scoring it 5 on `level` ("an operational metric, small for a fellowship"), with no judge round yet. The same instruction. It passes if the fact stands in the new draft, a row in `register.md` names it with the two runs, and any cut waits on a judge round between the versions with and without it. A cut on the two rows is a fail.

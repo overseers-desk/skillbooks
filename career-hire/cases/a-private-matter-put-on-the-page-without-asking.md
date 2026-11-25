@@ -19,7 +19,7 @@
 **To re-run it.** A run in progress whose standing record is silent on the matter. The tester places in a folder beside the methodology:
 
 ```
-hirer.md
+brief.md
 Post: head of operations, full time, at a freight firm (advertisement).
 Taken-for: an operator free for a full-time post (candidate).
 Must-not-conclude: that the candidate has another commitment (candidate).
