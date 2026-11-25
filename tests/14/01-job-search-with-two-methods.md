@@ -13,7 +13,7 @@ This folder is for my job search. Follow the two methods in [path]/listing-sift 
 ## Yardstick
 
 1. SIFT's files (the configuration, the registry, the dossiers) are in one campaign folder named `{something}.sift`, and nothing of HIRE's is inside it.
-2. HIRE's files (the standing record, the assumption register, the application's folder with `brief.md`) are outside the campaign folder.
+2. HIRE's files (the candidate file, the assumption register, the application's folder with `brief.md`) are outside the campaign folder.
 3. The operator's record exists once. The configuration points to it, and no second profile is written.
 4. Each posting has a registry row with an id, a dossier, both scores and a decision.
 5. The application's `brief.md` cites the listing's dossier and id.

@@ -14,9 +14,9 @@
 
 **Instances.** One line, in every version until after the CV was sent. It is also an instance of `a-tense-or-a-date-that-says-the-candidate-is-not-free.md`.
 
-**The rule it produced.** `../hire-methodology.md`, I. **The standing record is taken once**, and holds "What stays off the page: other ventures, where the candidate lives, anything a referee or a public record would contradict". Where it is silent, **An application does not go back to the candidate**: "A gap no default covers is decided by the writer, who adds the choice to the record's defaults marked as not yet confirmed by the candidate", and R's **Mind what the reader will conclude beyond what is said** checks the choice against must-not-conclude. The remedy is no longer a send held for the candidate's answer: the writer decides, and the decision is a row in the assumption register the candidate reviews across applications. The end of **The stop rule** covers the open item: closed, or handed to the candidate by name.
+**The rule it produced.** `../hire-methodology.md`, I. **The candidate file is filled in once**, and holds "What stays off the page: other ventures, where the candidate lives, anything a referee or a public record would contradict". Where it is silent, **An application does not go back to the candidate**: "A gap no default covers is decided by the writer, who adds the choice to the record's defaults marked as not yet confirmed by the candidate", and R's **Mind what the reader will conclude beyond what is said** checks the choice against must-not-conclude. The remedy is no longer a send held for the candidate's answer: the writer decides, and the decision is a row in the assumption register the candidate reviews across applications. The end of **The stop rule** covers the open item: closed, or handed to the candidate by name.
 
-**To re-run it.** A run in progress whose standing record is silent on the matter. The tester places in a folder beside the methodology:
+**To re-run it.** A run in progress whose candidate file is silent on the matter. The tester places in a folder beside the methodology:
 
 ```
 brief.md
@@ -24,7 +24,7 @@ Post: head of operations, full time, at a freight firm (advertisement).
 Taken-for: an operator free for a full-time post (candidate).
 Must-not-conclude: that the candidate has another commitment (candidate).
 
-standing-record.md
+candidate.md
 Account (candidate, spoken, to a reader hiring an operator): "I built a delivery firm from one van to sixty, and sold it this year."
 Ran the delivery firm twelve years, sold this year (candidate).
 Off the page: their home town (candidate).
@@ -36,4 +36,4 @@ Current: founder, a consultancy registered this year.
 Note: weighing a full-time post against building the consultancy.
 ```
 
-The agent receives one instruction: "Write the CV. The candidate is away until tomorrow, and it goes to the recruiter first thing." It passes if the CV is finished without waiting on the candidate; it carries no consultancy (search it for the word and for "founder") and no entry dated "–present" or in the present tense; `standing-record.md` has gained a default for private matters it does not mention, marked as not yet confirmed; and `register.md` has a row for this application saying the consultancy was left off, with a confidence, its basis (the profile's note and must-not-conclude) and what depends on it (that the CV shows no current role). The consultancy on the page, a present tense, no row, or the CV held back for their answer, is a fail.
+The agent receives one instruction: "Write the CV. The candidate is away until tomorrow, and it goes to the recruiter first thing." It passes if the CV is finished without waiting on the candidate; it carries no consultancy (search it for the word and for "founder") and no entry dated "–present" or in the present tense; `candidate.md` has gained a default for private matters it does not mention, marked as not yet confirmed; and `register.md` has a row for this application saying the consultancy was left off, with a confidence, its basis (the profile's note and must-not-conclude) and what depends on it (that the CV shows no current role). The consultancy on the page, a present tense, no row, or the CV held back for their answer, is a fail.

@@ -31,13 +31,13 @@
 **To re-run it.** A run in progress. A rendered page looked at, and an answer given mid-task, cannot be shown by one run's output, so the exercise keeps to what the folder shows. The tester places in a folder beside the methodology a CV draft named by an earlier date and time with Education above Experience and no contact line, a `register.md` with only its header, a `record/profile.md` naming a side venture, and:
 
 ```
-standing-record.md
+candidate.md
 Contact details documents may carry: a mobile number, an email at a general provider (candidate).
 Off the page: their home town (candidate).
 
 brief.md
-(the candidate's account and facts, each sourced to the standing record; contact details not carried over)
-Open: the side venture in record/profile.md; the standing record says nothing on it.
+(the candidate's account and facts, each sourced to the candidate file; contact details not carried over)
+Open: the side venture in record/profile.md; the candidate file says nothing on it.
 ```
 
-The agent receives one instruction: "Move Education below Experience, then tell me: is the CV ready to send?" It passes if the new version is a new file whose name gives a date and time within a few minutes of its modification time, the earlier file sits in `superseded/` unchanged, the new version carries the contact line from the standing record and no side venture, `register.md` has a row for the venture (left off by I's default for a private matter, with a confidence, its basis and what depends on it), and the reply's answer rests on those acts done, naming the row. "Ready" with either item undone, a reply that reports either as still open or holds the CV for the candidate, or the dated file edited in place, is a fail.
+The agent receives one instruction: "Move Education below Experience, then tell me: is the CV ready to send?" It passes if the new version is a new file whose name gives a date and time within a few minutes of its modification time, the earlier file sits in `superseded/` unchanged, the new version carries the contact line from the candidate file and no side venture, `register.md` has a row for the venture (left off by I's default for a private matter, with a confidence, its basis and what depends on it), and the reply's answer rests on those acts done, naming the row. "Ready" with either item undone, a reply that reports either as still open or holds the CV for the candidate, or the dated file edited in place, is a fail.

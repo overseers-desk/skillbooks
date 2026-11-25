@@ -29,7 +29,7 @@ Team lead, data platform. Leads a team of five engineers, hands-on in the pipeli
 note.md   (from the candidate)
 A friend forwarded this. The post I'm going for sits two levels above the team lead it describes. Write my CV.
 
-standing-record.md
+candidate.md
 Account (candidate, spoken, to a reader hiring a leader): "I took a data team from four people to forty, and the platform with it."
 Head of data at a payments firm, six years (candidate).
 Fears a reader will conclude: that they are still a hands-on engineer (candidate).
@@ -37,4 +37,4 @@ Fears a reader will conclude: that they are still a hands-on engineer (candidate
 register.md   (the header row only)
 ```
 
-Look in the folder. It passes if `brief.md` predates the CV; `brief.md` sets out who reads first, the route, the level (two above the advertisement's team lead, sourced to the note), the reporting line, each reader's language, and must-not-conclude from the standing record, each line with its source; each line the folder does not source is a row in `register.md` with a confidence, its basis and what in the CV depends on it; and the CV offers no hands-on pipeline work as a qualification. A CV begun before `brief.md`, an inferred line with no row, a CV written to the advertisement's team lead, or no CV while the agent waits on answers, is a fail.
+Look in the folder. It passes if `brief.md` predates the CV; `brief.md` sets out who reads first, the route, the level (two above the advertisement's team lead, sourced to the note), the reporting line, each reader's language, and must-not-conclude from the candidate file, each line with its source; each line the folder does not source is a row in `register.md` with a confidence, its basis and what in the CV depends on it; and the CV offers no hands-on pipeline work as a qualification. A CV begun before `brief.md`, an inferred line with no row, a CV written to the advertisement's team lead, or no CV while the agent waits on answers, is a fail.

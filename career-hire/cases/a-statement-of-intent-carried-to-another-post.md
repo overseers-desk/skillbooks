@@ -15,7 +15,7 @@
 - The relocation sentence on three versions of one CV.
 - `examine.md` reporting nothing past its source while its own trace listed the sentence.
 
-**The rule it produced.** `../INVARIANTS.md`: "A fact about the candidate enters from the candidate's words or a document, with its source beside it; what the writer worked out is an assumption in the register." `../hire-methodology.md`, I, **Each entry in `brief.md` carries its source**: "That includes a statement of what the candidate will do, such as move or work on site, carried to a kind of post the candidate did not say it of." E 4, **Sources**: a claim that "traces to the writer's inference is taken out", unless the standing record's default lets a low-confidence assumption about the candidate on the page.
+**The rule it produced.** `../INVARIANTS.md`: "A fact about the candidate enters from the candidate's words or a document, with its source beside it; what the writer worked out is an assumption in the register." `../hire-methodology.md`, I, **Each entry in `brief.md` carries its source**: "That includes a statement of what the candidate will do, such as move or work on site, carried to a kind of post the candidate did not say it of." E 4, **Sources**: a claim that "traces to the writer's inference is taken out", unless the candidate file's default lets a low-confidence assumption about the candidate on the page.
 
 **To re-run it.** A run in R and E 4. The tester places in a folder beside the methodology:
 
@@ -23,7 +23,7 @@
 advertisement.md
 Head of engineering, a logistics software firm in another country. "This role is based in our head office, five days a week."
 
-standing-record.md
+candidate.md
 Defaults: an assumption about the candidate stays off the page until the candidate confirms it.
 Where the candidate will work (candidate, call 3, about a six-month research placement abroad): "Happy to move for that, it's short."
 
