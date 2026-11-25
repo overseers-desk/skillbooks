@@ -134,7 +134,7 @@ Examine runs cheap readers before dear ones, and the candidate last. Every check
 
 ### 1. Sentence readers
 
-Run prose-stethoscope on the draft, on a copy in which any template markup is replaced by the words the reader will see. For a CV, name all seven of its modules and give it the four sentences from `brief.md`. Add this folder's two modules by path:
+Run prose-stethoscope on the draft, on a copy in which any template markup is replaced by the words the reader will see. For a CV, name every module the skill lists for one and give it the four sentences from `brief.md`. Add this folder's two modules by path:
 
 - `modules/restate.md` asks whether the reader can say in their own words what a sentence asserts. It is the check for a patched sentence.
 - `modules/grain.md` asks whether a sentence sits at a much finer level of detail than the document around it.
