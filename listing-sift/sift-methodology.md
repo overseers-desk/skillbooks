@@ -219,7 +219,7 @@ A dossier file for every listing. Updated `alive` column in the registry where a
 
 ### Purpose
 
-Score every row in the registry that has empty Fit columns and is not known to be dead, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise. A listing found dead before it was scored keeps its row and its dossier and stays unscored; one that dies after scoring keeps its scores. A dimension added to the configuration after a row was scored leaves that row's column for it empty: Fit scores the row on that dimension and computes its stars again.
+Score every row in the registry that has empty Fit columns and is not known to be dead, using the dossier as primary evidence. Produce the two-axis rating (stars + percentage) so that Target can prioritise. A listing found dead before it was scored keeps its row and its dossier and stays unscored; one that dies after scoring keeps its scores. A dimension added to the configuration after a row was scored leaves that row's column for it empty. Fit goes back over such rows once the operator has agreed to the dimension, which the configuration shows by the dimension's absence from `unconfirmed`. Going back reads every dossier again, and one pass serves every dimension agreed to since the last. A dimension the operator is still settling therefore stays under `unconfirmed` until the set is agreed: rows not yet scored are scored on it like any other, and rows already scored wait.
 
 ### Model allocation
 
@@ -234,11 +234,11 @@ Fit is Sonnet-tier work. When a scoring rubric does the intellectual heavy lifti
 
 ### Process
 
-For each row where `alive` is not `no`, and `stars` or the column of one of the campaign's dimensions is empty:
+For each row where `alive` is not `no`, and `stars` is empty or the column of a dimension the operator has agreed to is empty:
 
 1. Read the dossier. The listing description and source background are the primary evidence for scoring. If the dossier fetch failed, note this in `notes_fit` and score from whatever information is available.
-2. Score each of the campaign's dimensions using the rubric's anchors. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
-3. Compute `stars = clamp(sum-of-dimensions, 1.0, 5.0)`.
+2. Score each of the campaign's dimensions the row has no score for, using the rubric's anchors. Where a listing leaves a dimension's value unstated (pay, size, hours), estimate it from comparable listings and what is known of the publisher, and mark it as an estimate with its basis. Whether a publisher states a value is its own habit, not a property of what it offers: scoring the unstated as zero, or setting it aside, ranks the few who publish above the many who do not.
+3. Compute `stars = clamp(sum-of-dimensions, 1.0, 5.0)`, over the dimensions the row has a score for.
 4. Assess `pct_base` by comparing each stated requirement against the operator profile. List any `hard_gates`.
 5. Identify applicable amplifier tags from the campaign's amplifier list.
 6. Compute `pct = round(pct_base × factor^(number of amplifiers))`, capped at 95.

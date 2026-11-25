@@ -121,10 +121,15 @@ amplifiers:
 # ---------------------------------------------------------------------------
 # UNCONFIRMED — what the operator has not yet agreed to
 #
-# The keys of this file whose value a phase set because the operator could not
-# be asked: a top-level key, a dimension by its name, or a name under `other`.
-# The operator takes a key off this list on agreeing with its value or
-# correcting it.
+# The keys of this file the operator has not yet agreed to: a top-level key, a
+# dimension by its name, or a name under `other`. A key is here because a phase
+# set its value while the operator could not be asked, or because the operator
+# is still settling it. The operator takes a key off this list on agreeing with
+# its value or correcting it.
+#
+# Fit scores a listing on an unconfirmed dimension like any other, and does not
+# go back over listings already scored until the dimension is agreed
+# (sift-methodology.md, SOP 3).
 # ---------------------------------------------------------------------------
 
 # unconfirmed:

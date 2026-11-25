@@ -6,7 +6,9 @@ Reads campaign.yaml and registry.tsv in the directory. Prints one line per findi
 "check<TAB>row id<TAB>what is wrong", then a count per check. Exits 1 when there is a finding.
 The checks are the registry format's quality checklist and what follows from the configuration:
 the id format, a column per dimension with scores on its scale, stars and pct against their
-formulas, amplifier tags, and columns whose values the configuration lists.
+formulas, amplifier tags, and columns whose values the configuration lists. A scored row may lack a
+score for a dimension named under `unconfirmed`, since Fit goes back over scored rows only for
+dimensions the operator has agreed to.
 """
 import math, re, sys
 from collections import Counter
@@ -77,6 +79,8 @@ def check_registry(cfg, header, rows):
             for d in cfg.get("dimensions") or []}
     amplifiers = cfg.get("amplifiers") or {}
     tags, factor = set(amplifiers.get("tags") or {}), amplifiers.get("factor")
+    unconfirmed = set(cfg.get("unconfirmed") or [])
+    waiting = set(dims) if "dimensions" in unconfirmed else unconfirmed & set(dims)
     listed = dict(CORE_VALUES, **{c: set(map(str, v)) for c, v in (cfg.get("values") or {}).items()})
 
     for column in list(dims) + [c for c in listed if c not in CORE_VALUES]:
@@ -113,16 +117,19 @@ def check_registry(cfg, header, rows):
 
         if not stars:
             continue
-        scores = []
+        scores, complete = [], True
         for name, scale in dims.items():
+            if not row.get(name, "") and name in waiting:
+                continue
             score = number(row.get(name, ""))
             if score is None or score not in scale:
                 find("dimension", rid, f"{name} holds {row.get(name, '')!r}, which is not on its scale")
+                complete = False
             else:
                 scores.append(score)
         if number(stars) is None:
             find("stars", rid, f"stars holds {stars!r}, which is not a number")
-        elif len(scores) == len(dims) and dims:
+        elif complete and scores:
             expected = min(5.0, max(1.0, sum(scores)))
             if abs(number(stars) - expected) > 0.01:
                 find("stars", rid, f"stars is {stars} and the dimensions sum to {sum(scores):g}, which clamps to {expected:g}")
