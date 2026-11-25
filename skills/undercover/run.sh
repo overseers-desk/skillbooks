@@ -17,6 +17,17 @@ for f in $need; do [ -s "$RUN/$f" ] || { echo "missing $RUN/$f" >&2; exit 2; }; 
 PROBE='Without opening any file or calling any tool, list every email address (domain only), person'"'"'s name, office, company and home folder path you can see anywhere in your context outside the tool definitions. Answer on two lines and nothing else: "LEAKS: none" or "LEAKS: <the list>", then "CWD: <your working directory>".'
 OUT=$RUN/out; mkdir -p "$OUT"
 
+# Rooms go under $TMPDIR; without a writable one, under the first of /tmp and /var/tmp that is on disk,
+# since a room is tens of megabytes and a memory-backed /tmp fills with them.
+ROOMS=${TMPDIR:-}
+if [ -z "$ROOMS" ] || [ ! -d "$ROOMS" ] || [ ! -w "$ROOMS" ]; then
+  ROOMS=
+  for d in /tmp /var/tmp; do
+    case $(stat -f -c %T "$d" 2>/dev/null) in tmpfs|ramfs|"") ;; *) [ -w "$d" ] && { ROOMS=$d; break; } ;; esac
+  done
+  [ -n "$ROOMS" ] || { echo "no disk-backed temporary folder: set TMPDIR to one" >&2; exit 2; }
+fi
+
 room() {  # room <seconds> <home> <claude args...>; the brief or question arrives on stdin
   local secs=$1 h=$2; shift 2
   ( cd "$h/work" && env -i PATH="$PATH" HOME="$h" CLAUDE_CONFIG_DIR="$h/.claude" \
@@ -27,7 +38,7 @@ WEB=(--tools WebSearch WebFetch --allowedTools WebSearch WebFetch)
 
 newroom() {  # newroom <label>: print a probed, clean room's home, or fail
   local label=$1 h
-  h=$(mktemp -d /tmp/office-XXXX); mkdir -p "$h/work"
+  h=$(mktemp -d "$ROOMS/office-XXXX"); mkdir -p "$h/work"
   echo "$PROBE" | room 180 "$h" --model haiku --tools "" 2>>"$OUT/$label.err" | jq -r .result > "$OUT/$label-probe.txt"
   if ! grep -qi '^LEAKS: *none' "$OUT/$label-probe.txt" || ! grep -q "^CWD: *$h/work" "$OUT/$label-probe.txt"; then
     echo "$label: room $h is not clean, refused. Probe said:" >&2; cat "$OUT/$label-probe.txt" >&2; return 1
