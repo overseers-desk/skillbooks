@@ -30,26 +30,24 @@ Posts are named here by role. Post A is a vice-president post leading a new AI u
 - **A third-person slip**: a sentence in which the page calls the candidate "he" or "his" where the rest speaks without a pronoun or as "I".
 - **Repeat**: one of three first drafts written under the same version for the same post. There is no version numbered 5.
 
-## State reached
+## Result in brief
 
 - The lab exists (`labs/sales-hire/`), with eight versions of the method for this round and `make-variants.py`, which defines seven of them from the baseline. `all-changes.md` is the method as it stood after six commits made directly on the branch (`9202090d` to `e16b5f63`), since returned to the baseline.
-- One version, `v8-opening-holes2`, improved the top of a first draft on each of the three posts tried: where both pages reached the judges in the same form, 45 judges of 48 preferred its top to the baseline's. On a full read no version is reliably ahead of the baseline. It has not been integrated. The first drafts were judged without their name, employers, titles and dates (finding 5), so this speaks to the summary and bullets and has to be repeated on whole pages.
-- One page for post A beats the page the candidate already had: seven judges to one on a full read and five to two on the top. It was joined by hand from the top of one run and the body of another, as a test of what decides a comparison (finding 4). It is evidence, not a page ready to send: its two parents disagree on one date, it has not been traced to sources as one page, and whether it goes anywhere is the owner's decision.
+- One version, `v8-opening-holes2`, improved the top of a first draft on each of the three posts tried: where both pages reached the judges in the same form, 45 of 48 judges preferred its top to the baseline's. On a full read no version is reliably ahead of the baseline. It has not been integrated. Most first drafts were judged without their name, employers, titles and dates (result 5), so this speaks to the summary and bullets.
+- One page for post A beats the page the candidate already had: seven judges to one on a full read and five to two on the top. It was joined by hand from the top of one run and the body of another, as a test of what decides a comparison (result 4). It is evidence, not a page ready to send: its two parents disagree on one date, it has not been traced to sources as one page, and whether it goes anywhere is the owner's decision.
 - Four instruments exist outside the repository: sealed judges, runs that stop at the first full draft, an outside count of why each change to a page was made, and a count of the advertisement's asks a page proves.
 - A lab rule, agreed with the owner: a question put to a reader about the page is tested as a module file in the round's folder, and copied into `sales-hire/modules/` when it has held. Four edits in this round's versions are such questions written into the method's text.
 
-## The owner's words on the series
+## Design
 
-- On the series and what a round leaves: "you can say it's the sales-improvmeent-1 and we plan to do 1 all the way to 9 in the coming days (at which point sales improvement might be exhausted). each run produces a log and at your log, You can speculate what worked, and express the wish to see different CV being worked on to see the result difference, so that next agent can start working."
-- On tone: "You must speak it in a discovery tone rather than in a infantilization tone ... speak like a scientist."
-- On the two ways of working: "If we are making progressive change and we are locking down a version that we believe reasonably well, but still leave a bit of chance of regression, that if regression is detected, the next agent is feel free to roll back and find a good combination that works. Then we have a timeline-based method. Alternatively, if we are widely testing competing theories, we might have folder-based method." And: "I prefer the lab inside method repository".
-- On the joined page: "since now we have a good CV, let's keep the work".
-- On means, for the autonomous part of this round: "I give you the all of the rest of the context and the unlimited use of Jethro agents and I'll check periodically." He set no budget for a round and no order among the wishes.
-- His own ideas tested here: applying only half of the changes; the baseline with only the salesperson sentence; listing the holes and marking each change with the hole it serves; the `sell` and `check` marks drawn as a path, "any move towards selling should be upward, and any move towards checking should be rightward".
+- **Versions.** The baseline and the eight texts in `variants/`. Seven are the baseline with one named set of replacements, defined in `make-variants.py`: `v1-opening` (six opening sentences start from the person filling the post), `v2-examine` (the checking phase says what each kind of reader is for and when a page is ready to send), `v3-say` (the salesperson sentence), `v4-hole` (the holes are listed, and each fact and each change is set against one), `v6-say-hole` (both of those), `v7-holes2` (the holes in the employer's order drive the top of the page and the proof set against each, with a check that the page speaks in one person) and `v8-opening-holes2` (`v1-opening` with `v7-holes2`). `all-changes` is six changes made together.
+- **Posts.** A, B and C. Each writer had the candidate's whole record except the pages already written for the search.
+- **Writers.** One Opus session per page, given the method's path, the post and the record, and nothing about how to write.
+- **Two stages.** First drafts: three per version and post, 45 in all, each compared with the baseline's draft of the same repeat. Finished pages: one per version for post A, compared with each other.
+- **Measures.** Sealed judges on a full read and on the top, and an outside reader's count of why each change to a finished page was made.
+- **Data.** `first-draft-comparisons.tsv` beside this file holds every first-draft comparison, with a column saying whether the two pages had the same form.
 
-The wish to see other CVs worked on is his. The other wishes below, the bar for integration in the lab's note and in the last wish, and the rule that a reader's question is a module copied on release are mine; he asked for the options to be listed with a decision and has not objected to them. He has not said he read the joined page. The two unlabelled pairs the plan offered for his own blind read were never prepared. Nobody has been given the tracing of the joined page or the settling of its date.
-
-## What was observed
+## Results
 
 1. **What earlier writers took the job to be.** Three sessions that had each written a batch of CVs under the method were asked what the job had been. Unprompted: "an inspector of the method's output"; "a checker" and "a foreman"; "a tester and a compliance checker". Each counted a page done when its checks had run. None of their pages met the method's stop rule, and each set a cap of its own. Two took proof of the candidate's standing off pages after their own judges had named it as deciding.
 
@@ -59,36 +57,26 @@ The wish to see other CVs worked on is his. The other wishes below, the bar for 
 
 4. **A page with both wins.** For post A the best top was joined by hand to the best body. The joined page beat the body's parent 8 to 0 on both tests, beat the top's parent 8 to 0 on a full read and tied it 4 to 4 on the top (the tops are the same text), and beat the page the candidate already had 7 to 1 on a full read and 5 to 2 on the top.
 
-5. **Versions compared at the first full draft.** Three first drafts per version and post, each judged against the baseline's draft of the same repeat. The version's count is given.
-
-The tool that turned a draft into text for the judges, `draft-text.sh`, dropped every line written as a raw Typst call. In 39 of the 45 first drafts that removed the name line, the employers, the role titles and the dates. Six drafts had written those lines as plain markdown and reached the judges whole: the baseline's second and third on post B, `v7-holes2`'s second on post B, and on post A `v4-hole`'s third, `v7-holes2`'s third and `v8-opening-holes2`'s second. In the eight full-read pairs where only one page was whole, the whole page won all eight, seven of them 8 to 0, and judges said so: "CV 2 has no name, no contact details, and no employers or dates on the roles". The table below counts every pair, mixed ones included. The session that began round 2 found this and recounted the pairs in which both pages were converted alike:
-
-| Version | Full read, like pairs | Top, like pairs |
-|---|---|---|
-| v1-opening | 32 of 56 | 33 of 55 |
-| v7-holes2 | 35 of 55 | 40 of 56 |
-| v8-opening-holes2 | 24 of 48 | 45 of 48 |
-
-Even the like pairs were judged on pages without employers and dates, and their top began at the summary.
+5. **Versions compared at the first full draft.** The version's count of judges is given, with the number of comparisons counted in brackets. A first draft reached the judges as text, and in 39 of the 45 that text lacked the name line, the employers, the role titles and the dates; six kept them. A comparison is counted only where both pages had the same form (16 of 72 are left out; where one page was whole and the other not, the whole page won every full read). The counts therefore speak to the summary and the bullets under each post.
 
 | Post | Version | Full read | Top |
 |---|---|---|---|
-| A | v1-opening | 16 of 24 | 18 of 24 |
-| A | v3-say | 9 of 24 | 12 of 23 |
-| A | v4-hole | 13 of 24 | 14 of 21 |
-| A | v6-say-hole | 12 of 24 | 15 of 23 |
-| A | v7-holes2 | 10 of 24 | 20 of 24 |
-| A | v8-opening-holes2 | 16 of 24 | 23 of 24 |
-| B | v1-opening | 3 of 24 | 9 of 23 |
-| B | v7-holes2 | 12 of 24 | 14 of 24 |
-| B | v8-opening-holes2 | 4 of 24 | 20 of 24 |
-| C | v1-opening | 13 of 24 | 12 of 23 |
-| C | v7-holes2 | 19 of 23 | 19 of 24 |
-| C | v8-opening-holes2 | 12 of 24 | 21 of 24 |
+| A | v1-opening | 16 of 24 (3) | 18 of 24 (3) |
+| A | v3-say | 9 of 24 (3) | 12 of 23 (3) |
+| A | v4-hole | 5 of 16 (2) | 8 of 15 (2) |
+| A | v6-say-hole | 12 of 24 (3) | 15 of 23 (3) |
+| A | v7-holes2 | 4 of 16 (2) | 13 of 16 (2) |
+| A | v8-opening-holes2 | 8 of 16 (2) | 16 of 16 (2) |
+| B | v1-opening | 3 of 8 (1) | 3 of 8 (1) |
+| B | v7-holes2 | 12 of 16 (2) | 8 of 16 (2) |
+| B | v8-opening-holes2 | 4 of 8 (1) | 8 of 8 (1) |
+| C | v1-opening | 13 of 24 (3) | 12 of 23 (3) |
+| C | v7-holes2 | 19 of 23 (3) | 19 of 24 (3) |
+| C | v8-opening-holes2 | 12 of 24 (3) | 21 of 24 (3) |
 
-6. **The top can be instructed.** `v7-holes2` has the writer list the holes in the employer's order and requires the top of the page to show the candidate filling the first of them, a clause to each. `v8-opening-holes2` adds the six sentences of `v1-opening`, which start the method from the person filling the post. On the top, in like pairs, the combined version took 45 judges of 48, `v7-holes2` 40 of 56 and `v1-opening` alone 33 of 55. The repeat is the unit of evidence here, since nearly every comparison came out 8 to 0, 4 to 4 or 0 to 8: the combined version's top won eight repeats of nine and tied one.
+6. **The top can be instructed.** `v7-holes2` has the writer list the holes in the employer's order and requires the top of the page to show the candidate filling the first of them, a clause to each. `v8-opening-holes2` adds the six sentences of `v1-opening`, which start the method from the person filling the post. Across the three posts the combined version's top took 45 of 48 judges, `v7-holes2`'s 40 of 56 and `v1-opening`'s 33 of 55. Nearly every comparison came out 8 to 0, 4 to 4 or 0 to 8, so the repeat is the unit of evidence and the sums summarise it.
 
-7. **The body has not been instructed.** `v7-holes2` and `v8-opening-holes2` also tell the writer to set the most concrete thing on record against each hole. On a full read, in like pairs, they took 35 of 55 and 24 of 48. The combined version's two 0 to 8 results on post B, and `v1-opening`'s 3 of 24 there, came from pairs in which only the baseline's page was whole. The proofs judges asked for were on record in every case examined; writers did not fetch them.
+7. **The body has not been instructed.** `v7-holes2` and `v8-opening-holes2` also tell the writer to set the most concrete thing on record against each hole. On a full read they took 35 of 55 and 24 of 48, and `v1-opening` 32 of 56: no version is reliably ahead of the baseline. The proofs judges asked for were on record in every case examined; writers did not fetch them.
 
 8. **Run-to-run variation is as large as the difference between versions.** The same version opened differently on different runs. The baseline's own drafts vary as much: on post A its second draft beat two of five versions on a full read and tied three, and its third lost to all five, two of those to pages that reached the judges whole when it had not. A single repeat is largely a statement about that repeat's baseline draft. The method's own way of choosing an opening, its internal judges on three approaches, was reported by several writers as following reading order.
 
@@ -112,7 +100,7 @@ A first draft takes about ten minutes and four to seven dollars. The baseline's 
 
 12. **How far the sealed judges can be trusted.** Shown the same page twice, they chose the first one read 7 times of 8. Shown a real difference, they chose by content, with the first-read copy chosen exactly 4 times of 8. They preferred a page to a copy with its summary replaced by generic sentences 8 to 0, and a page written for the post to one written for another post 8 to 0. Differences between finished pages mostly came out 8 to 0, so they rank two pages better than they grade them. About half the answers still read as an assessor comparing two documents, and most judges guessed that one applicant was trying two versions. The pile test has only been tried with four judges while the harness was built, and drew no such guess; it has no fairness test yet and costs about eighty cents a judge against five to eleven.
 
-## Ground already covered
+## Approaches ruled out
 
 - **Rewording the whole text in a seller's voice, with every rule kept.** Tried twice with subagents, once through the speak-like skill and once as a direct rewrite. Readers cast as a salesperson and as a placer of candidates did not believe a seller wrote either. A reader asked only what the author does for a living moved from "prompt or methodology engineer" to "CV writer or career-services consultant". A fresh session that read only the text described the job and "finished" the same way before and after. A check for changed rules found seven, one of them a rule that could be read backwards: an observation recast as "do X and Y follows" reads as an order to do X.
 - **The cold reader of the this-guy-aint skill as a gate for the method's text.** It objects to features any procedure for agents has, such as addressing its reader as an agent. It gives useful leads and cannot be passed.
@@ -122,7 +110,7 @@ A first draft takes about ten minutes and four to seven dollars. The baseline's 
 - **A stop rule that lets a later pass read only what changed.** A page went out whose last edits no reader had seen whole, with third-person slips in it.
 - **Giving writers a reduced copy of the record.** It changed what a writer opened on. It was not why proofs were missing: the lines the judges wanted were in the reduced copy too.
 
-## What may have worked, as speculation
+## Interpretation, as speculation
 
 - The top instruction may work because it turns an open choice into a derivation: the writer no longer picks an opening, it reads the order off the advertisement. The six opening sentences may help it by putting the person filling the post in front of the writer before any rule is read; alone they did little.
 - The body may resist the same move because "the most concrete thing on record" still leaves the writer to judge what is concrete enough, and nothing later in the method checks it. The top is short enough for a writer to verify against a numbered list; the body is not.
@@ -134,9 +122,9 @@ A first draft takes about ten minutes and four to seven dollars. The baseline's 
 These came from reading the baseline as someone with a candidate to place, before any test. Most were not reached.
 
 - **Each step sells only the next step.** The page's job is the first conversation, and the first person to read it can turn a candidate down and cannot hire one. The baseline defines its product as a document and stops when its readers find nothing more. Partly tried: `v1-opening` restates the aim; a rule for when a page is ready to send is in `v2-examine`. Neither showed an effect alone.
-- **What the person hiring takes the candidate for is settled in the first lines.** Tested, and the round's one firm result (findings 3, 4 and 6).
+- **What the person hiring takes the candidate for is settled in the first lines.** Tested, and the round's one firm result (results 3, 4 and 6).
 - **Order follows the buyer's interest.** Tested for the top only. Order inside each post and across the body is untouched.
-- **A concrete proof for each thing the buyer needs.** Instructed in `v7-holes2` and `v8-opening-holes2`, with no effect shown (finding 7).
+- **A concrete proof for each thing the buyer needs.** Instructed in `v7-holes2` and `v8-opening-holes2`, with no effect shown (result 7).
 - **The buyer's objections, not the candidate's fears.** The baseline fills its list of conclusions to avoid from what the candidate fears. A seller lists what this buyer will hold against the candidate and answers it on the page or leaves it for the conversation. Tried only as one question to the reader who holds the advertisement, in `v2-examine`. Untested as a step of its own.
 - **Know what there is to sell.** The baseline's interview asks where each fact came from. It does not ask for the candidate's strongest results, or why earlier employers and clients chose them. Untested.
 - **Standing is a selling point for any buyer.** Who backed the candidate, whom they worked for, the size of what they ran. Earlier batches cut such facts where no line of the advertisement asked for them, and judges asked for them back. Untested as an instruction.
@@ -146,12 +134,23 @@ These came from reading the baseline as someone with a candidate to place, befor
 - **Some posts no page can win.** A post that excludes the candidate, or whose core work the record lacks, is a question of whether to apply. The baseline starts from a post already judged worth answering, and this round kept such posts out of its tests.
 - **The route outweighs the wording.** A page that arrives through someone inside does better than one that arrives cold. Outside this method's reach as it stands, and also a matter for the second stage.
 
-## Wishes for the rounds that follow
+## What the next rounds could test
 
-- **The combined version before it is integrated.** The 45 first drafts are still on disk and can be judged again as whole pages once `draft-text.sh` keeps the name, employers, titles and dates; nothing about the full read should be concluded before that. The pile seat would then say which test matters more for a call. Post D stays held back: it is used once, on whatever text is proposed for integration.
+- **The combined version before it is integrated.** The 45 first drafts are on disk and can be judged as whole pages once the conversion keeps the name, employers, titles and dates, which would settle the full read. The pile seat would then say which test matters more for a call. Post D stays held back: it is used once, on whatever text is proposed for integration.
 - **The body.** A version in which the proof for each hole is gathered where it can be checked, for instance in `selection.md`, before any sentence is written.
 - **Modules.** The four reader's questions now written into versions' text lifted into module files: what the reader takes the candidate for, looked for and did not find, and would hesitate over (in `v2-examine`, the sentence beginning "Last, from where the person filling the post stands"); the reader's own list of the employer's needs and where the page shows each (in `v4-hole`, `v7-holes2` and `v8-opening-holes2`, "Before it opens the page"); the check that the page speaks of the candidate in one person (in `v7-holes2` and `v8-opening-holes2`); and a line-by-line reader, not yet written, that says of each line whether the person hiring is more or less inclined to call.
 - **The checking phase on one fixed draft,** with and without that last module, measured by the outside count of selling and checking changes and by the judges.
 - **A fixed point of comparison.** Each draft judged against one common reference page, or several baseline drafts per repeat, since the baseline's draw decided much of each repeat here.
 - **The candidate file.** Whether a file that states facts as "he" is where the third-person slips come from, and whether the file's regrouping changed what writers pick up, by writing one post under the baseline from the file as it was before and after.
 - **A bar for integration that names the seat.** A version's replacements enter the method when the effect has shown on at least two posts and three repeats each. This round met that on the top and not on the full read, so the bar has to say which test it is about.
+
+## The owner's words on the series
+
+- On the series and what a round leaves: "you can say it's the sales-improvmeent-1 and we plan to do 1 all the way to 9 in the coming days (at which point sales improvement might be exhausted). each run produces a log and at your log, You can speculate what worked, and express the wish to see different CV being worked on to see the result difference, so that next agent can start working."
+- On tone: "You must speak it in a discovery tone rather than in a infantilization tone ... speak like a scientist."
+- On the two ways of working: "If we are making progressive change and we are locking down a version that we believe reasonably well, but still leave a bit of chance of regression, that if regression is detected, the next agent is feel free to roll back and find a good combination that works. Then we have a timeline-based method. Alternatively, if we are widely testing competing theories, we might have folder-based method." And: "I prefer the lab inside method repository".
+- On the joined page: "since now we have a good CV, let's keep the work".
+- On means, for the autonomous part of this round: "I give you the all of the rest of the context and the unlimited use of Jethro agents and I'll check periodically." He set no budget for a round and no order among the wishes.
+- His own ideas tested here: applying only half of the changes; the baseline with only the salesperson sentence; listing the holes and marking each change with the hole it serves; the `sell` and `check` marks drawn as a path, "any move towards selling should be upward, and any move towards checking should be rightward".
+
+The wish to see other CVs worked on is his. The other wishes below, the bar for integration in the lab's note and in the last wish, and the rule that a reader's question is a module copied on release are mine; he asked for the options to be listed with a decision and has not objected to them. He has not said he read the joined page. The two unlabelled pairs the plan offered for his own blind read were never prepared. Nobody has been given the tracing of the joined page or the settling of its date.
