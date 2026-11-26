@@ -15,8 +15,13 @@ Each round is one folder, `round-N/`. Its worklog calls it sales-improvement-N.
 - `variants/` holds one file per version, each the whole text of the method.
 - `make-variants.py` defines each version as the baseline text with a named set of replacements, and writes the files in `variants/`.
 - The worklog, a dated `…-WORKLOG-sales-improvement-N.md`, says what the round ran and what it found.
+- `modules/`, where a round has any, holds questions put to a reader about the page, one file each.
 
 A round starts from a baseline commit of the method, named at the top of its worklog and of its `make-variants.py`. When a version has held across more than one post, its replacements go into `sales-hire/hire-methodology.md` as an ordinary commit, and the next round starts from there.
+
+## A reader's question is a module
+
+A question put to a reader about the page is tested here as a module file, and copied into `sales-hire/modules/` by an ordinary commit when it has held. The method's text names which modules to run and what to do with their answers. It does not carry the question itself, so a question never has two homes.
 
 ## What stays outside this repository
 
