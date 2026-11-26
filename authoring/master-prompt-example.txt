@@ -1,12 +1,7 @@
+Your job is to optimise the SOP so an AI can use it to make a useful itinerary.
 
-Your job is to optimise the sop so an ai can use it to make useful itinerary.
+Read travel/sop-travel-itinerary-management.md. An AI that followed it made Edinburgh_Itinerary_v1_Dec23-26_2025.md.
 
-Read travel/sop-travel-itinerary-management.md. Asking Claude to use it led to claude AI creating the Itinerary Edinburgh_Itinerary_v1_Dec23-26_2025.md.
+To test a revision, launch a fresh subagent and give it only what a user would say: "Follow travel/sop-travel-itinerary-management.md to make the itinerary for [journey folder], the Edinburgh segment only, and save it as the next version."
 
-Here how to run a headless claude (if you try another time remember to up the version number)
-
-```
-$ CLAUDE_CONFIG_DIR=~/.claude-private claude -p "Let's follow travel/sop-travel-itinerary-management.md  to make itinerary for '[journey folder]'; but do it for Edinburgh segment only, and save the result as Edinburgh itinerary version 1." --allowedTools "Bash,Read,Write"   --permission-mode acceptEdits
-```
-
-The Problem to solve is: ...
+The problem to solve is: ...

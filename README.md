@@ -261,7 +261,7 @@ The methodologies share a structural principle: read before writing. SPAR profil
 - `roster/` — Roster management (architectural notes only)
 - `tests/` — Test cases and results for validating SOPs through iterative rounds
 - `sop-authoring-rules.md` — Meta-guide for creating and updating SOPs
-- `authoring/` — Start here to create or revise an AESOP: the prompt that runs the author-test-fix loop, and a worked headless example
+- `authoring/` — Start here to create or revise an AESOP: the prompt that runs the author-test-fix loop, and a worked example
 
 ## Usage
 
