@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Round 1 variants of the HIRE method. Each is the baseline text with one named set of replacements.
 
-Run from the repository root with the baseline text checked out in sales-hire/hire-methodology.md:
+Baseline: sales-hire/hire-methodology.md as of commit e51412d3, which is what it holds now. Run from the repository root:
     python3 labs/sales-hire/round-1/make-variants.py
-It writes one file per variant into labs/sales-hire/round-1/variants/. The variant all-changes.md is not made here:
+It writes one file per variant into labs/sales-hire/round-1/variants/. There is no v5. The variant all-changes.md is not made here:
 it is the method as it stood after the six commits 9202090d to e16b5f63 on branch hire-shift.
 """
 import os

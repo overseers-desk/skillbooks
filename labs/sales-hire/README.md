@@ -10,13 +10,13 @@ A change comes here when it has to stand beside other versions at the same time.
 
 ## Layout
 
-Each round is one folder, `round-N/`, and is also called sales-improvement-N.
+Each round is one folder, `round-N/`. Its worklog calls it sales-improvement-N.
 
 - `variants/` holds one file per version, each the whole text of the method.
 - `make-variants.py` defines each version as the baseline text with a named set of replacements, and writes the files in `variants/`.
-- The worklog says which commit of the method the round started from, what it ran and what it found.
+- The worklog, a dated `…-WORKLOG-sales-improvement-N.md`, says what the round ran and what it found.
 
-A round starts from a baseline commit of the method, named at the top of its worklog. When a version has held across more than one post, its replacements go into `sales-hire/hire-methodology.md` as an ordinary commit, and the next round starts from there.
+A round starts from a baseline commit of the method, named at the top of its worklog and of its `make-variants.py`. When a version has held across more than one post, its replacements go into `sales-hire/hire-methodology.md` as an ordinary commit, and the next round starts from there.
 
 ## What stays outside this repository
 
