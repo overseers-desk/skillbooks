@@ -132,6 +132,8 @@ When the candidate does take part in an application, notes given toward a text a
 
 Examine runs cheap readers before dear ones, and the candidate last. Every check and what came of it goes into `examine.md`, a one-sentence repair included, with its evidence saved in the folder: what each reader was given and answered, each script with its output. A reader run through a skill or as an agent leaves no file of its own; whoever ran it saves both.
 
+**One test decides whether a sentence stays: whether it does work.** An application sells the candidate's work to this reader, and a sentence does work when the page is more likely to move the reader to take the candidate forward with it than without it. The test is applied here, to every sentence, and is not left to advice the writer follows while selecting, since advice is followed unevenly. Check 1's `work` rows say which sentences a reader has no use for; those sentences are taken out together, as one version, and the judges choose between the page with them and the page without. Nothing in this method, in a brief to a writer or in the candidate file selects sentences by another test, such as whether a fact matters or whether the advertisement asked for it. What limits a page is that it is true (check 4) and what the candidate has ruled off it.
+
 ### 1. Sentence readers
 
 Run prose-stethoscope on the draft, on a copy in which any template markup is replaced by the words the reader will see. For a CV, name every module the skill lists for one and give it the four sentences from `brief.md`. Add this folder's two modules by path:
