@@ -4,13 +4,19 @@
 
 ## File format
 
-One TSV file per campaign. TSV, not CSV — registry fields contain URLs, free-text notes, and comma-separated tags that cause quoting problems with commas.
+One TSV file per campaign. TSV, not CSV — registry fields contain URLs, free-text notes, and comma-separated tags that cause quoting problems with commas. With one row to a line and no quoting, the registry can also be filtered and sorted by line tools, with no parser.
 
 Every row must have an `id` and a `url`. A row without these is not a listing. The file is named `registry.tsv` and lives in the campaign root directory. Do not embed the campaign name in the filename — the directory already carries that context.
 
 **Delimiter and line-break conventions:** Tab (`\t`) separates fields; newline (`\n`) separates rows. Neither may appear inside a field value. When a field needs to represent a line break within its content (e.g. a multi-sentence note), use carriage return (`\r`) instead of newline. Standard tools (LibreOffice, Python `csv` with `delimiter='\t'`, pandas) read `\r` inside a field without treating it as a row boundary.
 
 **Programmatic access:** Use a tool that writes TSV without CSV quoting, such as `sqlite3`. A tool that applies CSV quoting to its output corrupts fields that contain double quotes.
+
+**Row order:** Rows carry no order, and whoever reads the registry expects them in any order. A ranking is a sort made when someone looks. It changes whenever a dimension, a threshold or a ruling changes, so no ranked list is kept as a file beside the registry. The core columns keep their positions, so a sort can name them by number: 1 `id`, 5 `title`, 9 `alive`, 11 `stars`, 12 `pct`, 16 `decision`. The twenty highest-ranked listings that are alive and not skipped, by stars and then pct:
+
+```
+tail -n +2 registry.tsv | awk -F'\t' '$9 != "no" && $16 != "skip"' | sort -t$'\t' -k11,11gr -k12,12nr | head -20 | cut -f1,5,11,12
+```
 
 ## Core columns
 

@@ -39,13 +39,13 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **Phases:** Sweep, Investigate, Fit, Target
 
-**Direction:** Inbound-reactive. An external party has published a listing (job posting, grant call, CFP, tender) and the operator must decide which to pursue and how to respond.
+**Direction:** Inbound-reactive. An external party has published a listing (job posting, grant call, CFP, tender) and the applicant must decide which to pursue and how to respond.
 
 **What each phase does:**
 
 - **Sweep** discovers listings from campaign-defined sources (job boards, grant databases, company career pages). Casts wide without filtering. Every listing gets a registry row.
 - **Investigate** fetches each listing, archives the full description as a permanent dossier, and researches the source organisation. The dossier ensures that scores remain auditable even after the listing goes offline.
-- **Fit** scores each listing on two axes: value-to-us (stars, computed from the campaign's dimensions) and likelihood-of-success (percentage, computed from requirement matching against the operator profile, with amplifiers for competitive advantages). The two axes together produce a prioritisation matrix.
+- **Fit** scores each listing on two axes: value-to-us (stars, computed from the campaign's dimensions) and likelihood-of-success (percentage, computed from requirement matching against the applicant profile, with amplifiers for competitive advantages). The two axes together produce a prioritisation matrix.
 - **Target** decides disposition (respond, skip, watch, network-approach) and hands each listing worth a response to the method that prepares it.
 
 **Model allocation:** Sweep and Investigate are Sonnet-tier. Fit is Sonnet-tier (rubric application). Target is human judgment.
@@ -261,7 +261,7 @@ The methodologies share a structural principle: read before writing. SPAR profil
 - `roster/` — Roster management (architectural notes only)
 - `tests/` — Test cases and results for validating SOPs through iterative rounds
 - `sop-authoring-rules.md` — Meta-guide for creating and updating SOPs
-- `authoring/` — Start here to create or revise an AESOP: the prompt that runs the author-test-fix loop, and a worked headless example
+- `authoring/` — Start here to create or revise an AESOP: the prompt that runs the author-test-fix loop, and a worked example
 
 ## Usage
 

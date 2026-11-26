@@ -16,5 +16,5 @@ Repository-wide invariants are in `INVARIANTS.md` beside this file, imported bel
 
 ## Authoring AESOPs
 
-Before creating or revising an AESOP, read `authoring/`: it holds the prompt that runs the author-test-fix loop (cases in `tests/NN/`) and a worked headless example. The rules for how AESOPs are written are in `sop-authoring-rules.md`; they override authoring instincts.
+Before creating or revising an AESOP, read `authoring/`: it holds the prompt that runs the author-test-fix loop (cases in `tests/NN/`) and a worked example. The rules for how AESOPs are written are in `sop-authoring-rules.md`; they override authoring instincts.
 
