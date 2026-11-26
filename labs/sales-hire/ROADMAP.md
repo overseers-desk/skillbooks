@@ -2,6 +2,12 @@
 
 A job application is a large sale to a committee, made in reply to a published requirement, with one unit to sell and the seller as the product. The lessons below are taken from the bodies of sales practice that fit that description. Each is something the method could make a writer do. A round of the lab picks some of them, writes each into a version of the method, and measures the pages that come out. Each round's worklog names the items it tested by the letters and numbers here.
 
+## How the series is run
+
+The work of a round is to find, by relentless experiment, the best way to bring the outcome. That has two parts. One is getting the judges to agree that a page is better. The other is correcting the judges where they do not behave as a person hiring would. Which route to take to either is for the session running the round to work out. The owner is not expected to supply step-by-step suggestions, and a question about how to run an experiment is settled by running one.
+
+## The lessons
+
 | Item | The lesson | Tested in | How | What was found |
 |---|---|---|---|---|
 | A1 | Each step sells only the next step: the page is there to win the first conversation | round 1 | `v1-opening`; the ready-to-send rule in `v2-examine` | no effect alone; part of the version that improved the top |
