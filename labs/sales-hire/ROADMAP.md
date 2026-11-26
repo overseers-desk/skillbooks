@@ -6,6 +6,14 @@ A job application is a large sale to a committee, made in reply to a published r
 
 The work of a round is to find, by relentless experiment, the best way to bring the outcome. That has two parts. One is getting the judges to agree that a page is better. The other is correcting the judges where they do not behave as a person hiring would. Which route to take to either is for the session running the round to work out. The owner is not expected to supply step-by-step suggestions, and a question about how to run an experiment is settled by running one.
 
+## The judges, and what they may know
+
+A judge is a fresh session of the profile the round runs under, told it is the person the post reports to and given only the advertisement and the pages.
+
+Round 1 considered running judges under a new, empty profile, so that nothing about the candidate's own office could reach them. Where two versions of one candidate's page were compared, experiment showed no observable difference between the two ways of running a judge, so the empty profile is not part of this work.
+
+One case may bring the need back, and it has not been tested: a test that ranks the candidate's page against other candidates' pages. There a judge who can tell whose office it is running in would not treat that candidate like the others. If a round finds that this affects how the ranking test comes out, an empty profile is the thing to consider. On the researcher's computer where round 1 ran, a sign-in token kept at `~/.jail-claude-token` lets an empty profile be used without logging in to it. That file belongs to one computer and is not guaranteed to exist; where it is missing, some other way of creating an empty, signed-in profile would be needed. The owner allows another profile only for a reason stated to him, so a round that comes to need one writes that reason down for him first.
+
 ## The lessons
 
 | Item | The lesson | Tested in | How | What was found |
