@@ -21,8 +21,8 @@ Posts are named here by role. Post A is a vice-president post leading a new AI u
 
 ## State reached
 
-- The lab exists (`labs/sales-hire/`), with seven versions of the method for this round and `make-variants.py`, which defines six of them from the baseline. `all-changes.md` is the method as it stood after six commits made directly on the branch (`9202090d` to `e16b5f63`) and since returned to the baseline.
-- No version has been shown to produce a better whole page than the baseline. One instruction has shown the same effect on three runs out of three (finding 8).
+- The lab exists (`labs/sales-hire/`), with eight versions of the method for this round and `make-variants.py`, which defines seven of them from the baseline. `all-changes.md` is the method as it stood after six commits made directly on the branch (`9202090d` to `e16b5f63`) and since returned to the baseline.
+- No version has been shown to produce a better whole page than the baseline. One version, `v8-opening-holes2`, improved the top of the page on each of the three posts tried, 64 judges of 72 (finding 12). On a full read no version is reliably ahead, and that one was behind on post B.
 - One page for post A beats the page the candidate already had: seven judges of eight on a full read and five of seven on the top alone. It was joined by hand from the top of one run and the body of another, and no single run produced it. Its two parents disagree on one date, and it has not been traced to sources as one page.
 - Four instruments exist outside the repository: sealed judges, runs that stop at the first full draft, an outside count of why each change to a page was made, and a count of the advertisement's asks a page proves.
 - A lab rule agreed with the owner at the end of the round: a question put to a reader about the page is tested as a module file in the round's folder, and copied into `sales-hire/modules/` when it wins. Four edits in this round's versions are such questions written into the method's text, and are not yet lifted out (see Wishes).
@@ -71,6 +71,20 @@ The baseline's own draft varies as much as any version's. Its second draft beat 
 
 11. **The sealed judges.** Each is the person the post reports to, in a room built with the undercover skill, answering a recruiter's note. Shown the same page twice, they chose the first one read seven times of eight. Shown a real difference, they chose by content, with the first-read copy chosen exactly four times of eight. Every difference large enough to see came out eight to nothing, so they rank two pages and do not grade them. Most guessed that one applicant was trying two versions. A pile test, one page among nine rival pages, drew no such guess and costs about eighty cents a judge against five to eleven.
 
+12. **Two more posts, and the two leading changes combined.** `v8-opening-holes2` is `v1-opening` and `v7-holes2` together. Three first drafts per version on posts B and C, and three of the combined version on post A, each judged against the baseline's draft of the same repeat. The version's count is given.
+
+| Post | Version | Full read, repeats 1 to 3 | Total | Top, repeats 1 to 3 | Total |
+|---|---|---|---|---|---|
+| A | v8-opening-holes2 | 0 of 8, 8 of 8, 8 of 8 | 16 of 24 | 8 of 8, 7 of 8, 8 of 8 | 23 of 24 |
+| B | v1-opening | 3 of 8, 0 of 8, 0 of 8 | 3 of 24 | 3 of 8, 4 of 7, 2 of 8 | 9 of 23 |
+| B | v7-holes2 | 8 of 8, 4 of 8, 0 of 8 | 12 of 24 | 6 of 8, 2 of 8, 6 of 8 | 14 of 24 |
+| B | v8-opening-holes2 | 4 of 8, 0 of 8, 0 of 8 | 4 of 24 | 8 of 8, 4 of 8, 8 of 8 | 20 of 24 |
+| C | v1-opening | 4 of 8, 7 of 8, 2 of 8 | 13 of 24 | 6 of 8, 6 of 7, 0 of 8 | 12 of 23 |
+| C | v7-holes2 | 8 of 8, 7 of 7, 4 of 8 | 19 of 23 | 4 of 8, 8 of 8, 7 of 8 | 19 of 24 |
+| C | v8-opening-holes2 | 4 of 8, 8 of 8, 0 of 8 | 12 of 24 | 5 of 8, 8 of 8, 8 of 8 | 21 of 24 |
+
+On the top, the combined version was level with or ahead of the baseline's draft in all nine repeats, and `v7-holes2` in eight of nine. On a full read the picture is mixed for every version, and the combined version lost two repeats of three on post B eight to nothing. `v1-opening` alone did not hold outside post A.
+
 ## Ground already covered
 
 - **Rewording the whole text in a seller's voice, with every rule kept.** Tried twice with subagents, once through the speak-like skill and once as a direct rewrite. Readers cast as a salesperson and as a placer of candidates did not believe a seller wrote either, and a reader asked only what the author does for a living moved from "prompt or methodology engineer" to "CV writer or career-services consultant". A fresh session that read only the text described the job and "finished" the same way before and after. A check for changed rules found seven, one of them a rule that could be read backwards: an observation recast as "do X and Y follows" reads as an order to do X.
@@ -85,16 +99,16 @@ The baseline's own draft varies as much as any version's. Its second draft beat 
 
 - The top instruction of `v7-holes2` may work because it turns an open choice into a derivation: the writer no longer picks an opening, it reads the order off the advertisement. If so, the same move could be tried on the body, where the writer still chooses what counts as proof.
 - The salesperson sentence with the two marks moved the reasons writers gave from about one selling reason in twenty to one in three, on one run. Whether reasons of that kind change the page is not known: that page still lost its comparison.
-- `v1-opening`, six sentences at the head of the method that start from the person filling the post, was level with or ahead of the baseline's draft in every repeat on both tests. I did not expect that from the smallest change, and three repeats against a varying baseline do not establish it.
+- `v1-opening`, six sentences at the head of the method that start from the person filling the post, was level with or ahead of the baseline's draft in every repeat on both tests. I did not expect that from the smallest change, and three repeats against a varying baseline do not establish it. On posts B and C it did not hold alone (finding 12); combined with the top instruction it did on the top.
 - The checking phase may add little to a page. The older pages were ahead before their checks ran, the writers' own judges often preferred a first draft to its repaired version, and the baseline's 71-minute run tied a 28-minute one on a full read.
 
 ## Wishes for the rounds that follow
 
-- **Other posts.** Posts B and C under the baseline, `v1-opening` and `v7-holes2`. The top instruction has only been seen where the advertisement asks first for leadership. Post D stays held back for whatever text is proposed for integration.
+- **The combined version before it is integrated.** Its effect on the top meets the bar below on three posts. Its full read fell behind on post B, and nothing here says why: reading the judges' answers for those two repeats, under `sealed/runs/dr2-07-…` and `dr3-07-…` outside the repository, would be the first step. Post D stays held back for whatever text is proposed for integration.
 - **A fixed point of comparison.** Each draft judged against one common reference page, or several baseline drafts per round, since the baseline's draw decided much of each repeat here.
 - **The body.** A version in which the proof for each need is gathered where it can be checked, for instance in `selection.md`, before any sentence is written.
 - **Modules.** The four reader's questions now written into versions' text lifted into module files: what the reader takes the candidate for, looked for and did not find, and would hesitate over (in `v2-examine`, the sentence beginning "Last, from where the person filling the post stands"); the reader's own list of the employer's needs and where the page shows each (in `v4-hole` and `v7-holes2`, "Before it opens the page"); the check that the page speaks of the candidate in one person (in `v7-holes2`); and a line-by-line reader, not yet written, that says of each line whether the person hiring is more or less inclined to call. Every reader in the checking phase except the judges now reports only what is wrong, which may be why nearly every change is a correction.
 - **The checking phase on one fixed draft,** with and without that module, measured by the outside count of selling and checking changes and by the judges.
 - **The pile seat** for any page proposed as better, since it is the only seat that sets the page against other candidates.
 - **The candidate file.** Whether a file that states facts as "he" is where the third-person slips come from, and whether the file's regrouping changed what writers pick up, by writing one post under the baseline from the file as it was before and after.
-- **A bar for integration.** A version's replacements enter the method when the effect has shown on at least two posts and three runs each.
+- **A bar for integration.** A version's replacements enter the method when the effect has shown on at least two posts and three runs each. This round shows the bar has to name the seat: a version can pass it on the top and fail it on the full read. Which seat decides a call is what the pile seat could answer.

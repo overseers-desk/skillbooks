@@ -49,7 +49,7 @@ def holes2(s):
     s=rep(s,"This is the check that finds grain and inherited sentences, and it costs one call.","This is the check that finds grain and inherited sentences, and it costs one call. Before it opens the page, it lists from the advertisement alone what this employer most needs done; afterwards it says, for each, where the page shows the candidate doing it, or that it does not.")
     s=rep(s,"Then say plainly what remains: the rows left standing and why,","Then say plainly what remains: how many changes served each hole and how many were `check`, the rows left standing and why,")
     return s
-variants={'v1-opening':opening,'v2-examine':examine,'v3-say':say,'v4-hole':hole,'v6-say-hole':lambda s: hole(say(s)),'v7-holes2':holes2}
+variants={'v1-opening':opening,'v2-examine':examine,'v3-say':say,'v4-hole':hole,'v6-say-hole':lambda s: hole(say(s)),'v7-holes2':holes2,'v8-opening-holes2':lambda s: holes2(opening(s))}
 for name,fn in variants.items():
     text=fn(base)
     open(os.path.join(HERE,'variants',name+'.md'),'w').write(text)
