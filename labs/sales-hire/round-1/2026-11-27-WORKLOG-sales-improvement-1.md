@@ -4,9 +4,20 @@ Round 1 of the lab for HIRE, 27 November 2026. The question of the series: does 
 
 ## Baseline
 
-The baseline is commit `e51412d3` on branch `hire-shift`. It is the first commit that holds both the candidate file's format grouped by kind and subject (`9b127c04`, `e918ca6e`, issue 272 on the repository) and the folder's name `sales-hire` (the rename `e6789924`, made on branch `aesop` and merged in at `736b9b96`). Every version in `variants/` is this text with one named set of replacements. `sales-hire/hire-methodology.md` at the branch tip is the baseline text again (`2649d5a5`): nothing from this round has been integrated.
+The baseline is commit `e51412d3` on branch `hire-shift`. It is the first commit that holds both the candidate file's format grouped by kind and subject (`9b127c04`, `e918ca6e`, issue 272 of `overseers-desk/skillbooks`; the format is the table under "What a run produces" in the method) and the folder's name `sales-hire` (the rename `e6789924`, made on branch `aesop` and merged in at `736b9b96`). Every version in `variants/` is this text with one named set of replacements. `sales-hire/hire-methodology.md` at the branch tip is the baseline text again (`2649d5a5`): nothing from this round has been integrated.
 
 Posts are named here by role. Post A is a vice-president post leading a new AI unit at a car maker's software company. Post B is an engineering senior director at a digital bank. Post C is a chief technology officer of a healthcare technology company, advertised through a recruiter. Post D, a chief technology officer of an AI startup, was held back and not used. The key to the real posts, and every page, room and judge's answer, is outside this repository, at `/var/local/aesop/sales-voice/` on the host `yoga` as of 27 November 2026 (`KEY.md` there).
+
+## Terms used below
+
+- **A comparison** puts two pages for one post before eight sealed judges, half reading each page first. Each judge names the one page it would call the candidate on. "6 to 2" means six judges chose the first-named page and two the other.
+- **Full read**: the judges see both pages whole. **Top**: they see only the first 24 lines of each, as far as a screener reads in a few seconds. **Pile**: one page sits among nine rival candidates' pages and the judge names whom to call first.
+- **The salesperson sentence**: "I am a salesperson and my goal is to sell the candidate", written by the writer at the start of each phase. It is in `v3-say`, `v6-say-hole` and `all-changes`.
+- **The two marks**: `sell` and `check`, put by the writer on each change to a page with its reason. They are in `all-changes` only. `v4-hole`, `v6-say-hole` and `v7-holes2` mark a change with the number of the hole it serves, or `check`.
+- **A third-person slip**: a sentence in which the page calls the candidate "he" or "his" where the rest speaks without a pronoun or as "I".
+- **Repeat**: one of three first drafts written under the same version for the same post. There is no version numbered 5.
+
+`KEY.md`, outside the repository, lists each tool named below and how it is called.
 
 ## State reached
 
@@ -26,7 +37,7 @@ Posts are named here by role. Post A is a vice-president post leading a new AI u
 
 4. **Full runs for post A, whole record, one run per version.** Minutes and dollars are for one writer on Opus.
 
-| Version | Minutes | Dollars | Words | Third-person slips | Full read against the best body | Top against the best top |
+| Version | Minutes | Dollars | Words | Third-person slips | Full read: this version to the best body (`v3-say`) | Top: this version to the best top (`all-changes`) |
 |---|---|---|---|---|---|---|
 | baseline | 71 | 8 | 635 | none | 4 to 4 | 0 to 7 |
 | all-changes | 25 | 10 | 711 | none | 1 to 7 | (the best top) |
@@ -40,23 +51,23 @@ Posts are named here by role. Post A is a vice-president post leading a new AI u
 
 6. **The joined page.** The best top over the best body beat the body's parent eight to nothing on both tests, beat the top's parent eight to nothing on a full read and tied it four to four on the top (the tops are the same text), and beat the page the candidate already had seven to one and five to two. So on this post those two choices decide, and a page that has both wins.
 
-7. **First drafts for post A, three per version, each judged against the baseline's draft of the same round.** The version's count is given, of the judges who answered.
+7. **First drafts for post A, three per version, each judged against the baseline's draft of the same repeat.** The version's count is given, of the judges whose answer could be counted.
 
-| Version | Full read, rounds 1 to 3 | Total | Top, rounds 1 to 3 | Total |
+| Version | Full read, repeats 1 to 3 | Total | Top, repeats 1 to 3 | Total |
 |---|---|---|---|---|
-| v1-opening | 4, 4, 8 of 8 | 16 of 24 | 6, 4, 8 of 8 | 18 of 24 |
-| v3-say | 3, 0, 6 of 8 | 9 of 24 | 4 of 7, 0 of 8, 8 of 8 | 12 of 23 |
-| v4-hole | 5, 0, 8 of 8 | 13 of 24 | 6 of 8, 2 of 7, 6 of 6 | 14 of 21 |
-| v6-say-hole | 0, 4, 8 of 8 | 12 of 24 | 2 of 8, 7 of 7, 6 of 8 | 15 of 23 |
-| v7-holes2 | 0, 4, 6 of 8 | 10 of 24 | 8, 5, 7 of 8 | 20 of 24 |
+| v1-opening | 4 of 8, 4 of 8, 8 of 8 | 16 of 24 | 6 of 8, 4 of 8, 8 of 8 | 18 of 24 |
+| v3-say | 3 of 8, 0 of 8, 6 of 8 | 9 of 24 | 4 of 7, 0 of 8, 8 of 8 | 12 of 23 |
+| v4-hole | 5 of 8, 0 of 8, 8 of 8 | 13 of 24 | 6 of 8, 2 of 7, 6 of 6 | 14 of 21 |
+| v6-say-hole | 0 of 8, 4 of 8, 8 of 8 | 12 of 24 | 2 of 8, 7 of 7, 6 of 8 | 15 of 23 |
+| v7-holes2 | 0 of 8, 4 of 8, 6 of 8 | 10 of 24 | 8 of 8, 5 of 8, 7 of 8 | 20 of 24 |
 
-The baseline's own draft varies as much as any version's. Its round-2 draft beat four of five versions on a full read, and its round-3 draft lost to all five. A round's result is therefore largely a statement about that round's baseline draft.
+The baseline's own draft varies as much as any version's. Its second draft beat four of five versions on a full read, and its third lost to all five. A repeat's result is therefore largely a statement about that repeat's baseline draft.
 
-8. **One instruction reproduced.** `v7-holes2` has the writer list what the employer needs done, in the employer's order, and requires the top of the page to show the candidate filling the first of those, a clause to each. Its top beat the baseline draft's top in all three rounds. Its other instruction, to set the most concrete thing on record against each need, shows no effect on the full read.
+8. **One instruction reproduced.** `v7-holes2` has the writer list what the employer needs done, in the employer's order, and requires the top of the page to show the candidate filling the first of those, a clause to each. Its top beat the baseline draft's top in all three repeats. Its other instruction, to set the most concrete thing on record against each need, shows no effect on the full read.
 
 9. **The same version opens differently on different runs.** Each of four versions chose a different opening on its full run and on its first draft. The method's own way of choosing an opening, its internal judges on three approaches, was reported by several writers as following reading order.
 
-10. **Third-person slips** appeared in three of the eight full pages written in this round. A sealed judge shown a page with three such sentences against the same page without them chose the clean one eight times of eight.
+10. **Third-person slips** appeared in three of the eight full pages written in this round: `v2-examine`, `v4-hole`, and the first page for post A, written under `all-changes` from the reduced copy of the record and not in the table above. A sealed judge shown a page with three such sentences against the same page without them chose the clean one eight times of eight.
 
 11. **The sealed judges.** Each is the person the post reports to, in a room built with the undercover skill, answering a recruiter's note. Shown the same page twice, they chose the first one read seven times of eight. Shown a real difference, they chose by content, with the first-read copy chosen exactly four times of eight. Every difference large enough to see came out eight to nothing, so they rank two pages and do not grade them. Most guessed that one applicant was trying two versions. A pile test, one page among nine rival pages, drew no such guess and costs about eighty cents a judge against five to eleven.
 
@@ -74,15 +85,15 @@ The baseline's own draft varies as much as any version's. Its round-2 draft beat
 
 - The top instruction of `v7-holes2` may work because it turns an open choice into a derivation: the writer no longer picks an opening, it reads the order off the advertisement. If so, the same move could be tried on the body, where the writer still chooses what counts as proof.
 - The salesperson sentence with the two marks moved the reasons writers gave from about one selling reason in twenty to one in three, on one run. Whether reasons of that kind change the page is not known: that page still lost its comparison.
-- `v1-opening`, six sentences at the head of the method that start from the person filling the post, was level with or ahead of the baseline's draft in every round on both tests. I did not expect that from the smallest change, and three rounds against a varying baseline do not establish it.
+- `v1-opening`, six sentences at the head of the method that start from the person filling the post, was level with or ahead of the baseline's draft in every repeat on both tests. I did not expect that from the smallest change, and three repeats against a varying baseline do not establish it.
 - The checking phase may add little to a page. The older pages were ahead before their checks ran, the writers' own judges often preferred a first draft to its repaired version, and the baseline's 71-minute run tied a 28-minute one on a full read.
 
 ## Wishes for the rounds that follow
 
 - **Other posts.** Posts B and C under the baseline, `v1-opening` and `v7-holes2`. The top instruction has only been seen where the advertisement asks first for leadership. Post D stays held back for whatever text is proposed for integration.
-- **A fixed point of comparison.** Each draft judged against one common reference page, or several baseline drafts per round, since the baseline's draw decided much of each round here.
+- **A fixed point of comparison.** Each draft judged against one common reference page, or several baseline drafts per round, since the baseline's draw decided much of each repeat here.
 - **The body.** A version in which the proof for each need is gathered where it can be checked, for instance in `selection.md`, before any sentence is written.
-- **Modules.** The four reader's questions now written into versions' text lifted into module files: what the reader takes the candidate for, looked for and did not find, and would hesitate over; the reader's own list of the employer's needs and where the page shows each; the check for one person; and a line-by-line reader, not yet written, that says of each line whether the person hiring is more or less inclined to call. Every reader in the checking phase except the judges now reports only what is wrong, which may be why nearly every change is a correction.
+- **Modules.** The four reader's questions now written into versions' text lifted into module files: what the reader takes the candidate for, looked for and did not find, and would hesitate over (in `v2-examine`, the sentence beginning "Last, from where the person filling the post stands"); the reader's own list of the employer's needs and where the page shows each (in `v4-hole` and `v7-holes2`, "Before it opens the page"); the check that the page speaks of the candidate in one person (in `v7-holes2`); and a line-by-line reader, not yet written, that says of each line whether the person hiring is more or less inclined to call. Every reader in the checking phase except the judges now reports only what is wrong, which may be why nearly every change is a correction.
 - **The checking phase on one fixed draft,** with and without that module, measured by the outside count of selling and checking changes and by the judges.
 - **The pile seat** for any page proposed as better, since it is the only seat that sets the page against other candidates.
 - **The candidate file.** Whether a file that states facts as "he" is where the third-person slips come from, and whether the file's regrouping changed what writers pick up, by writing one post under the baseline from the file as it was before and after.
