@@ -30,14 +30,14 @@ The candidate file's format is closed. Its first line is this comment, word for 
 
 | Part | Holds | Fields of an entry |
 |---|---|---|
-| `rulings` | What the candidate has decided about their own applications | `id`, `rule`, `words`, `said`, `ask`, `why`, `reconciled` |
-| `facts` | What is true of the candidate that an application may use | `id`, `fact`, `value` or `from`, `include`, `unless`, `words`, `said`, `ask`, `why`, `reconciled` |
+| `rulings` | What the candidate has decided about their own applications | `id`, `rule`, `words`, `said`, `asked-enough`, `reconciled` |
+| `facts` | What is true of the candidate that an application may use | `id`, `fact`, `value` or `from`, `include`, `unless`, `words`, `said`, `asked-enough`, `reconciled` |
 | `account` | The candidate's own telling of the work | `id`, `text`, `said` |
 | `corrections` | What the candidate said in correcting a draft | `id`, `kind_of_post`, `words`, `said` |
 | `open` | Questions put to the candidate and not yet answered | `id`, `question`, `raised_on` |
 | `defaults` | An agent's choice where the candidate has said nothing, not yet confirmed | `id`, `rule`, `origin` |
 
-`words` quotes the candidate and `said` gives where and when; an entry without them says in `note` who wrote it and that the candidate has not read it. `include` is `always` or `never`, which only the candidate sets (`never` may carry `unless`), or `by-outcome`, the usual case, which leaves the fact to Examine. `from` names a fact kept in a record outside the file, by path and key, in place of `value`. `why` says, in the candidate's words, why the entry is in the file; where agents kept asking, it says so and that this is the final answer. `reconciled` names what the entry may seem to conflict with and the reason it does not. `ask: never` marks an entry the candidate has answered: no agent puts its question to the candidate again, and one that still sees a conflict adds a single entry to `open` naming the two things. A question about the candidate has one home in the file. The format changes only through an issue raised on this methodology: a keeper who lacks a part or a field raises one and adds nothing meanwhile.
+`words` quotes the candidate and `said` gives where and when; an entry without them says in `note` who wrote it and that the candidate has not read it. `include` is `always` or `never`, which only the candidate sets (`never` may carry `unless`), or `by-outcome`, the usual case, which leaves the fact to Examine. `from` names a fact kept in a record outside the file, by path and key, in place of `value`. `asked-enough` marks an entry on which no further question is put to the candidate, by any route; its value gives the reason in the candidate's words, such as that every possible answer has already been given. `reconciled` names what the entry may seem to conflict with and the reason it does not. A question about the candidate has one home in the file. The format changes only through an issue raised on this methodology: a keeper who lacks a part or a field raises one and adds nothing meanwhile.
 
 Then one working folder per application, holding:
 
