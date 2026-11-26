@@ -2,6 +2,17 @@
 
 Round 1 of the lab for HIRE, 27 November 2026. The question of the series: does a version of the method exist under which a writer sells the candidate, and does the page it writes win more often with the person filling the post. The series is planned to run to sales-improvement-9.
 
+## What the work is for
+
+The owner holds that a job application is a sale: "The nature of it is still sales." Over three batches of CVs he gave input on "framing, order, and relevance", and "the AI constantly gave back one simple-minded answer: Is this verifiable?" His conclusion: "there is a soul needed. The soul is a salesman's soul." He also holds that announcing this to an agent does nothing, and that "the choice of words and the framing that it was written as if it is from a salesperson do more work".
+
+So a round is not an audit of a method. It asks what would make the person filling a post call this candidate, and what in the method's text makes a writer produce that. The pull toward checking that the series studies acts on whoever runs a round as much as on the writers under test: "deviation was completely being observed every time." This log is itself mostly about instruments and counts, and a reader who takes its cue from that will check the round instead of continuing it. Four questions kept the work pointed during this round, and they are worth asking of any page before measuring it:
+
+- Who is deciding at this step, what are they short of, and what gets the candidate the next conversation?
+- What does the page lead with, what follows, and what stays out because this person has no use for it?
+- Who else is being put in front of them, and what does this candidate offer that theirs cannot?
+- What doubt will they raise, and which proof on the page answers it?
+
 ## Baseline
 
 The baseline is commit `e51412d3` on branch `hire-shift`. It is the first commit that holds both the candidate file's format grouped by kind and subject (`9b127c04`, `e918ca6e`, issue 272 of `overseers-desk/skillbooks`; the format is the table under "What a run produces" in the method) and the folder's name `sales-hire` (the rename `e6789924`, made on branch `aesop` and merged in at `736b9b96`). Every version in `variants/` is this text with one named set of replacements, and `sales-hire/hire-methodology.md` is this text: nothing from the round has been integrated.
@@ -23,7 +34,7 @@ Posts are named here by role. Post A is a vice-president post leading a new AI u
 
 - The lab exists (`labs/sales-hire/`), with eight versions of the method for this round and `make-variants.py`, which defines seven of them from the baseline. `all-changes.md` is the method as it stood after six commits made directly on the branch (`9202090d` to `e16b5f63`), since returned to the baseline.
 - One version, `v8-opening-holes2`, improved the top of a first draft on each of the three posts tried: where both pages reached the judges in the same form, 45 judges of 48 preferred its top to the baseline's. On a full read no version is reliably ahead of the baseline. It has not been integrated. The first drafts were judged without their name, employers, titles and dates (finding 5), so this speaks to the summary and bullets and has to be repeated on whole pages.
-- One page for post A beats the page the candidate already had: seven judges to one on a full read and five to two on the top. It was joined by hand from the top of one run and the body of another. Its two parents disagree on one date, and it has not been traced to sources as one page.
+- One page for post A beats the page the candidate already had: seven judges to one on a full read and five to two on the top. It was joined by hand from the top of one run and the body of another, as a test of what decides a comparison (finding 4). It is evidence, not a page ready to send: its two parents disagree on one date, it has not been traced to sources as one page, and whether it goes anywhere is the owner's decision.
 - Four instruments exist outside the repository: sealed judges, runs that stop at the first full draft, an outside count of why each change to a page was made, and a count of the advertisement's asks a page proves.
 - A lab rule, agreed with the owner: a question put to a reader about the page is tested as a module file in the round's folder, and copied into `sales-hire/modules/` when it has held. Four edits in this round's versions are such questions written into the method's text.
 
@@ -99,7 +110,7 @@ A first draft takes about ten minutes and four to seven dollars. The baseline's 
 
 11. **Third-person slips** appeared in three of the eight finished pages: `v2-examine`, `v4-hole`, and the first page for post A, written under `all-changes` from the reduced copy of the record. A sealed judge shown a page with three such sentences against the same page without them chose the clean one 8 times of 8.
 
-12. **How far the sealed judges can be trusted.** Shown the same page twice, they chose the first one read 7 times of 8. Shown a real difference, they chose by content, with the first-read copy chosen exactly 4 times of 8. They preferred a page to a copy with its summary replaced by generic sentences 8 to 0, and a page written for the post to one written for another post 8 to 0. Differences between finished pages mostly came out 8 to 0, so they rank two pages better than they grade them. About half the answers still read as an assessor comparing two documents, and most judges guessed that one applicant was trying two versions. The pile test drew no such guess; it costs about eighty cents a judge against five to eleven.
+12. **How far the sealed judges can be trusted.** Shown the same page twice, they chose the first one read 7 times of 8. Shown a real difference, they chose by content, with the first-read copy chosen exactly 4 times of 8. They preferred a page to a copy with its summary replaced by generic sentences 8 to 0, and a page written for the post to one written for another post 8 to 0. Differences between finished pages mostly came out 8 to 0, so they rank two pages better than they grade them. About half the answers still read as an assessor comparing two documents, and most judges guessed that one applicant was trying two versions. The pile test has only been tried with four judges while the harness was built, and drew no such guess; it has no fairness test yet and costs about eighty cents a judge against five to eleven.
 
 ## Ground already covered
 
@@ -120,7 +131,7 @@ A first draft takes about ten minutes and four to seven dollars. The baseline's 
 
 ## Wishes for the rounds that follow
 
-- **The combined version before it is integrated.** The 45 first drafts are still on disk and can be judged again as whole pages once `draft-text.sh` keeps the name, employers, titles and dates; nothing about the full read should be concluded before that. The pile seat would then say which test matters more for a call. Post D stays held back for whatever text is proposed.
+- **The combined version before it is integrated.** The 45 first drafts are still on disk and can be judged again as whole pages once `draft-text.sh` keeps the name, employers, titles and dates; nothing about the full read should be concluded before that. The pile seat would then say which test matters more for a call. Post D stays held back: it is used once, on whatever text is proposed for integration.
 - **The body.** A version in which the proof for each hole is gathered where it can be checked, for instance in `selection.md`, before any sentence is written.
 - **Modules.** The four reader's questions now written into versions' text lifted into module files: what the reader takes the candidate for, looked for and did not find, and would hesitate over (in `v2-examine`, the sentence beginning "Last, from where the person filling the post stands"); the reader's own list of the employer's needs and where the page shows each (in `v4-hole`, `v7-holes2` and `v8-opening-holes2`, "Before it opens the page"); the check that the page speaks of the candidate in one person (in `v7-holes2` and `v8-opening-holes2`); and a line-by-line reader, not yet written, that says of each line whether the person hiring is more or less inclined to call.
 - **The checking phase on one fixed draft,** with and without that last module, measured by the outside count of selling and checking changes and by the judges.
