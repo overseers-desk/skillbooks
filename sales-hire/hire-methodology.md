@@ -58,6 +58,8 @@ A file's time is read from the clock when it is written (`cases/a-task-reported-
 
 ## H — Hirer
 
+Begin by writing in this phase's notes: I am a salesperson and my goal is to sell the candidate.
+
 A document is not begun until `brief.md` exists for it. A repair to a document already under way is made with `brief.md` open beside it. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
 
 Establish, and mark each line with where it came from (the advertisement, the candidate, another named source, or your own inference):
@@ -78,6 +80,8 @@ H closes with four sentences, which Examine hands to its readers:
 - **must-not-conclude**: the conclusions the candidate does not want drawn. This one is filled in I, from the candidate's own fears, since a conclusion the writer supposes produces rows about the writer's worry and none about the candidate's.
 
 ## I — Interview
+
+Begin by writing in this phase's notes: I am a salesperson and my goal is to sell the candidate.
 
 **Read the record first, whole.** Everything in the candidate's own words: recorded conversations, essays, earlier accounts of the same work, notes, and what the candidate said in correcting earlier drafts. A correction holds for later documents of that kind; a document the candidate sent afterwards to another reader does not undo it, and where the two disagree for the same kind of reader the question goes to the candidate in the register. Read them through; a keyword search finds what was already expected. A question whose answer the record holds is not put to the candidate (`cases/questions-asked-whose-answers-the-record-held.md`), and a claim that the record lacks something is made after a search for it, and names every file of the record that was searched (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
@@ -106,6 +110,8 @@ Follow the answers in that sitting: where one opens something the questions did 
 When the candidate does take part in an application, notes given toward a text are first said back in the writer's words and built on once the candidate agrees that is what was meant. A remark on a draft is different: it is acted on, where the candidate pointed. A default the candidate has accepted in the register is an answer, and is not put again.
 
 ## R — Reframe
+
+Begin by writing in this phase's notes: I am a salesperson and my goal is to sell the candidate.
 
 **Start from an empty page.** An earlier document for another post is a source of facts. Its sentences were each written to answer a different reader, and they carry that purpose with them unseen (`cases/a-cv-built-by-editing-one-written-for-another-post.md`).
 
@@ -144,9 +150,11 @@ When the candidate does take part in an application, notes given toward a text a
 
 ## E — Examine
 
+Begin by writing in this phase's notes: I am a salesperson and my goal is to sell the candidate. Write it again before each check.
+
 Three kinds of reader. The common-sense reading and the judges hold the advertisement and stand nearest the person hiring: what the page says, and what stays on it, is theirs to settle. The sentence and voice readers hear how a line reads: a row of theirs is a reason to say a line differently, and a line comes off on their word only where those who hold the advertisement prefer the page without it. A line the judges have put back stays through later sentence readings. The sources trace sees that each claim will hold when the candidate is asked about it in the conversation, or a referee is, and brings a claim back to what the candidate can stand behind. What the candidate has ruled off, and what the trace cannot support, still stay off.
 
-Examine runs cheap readers before dear ones, and the candidate last. Every check and what came of it goes into `examine.md`, a one-sentence repair included, with its evidence saved in the folder: what each reader was given and answered, each script with its output. A reader run through a skill or as an agent leaves no file of its own; whoever ran it saves both. A question put to the candidate in the register says what the answer would let the page say, and on which applications.
+Examine runs cheap readers before dear ones, and the candidate last. Every check and what came of it goes into `examine.md`, a one-sentence repair included, with its evidence saved in the folder: what each reader was given and answered, each script with its output. A reader run through a skill or as an agent leaves no file of its own; whoever ran it saves both. Mark each change to the page `sell` or `check`, with a line saying why: `sell` where it raises the chance of selling the candidate at a good price, `check` where it makes sure something is right. A question put to the candidate in the register says what the answer would let the page say, and on which applications.
 
 ### 1. Sentence readers
 
@@ -202,7 +210,7 @@ Where a skill named above is not installed, put the check's question to a fresh 
 
 ### The stop rule
 
-A page is ready to send when, in this order: the judges prefer no version on file to it, the first full draft among them; what the common-sense reader raised has been answered; the sources trace holds on the version that goes out; and everything the sentence and voice readers raised has been answered once, by saying the line differently, by leaving it where this section says to, or by putting it to the candidate. A further pass runs only over what the last one changed. Where the judges prefer an earlier version, what they name is put back into the current one; the earlier version does not replace it, since it lacks every repair made since. What they name is not put back where a ruling of the candidate's or the sources check keeps it off the page: it goes to the register, and the round is recorded as won by the earlier version on that ground. Whatever is done last, the page that is sent is the one the sources trace and the whole reading were made on. Then say plainly what remains: the rows left standing and why, the decisions in the register that most deserve the candidate's eye, and the claims resting on them. A document that has stopped is not thereby right; it is one the available readers can no longer improve.
+A page is ready to send when, in this order: the judges prefer no version on file to it, the first full draft among them; what the common-sense reader raised has been answered; the sources trace holds on the version that goes out; and everything the sentence and voice readers raised has been answered once, by saying the line differently, by leaving it where this section says to, or by putting it to the candidate. A further pass runs only over what the last one changed. Where the judges prefer an earlier version, what they name is put back into the current one; the earlier version does not replace it, since it lacks every repair made since. What they name is not put back where a ruling of the candidate's or the sources check keeps it off the page: it goes to the register, and the round is recorded as won by the earlier version on that ground. Whatever is done last, the page that is sent is the one the sources trace and the whole reading were made on. Then say plainly what remains: how many changes were marked `sell` and how many `check`, the rows left standing and why, the decisions in the register that most deserve the candidate's eye, and the claims resting on them. A document that has stopped is not thereby right; it is one the available readers can no longer improve.
 
 A task is done when the act that finishes it has been done and seen: the file built and opened, the commit pushed, the open item closed or handed to the candidate by name (`cases/a-task-reported-done-without-the-act-that-finishes-it.md`).
 
