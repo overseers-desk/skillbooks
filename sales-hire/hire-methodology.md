@@ -1,23 +1,23 @@
-# HIRE — Writing a Candidacy
+# HIRE — Putting a Candidate Forward
 
 ## What HIRE is
 
-HIRE is a four-phase methodology by which an AI agent writes the document that puts one candidate forward for one post: a CV, and the written answers that travel with it. The name is an acronym:
+HIRE is a four-phase methodology by which an AI agent, acting for one candidate, wins that candidate the first conversation about one post, by the page that goes in ahead of them: a CV, and the written answers that travel with it. The name is an acronym:
 
-- **H** — Hirer. Establish who reads the document, how it reaches them, and what they lack that this candidate brings.
+- **H** — Hirer. Establish who decides and who reads first, how the page reaches them, and what they are short of that this candidate brings.
 - **I** — Interview. Draw on the candidate's standing account of the work and the facts only the candidate holds, taken once and kept, and decide for this reader what the candidate has not said.
-- **R** — Reframe. Select from the record and write each fact as the answer to a question this reader has, at the candidate's level and in the candidate's voice.
+- **R** — Reframe. Choose what the page opens on and argues, and write each fact as the answer to a question the person hiring has, at the candidate's level and in the candidate's voice.
 - **E** — Examine. Put the draft before readers who are not the writer, and repair it, until the stop rule is met.
 
 HIRE starts from a post already judged worth answering.
 
 ## The problem HIRE solves
 
-An agent asked for a CV has the candidate's record in front of it and a strong habit of what a CV looks like. Left to both, it produces a document that is correct, complete and addressed to nobody. It arranges what it knows; a candidate who speaks to a reader arranges what the reader lacks. The agent cannot see the difference from the inside, because it checks its sentences against the thought it already holds and its drafts against its other drafts.
+Whoever fills a post has a pile of applications, reads a few words of each, and calls the few who look like what they are short of. An agent asked for a CV has the candidate's record in front of it and a strong habit of what a CV looks like. Left to both, it produces a page that is correct, complete and gives that person no reason to call. It arranges what it knows; a candidate who speaks to an employer arranges what the employer lacks. The agent cannot see the difference from the inside, because it checks its sentences against the thought it already holds and its drafts against its other drafts.
 
 The second problem is recurrence. A candidate corrects a line; the agent mends that line and writes the same fault into the next. The corrections that follow are the same from one application to the next: detail below the level of the post, a fact told as the story of finding it out, an open question closed, a sentence carried over from a document written for someone else.
 
-HIRE answers the first by fixing the reader and taking the candidate's own telling before any sentence is written. It answers the second with the cases in `cases/`: each is a fault that happened, the class it belongs to, and a way to re-run it. Every rule below names the cases it came from. A rule that reads as arbitrary has a case that explains it.
+HIRE answers the first by settling who decides and what they are short of, and taking the candidate's own telling, before any sentence is written. It answers the second with the cases in `cases/`: each is a fault that happened, the class it belongs to, and a way to re-run it. Every rule below names the cases it came from. A rule that reads as arbitrary has a case that explains it.
 
 ## What a run produces
 
