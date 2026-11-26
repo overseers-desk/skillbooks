@@ -28,4 +28,6 @@ A question put to a reader about the page is tested here as a module file, and c
 
 ## What stays outside this repository
 
-The posts a real candidate applied to, the CVs written for them and the judges' answers name people and employers. They are kept outside this repository. A round's worklog names posts by role and says where its key is.
+What a round learns about the method is kept here: the roadmap, the worklog, the versions, and results with posts named by role. What a round works on is kept outside: the posts a real candidate applied to, the CVs written for them, the writers' folders, the judges' notes and answers, and any script that names a post. These name people and employers, and this repository is public.
+
+The outside material sits in one folder per series, with a key file that maps each role name used here to the real post and lists the tools. A round's worklog says where that folder is. The folder is not under this repository's version control, so keeping a second copy of it is for whoever runs the round to arrange.
