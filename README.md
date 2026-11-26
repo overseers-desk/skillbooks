@@ -235,7 +235,7 @@ Each methodology covers one direction of information flow as a four-phase pipeli
 
 **Model allocation:** Reframe and the reading of Examine's rows are Opus-tier or above. The readers Examine calls choose their own models.
 
-**Procedure documents:** `career-hire/hire-methodology.md`, with the faults its rules came from in `career-hire/cases/`.
+**Procedure documents:** `sales-hire/hire-methodology.md`, with the faults its rules came from in `sales-hire/cases/`.
 
 ### How the methodologies relate
 
