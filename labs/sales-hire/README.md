@@ -10,6 +10,8 @@ A change comes here when it has to stand beside other versions at the same time.
 
 ## Layout
 
+`ROADMAP.md` lists the lessons from selling that the rounds test, and what each has shown so far.
+
 Each round is one folder, `round-N/`. Its worklog calls it sales-improvement-N.
 
 - `variants/` holds one file per version, each the whole text of the method.

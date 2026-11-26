@@ -117,22 +117,9 @@ A first draft takes about ten minutes and four to seven dollars. The baseline's 
 - The salesperson sentence with the two marks moved the reasons writers gave from about one selling reason in twenty to one in three, on one run. Whether reasons of that kind change the page is not known: that page still lost its comparison.
 - The checking phase may add little to a page. The older pages were ahead before their checks ran, the writers' own judges often preferred a first draft to its repaired version, and a 71-minute run tied a 28-minute one. Every reader in that phase except the judges reports only what is wrong, which may be why nearly every change made there is a correction.
 
-## Directions held at the start, and where each stands
+## Which parts of the roadmap this round tested
 
-These came from reading the baseline as someone with a candidate to place, before any test. Most were not reached.
-
-- **Each step sells only the next step.** The page's job is the first conversation, and the first person to read it can turn a candidate down and cannot hire one. The baseline defines its product as a document and stops when its readers find nothing more. Partly tried: `v1-opening` restates the aim; a rule for when a page is ready to send is in `v2-examine`. Neither showed an effect alone.
-- **What the person hiring takes the candidate for is settled in the first lines.** Tested, and the round's one firm result (results 3, 4 and 6).
-- **Order follows the buyer's interest.** Tested for the top only. Order inside each post and across the body is untouched.
-- **A concrete proof for each thing the buyer needs.** Instructed in `v7-holes2` and `v8-opening-holes2`, with no effect shown (result 7).
-- **The buyer's objections, not the candidate's fears.** The baseline fills its list of conclusions to avoid from what the candidate fears. A seller lists what this buyer will hold against the candidate and answers it on the page or leaves it for the conversation. Tried only as one question to the reader who holds the advertisement, in `v2-examine`. Untested as a step of its own.
-- **Know what there is to sell.** The baseline's interview asks where each fact came from. It does not ask for the candidate's strongest results, or why earlier employers and clients chose them. Untested.
-- **Standing is a selling point for any buyer.** Who backed the candidate, whom they worked for, the size of what they ran. Earlier batches cut such facts where no line of the advertisement asked for them, and judges asked for them back. Untested as an instruction.
-- **Readers who answer as the buyer.** A reader of the page says whether they would call, what they looked for and did not find, and what would stop them, where the baseline's readers list faults. In `v2-examine` and `v4-hole` for one reader; the line-by-line reader is not written. The checking phase was not studied in this round.
-- **Proof is for closing, and checking protects a won deal.** The sources trace matters because a claim will be tested in the conversation and by a referee. Not tried as wording. The rewording of the whole text was the only attempt at voice, and it failed for other reasons.
-- **The buyer's answer is the only verdict.** Nothing in the baseline follows a page once it is sent: no record of a reply, a call or silence, and so no way for a search of a hundred posts to learn which pitch works. This belongs to the second stage, the application, which is not yet written.
-- **Some posts no page can win.** A post that excludes the candidate, or whose core work the record lacks, is a question of whether to apply. The baseline starts from a post already judged worth answering, and this round kept such posts out of its tests.
-- **The route outweighs the wording.** A page that arrives through someone inside does better than one that arrives cold. Outside this method's reach as it stands, and also a matter for the second stage.
+`../ROADMAP.md` lists the lessons from selling that the series draws on. This round chose nine of them: A1 (the page wins the next step), A3 (the buyer's need before the pitch), B1 and C2 (the buyer's order, at the top), C1 (the kind a buyer files the candidate under), D1 (a concrete proof per claim), F1 in part (a reader who answers as the buyer), F2 (the seller's stance kept in view) and H1 (the whole text in a seller's voice). A4 entered only as one question to a reader. The roadmap carries what each showed.
 
 ## What the next rounds could test
 
