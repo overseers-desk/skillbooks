@@ -8,6 +8,9 @@ It writes one file per variant into labs/sales-hire/round-1/variants/. There is 
 all-changes.md is the method as it stood after the six commits 9202090d to e16b5f63 on branch hire-shift. h1-edit.md and
 h1-rewrite.md are the whole text reworded, the first by an editor and the second by a rewrite; neither is a set of replacements.
 v15-holes-plain is v7-holes2 with its hole step said without steps, numbering or order.
+v16-hole-thought has what the employer needs done as one of the things the brief establishes and gives no rule for the
+page on its account; it keeps the reader's own list of the employer's needs and the check for one person, and each of four
+things the text said in several places is said in one.
 v9-leads, v10-leads-stays-out, v11-several, v12-body, v13-first-post and v14-outside-trace are replacements on v7-holes2, the text put into the method at 323012ca. A
 variant that names a module expects the files of labs/sales-hire/round-1/modules/ beside the method's own modules.
 """
@@ -100,7 +103,19 @@ def holes_plain(s):
     s=rep(s,"Before it opens the page, it lists from the advertisement alone what this employer most needs done; afterwards it says, for each, where the page shows the candidate doing it, or that it does not.","It also says, from the advertisement alone and uninfluenced by the page, what this employer most needs done, and where the page shows the candidate doing each or that it does not.")
     s=rep(s,"Then say plainly what remains: how many changes served each hole and how many were `check`, the rows left standing and why,","Then say plainly what remains: the rows left standing and why,")
     return s
-variants={'v1-opening':opening,'v2-examine':examine,'v3-say':say,'v4-hole':hole,'v6-say-hole':lambda s: hole(say(s)),'v7-holes2':holes2,'v8-opening-holes2':lambda s: holes2(opening(s)),'v9-leads':lambda s: leads(holes2(s)),'v10-leads-stays-out':lambda s: stays_out(holes2(s)),'v11-several':lambda s: several(holes2(s)),'v12-body':lambda s: body(holes2(s)),'v13-first-post':lambda s: first_post(holes2(s)),'v14-outside-trace':lambda s: outside_trace(holes2(s)),'v15-holes-plain':holes_plain}
+def hole_thought(s):
+    s=rep(s,"what it now repeats, what it now contradicts","what it now repeats, what it now contradicts, and whether the page still speaks of the candidate in one person")
+    s=rep(s,"This is the check that finds grain and inherited sentences, and it costs one call.","This is the check that finds grain and inherited sentences, and it costs one call. Before it opens the page, it lists from the advertisement alone what this employer most needs done; afterwards it says, for each, where the page shows the candidate doing it, or that it does not.")
+    s=rep(s,"\n- **The route.** Who reads first","\n- **What the employer needs done.** A buyer of a drill wants a hole in the wall, and an employer filling a post wants things done that nobody there is doing: ask what goes wrong for this employer while the post stays empty. Say what those things are and what shape each has. Some are stated in the advertisement or in what the employer has published; others show only between the lines, as when an advertisement asking for someone who speaks at conferences comes from an employer that wants to be seen leading its field.\n- **The route.** Who reads first")
+    s=rep(s,"| `brief.md` | H and I | The post, the route,","| `brief.md` | H and I | The post, what the employer needs done, the route,")
+    s=rep(s,"what neither gives is an assumption, scored and registered.","what neither gives is an inference.")
+    s=rep(s," A judge's brief and a reader line carry what the advertisement and the candidate said; an assumption put there comes back as the judge's finding (`cases/judges-briefed-with-the-writers-own-inference.md`)."," A reader line carries what the advertisement and the candidate said; an assumption put there comes back as the reader's finding.")
+    s=rep(s,"What the writer has worked out is entered as an assumption, in the register. That includes a statement of what the candidate will do, such as move or work on site, carried to a kind of post the candidate did not say it of","What the writer has worked out is an assumption and not an entry, and so is a statement of what the candidate will do, such as move or work on site, carried to a kind of post the candidate did not say it of")
+    s=rep(s," A thing the candidate leaves open is left open; that choice is content.","")
+    s=rep(s,"- Keep open what the candidate left open. ","- Keep open what the candidate left open; that choice is content. ")
+    s=rep(s,"A document the candidate sent supplies facts the candidate stands behind, and shows how they were told to that reader; it decides neither what another reader is told nor in what words. So a fact carried from one is weighed for this reader like any other.","A fact carried from a document the candidate sent is weighed for this reader like any other.")
+    return s
+variants={'v1-opening':opening,'v2-examine':examine,'v3-say':say,'v4-hole':hole,'v6-say-hole':lambda s: hole(say(s)),'v7-holes2':holes2,'v8-opening-holes2':lambda s: holes2(opening(s)),'v9-leads':lambda s: leads(holes2(s)),'v10-leads-stays-out':lambda s: stays_out(holes2(s)),'v11-several':lambda s: several(holes2(s)),'v12-body':lambda s: body(holes2(s)),'v13-first-post':lambda s: first_post(holes2(s)),'v14-outside-trace':lambda s: outside_trace(holes2(s)),'v15-holes-plain':holes_plain,'v16-hole-thought':hole_thought}
 for name,fn in variants.items():
     text=fn(base)
     open(os.path.join(HERE,'variants',name+'.md'),'w').write(text)
