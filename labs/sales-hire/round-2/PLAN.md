@@ -8,7 +8,7 @@ Round 1 left some versions neither kept nor dropped. Each was written and run th
 
 - **`v9-leads` and `v10-leads-stays-out`, what the first lines of the page answer:** carried over as one dimension. It has a new ground from the real applications: of eight pages written again, the two that fell were the two whose earlier page opened in the post's own frame and whose new page did not. What would settle it is sixteen examined pages a text, or a cheaper design that compares openings over one body.
 - **`v12-body`:** not carried over as written. Its pages ranked a third of a place better, inside the spread between pages of one text, and none of the four did what the version asks, so its wording does not survive the checks. The row below on what Examine may do to a page is where that belongs.
-- **`v11-several`, several pages and a choice among them:** settled inside round 1 by one more run. If kept it is released with its price, and is not a dimension of round 2.
+- **`v11-several`, several pages and a choice among them:** kept. In each of four sets of four examined pages an agent following its text chose the page the lab's pair judges preferred, and the chosen pages rank 0.62 better than their sets' means (a one-sided test puts that above zero at about 4 per cent; four sets cannot show half a rank). It is released with its price, that each application is written several times, and is not a dimension of round 2.
 
 `v13-first-post` and `v14-outside-trace` were dropped and are not carried over.
 

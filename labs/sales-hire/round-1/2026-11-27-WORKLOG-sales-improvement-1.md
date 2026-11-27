@@ -9,7 +9,7 @@ Round 1 of the lab for HIRE, 27 November 2026. The question of the series: does 
 | What the method tells the writer to do | Yes, 5 changes | One worked, the hole step: it leads in pairs and shows no lead among other candidates | Small, one job, in pairs only |
 | How the method's text is worded | Yes, 3 changes | None worked | None |
 | First draft or examined CV | Yes | The existing checks improve a CV | None new |
-| Choosing among drafts, joining parts | Once by hand; as `v11-several`, on four sets of four examined pages, with the lab's pair judges choosing | The chosen page ranks 0.62 better than its set's mean; left open, leaning kept, until an agent following the version's text makes the choice | 0.62 of a rank, as the lab's judges choose; not in the method |
+| Choosing among drafts, joining parts | Once by hand; as `v11-several`, on four sets of four examined pages, with the lab's pair judges choosing | The chosen page ranks 0.62 better than its set's mean, and an agent following the version's text chose the same page in all four sets; kept, at the price of writing each application several times | 0.62 of a rank; not in the method |
 | Keeping to the candidate's record | Yes, as a check; as `v14-outside-trace`, on four examined pages | The method's own trace misses 1 to 6 claims a page. A trace by a fresh agent, on the one page counted, left 1 claim past its source and cut 11 supported claims, and its pages rank a place behind; dropped in this form | None |
 | How a page is framed and opened, judged among other candidates | By placing the round's pages, and by hand; as four versions through writers: `v9-leads` and `v10-leads-stays-out` on first drafts, `v12-body` and `v13-first-post` on examined pages | No improvement. `v13-first-post` dropped; `v12-body` a third of a rank ahead, inside the spread, and left open; `v9-leads` and `v10-leads-stays-out` left open | None |
 | Which job the CV is for | 4 jobs; the released text on 10 real applications | The hole step shown on examined CVs for 1. Written again under the released text, two of eight real applications' pages stand higher among 31, both from 6th or lower | |
@@ -18,7 +18,7 @@ Round 1 of the lab for HIRE, 27 November 2026. The question of the series: does 
 | The document: CV or written answers | No, CV only | | |
 | How CVs are judged | Pairs, and a ranking among other candidates | Two drafts of one text differ as much as two versions; the two ways of judging agree on two drafts of one text and not on two versions | |
 
-The round cost 2,352 dollars at API prices: 1,847 dollars for the runs in the table of 'What the round cost, and what it need not have', 31 dollars of it in fifteen runs that an account's weekly limit stopped before they finished, and 505 dollars for the four sessions that directed the round and the 122 subagents they launched, the fourth session counted up to 28 November while it still ran. Any other session is not priced.
+The round cost about 2,418 dollars at API prices: about 1,913 dollars for the runs in the table of 'What the round cost, and what it need not have', 31 dollars of it in fifteen runs that an account's weekly limit stopped before they finished, and 505 dollars for the four sessions that directed the round and the 122 subagents they launched, the fourth session counted up to 28 November while it still ran. Any other session is not priced.
 
 ## What the work is for
 
@@ -64,7 +64,7 @@ The key to the real posts, and every page, room and judge's answer, is outside t
 - **The method writes a page the judges prefer to the one the candidate had.** For post A all three examined pages under `v7-holes2` won the full read against the page he already had, 7 to 1, 8 to 0 and 7 to 1, and two of three under the baseline did. The pair is not clean, and the claims above are in those pages.
 - **Set among other candidates' pages, how a page is framed and opened shows no improvement,** and the hole step's pages show no lead there. Pages written under one text differ there by about a rank of ten (result 15).
 - **No version written on the released text has bettered it among other candidates.** Six of the changes made by hand were written as versions on `v7-holes2`. Three were taken through writers to four examined pages each for post A: `v13-first-post` and `v14-outside-trace` are dropped, and `v12-body` is left open, a third of a rank ahead and inside the spread between pages of one text (result 17). The two versions of the top have no examined page and are left open (result 19).
-- **Choosing among several pages is the one lever that has moved rank.** In four sets of four examined pages, the page that won its set's pairs ranked 0.62 better than its set's mean. The choice made by an agent following `v11-several` is the one run left (result 19).
+- **Choosing among several pages is the one lever that has moved rank.** In four sets of four examined pages, the page that won its set's pairs ranked 0.62 better than its set's mean. An agent following `v11-several` chose the same page in all four sets, so the version is kept (result 19).
 - **On ten real applications under the released text,** two new pages stand 3rd and 7th of 31 in the pool. Of eight existing pages written again, two rose, from 13th to 6th and from 6th to 4th, and none of the three that had stood first or second rose (result 18).
 - **Nothing else stands clear of the draw.** The six opening sentences alone, the salesperson sentence, and both rewordings of the whole text are within what two baseline drafts give. The nearest is `h1-edit`, a rewording that lost no full-read comparison of nine (about 1 in 17); with sixteen such records in the round, a version in a seat, one that far out is expected.
 - **No wording changed what a writer takes its job to be.** Nine writers were asked afterwards, three each under the baseline and the two rewordings. Eight said the job was carrying the method through, and the answers do not differ by text (result 1).
@@ -253,12 +253,29 @@ The key to the real posts, and every page, room and judge's answer, is outside t
     |---|---|---|---|
     | `v9-leads` | Left open | No page written through the checks. Its first drafts open as asked on 4 of 4, and the released text's on 5 of 6 for the same posts. It also acts in the checks, which a first draft does not reach | Sixteen examined pages a text |
     | `v10-leads-stays-out` | Left open | As `v9-leads`, 4 first drafts of 4; it did not lower the lines the reader had no use for | Sixteen examined pages a text |
-    | `v11-several` | Left open, leaning kept | Over four sets of four examined pages, the page the lab's pair judges preferred ranks better than its set's mean by 0.62. The choice by an agent following the version's text, which the rule also asks for, was not made | That choice, among the sixteen pages that exist; no new page |
+    | `v11-several` | Kept | Over four sets of four examined pages, the page the lab's pair judges preferred ranks better than its set's mean by 0.62, a one-sided test putting that above zero at about 4 per cent; four sets cannot show it to be above half a rank. One agent a set, given the set under names that say nothing, the advertisement and the version's text, chose by the version's step for several attempts the page the pair judges preferred, in all four sets. Each choice was one session of 2 to 38 minutes and 0.72 to 1.73 dollars as reported, 5.00 in all. Its price is that each application is written several times | |
+    | `v15-holes-plain` | Dropped as a way to raise rank | On the two real applications of result 18 whose page written again stood lower than the page it replaced, the page under it stood no better than the page under the released text, and the old page stands first on both (result 20). The plain wording is shorter and did no worse, which is a ground for the owner to prefer it | |
     | `v12-body` | Left open, and with it each of L1, L3 and L4 | A third of a rank ahead, inside the spread between pages of one text; ahead on the full read and behind on the opening; none of four pages does as asked | A wording that survives the checks, and sixteen pages a text |
     | `v13-first-post` | Dropped | Four pages of four do as asked, and they rank 0.8 behind | |
     | `v14-outside-trace` | Dropped in this form | About a place behind, and behind in pairs in both seats; a page costs two and a half times as much; on the one page counted it cut supported claims as well as leaving one past its source | |
 
-    No second stage was run, since no version led the released text by half a rank. So round 1 keeps one change, the hole step, which is in the method. No change of wording written on it has bettered it among other candidates, and choosing among several pages is the one lever that has moved rank; the run that settles it needs no new page.
+    No second stage was run, since no version led the released text by half a rank. So round 1 keeps two changes: the hole step, which is in the method, and `v11-several`, choosing among several pages, which is kept with its price. No change of wording written on the hole step has bettered it among other candidates, and choosing among several pages is the one lever that has moved rank.
+
+20. **The plain wording of the hole step on two real applications.** `v15-holes-plain` is `v7-holes2` with its hole step said without steps, numbering or order, defined in `make-variants.py` and 478 characters shorter than the released text. It keeps the two sentences on the drill and the hole, and says that the brief holds the holes, that a reader who stops after the top of the page has seen that the candidate fills them, that a hole is filled by the most concrete thing the record holds, and that a change to the page either shows the candidate filling a hole more plainly or puts something right.
+    - *The test.* It was tried on the two real applications of result 18 whose page written again stood lower than the page it replaced, posts H and I. One writer for each wrote the CV again under it, in a clean copy of the candidate's record as it stood when result 18's pages were written, with the same instruction. The second writer was cut off by the account's weekly limit after its first draft, and a fresh writer carried it on. Each new page was ranked by sixteen judges on the same piles as before.
+    - *Mean rank, lower better.*
+
+      | Post | Old page | Page under the released text | Page under `v15-holes-plain` |
+      |---|---|---|---|
+      | H | 3.00 | 3.31 | 3.44 |
+      | I | 1.69 | 2.19 | 2.31 |
+
+      On post I the old page was called first by 8 of 16 judges and each of the two later pages by 1.
+    - *What it shows.* On neither post did the plain version better the released text, and the old page stands first on both; all the gaps on post H are inside the error of a placement.
+    - *What the pages show.* On post H the new page returned to the old page's shape, the work in three settings, and still opens on a general label and not on the post's own term. On post I the first draft opened on the advertisement's own asks as three labelled points, and the method's checks reworded those labels into general ones before the page was ranked; the first sentence was unchanged.
+    - *Limits.* One page a post; pages of one text differ by about a rank.
+    - *Cost as reported.* 34.72 dollars for the two writers and the carry-on, about 20 more in four further writers stopped after twelve minutes, and 6.13 for the judges.
+    - *Settled as.* Dropped as a way to raise rank on this evidence. The plain wording is shorter and did no worse, which is a ground for the owner to prefer it, and that choice is his.
 
 ## Approaches ruled out
 
@@ -311,6 +328,10 @@ The owner asked of the round: "do we really have to use so many tokens?" It did 
 | Judges for the sixteen examined pages of result 17, in pairs and among other candidates | 1,136 rooms | 48 |
 | Judges for the real applications among other candidates | 288 rooms | 46 |
 | Readers of the sixteen examined pages and their writers' records, run as sessions | 32 | 14 |
+| Choosing among each set of four examined pages, one agent a set (result 19) | 4 sessions | 5.00 |
+| Writers for the two real applications under `v15-holes-plain`, with the carry-on of the second (result 20) | 3 | 34.72 |
+| Four further writers for those applications, stopped after twelve minutes | 4 | about 20 |
+| Judges for those two pages among other candidates | 32 rooms | 6.13 |
 | The four sessions that directed the round | 4, the last counted up to 28 November while it still ran | 343 |
 | Subagents of those four sessions | 122 | 162 |
 
@@ -327,7 +348,7 @@ Three limits of this round's evidence bear on what follows. The hole step's blin
 - **A trace the writer does not run on its own page.** Every examined page passed the method's own trace with unsupported claims on it. `v14-outside-trace`, a trace by a fresh agent, is dropped in that form (result 17).
 - **The voice of the whole text, tested cleanly.** `h1-edit` with its seven rule differences repaired, against the baseline in one batch.
 - **What the writer takes its job to be.** A version that says what the job is and what tells the writer it is done in terms of the employer's reply. The question of result 1 has first to be shown to move with something.
-- **Choosing among several pages.** The judges put the drafts of one text in one order every time, so choosing the best of several, or joining the best opening to the best body, may gain more than a wording does. It multiplies the cost of each application, and the pile's spread between pages of one text is its price and its gain in one number. Written as `v11-several`, it is one run short of settled (result 19).
+- **Choosing among several pages.** The judges put the drafts of one text in one order every time, so choosing the best of several, or joining the best opening to the best body, may gain more than a wording does. It multiplies the cost of each application, and the pile's spread between pages of one text is its price and its gain in one number. Written as `v11-several`, it is kept, at the price of writing each application several times (result 19).
 - **The check for one person.** As worded it lets a page wholly in the third person pass.
 - **Modules.** The three reader's questions now written into versions' text lifted into module files, and a fourth written: what the reader takes the candidate for, looked for and did not find, and would hesitate over (in `v2-examine`, the sentence beginning "Last, from where the person filling the post stands"); the reader's own list of the employer's needs and where the page shows each (in `v4-hole`, `v7-holes2` and `v8-opening-holes2`, "Before it opens the page"); the check that the page speaks of the candidate in one person (in `v7-holes2` and `v8-opening-holes2`); and a line-by-line reader, not yet written, that says of each line whether the person hiring is more or less inclined to call.
 - **Conditions as versions.** The writers' reasoning effort, and a writer without the office's instructions, each against the same text.
