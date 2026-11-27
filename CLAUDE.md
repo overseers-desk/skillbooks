@@ -10,7 +10,7 @@ event list, the event cache) lives in the user's own repository and is handed to
 as a data root at run time. Nothing naming the user's cities, interests or decisions
 belongs under `almanac/`.
 
-Repository-wide invariants are in `INVARIANTS.md` beside this file, imported below. Each methodology carries its own hard rules in its own `INVARIANTS.md`, imported by that directory's `CLAUDE.md` so they arrive in context when you work there. The procedures and validators cite them by number.
+Repository-wide invariants are in `INVARIANTS.md` beside this file, imported below. Each methodology's own `INVARIANTS.md` is imported by that directory's `CLAUDE.md`, so it arrives in context when you work there.
 
 @INVARIANTS.md
 
