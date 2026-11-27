@@ -2,6 +2,24 @@
 
 Round 1 of the lab for HIRE, 27 November 2026. The question of the series: does a version of the method exist under which a writer sells the candidate, and does the page it writes win more often with the person filling the post. The series is planned to run to sales-improvement-9.
 
+## The dimensions the round explored, and how far each worked
+
+| Dimension | Tested? | Outcome | Improvement |
+|---|---|---|---|
+| What the method tells the writer to do | Yes, 5 changes | One worked, the hole step: it leads in pairs and shows no lead among other candidates | Small, one job, in pairs only |
+| How the method's text is worded | Yes, 3 changes | None worked | None |
+| First draft or finished CV | Yes | The existing checks improve a CV | None new |
+| Choosing among drafts, joining parts | Once, by hand | Promising | Not in the method |
+| Keeping to the candidate's record | Yes, as a check | The method's own trace misses 1 to 6 claims a page | Not in the method |
+| How a page is framed and opened, judged among other candidates | By placing the round's pages, and by hand | No improvement | None |
+| Which job the CV is for | 4 jobs | The hole step shown on finished CVs for 1 | |
+| The writer: model, effort, instructions | No | | |
+| The candidate | No, one only | | |
+| The document: CV or written answers | No, CV only | | |
+| How CVs are judged | Pairs, and a ranking among other candidates | Two drafts of one text differ as much as two versions; the two ways of judging agree on two drafts of one text and not on two versions | |
+
+The round cost 1,143 dollars as its runs report it, and besides that the sessions that ran it, which are not priced (see 'What the round cost, and what it need not have').
+
 ## What the work is for
 
 The owner holds that a job application is a sale: "The nature of it is still sales." Over three batches of CVs he gave input on "framing, order, and relevance", and "the AI constantly gave back one simple-minded answer: Is this verifiable?" His conclusion: "there is a soul needed. The soul is a salesman's soul." He also holds that announcing this to an agent does nothing, and that "the choice of words and the framing that it was written as if it is from a salesperson do more work".
@@ -34,6 +52,8 @@ The key to the real posts, and every page, room and judge's answer, is outside t
 - **A hole**: something the employer needs done that nobody there is doing, read from the advertisement. The word is the owner's, from the saying that a buyer of a drill wants a hole in the wall.
 - **The salesperson sentence**: "I am a salesperson and my goal is to sell the candidate", written by the writer at the start of each phase. **The two marks**: `sell` and `check`, put by the writer on each change to a page with its reason.
 - **A third-person slip**: a sentence in which the page calls the candidate "he" or "his" where the rest speaks without a pronoun or as "I".
+- **A pile, a placement, a rank.** A pile is ten CVs for one post, the candidate's page and nine other people's. A placement sets one page of the candidate's at the fifth place in a pile, before eight judges who give the order in which they would call the ten. The page's rank is its place in that order, 1 to 10, averaged over the judges; a lower rank is better.
+- **A change by hand, and its base.** One change made to a finished page by an editor and not by a writer following the method, as a probe of what such a change is worth. The two bases are finished pages for post A as corrected to the record: `a2`, the second under the text at `e51412d3`, and `p1`, the first under `v7-holes2`. In the data the changes are named L0, the page reworded; LM, its proof made general; L1, need against proof; L2, the first job listed; L3, standing; L4, the doubt answered; L5, what other applicants cannot offer; L6, the trade of an unrelated post kept out; L7, the opening on what was led; L8, the summary held to the post; L9, those three together, and L9v the same with one figure the candidate rules is always given.
 
 ## Result in brief
 
@@ -42,12 +62,13 @@ The key to the real posts, and every page, room and judge's answer, is outside t
 - **The full-read lead is not made of claims past the record.** Traced by outside readers, the three finished pages under `v7-holes2` carry 5, 6 and 5 claims the record does not support as stated, and the baseline's carry 1, 2 and 6, a gap the draw gives one time in five. With all six pages corrected to the record, the version still led the full read, 7 pairings won and none lost. Which of those claims are false on their face is the candidate's to say.
 - **`v7-holes2` is in the method.** The rule the owner approved for that is met: its finished pages are not behind the baseline's, and on the held-back post it is ahead in one seat and behind in neither. One fault goes in with it: its check for one person lets a page wholly in the third person pass.
 - **The method writes a page the judges prefer to the one the candidate had.** For post A all three finished pages under `v7-holes2` won the full read against the page he already had, 7 to 1, 8 to 0 and 7 to 1, and two of three under the baseline did. The pair is not clean, and the claims above are in those pages.
+- **Set among other candidates' pages, how a page is framed and opened shows no improvement,** and the hole step's pages show no lead there. Pages written under one text differ there by about a rank of ten (result 15).
 - **Nothing else stands clear of the draw.** The six opening sentences alone, the salesperson sentence, and both rewordings of the whole text are within what two baseline drafts give. The nearest is `h1-edit`, a rewording that lost no full-read comparison of nine (about 1 in 17); with sixteen such records in the round, a version in a seat, one that far out is expected.
 - **No wording changed what a writer takes its job to be.** Nine writers were asked afterwards, three each under the baseline and the two rewordings. Eight said the job was carrying the method through, and the answers do not differ by text (result 1).
 - **The method's checks do work that a first draft does not show.** A finished page beat its own first draft on a full read in four runs of six and lost in none. A result on first drafts is not a result on the page that is sent.
 - **One page for post A was joined by hand from two** and beat both. Corrected to the record it still beats the page the candidate had on a full read, 7 to 1, and is level on the opening (result 11). Whether it goes anywhere is the owner's decision.
-- **The round cost more than it had to** (the last section but one). The running of the round itself is very likely its largest cost, and about a quarter of what the writers and judges cost bought the findings above.
-- **Instruments** exist outside the repository: the judges, runs that stop at the first full draft or go on to a finished page, the conversion of a draft to a whole page, the calculation of what the draw alone gives, a trace of a page to the record by an outside reader, an outside count of why each change to a page was made, a question put to a writer in its own session afterwards, and a count of the advertisement's asks a page proves.
+- **The round cost more than it had to** (see 'What the round cost, and what it need not have'). The running of the round itself is very likely its largest cost, and about a quarter of what the writers and judges cost bought the findings above.
+- **Instruments** exist outside the repository: the judges, runs that stop at the first full draft or go on to a finished page, the conversion of a draft to a whole page, the calculation of what the draw alone gives, a trace of a page to the record by an outside reader, an outside count of why each change to a page was made, a question put to a writer in its own session afterwards, a count of the advertisement's asks a page proves, a ranking of a page among nine other people's CVs, and judges run with no follow-up question.
 - A lab rule, agreed with the owner: a question put to a reader about the page is tested as a module file in the round's folder, and copied into `sales-hire/modules/` when it has held. Three edits in this round's versions are such questions written into the method's text.
 
 ## Design
@@ -159,14 +180,13 @@ The key to the real posts, and every page, room and judge's answer, is outside t
     - *The method's path.* In the first batch the folder a writer was pointed at carried the version's name. Later batches use folder names that say nothing.
     - *A writer's own judges.* The method has a writer run judges of its own. Each writer chose how, and one finished run put a round of them through a judging script it found in the record, which signs in with the sealed rooms' token.
 
-15. **Among other candidates' pages.** How a page is framed and opened, judged among other candidates' pages, shows no improvement. A test of 25 November, kept with the candidate's applications, had set the candidate's page for posts B and D among nine rivals under three ways of opening it, and asked for a shortlist: no opening won, and the order of the pile decided more than the opening did. The placements here repeat that test for posts A and D with the judges giving the whole order, since three calls from ten went to the same rivals in every room. A rank runs from 1 to 10 and lower is better.
+15. **Among other candidates' pages.** How a page is framed and opened, judged among other candidates' pages, shows no improvement. A test of 25 November, kept with the candidate's applications, had set the candidate's page for posts B and D among nine rivals under three ways of opening it, and asked for a shortlist: no opening won, and the order of the pile decided more than the opening did. The placements here repeat that test for posts A and D with the judges giving the whole order, since three calls from ten went to the same rivals in every room.
     - *The hole step shows no lead.* Post A finished pages: 4.50, 5.88 and 3.88 under the text at `e51412d3`, 6.12, 4.25 and 5.88 under `v7-holes2`. Post D first drafts: 4.62, 6.75, 6.75 against 6.38, 6.62, 6.62.
     - *A page is placed by what it shows of the record.* A copy with its figures and mechanisms made general falls a rank and a half; a copy with a generic summary does not move; corrected to the record, six pages move a fifth of a rank for the worse, within the error; the method's checks are worth about half a rank.
     - *Pages of one text differ by about a rank*, a standard deviation of 1.1 over twelve pages where the error of one placement is about 0.3.
     - *Pairs and the pile agree within a text.* Of the decided comparisons above between two pages of one text, the winner ranks better in the pile in 14 and worse in 1; between pages of different texts, better in 11, worse in 8, within half a rank in 29.
     - *The candidate's page in the pool.* Set beside each of the thirty eligible CVs, the page the candidate had stands 6th of 31 for post A and 9th of 31 for post D. Judges hold against it the scale and setting of what was led, on which four questions in the candidate file are open.
-    - *Changes made by hand, as probes.* The body as need against proof, the first job listed, standing, and the doubt answered each win the full read against their base on both pages, 7 or 8 judges of 8, and move the page among rivals by four tenths of a rank at most. Opening the page on the largest organisation led betters both pages by six tenths of a rank, against the earlier test's result of none for the same opening. None was written into the method or run through a writer, so by the roadmap's standard none is an improvement achieved. In the data the changes are named L0, the page reworded; LM, its proof made general; L1, need against proof; L2, the first job listed; L3, standing; L4, the doubt answered; L5, what other applicants cannot offer; L6, the trade of an unrelated post kept out; L7, the opening on what was led; L8, the summary held to the post; L9, those three together, and L9v the same with one figure the candidate rules is always given. The bases a2 and p1 are the second finished page under the text at `e51412d3` and the first under `v7-holes2`, both as corrected.
-    - It took 872 judges' rooms and 106 dollars as the rooms report it.
+    - *Changes made by hand, as probes.* The body as need against proof, the first job listed, standing, and the doubt answered each win the full read against their base on both pages, 7 or 8 judges of 8, and move the page among rivals by four tenths of a rank at most. Opening the page on the largest organisation led betters both pages by six tenths of a rank, against the earlier test's result of none for the same opening. None was written into the method or run through a writer, so by the roadmap's standard none is an improvement achieved.
 
 ## Approaches ruled out
 
@@ -179,6 +199,9 @@ The key to the real posts, and every page, room and judge's answer, is outside t
 - **Giving writers a reduced copy of the record.** It changed what a writer opened on. It was not why proofs were missing: the lines the judges wanted were in the reduced copy too.
 - **Three drafts a text across many texts, before the draw is known.** Eighty first drafts were written before baseline drafts were set against each other. That control took 288 judges and showed that three drafts against three see only a large effect.
 - **A follow-up question to every judge.** Each judge was asked afterwards whether anything in its room pointed away from the recruiter. The question cost more than the answer it followed, and the room's own record already showed what it asks. The follow-up turn is also not clean: in 19 of 583 rooms looked at, it arrived with context added by one of the office's hooks, which the turn of the choice never had. Every choice was made before that turn, so the counts stand, and nothing in this log is read from a follow-up.
+- **Three calls from ten as the measure of a page among other candidates.** The same rivals take them in every room, so a page that is fourth and one that is tenth score alike. The judge gives the whole order.
+- **Rivals drawn by level and function.** The page then sits in a gap between rivals and cannot move, and the level in the pool's index does not order strength. Rivals are the nine nearest the page, found by ranking the pool against it.
+- **A generic summary as the control for the ranking.** A copy with its summary replaced by generic sentences does not move among rivals. The control that suits the ranking makes the page's figures and mechanisms general.
 - **Resuming a writer's session to ask it one question.** It costs about as much as the draft, because the whole session is read again. The question belongs at the end of the writer's own run.
 - **Committing writers' rooms while writers run.** A room holds a copy of the record, and a commit of thirty rooms brought 92,000 files under the commit checks and stalled the machine. Rooms are committed after they are pruned.
 
@@ -194,7 +217,7 @@ The key to the real posts, and every page, room and judge's answer, is outside t
 
 ## Which parts of the roadmap this round tested
 
-`../ROADMAP.md` lists the lessons from selling that the series draws on. This round chose nine of them: A1 (the page wins the next step), A3 (the buyer's need before the pitch), B1 and C2 (the buyer's order, at the top), C1 (the kind a buyer files the candidate under), D1 (a concrete proof per claim), F1 in part (a reader who answers as the buyer), F2 (the seller's stance kept in view) and H1 (the whole text in a seller's voice). A4 entered only as one question to a reader, and D3 (checking protects a won deal) entered through the traces. The roadmap carries what each showed.
+`../ROADMAP.md` lists the lessons from selling that the series draws on. This round chose nine of them: A1 (the page wins the next step), A3 (the buyer's need before the pitch), B1 and C2 (the buyer's order, at the top), C1 (the kind a buyer files the candidate under), D1 (a concrete proof per claim), F1 in part (a reader who answers as the buyer), F2 (the seller's stance kept in view) and H1 (the whole text in a seller's voice). A4 entered only as one question to a reader, and D3 (checking protects a won deal) entered through the traces. Changes made by hand to finished pages bear on A4, B1 below the top, B2, C1, C2 and D2. Placing the round's pages among other candidates' pages bears on A3, D1, D3 and G2. Neither is a test of a change to the method: no version carries the change and no writer ran under one. The roadmap carries what each showed.
 
 ## What the round cost, and what it need not have
 
@@ -207,7 +230,8 @@ The owner asked of the round: "do we really have to use so many tokens?" It did 
 | Questions put to writers afterwards | 9 | 74 |
 | Judges' answers | 2,884 rooms | 95 |
 | The follow-up question to each judge | 2,884 | 145 |
-| Subagents | 33 | 30 |
+| Judges for the ranking among other candidates and for the changes by hand | 872 rooms | 106 |
+| Subagents | 33, and 25 more for the ranking and the changes by hand | 30 for the 33; the 25 not counted |
 | The running of the round itself | | not priced; 351 million tokens read again from its own context |
 
 - The session that runs a round is its largest cost. Each tool call reads the whole of a growing context again. A subagent that reads, traces or counts and returns one screen costs one or two dollars.
@@ -237,7 +261,7 @@ Three limits of this round's evidence bear on what follows. The hole step's blin
 - On the joined page: "since now we have a good CV, let's keep the work".
 - On dropping a test: "if something depends on something else being true and it's no longer true, then it doesn't have to be tested anymore."
 - On the judges' account: "… my name will leak into the judge if we use the same account, because my name is in the plugin, and also that I happen to be the candidate in this case."
-- On the next round: "I am curious of validating the test result by the second method of ranking our CV with comparables." On the pool for it: "some CV can be used for more than one purpose".
+- On a second way of judging: "I am curious of validating the test result by the second method of ranking our CV with comparables." On the pool for it: "some CV can be used for more than one purpose".
 - On means: "I give you the all of the rest of the context and the unlimited use of Jethro agents and I'll check periodically." (Jethro agents are subagents the work is handed to.) He set no budget for a round in advance and no order among the wishes. On the size of a round: "I note that the over budget of 60% is not a huge deal. It happens all the time, but I still prefer that the next agent to be able to finish a shape that ends within its context."
 - On what to explore next: "Not every dimension can be explored, but as any living creature, the direction that already showed signs of improvement should be explored first."
 - His own ideas tested here: applying only half of the changes; the baseline with only the salesperson sentence; listing the holes and marking each change with the hole it serves; the `sell` and `check` marks drawn as a path, "any move towards selling should be upward, and any move towards checking should be rightward"; the whole text worded as a salesperson would word it.
