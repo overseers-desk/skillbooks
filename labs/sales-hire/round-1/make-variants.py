@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """Round 1 variants of the HIRE method. Each is the baseline text with one named set of replacements.
 
-Baseline: sales-hire/hire-methodology.md as of commit e51412d3, which is what it holds now. Run from the repository root:
+Baseline: sales-hire/hire-methodology.md as of commit e51412d3, read from git so that later changes to the method do not
+move it. Run from the repository root:
     python3 labs/sales-hire/round-1/make-variants.py
-It writes one file per variant into labs/sales-hire/round-1/variants/. There is no v5. The variant all-changes.md is not made here:
-it is the method as it stood after the six commits 9202090d to e16b5f63 on branch hire-shift.
+It writes one file per variant into labs/sales-hire/round-1/variants/. There is no v5. Three variants are not made here.
+all-changes.md is the method as it stood after the six commits 9202090d to e16b5f63 on branch hire-shift. h1-edit.md and
+h1-rewrite.md are the whole text reworded, the first by an editor and the second by a rewrite; neither is a set of replacements.
 """
-import os
+import os, subprocess
 HERE=os.path.dirname(os.path.abspath(__file__))
-base=open(os.path.join(HERE,'..','..','..','sales-hire','hire-methodology.md')).read()
+BASELINE='e51412d3'
+base=subprocess.run(['git','show',BASELINE+':sales-hire/hire-methodology.md'],check=True,capture_output=True,text=True,cwd=HERE).stdout
 three='Three kinds of reader. The common-sense reading and the judges hold the advertisement and stand nearest the person hiring: what the page says, and what stays on it, is theirs to settle. The sentence and voice readers hear how a line reads: a row of theirs is a reason to say a line differently, and a line comes off on their word only where those who hold the advertisement prefer the page without it. A line the judges have put back stays through later sentence readings. The sources trace sees that each claim will hold when the candidate is asked about it in the conversation, or a referee is, and brings a claim back to what the candidate can stand behind. What the candidate has ruled off, and what the trace cannot support, still stay off.'
 SAY="Begin by writing in this phase's notes: I am a salesperson and my goal is to sell the candidate."
 def rep(s,a,b):
