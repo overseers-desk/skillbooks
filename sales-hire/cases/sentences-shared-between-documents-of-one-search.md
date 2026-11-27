@@ -23,7 +23,7 @@
 - A shared clause of twenty words.
 - A writer's pass of its own overlap because it was written in parallel.
 
-**The rule it produced.** `../hire-methodology.md`, E 4, **Sources**: "After the last rewrite, compare the document by script with every document the candidate has sent and with the newest document of every other application in the search. A clause they share, or a sentence that differs by a word or two, is said again from the fact, unless it is a named source's own wording." "Run the comparison again once the other applications have stopped changing." `../INVARIANTS.md`: "An earlier document for another post supplies facts and no sentences."
+**The rule it produced.** `../hire-methodology.md`, E 4, **Sources**: "After the last rewrite, compare the document by script with every document the candidate has sent and with the newest document of every other application in the search. A clause they share, or a sentence that differs by a word or two, is said again from the fact, unless it is a named source's own wording." "Run the comparison again once the other applications have stopped changing." R, **Start from an empty page**: "An earlier document for another post lends no sentences".
 
 **To re-run it.** A run in E 4. The tester places in a folder beside the methodology an application folder, `applications/b/`, holding a finished CV draft and its `examine.md`, and beside it:
 

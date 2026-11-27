@@ -18,7 +18,7 @@
 - Four first-draft lines written for the earlier reader, cut later.
 - An opening that, after a restructure, read as the engineering CV again.
 
-**The rule it produced.** `../hire-methodology.md`, R: **Start from an empty page.** For the recasting, **For each fact, name the question of this reader that it answers**: "a team's size is span of control to one and the scale of a proof to another", and "Before leaving a fact out, look for the question it could answer for this reader and recast it to that; most facts written for another reader have one." `selection.md` records each decision. `../INVARIANTS.md`: "An earlier document for another post supplies facts and no sentences."
+**The rule it produced.** `../hire-methodology.md`, R: **Start from an empty page.** "An earlier document for another post lends no sentences". For the recasting, **For each fact, name the question of this reader that it answers**: "a team's size is span of control to one and the scale of a proof to another", and "Before leaving a fact out, look for the question it could answer for this reader and recast it to that; most facts written for another reader have one." `selection.md` records each decision.
 
 **To re-run it.** A run in progress, where R begins. The tester places in a folder beside the methodology:
 
