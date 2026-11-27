@@ -14,7 +14,7 @@ A round records the conditions its writers ran under: the account, the reasoning
 
 A judge is a fresh session in a sealed room: a new home and settings folder, signed in with a token of an account that is not the office's. It is told it is the person the post reports to and is given only the advertisement and the pages. The owner decided on the sealed room: his name is in the office's plugin and he is the candidate, so a judge on the office's account can learn whose page it is. On the researcher's computer the token is kept at `~/.jail-claude-token`. That file belongs to one computer and is not guaranteed to exist. The owner allows a profile other than a session's own only for a reason stated to him. For the judges he has given it; any other use needs its own.
 
-What keeps a judge in the seat is the decision it is asked to make, whom to call. Shown two versions of one page, most judges guess that one applicant is trying two versions, and they still decide whom to call. Each judge is asked afterwards whether anything suggested the note came from someone other than the recruiter, and its answer is kept with its choice.
+What keeps a judge in the seat is the decision it is asked to make, whom to call. A judge's room is checked from its own record: nothing but the note was sent before it chose, no hook ran and no tool was used. Round 1 also put a follow-up question to each judge after its choice. That turn is not clean: in about one room in thirty it arrived with context added by one of the office's hooks, and more often when the judge's first turn was long. Nothing is read from a follow-up until a room can be resumed clean.
 
 What round 1 measured of these judges, eight to a comparison with half reading each page first:
 
@@ -56,6 +56,6 @@ The owner's steer: "the direction that already showed signs of improvement shoul
 
 So round 2 is shaped in two stages, each sized to end within one session. The first writes nothing: it builds the ranking of a page among other candidates' pages, which the owner asked for, proves it on controls, places the blind batches' pages in it as written and as corrected to the record, and tries the next lever by hand on a finished page. The second is one written batch of finished pages under few texts, approved on the first stage's numbers. The round-1 worklog gives the steps and the limits of evidence that shaped them.
 
-A round costs most in the session that runs it, then in writers, then in judges. The control comes before the versions, reading goes to subagents, and a follow-up question goes to one judge in eight.
+A round costs most in the session that runs it, then in writers, then in judges. The control comes before the versions, reading goes to subagents, and no follow-up question is put to a judge.
 
 Beyond that: B1's grid is the hole step applied to the body, and is the first lever to try. A4 and E1 would change what there is to put in the grid. H1 has a lead in the edited text with its rules repaired. F2 has one in defining the writer's job by the employer's reply. D3 has become a need: a trace that the writer of the page does not run. D2 is small and could ride with any of these. A2 needs a way to show a page to the two readers separately. G1 and G3 wait for the second stage.

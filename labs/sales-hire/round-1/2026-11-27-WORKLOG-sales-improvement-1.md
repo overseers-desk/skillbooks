@@ -168,7 +168,7 @@ The key to the real posts, and every page, room and judge's answer, is outside t
 - **A stop rule that lets a later pass read only what changed.** A page went out whose last edits no reader had seen whole, with third-person slips in it.
 - **Giving writers a reduced copy of the record.** It changed what a writer opened on. It was not why proofs were missing: the lines the judges wanted were in the reduced copy too.
 - **Three drafts a text across many texts, before the draw is known.** Eighty first drafts were written before baseline drafts were set against each other. That control took 288 judges and showed that three drafts against three see only a large effect.
-- **A follow-up question to every judge.** Each judge was asked afterwards whether anything in its room pointed away from the recruiter. The question cost more than the answer it followed, and the room's own record already showed what it asks. One judge in eight is enough.
+- **A follow-up question to every judge.** Each judge was asked afterwards whether anything in its room pointed away from the recruiter. The question cost more than the answer it followed, and the room's own record already showed what it asks. The follow-up turn is also not clean: in 19 of 583 rooms looked at, it arrived with context added by one of the office's hooks, which the turn of the choice never had. Every choice was made before that turn, so the counts stand, and nothing in this log is read from a follow-up.
 - **Resuming a writer's session to ask it one question.** It costs about as much as the draft, because the whole session is read again. The question belongs at the end of the writer's own run.
 - **Committing writers' rooms while writers run.** A room holds a copy of the record, and a commit of thirty rooms brought 92,000 files under the commit checks and stalled the machine. Rooms are committed after they are pruned.
 
@@ -202,7 +202,7 @@ The owner asked of the round: "do we really have to use so many tokens?" It did 
 
 - The session that runs a round is its largest cost. Each tool call reads the whole of a growing context again. A subagent that reads, traces or counts and returns one screen costs one or two dollars.
 - About a quarter of what the writers and judges cost bought the round's findings: the fairness tests, the baseline against itself, and the blind batches with their traces. The first batch of 45 drafts was not blind, and 16 writer runs were stopped before they finished.
-- What follows for a round: the control before the versions; few texts; the session directs and subagents read; a step is one script that ends in one screen; the follow-up question goes to one judge in eight; and a round is sized to end within the context of the session that runs it, which is the owner's stated preference.
+- What follows for a round: the control before the versions; few texts; the session directs and subagents read; a step is one script that ends in one screen; no follow-up question is put to a judge until a room can be resumed clean; and a round is sized to end within the context of the session that runs it, which is the owner's stated preference.
 
 ## What the next rounds could test
 
