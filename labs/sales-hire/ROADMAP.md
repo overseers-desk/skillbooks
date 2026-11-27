@@ -54,7 +54,7 @@ The letters group the lessons by where they come from: A, selling to large accou
 
 The owner's steer: "the direction that already showed signs of improvement should be explored first." One direction has shown it, the hole step, and written blind its lead sits on the full read of the finished page. It is in the method from the end of round 1. What no test has yet asked is whether the candidate is called ahead of anyone else.
 
-So round 2 is shaped in two stages, each sized to end within one session. The first writes nothing: it builds the ranking of a page among other candidates' pages, which the owner asked for, proves it on controls, places the blind batches' pages in it as written and as corrected to the record, and tries the next lever by hand on a finished page. The second is one written batch of finished pages under few texts, approved on the first stage's numbers. The round-1 worklog gives the steps and the objections that shaped them.
+So round 2 is shaped in two stages, each sized to end within one session. The first writes nothing: it builds the ranking of a page among other candidates' pages, which the owner asked for, proves it on controls, places the blind batches' pages in it as written and as corrected to the record, and tries the next lever by hand on a finished page. The second is one written batch of finished pages under few texts, approved on the first stage's numbers. The round-1 worklog gives the steps and the limits of evidence that shaped them.
 
 A round costs most in the session that runs it, then in writers, then in judges. The control comes before the versions, reading goes to subagents, and a follow-up question goes to one judge in eight.
 
