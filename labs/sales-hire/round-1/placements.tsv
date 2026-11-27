@@ -65,29 +65,29 @@ placement	D	nearest nine	first draft, baseline, held-back batch, repeat 3	5	8	0	
 placement	D	nearest nine	first draft, v7-holes2, held-back batch, repeat 1	5	8	0	0	1	7	0	0.12	6.38	whole	none
 placement	D	nearest nine	first draft, v7-holes2, held-back batch, repeat 2	5	8	0	0	1	7	0	0.12	6.62	whole	none
 placement	D	nearest nine	first draft, v7-holes2, held-back batch, repeat 3	5	8	0	0	0	8	0	0.00	6.62	whole	none
-lever	A	nearest nine	lever L0 on base a2	5	8	0	0	0	8	0	0.00	5.25	whole	none
-lever	A	nearest nine	lever L1 on base a2	5	8	0	0	1	7	0	0.12	4.88	whole	none
-lever	A	nearest nine	lever L2 on base a2	5	8	0	0	0	8	0	0.00	5.38	whole	none
-lever	A	nearest nine	lever L3 on base a2	5	8	0	1	0	7	0	0.25	4.75	whole	none
-lever	A	nearest nine	lever L4 on base a2	5	8	0	0	0	8	0	0.00	5.12	whole	none
-lever	A	nearest nine	lever L5 on base a2	5	8	0	0	0	8	0	0.00	5.25	whole	none
-lever	A	nearest nine	lever LM on base a2	5	8	0	0	0	8	0	0.00	6.75	whole	none
-lever	A	nearest nine	finished page, baseline, run 2, corrected	5	8	0	0	0	8	0	0.00	5.12	whole	none
-lever	A	nearest nine	lever L0 on base p1	5	8	0	0	0	8	0	0.00	5.25	whole	none
-lever	A	nearest nine	lever L1 on base p1	5	8	0	0	0	8	0	0.00	5.12	whole	none
-lever	A	nearest nine	lever L2 on base p1	5	8	0	0	0	8	0	0.00	5.50	whole	none
-lever	A	nearest nine	lever L3 on base p1	5	8	0	0	0	8	0	0.00	5.25	whole	none
-lever	A	nearest nine	lever L4 on base p1	5	8	0	0	0	8	0	0.00	5.75	whole	none
-lever	A	nearest nine	lever L5 on base p1	5	8	0	0	0	8	0	0.00	6.00	whole	none
-lever	A	nearest nine	lever LM on base p1	5	8	0	0	0	8	0	0.00	6.75	whole	none
-lever	A	nearest nine	finished page, v7-holes2, run 1, corrected	5	8	0	0	0	8	0	0.00	5.38	whole	none
-lever	A	nearest nine	lever L6 on base a2	5	8	0	0	0	8	0	0.00	4.88	whole	none
-lever	A	nearest nine	lever L7 on base a2	5	8	0	1	1	6	0	0.38	4.62	whole	none
-lever	A	nearest nine	lever L8 on base a2	5	8	0	0	1	7	0	0.12	4.38	whole	none
-lever	A	nearest nine	lever L9v on base a2	5	8	0	0	1	7	0	0.12	4.50	whole	none
-lever	A	nearest nine	lever L6 on base p1	5	8	0	0	0	8	0	0.00	5.12	whole	none
-lever	A	nearest nine	lever L7 on base p1	5	8	0	0	0	8	0	0.00	4.75	whole	none
-lever	A	nearest nine	lever L8 on base p1	5	8	0	0	0	8	0	0.00	5.38	whole	none
-lever	A	nearest nine	lever L9v on base p1	5	8	0	0	0	8	0	0.00	5.62	whole	none
-lever	A	nearest nine	lever L9 on base a2	5	16	0	3	2	11	0	0.50	4.25	whole	none
-lever	A	nearest nine	lever L9 on base p1	5	16	0	0	0	16	0	0.00	5.50	whole	none
+by hand	A	nearest nine	change L0 on base a2	5	8	0	0	0	8	0	0.00	5.25	whole	none
+by hand	A	nearest nine	change L1 on base a2	5	8	0	0	1	7	0	0.12	4.88	whole	none
+by hand	A	nearest nine	change L2 on base a2	5	8	0	0	0	8	0	0.00	5.38	whole	none
+by hand	A	nearest nine	change L3 on base a2	5	8	0	1	0	7	0	0.25	4.75	whole	none
+by hand	A	nearest nine	change L4 on base a2	5	8	0	0	0	8	0	0.00	5.12	whole	none
+by hand	A	nearest nine	change L5 on base a2	5	8	0	0	0	8	0	0.00	5.25	whole	none
+by hand	A	nearest nine	change LM on base a2	5	8	0	0	0	8	0	0.00	6.75	whole	none
+by hand	A	nearest nine	finished page, baseline, run 2, corrected	5	8	0	0	0	8	0	0.00	5.12	whole	none
+by hand	A	nearest nine	change L0 on base p1	5	8	0	0	0	8	0	0.00	5.25	whole	none
+by hand	A	nearest nine	change L1 on base p1	5	8	0	0	0	8	0	0.00	5.12	whole	none
+by hand	A	nearest nine	change L2 on base p1	5	8	0	0	0	8	0	0.00	5.50	whole	none
+by hand	A	nearest nine	change L3 on base p1	5	8	0	0	0	8	0	0.00	5.25	whole	none
+by hand	A	nearest nine	change L4 on base p1	5	8	0	0	0	8	0	0.00	5.75	whole	none
+by hand	A	nearest nine	change L5 on base p1	5	8	0	0	0	8	0	0.00	6.00	whole	none
+by hand	A	nearest nine	change LM on base p1	5	8	0	0	0	8	0	0.00	6.75	whole	none
+by hand	A	nearest nine	finished page, v7-holes2, run 1, corrected	5	8	0	0	0	8	0	0.00	5.38	whole	none
+by hand	A	nearest nine	change L6 on base a2	5	8	0	0	0	8	0	0.00	4.88	whole	none
+by hand	A	nearest nine	change L7 on base a2	5	8	0	1	1	6	0	0.38	4.62	whole	none
+by hand	A	nearest nine	change L8 on base a2	5	8	0	0	1	7	0	0.12	4.38	whole	none
+by hand	A	nearest nine	change L9v on base a2	5	8	0	0	1	7	0	0.12	4.50	whole	none
+by hand	A	nearest nine	change L6 on base p1	5	8	0	0	0	8	0	0.00	5.12	whole	none
+by hand	A	nearest nine	change L7 on base p1	5	8	0	0	0	8	0	0.00	4.75	whole	none
+by hand	A	nearest nine	change L8 on base p1	5	8	0	0	0	8	0	0.00	5.38	whole	none
+by hand	A	nearest nine	change L9v on base p1	5	8	0	0	0	8	0	0.00	5.62	whole	none
+by hand	A	nearest nine	change L9 on base a2	5	16	0	3	2	11	0	0.50	4.25	whole	none
+by hand	A	nearest nine	change L9 on base p1	5	16	0	0	0	16	0	0.00	5.50	whole	none

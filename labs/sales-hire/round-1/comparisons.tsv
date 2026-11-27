@@ -299,3 +299,31 @@ the page the candidate had against the round's first finished page	reduced recor
 the page the candidate had against the round's first finished page	reduced record	B		top	the page the candidate had	all-changes finished page	8	0	0
 the page the candidate had against the round's first finished page	reduced record	C		full	the page the candidate had	all-changes finished page	8	0	0
 the page the candidate had against the round's first finished page	reduced record	C		top	the page the candidate had	all-changes finished page	8	0	0
+change by hand against its base	by hand	A		full	base a2	change L0 on that base	7	1	0
+change by hand against its base	by hand	A		top	base a2	change L0 on that base	8	0	0
+change by hand against its base	by hand	A		full	base a2	change L1 on that base	0	8	0
+change by hand against its base	by hand	A		top	base a2	change L1 on that base	4	4	0
+change by hand against its base	by hand	A		full	base a2	change L2 on that base	0	8	0
+change by hand against its base	by hand	A		top	base a2	change L2 on that base	8	0	0
+change by hand against its base	by hand	A		full	base a2	change L3 on that base	0	8	0
+change by hand against its base	by hand	A		top	base a2	change L3 on that base	0	8	0
+change by hand against its base	by hand	A		full	base a2	change L4 on that base	0	8	0
+change by hand against its base	by hand	A		top	base a2	change L4 on that base	5	3	0
+change by hand against its base	by hand	A		full	base a2	change L5 on that base	8	0	0
+change by hand against its base	by hand	A		top	base a2	change L5 on that base	8	0	0
+change by hand against its base	by hand	A		full	base a2	change LM on that base	8	0	0
+change by hand against its base	by hand	A		top	base a2	change LM on that base	8	0	0
+change by hand against its base	by hand	A		full	base p1	change L0 on that base	4	4	0
+change by hand against its base	by hand	A		top	base p1	change L0 on that base	4	4	0
+change by hand against its base	by hand	A		full	base p1	change L1 on that base	1	7	0
+change by hand against its base	by hand	A		top	base p1	change L1 on that base	4	4	0
+change by hand against its base	by hand	A		full	base p1	change L2 on that base	0	8	0
+change by hand against its base	by hand	A		top	base p1	change L2 on that base	4	4	0
+change by hand against its base	by hand	A		full	base p1	change L3 on that base	0	8	0
+change by hand against its base	by hand	A		top	base p1	change L3 on that base	8	0	0
+change by hand against its base	by hand	A		full	base p1	change L4 on that base	0	8	0
+change by hand against its base	by hand	A		top	base p1	change L4 on that base	4	4	0
+change by hand against its base	by hand	A		full	base p1	change L5 on that base	4	4	0
+change by hand against its base	by hand	A		top	base p1	change L5 on that base	8	0	0
+change by hand against its base	by hand	A		full	base p1	change LM on that base	8	0	0
+change by hand against its base	by hand	A		top	base p1	change LM on that base	4	4	0

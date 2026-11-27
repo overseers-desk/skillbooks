@@ -14,8 +14,8 @@ A change comes here when it has to stand beside other versions at the same time.
 
 Each round is one folder, `round-N/`. Its worklog calls it sales-improvement-N.
 
-- `variants/`, where a round writes versions, holds one file per version, each the whole text of the method.
-- `make-variants.py`, in such a round, defines each version as the baseline text with a named set of replacements, and writes the files in `variants/`.
+- `variants/` holds one file per version, each the whole text of the method.
+- `make-variants.py` defines each version as the baseline text with a named set of replacements, and writes the files in `variants/`.
 - The worklog, a dated `…-WORKLOG-sales-improvement-N.md`, says what the round ran and what it found.
 - `modules/`, where a round has any, holds questions put to a reader about the page, one file each.
 - Data files hold the round's comparisons, with posts named by role.
