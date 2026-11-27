@@ -1,6 +1,16 @@
 # Plan for round 2
 
-Round 2 has not started. It starts when round 1 is closed, with each of its versions kept, dropped or left open, and when the ten CVs now being written for the candidate's real applications under the released text have been delivered and judged. It starts from the method as the owner then releases it, and it is held to the section "What a round is" of `../ROADMAP.md`.
+Round 2 has not started. Round 1 is closed, and ten of the candidate's real applications have been written under the released text and judged (round 1's worklog, results 17 to 19). Round 2 starts on the owner's word, from the method as he then releases it, and it is held to the section "What a round is" of `../ROADMAP.md`.
+
+## Carried over from round 1
+
+Round 1 left some versions neither kept nor dropped. Each was written and run through writers at a small size, and showed neither a gain large enough to keep nor a loss large enough to drop. What becomes of each:
+
+- **`v9-leads` and `v10-leads-stays-out`, what the first lines of the page answer:** carried over as one dimension. It has a new ground from the real applications: of eight pages written again, the two that fell were the two whose earlier page opened in the post's own frame and whose new page did not. What would settle it is sixteen examined pages a text, or a cheaper design that compares openings over one body.
+- **`v12-body`:** not carried over as written. Its pages ranked a third of a place better, inside the spread between pages of one text, and none of the four did what the version asks, so its wording does not survive the checks. The row below on what Examine may do to a page is where that belongs.
+- **`v11-several`, several pages and a choice among them:** settled inside round 1 by one more run. If kept it is released with its price, and is not a dimension of round 2.
+
+`v13-first-post` and `v14-outside-trace` were dropped and are not carried over.
 
 ## What it will take up, in order of ground
 
@@ -16,7 +26,7 @@ Each row is a change to something the series keeps. W means seen on pages writte
 | The length of the top | A limit on what stands above the first heading | H: the worst-placed pages' summaries ran 226 to 323 words and the best 114 to 170, which goes with who wrote the page | rank, and what the reader had no use for |
 | The first reader and the one who decides | A second seat, the screener who can refuse and cannot hire | R: roadmap A2, untried | a page passes both seats |
 
-Whatever of round 1's versions is left open comes first, with the number of pages that settles it. What the ten real CVs show the released text gets wrong is added above this table as it is found; a fault found there outranks a reasoned row.
+The dimension carried over from round 1 comes first. On the real applications, writing a page again under the released text helped where the old page stood low and showed the reader something the post asks for that the old page did not; it did nothing for pages that already stood first or second.
 
 ## Shape
 
