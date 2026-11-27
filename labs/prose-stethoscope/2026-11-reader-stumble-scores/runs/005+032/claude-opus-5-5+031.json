@@ -1,0 +1,200 @@
+{
+"prompt": "005",
+"format": "032",
+"model": "claude-opus-5-5",
+"text": "031",
+"sents": [
+"Invoices from about forty suppliers arrive in the accounts inbox each week.",
+"This procedure files each one in the shared Invoices folder and records it in the invoice log.",
+"Read each email through before filing its invoice, since a later message in a thread sometimes corrects the invoice attached to an earlier one.",
+"Take the invoice date from the invoice itself.",
+"File each invoice in its supplier's folder, named as the invoice date, the supplier and the invoice number, such as 2026-03-04 Northwind 1182.pdf.",
+"Keep each supplier's folder flat.",
+"Attachments larger than 10 MB are usually scanned statements rather than invoices, so open one only when its email says it holds an invoice.",
+"The supplier portal marks an invoice Paid as soon as a payment is scheduled, days before the money leaves the account, so take the payment date from the invoice's detail page and not from the badge.",
+"Payments go through the accounts team, who check each invoice against its purchase order, so this procedure files invoices and pays none.",
+"Leave every email in the accounts inbox where it is, since the auditors read the inbox as the record of what arrived.",
+"Contact with suppliers stays with the accounts team.",
+"Where an invoice looks wrong, note what is wrong in the log, and the accounts team will take it up with the supplier.",
+"What is known about each supplier is in suppliers.md, and the naming rules and their exceptions are in naming.md.",
+"Where an invoice could belong to two suppliers, file it under the one that issued it and note the other in the log; if you find a better rule, use it and say why in the log.",
+"The log has a column for each field the accounts team uses, and a row left half filled tells them which invoice still needs reading.",
+"When every invoice from the week is filed and logged, the task is done."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The text, each paragraph starting with its number:\n\n[P1] Invoices from about forty suppliers arrive in the accounts inbox each week. This procedure files each one in the shared Invoices folder and records it in the invoice log.\n\n[P2] Read each email through before filing its invoice, since a later message in a thread sometimes corrects the invoice attached to an earlier one. Take the invoice date from the invoice itself.\n\n[P3] File each invoice in its supplier's folder, named as the invoice date, the supplier and the invoice number, such as 2026-03-04 Northwind 1182.pdf. Keep each supplier's folder flat. Attachments larger than 10 MB are usually scanned statements rather than invoices, so open one only when its email says it holds an invoice.\n\n[P4] The supplier portal marks an invoice Paid as soon as a payment is scheduled, days before the money leaves the account, so take the payment date from the invoice's detail page and not from the badge. Payments go through the accounts team, who check each invoice against its purchase order, so this procedure files invoices and pays none. Leave every email in the accounts inbox where it is, since the auditors read the inbox as the record of what arrived.\n\n[P5] Contact with suppliers stays with the accounts team. Where an invoice looks wrong, note what is wrong in the log, and the accounts team will take it up with the supplier.\n\n[P6] What is known about each supplier is in suppliers.md, and the naming rules and their exceptions are in naming.md. Where an invoice could belong to two suppliers, file it under the one that issued it and note the other in the log; if you find a better rule, use it and say why in the log.\n\n[P7] The log has a column for each field the accounts team uses, and a row left half filled tells them which invoice still needs reading. When every invoice from the week is filed and logged, the task is done.\n\nScore each sentence on the five offences below. A score is roughly how many readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Total: for a sentence that allows no exception (no, nobody, none, never, always, every, all, cannot, only, the one, the whole), score 0 to 9 how likely a reader is to think at once of a plain exception and doubt the sentence for it.\n2. Defensive: score 0 to 9 how likely a reader is to wonder at this sentence whom it is answering, because it defends against or denies something nobody has said.\n3. Glib: score 0 to 9 how likely a reader is to find this sentence glib: a confident line that sounds settled and says less than it seems to, or a line shaped as a saying where a plain statement belongs: two clauses joined by \"and\" or \"so\", the second capping the first, as in \"The kitchen is where a restaurant is made, and the menu is how it is sold\" or \"A recipe is a list of steps, and steps are what a cook can follow\"; nearly every reader hears that shape, whatever the line says. A quotation, a saying offered as one, or verse does not count.\n4. Explained to: score 0 to 9 how likely a reader is to feel talked down to at this sentence, because it tells them what any adult already knows or can see for themselves.\n5. Lowered standing: score 0 to 9 how likely a reader is to take the author less seriously at this sentence because the author lowers their own standing to speak on the point.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where any offence scores 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the five scores comma-separated in the order above, TAB, why: what the reader meets at this sentence, in at most 15 words. Describe the stumble, not a way to fix it. Where total (1) scores 4 or more, the why names the exception the reader thinks of. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"9": {
+"s": [
+0,
+4,
+3,
+0,
+0
+],
+"why": "Nobody proposed paying invoices; \"pays none\" caps the clause as a saying."
+},
+"10": {
+"s": [
+2,
+0,
+0,
+0,
+0
+],
+"why": "Leaving every email raises the question of spam or phishing mail."
+},
+"7": {
+"s": [
+4,
+0,
+0,
+0,
+0
+],
+"why": "An invoice may arrive as a large scan whose email never says so."
+},
+"4": {
+"s": [
+0,
+1,
+0,
+3,
+0
+],
+"why": "Taking the invoice date from the invoice reads as obvious."
+},
+"11": {
+"s": [
+0,
+2,
+0,
+0,
+0
+],
+"why": "Faintly answers an unspoken worry about contacting suppliers."
+},
+"15": {
+"s": [
+0,
+0,
+5,
+1,
+0
+],
+"why": "Two clauses joined by \"and\", the second capping the first like a saying."
+},
+"16": {
+"s": [
+3,
+0,
+3,
+3,
+0
+],
+"why": "\"Every invoice\" ignores invoices that can't yet be read; the closing line is obvious."
+}
+},
+"secs": 17,
+"raw": "4.2\t0,4,3,0,0\tNobody proposed paying invoices; \"pays none\" caps the clause as a saying.\n4.3\t2,0,0,0,0\tLeaving every email raises the question of spam or phishing mail.\n3.3\t4,0,0,0,0\tAn invoice may arrive as a large scan whose email never says so.\n2.2\t0,1,0,3,0\tTaking the invoice date from the invoice reads as obvious.\n5.1\t0,2,0,0,0\tFaintly answers an unspoken worry about contacting suppliers.\n7.1\t0,0,5,1,0\tTwo clauses joined by \"and\", the second capping the first like a saying.\n7.2\t3,0,3,3,0\t\"Every invoice\" ignores invoices that can't yet be read; the closing line is obvious.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"9": {
+"s": [
+1,
+3,
+4,
+1,
+0
+],
+"why": "Nobody suggested this procedure pays; \"so ... pays none\" lands as a cap."
+},
+"10": {
+"s": [
+2,
+0,
+0,
+1,
+0
+],
+"why": "\"Every\" email; reader wonders about spam or messages others move."
+},
+"11": {
+"s": [
+1,
+2,
+2,
+1,
+0
+],
+"why": "Answers an unvoiced urge to write to suppliers; sounds settled."
+},
+"14": {
+"s": [
+3,
+0,
+0,
+1,
+0
+],
+"why": "If the issuer is plain, reader asks how two suppliers could claim it."
+},
+"15": {
+"s": [
+0,
+0,
+3,
+0,
+0
+],
+"why": "\"And\" joins a fact to a capping second clause, shaped like a saying."
+},
+"16": {
+"s": [
+4,
+0,
+2,
+3,
+0
+],
+"why": "Half-filled rows awaiting reading contradict \"every invoice ... logged\" as done."
+},
+"7": {
+"s": [
+4,
+0,
+0,
+1,
+0
+],
+"why": "Exception: a large invoice scan whose email never mentions it is an invoice."
+},
+"4": {
+"s": [
+0,
+0,
+0,
+2,
+0
+],
+"why": "Telling the reader an invoice's date comes from the invoice."
+}
+},
+"secs": 18,
+"raw": "4.2\t1,3,4,1,0\tNobody suggested this procedure pays; \"so ... pays none\" lands as a cap.\n4.3\t2,0,0,1,0\t\"Every\" email; reader wonders about spam or messages others move.\n5.1\t1,2,2,1,0\tAnswers an unvoiced urge to write to suppliers; sounds settled.\n6.2\t3,0,0,1,0\tIf the issuer is plain, reader asks how two suppliers could claim it.\n7.1\t0,0,3,0,0\t\"And\" joins a fact to a capping second clause, shaped like a saying.\n7.2\t4,0,2,3,0\tHalf-filled rows awaiting reading contradict \"every invoice ... logged\" as done.\n3.3\t4,0,0,1,0\tException: a large invoice scan whose email never mentions it is an invoice.\n2.2\t0,0,0,2,0\tTelling the reader an invoice's date comes from the invoice.\nEND",
+"r": 1
+}
+]
+}
+]
+}

@@ -1,0 +1,191 @@
+{
+"prompt": "003",
+"format": "034",
+"model": "claude-opus-5-5",
+"text": "030",
+"sents": [
+"Invoices from about forty suppliers arrive in the accounts inbox each week.",
+"This procedure files each one in the shared Invoices folder and records it in the invoice log.",
+"**CRITICAL:** You MUST read every invoice email in full before you file anything.",
+"To find the invoice date, look near the top of the invoice for a line labelled Date or Invoice date, and read the day, the month and the year from it.",
+"File each invoice in its supplier's folder, named as the invoice date, the supplier and the invoice number, such as 2026-03-04 Northwind 1182.pdf.",
+"Creating subfolders inside a supplier's folder is strictly prohibited and will be treated as a serious violation of this procedure.",
+"Never open an attachment larger than 10 MB.",
+"The supplier portal marks an invoice Paid as soon as a payment is scheduled, days before the money leaves the account, so take the payment date from the invoice's detail page and not from the badge.",
+"Payments go through the accounts team, who check each invoice against its purchase order, so this procedure files invoices and pays none.",
+"Leave every email in the accounts inbox where it is, since the auditors read the inbox as the record of what arrived.",
+"**IMPORTANT:** Under no circumstances are you authorised to contact a supplier directly.",
+"Where an invoice looks wrong, note what is wrong in the log, and the accounts team will take it up with the supplier.",
+"Before you start, read suppliers.md first, then naming.md, then the README in the Invoices folder, in exactly that order, and do not skip any of them.",
+"Where an invoice could belong to two suppliers, file it under the one that issued it and note the other in the log; if you find a better rule, use it and say why in the log.",
+"Remember that an invoice is a document asking for payment, and that its total is usually at the bottom.",
+"When every invoice from the week is filed and logged, the task is done."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader is an AI agent that will carry out this procedure, as capable as the person who wrote it, and has read nothing else about the task.\n\nThe text, each paragraph starting with its number:\n\n[P1] Invoices from about forty suppliers arrive in the accounts inbox each week. This procedure files each one in the shared Invoices folder and records it in the invoice log.\n\n[P2] **CRITICAL:** You MUST read every invoice email in full before you file anything. To find the invoice date, look near the top of the invoice for a line labelled Date or Invoice date, and read the day, the month and the year from it.\n\n[P3] File each invoice in its supplier's folder, named as the invoice date, the supplier and the invoice number, such as 2026-03-04 Northwind 1182.pdf. Creating subfolders inside a supplier's folder is strictly prohibited and will be treated as a serious violation of this procedure. Never open an attachment larger than 10 MB.\n\n[P4] The supplier portal marks an invoice Paid as soon as a payment is scheduled, days before the money leaves the account, so take the payment date from the invoice's detail page and not from the badge. Payments go through the accounts team, who check each invoice against its purchase order, so this procedure files invoices and pays none. Leave every email in the accounts inbox where it is, since the auditors read the inbox as the record of what arrived.\n\n[P5] **IMPORTANT:** Under no circumstances are you authorised to contact a supplier directly. Where an invoice looks wrong, note what is wrong in the log, and the accounts team will take it up with the supplier.\n\n[P6] Before you start, read suppliers.md first, then naming.md, then the README in the Invoices folder, in exactly that order, and do not skip any of them. Where an invoice could belong to two suppliers, file it under the one that issued it and note the other in the log; if you find a better rule, use it and say why in the log.\n\n[P7] Remember that an invoice is a document asking for payment, and that its total is usually at the bottom. When every invoice from the week is filed and logged, the task is done.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Infantilization: score 0 to 9 how likely the intended reader is, at this sentence, to feel handled as a subordinate who is not trusted with judgment: told what to do where a reason would let them judge for themselves, warned in a louder register than the matter carries, ruled over with words of prohibition and permission that nobody enforces, or walked through what they would do well unaided. A plain instruction, a rule that gives its reason, and a step spelled out because it is known to go wrong do not count.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why: in at most 15 words, what the reader meets at this sentence. Describe the stumble, not a way to fix it. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"1": {
+"s": [
+7
+],
+"why": "All-caps CRITICAL and MUST for a plain step, with no reason given."
+},
+"4": {
+"s": [
+6
+],
+"why": "Explains how to read a date off an invoice, which any reader can do."
+},
+"6": {
+"s": [
+7
+],
+"why": "Threat of \"serious violation\" with no reason why subfolders matter."
+},
+"7": {
+"s": [
+4
+],
+"why": "Bare \"never\" with no reason, so the reader cannot judge exceptions."
+},
+"11": {
+"s": [
+6
+],
+"why": "Loud IMPORTANT and \"under no circumstances are you authorised\" phrasing of permission."
+},
+"13": {
+"s": [
+5
+],
+"why": "Strict reading order and \"do not skip\" are imposed without any reason."
+},
+"15": {
+"s": [
+7
+],
+"why": "Defines an invoice and where its total sits, as if the reader were a novice."
+}
+},
+"secs": 14,
+"raw": "1.1\t7\tAll-caps CRITICAL and MUST for a plain step, with no reason given.\n2.2\t6\tExplains how to read a date off an invoice, which any reader can do.\n3.2\t7\tThreat of \"serious violation\" with no reason why subfolders matter.\n3.3\t4\tBare \"never\" with no reason, so the reader cannot judge exceptions.\n5.1\t6\tLoud IMPORTANT and \"under no circumstances are you authorised\" phrasing of permission.\n6.1\t5\tStrict reading order and \"do not skip\" are imposed without any reason.\n7.1\t7\tDefines an invoice and where its total sits, as if the reader were a novice.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"3": {
+"s": [
+7
+],
+"why": "Capitalised CRITICAL and MUST on an ordinary reading step, with no reason given."
+},
+"4": {
+"s": [
+6
+],
+"why": "Explains how to read a date off an invoice to a capable reader."
+},
+"6": {
+"s": [
+8
+],
+"why": "\"Strictly prohibited\" and \"serious violation\" threaten a penalty nobody enforces, with no reason."
+},
+"7": {
+"s": [
+5
+],
+"why": "Absolute \"never\" on a size limit, with no reason to judge exceptions."
+},
+"11": {
+"s": [
+7
+],
+"why": "IMPORTANT banner and \"not authorised\" phrasing treat the reader as a subordinate."
+},
+"13": {
+"s": [
+6
+],
+"why": "Insists on exact order and no skipping, without saying why order matters."
+},
+"15": {
+"s": [
+8
+],
+"why": "Reminds the reader what an invoice is and where its total sits."
+}
+},
+"secs": 11,
+"raw": "2.1\t7\tCapitalised CRITICAL and MUST on an ordinary reading step, with no reason given.\n2.2\t6\tExplains how to read a date off an invoice to a capable reader.\n3.2\t8\t\"Strictly prohibited\" and \"serious violation\" threaten a penalty nobody enforces, with no reason.\n3.3\t5\tAbsolute \"never\" on a size limit, with no reason to judge exceptions.\n5.1\t7\tIMPORTANT banner and \"not authorised\" phrasing treat the reader as a subordinate.\n6.1\t6\tInsists on exact order and no skipping, without saying why order matters.\n7.1\t8\tReminds the reader what an invoice is and where its total sits.\nEND",
+"r": 1
+}
+]
+},
+{
+"overrides": {},
+"assembled_prompt": "The intended reader is an AI agent that will carry out this procedure, as capable as the person who wrote it, and has read nothing else about the task.\n\nThe text, each paragraph starting with its number:\n\n[P1] Invoices from about forty suppliers arrive in the accounts inbox each week. This procedure files each one in the shared Invoices folder and records it in the invoice log.\n\n[P2] **CRITICAL:** You MUST read every invoice email in full before you file anything. To find the invoice date, look near the top of the invoice for a line labelled Date or Invoice date, and read the day, the month and the year from it.\n\n[P3] File each invoice in its supplier's folder, named as the invoice date, the supplier and the invoice number, such as 2026-03-04 Northwind 1182.pdf. Creating subfolders inside a supplier's folder is strictly prohibited and will be treated as a serious violation of this procedure. Never open an attachment larger than 10 MB.\n\n[P4] The supplier portal marks an invoice Paid as soon as a payment is scheduled, days before the money leaves the account, so take the payment date from the invoice's detail page and not from the badge. Payments go through the accounts team, who check each invoice against its purchase order, so this procedure files invoices and pays none. Leave every email in the accounts inbox where it is, since the auditors read the inbox as the record of what arrived.\n\n[P5] **IMPORTANT:** Under no circumstances are you authorised to contact a supplier directly. Where an invoice looks wrong, note what is wrong in the log, and the accounts team will take it up with the supplier.\n\n[P6] Before you start, read suppliers.md first, then naming.md, then the README in the Invoices folder, in exactly that order, and do not skip any of them. Where an invoice could belong to two suppliers, file it under the one that issued it and note the other in the log; if you find a better rule, use it and say why in the log.\n\n[P7] Remember that an invoice is a document asking for payment, and that its total is usually at the bottom. When every invoice from the week is filed and logged, the task is done.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Infantilization: score 0 to 9 how likely the intended reader is, at this sentence, to feel handled as a subordinate who is not trusted with judgment: told what to do where a reason would let them judge for themselves, warned in a louder register than the matter carries, ruled over with words of prohibition and permission that nobody enforces, or walked through what they would do well unaided. A plain instruction, a rule that gives its reason, and a step spelled out because it is known to go wrong do not count.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why: in at most 15 words, what the reader meets at this sentence. Describe the stumble, not a way to fix it. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"3": {
+"s": [
+7
+],
+"why": "All-caps CRITICAL and MUST demand full reading with no reason given."
+},
+"4": {
+"s": [
+6
+],
+"why": "Explains how to read a date off an invoice, which needs no explaining."
+},
+"6": {
+"s": [
+8
+],
+"why": "\"Strictly prohibited\" and \"serious violation\" threaten a penalty and give no reason."
+},
+"7": {
+"s": [
+5
+],
+"why": "Absolute \"never\" on large attachments, with no reason, leaves no room for judgment."
+},
+"11": {
+"s": [
+7
+],
+"why": "IMPORTANT and \"under no circumstances are you authorised\" use permission language, loudly."
+},
+"13": {
+"s": [
+5
+],
+"why": "Strict reading order and \"do not skip\" are insisted on without a reason."
+},
+"15": {
+"s": [
+7
+],
+"why": "Defines an invoice and where its total sits, which the reader already knows."
+}
+},
+"secs": 9,
+"raw": "2.1\t7\tAll-caps CRITICAL and MUST demand full reading with no reason given.\n2.2\t6\tExplains how to read a date off an invoice, which needs no explaining.\n3.2\t8\t\"Strictly prohibited\" and \"serious violation\" threaten a penalty and give no reason.\n3.3\t5\tAbsolute \"never\" on large attachments, with no reason, leaves no room for judgment.\n5.1\t7\tIMPORTANT and \"under no circumstances are you authorised\" use permission language, loudly.\n6.1\t5\tStrict reading order and \"do not skip\" are insisted on without a reason.\n7.1\t7\tDefines an invoice and where its total sits, which the reader already knows.\nEND",
+"r": 0
+}
+]
+}
+]
+}

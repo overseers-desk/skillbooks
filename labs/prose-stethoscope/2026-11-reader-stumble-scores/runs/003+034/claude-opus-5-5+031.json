@@ -1,0 +1,80 @@
+{
+"prompt": "003",
+"format": "034",
+"model": "claude-opus-5-5",
+"text": "031",
+"sents": [
+"Invoices from about forty suppliers arrive in the accounts inbox each week.",
+"This procedure files each one in the shared Invoices folder and records it in the invoice log.",
+"Read each email through before filing its invoice, since a later message in a thread sometimes corrects the invoice attached to an earlier one.",
+"Take the invoice date from the invoice itself.",
+"File each invoice in its supplier's folder, named as the invoice date, the supplier and the invoice number, such as 2026-03-04 Northwind 1182.pdf.",
+"Keep each supplier's folder flat.",
+"Attachments larger than 10 MB are usually scanned statements rather than invoices, so open one only when its email says it holds an invoice.",
+"The supplier portal marks an invoice Paid as soon as a payment is scheduled, days before the money leaves the account, so take the payment date from the invoice's detail page and not from the badge.",
+"Payments go through the accounts team, who check each invoice against its purchase order, so this procedure files invoices and pays none.",
+"Leave every email in the accounts inbox where it is, since the auditors read the inbox as the record of what arrived.",
+"Contact with suppliers stays with the accounts team.",
+"Where an invoice looks wrong, note what is wrong in the log, and the accounts team will take it up with the supplier.",
+"What is known about each supplier is in suppliers.md, and the naming rules and their exceptions are in naming.md.",
+"Where an invoice could belong to two suppliers, file it under the one that issued it and note the other in the log; if you find a better rule, use it and say why in the log.",
+"The log has a column for each field the accounts team uses, and a row left half filled tells them which invoice still needs reading.",
+"When every invoice from the week is filed and logged, the task is done."
+],
+"batches": [
+{
+"overrides": {},
+"assembled_prompt": "The intended reader is an AI agent that will carry out this procedure, as capable as the person who wrote it, and has read nothing else about the task.\n\nThe text, each paragraph starting with its number:\n\n[P1] Invoices from about forty suppliers arrive in the accounts inbox each week. This procedure files each one in the shared Invoices folder and records it in the invoice log.\n\n[P2] Read each email through before filing its invoice, since a later message in a thread sometimes corrects the invoice attached to an earlier one. Take the invoice date from the invoice itself.\n\n[P3] File each invoice in its supplier's folder, named as the invoice date, the supplier and the invoice number, such as 2026-03-04 Northwind 1182.pdf. Keep each supplier's folder flat. Attachments larger than 10 MB are usually scanned statements rather than invoices, so open one only when its email says it holds an invoice.\n\n[P4] The supplier portal marks an invoice Paid as soon as a payment is scheduled, days before the money leaves the account, so take the payment date from the invoice's detail page and not from the badge. Payments go through the accounts team, who check each invoice against its purchase order, so this procedure files invoices and pays none. Leave every email in the accounts inbox where it is, since the auditors read the inbox as the record of what arrived.\n\n[P5] Contact with suppliers stays with the accounts team. Where an invoice looks wrong, note what is wrong in the log, and the accounts team will take it up with the supplier.\n\n[P6] What is known about each supplier is in suppliers.md, and the naming rules and their exceptions are in naming.md. Where an invoice could belong to two suppliers, file it under the one that issued it and note the other in the log; if you find a better rule, use it and say why in the log.\n\n[P7] The log has a column for each field the accounts team uses, and a row left half filled tells them which invoice still needs reading. When every invoice from the week is filed and logged, the task is done.\n\nScore each sentence on the offence below. A score is roughly how many intended readers in ten would meet the problem at that sentence (0 = none, 9 = nearly all).\n\n1. Infantilization: score 0 to 9 how likely the intended reader is, at this sentence, to feel handled as a subordinate who is not trusted with judgment: told what to do where a reason would let them judge for themselves, warned in a louder register than the matter carries, ruled over with words of prohibition and permission that nobody enforces, or walked through what they would do well unaided. A plain instruction, a rule that gives its reason, and a step spelled out because it is known to go wrong do not count.\n\nSpelling and grammar do not count.\n\nWrite a TSV and nothing else. One row per sentence where the score is 2 or more, in reading order: paragraph.sentence (e.g. 3.2), TAB, the score, TAB, why: in at most 15 words, what the reader meets at this sentence. Describe the stumble, not a way to fix it. Last line: END.",
+"runs": [
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"6": {
+"s": [
+2
+],
+"why": "Bare rule on folder structure with no reason, where the reader could otherwise judge."
+},
+"11": {
+"s": [
+2
+],
+"why": "Supplier contact is withheld with no reason given, which reads as a trust boundary."
+}
+},
+"secs": 11,
+"raw": "3.2\t2\tBare rule on folder structure with no reason, where the reader could otherwise judge.\n5.1\t2\tSupplier contact is withheld with no reason given, which reads as a trust boundary.\nEND",
+"r": 0
+},
+{
+"m": "claude-opus-5-5",
+"valid": true,
+"rows": {
+"4": {
+"s": [
+2
+],
+"why": "Taking an invoice's date from the invoice itself is spelled out as if not obvious."
+},
+"6": {
+"s": [
+3
+],
+"why": "A bare rule about folder structure, with no reason the reader could weigh."
+},
+"11": {
+"s": [
+3
+],
+"why": "Supplier contact is withheld by fiat, with no reason the reader could judge."
+}
+},
+"secs": 10,
+"raw": "2.2\t2\tTaking an invoice's date from the invoice itself is spelled out as if not obvious.\n3.2\t3\tA bare rule about folder structure, with no reason the reader could weigh.\n5.1\t3\tSupplier contact is withheld by fiat, with no reason the reader could judge.\nEND",
+"r": 1
+}
+]
+}
+]
+}
