@@ -18,7 +18,7 @@ Round 1 of the lab for HIRE, 27 November 2026. The question of the series: does 
 | The document: CV or written answers | No, CV only | | |
 | How CVs are judged | Pairs, and a ranking among other candidates | Two drafts of one text differ as much as two versions; the two ways of judging agree on two drafts of one text and not on two versions | |
 
-The round cost 1,877 dollars as its runs report it, 31 dollars of it in fifteen runs that an account's weekly limit stopped before they finished, and besides that the sessions that ran it, which are not priced (see 'What the round cost, and what it need not have').
+The round cost 2,352 dollars at API prices: 1,847 dollars for the runs in the table of 'What the round cost, and what it need not have', 31 dollars of it in fifteen runs that an account's weekly limit stopped before they finished, and 505 dollars for the four sessions that directed the round and the 122 subagents they launched, the fourth session counted up to 28 November while it still ran. Any other session is not priced.
 
 ## What the work is for
 
@@ -70,7 +70,7 @@ The key to the real posts, and every page, room and judge's answer, is outside t
 - **No wording changed what a writer takes its job to be.** Nine writers were asked afterwards, three each under the baseline and the two rewordings. Eight said the job was carrying the method through, and the answers do not differ by text (result 1).
 - **The method's checks do work that a first draft does not show.** An examined page beat its own first draft on a full read in four runs of six and lost in none. A result on first drafts is not a result on the page that is sent.
 - **One page for post A was joined by hand from two** and beat both. Corrected to the record it still beats the page the candidate had on a full read, 7 to 1, and is level on the opening (result 11). Whether it goes anywhere is the owner's decision.
-- **The round cost more than it had to** (see 'What the round cost, and what it need not have'). The running of the round itself is very likely its largest cost, and about a quarter of what the writers and judges cost bought the findings above.
+- **The round cost more than it had to** (see 'What the round cost, and what it need not have'). The four sessions that directed the round and their subagents cost 505 dollars, a fifth of the total, and about a quarter of what the writers and judges cost bought the findings above.
 - **Instruments** exist outside the repository: the judges, runs that stop at the first full draft or go on to an examined page, the conversion of a draft to a whole page, the calculation of what the draw alone gives, a trace of a page to the record by an outside reader, an outside count of why each change to a page was made, a question put to a writer in its own session afterwards, a count of the advertisement's asks a page proves, a ranking of a page among nine other people's CVs, and judges run with no follow-up question.
 - A lab rule, agreed with the owner: a question put to a reader about the page is tested as a module file in the round's folder, and copied into `sales-hire/modules/` when it has held. Three edits in this round's versions are such questions written into the method's text.
 
@@ -242,6 +242,7 @@ The key to the real posts, and every page, room and judge's answer, is outside t
       | G | chief AI officer, through a recruiter | 13th | 6th | 4.69, 3.00 |
 
     - Two pages gained, G by 1.69 and K by 0.94, well beyond the error of a placement, about 0.3 (result 15). Four moved by a fifth of a rank or less. Two stand lower, H by 0.31 and I by 0.50. The two gains were on pages that had stood 13th and 6th. Of the three that stood first or second, none rose and one fell a place.
+    - *Why the two stand lower, as far as the judges' answers show.* The page H replaced opened by naming the candidate's work in the post's own term, and nine of its sixteen judges described the candidate in that term; none did of the new page, whose first line is a general label, though seven credited its controls on when an agent may act against one for the old page. The page I replaced opened on the advertisement's own asks and was called first by eight of its sixteen judges, the new page by one; the new page opens on an earlier company in another field. In both, the earlier page's first lines took the post's own frame and the later page's did not. One page a post cannot tell this from the spread between pages of one text, nor from these judges' liking for an advertisement's own words (result 7).
     - The page replaced for post A is the page the candidate had in result 15, and it stands 6th of 31 here as it did there.
     - A writer took 30 to 62 minutes and 15 to 25 dollars for a page written again. Ranking one page among the pool took sixteen judges and about two and a half dollars.
 
@@ -309,11 +310,11 @@ The owner asked of the round: "do we really have to use so many tokens?" It did 
 | Judges for the sixteen examined pages of result 17, in pairs and among other candidates | 1,136 rooms | 48 |
 | Judges for the real applications among other candidates | 288 rooms | 46 |
 | Readers of the sixteen examined pages and their writers' records, run as sessions | 32 | 14 |
-| Subagents | 33, and more for the ranking, the changes by hand and the later readings | 30 for the 33; the rest not counted |
-| The running of the round itself | | not priced; the first two sessions read 351 million tokens again from their own context, and the later sessions were not counted |
+| The four sessions that directed the round | 4, the last counted up to 28 November while it still ran | 343 |
+| Subagents of those four sessions | 122 | 162 |
 
 - The weekly limit stopped fifteen runs on the evening of 27 November: one examined-page run of result 17 after 30 minutes and 10 dollars, twelve more of them as they started, with nothing reported, and the first runs of the two new real applications after 12 and 10 dollars, which fresh writers then carried on from what they had written. The thirteen examined pages were written again in empty rooms. The fifteen stopped runs cost 31 dollars.
-- The session that runs a round is its largest cost. Each tool call reads the whole of a growing context again. A subagent that reads, traces or counts and returns one screen costs one or two dollars.
+- The four sessions that directed the round cost 343 dollars. Each tool call reads the whole of a growing context again. A subagent that reads, traces or counts and returns one screen costs one or two dollars.
 - Up to result 16, about a quarter of what the writers and judges cost bought the round's findings: the fairness tests, the baseline against itself, and the blind batches with their traces. The first batch of 45 drafts was not blind, and 16 writer runs were stopped before they finished.
 - What follows for a round: the control before the versions; few texts; the session directs and subagents read; a step is one script that ends in one screen; no follow-up question is put to a judge until a room can be resumed clean; and a round is sized to end within the context of the session that runs it, which is the owner's stated preference.
 
