@@ -7,6 +7,8 @@ move it. Run from the repository root:
 It writes one file per variant into labs/sales-hire/round-1/variants/. There is no v5. Three variants are not made here.
 all-changes.md is the method as it stood after the six commits 9202090d to e16b5f63 on branch hire-shift. h1-edit.md and
 h1-rewrite.md are the whole text reworded, the first by an editor and the second by a rewrite; neither is a set of replacements.
+v9-leads, v10-leads-stays-out and v11-several are replacements on v7-holes2, the text put into the method at 323012ca. A
+variant that names a module expects the files of labs/sales-hire/round-1/modules/ beside the method's own modules.
 """
 import os, subprocess
 HERE=os.path.dirname(os.path.abspath(__file__))
@@ -52,7 +54,24 @@ def holes2(s):
     s=rep(s,"This is the check that finds grain and inherited sentences, and it costs one call.","This is the check that finds grain and inherited sentences, and it costs one call. Before it opens the page, it lists from the advertisement alone what this employer most needs done; afterwards it says, for each, where the page shows the candidate doing it, or that it does not.")
     s=rep(s,"Then say plainly what remains: the rows left standing and why,","Then say plainly what remains: how many changes served each hole and how many were `check`, the rows left standing and why,")
     return s
-variants={'v1-opening':opening,'v2-examine':examine,'v3-say':say,'v4-hole':hole,'v6-say-hole':lambda s: hole(say(s)),'v7-holes2':holes2,'v8-opening-holes2':lambda s: holes2(opening(s))}
+HOLES_END="ask what goes wrong for this employer while the post stays empty."
+TOP="Whatever is chosen, the top of the page shows the candidate filling the first holes, in the employer's order and a clause to each, before it turns to what the candidate finds most interesting in the record: a reader who stops there has seen the post answered."
+READER_END="afterwards it says, for each, where the page shows the candidate doing it, or that it does not."
+JUDGES_END="- Judges do not hear dryness, and they prefer the advertisement's own words and the cadence of machine-written prose."
+FIRST_LINES="Whatever is chosen, the first lines of the page answer the first thing this reader has to know of any applicant, as `brief.md` gives it, with the largest the record holds for it, told as a referee would tell it. The top then shows the candidate filling the first holes, in the employer's order and a clause to each, before it turns to what the candidate finds most interesting in the record: a reader who stops there has seen the post answered."
+def leads(s):
+    s=rep(s,HOLES_END,HOLES_END+" Above the list, write the first thing this reader has to know of any applicant before the rest of a page matters to them, such as whether the person has led at this size, with where you read it.")
+    s=rep(s,TOP,FIRST_LINES)
+    s=rep(s,READER_END,READER_END+" It is also given the question in `modules/first-thing.md`. Where it answers that the first lines did not tell it what it first had to know, they are written again from what the record holds for that, and the page is read whole again.")
+    return s
+def stays_out(s):
+    s=leads(s)
+    s=rep(s,FIRST_LINES,FIRST_LINES+" What this reader has no use for in choosing whom to speak to, such as the trade of a post in another field or the case for work the advertisement does not ask about, stays out of the top and stands in the entry it belongs to.")
+    s=rep(s,"and the page is read whole again.","and the page is read whole again. It is given `modules/top-no-use.md` as well. A line it had no use for moves to the entry it belongs to, or is said again as the answer to something this reader asks; nothing leaves the page by this.")
+    return s
+def several(s):
+    return rep(s,JUDGES_END,JUDGES_END+"\n\nWhere a post is worth more than one attempt, the page is written afresh several times, each time from an empty folder by an agent that sees none of the other attempts, and each attempt is taken through checks 1 to 4. The judges then choose among the finished pages, every pair of them in both orders, and the page that wins the most pairs is the one sent. The register records the choice and its margin.")
+variants={'v1-opening':opening,'v2-examine':examine,'v3-say':say,'v4-hole':hole,'v6-say-hole':lambda s: hole(say(s)),'v7-holes2':holes2,'v8-opening-holes2':lambda s: holes2(opening(s)),'v9-leads':lambda s: leads(holes2(s)),'v10-leads-stays-out':lambda s: stays_out(holes2(s)),'v11-several':lambda s: several(holes2(s))}
 for name,fn in variants.items():
     text=fn(base)
     open(os.path.join(HERE,'variants',name+'.md'),'w').write(text)
