@@ -6,7 +6,7 @@ One posting is the employer's own and states its pay. One states no pay and asks
 
 ## Prompt
 
-This folder is for my job search. Follow the two methods in [path]/listing-sift and [path]/career-hire. What I've told you about myself is in from-me.md, and three postings I've been sent are in postings/. Set the search up here, take the three postings as far as a decision each, and for one worth answering begin the application: stop once you have established who reads it, and do not write the CV. I'm away, so decide what you have to and note it where I'll find it.
+This folder is for my job search. Follow the two methods in [path]/listing-sift and [path]/sales-hire. What I've told you about myself is in from-me.md, and three postings I've been sent are in postings/. Set the search up here, take the three postings as far as a decision each, and for one worth answering begin the application: stop once you have established who reads it, and do not write the CV. I'm away, so decide what you have to and note it where I'll find it.
 
 (The runner added, as harness only: the local path of the method copies, and "There is no internet access here.")
 
