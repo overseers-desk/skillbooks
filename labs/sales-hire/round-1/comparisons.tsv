@@ -192,48 +192,48 @@ first draft, baseline against baseline	reworded	C	1 and 3	full	baseline draft 1	
 first draft, baseline against baseline	reworded	C	1 and 3	top	baseline draft 1	baseline draft 3	3	5	0
 first draft, baseline against baseline	reworded	C	2 and 3	full	baseline draft 2	baseline draft 3	1	7	0
 first draft, baseline against baseline	reworded	C	2 and 3	top	baseline draft 2	baseline draft 3	2	6	0
-finished page against baseline, every pairing	finished	A	1 and 1	full	baseline finished page 1	v7-holes2 finished page 1	0	8	0
-finished page against baseline, every pairing	finished	A	1 and 1	top	baseline finished page 1	v7-holes2 finished page 1	6	2	0
-finished page against baseline, every pairing	finished	A	1 and 2	full	baseline finished page 1	v7-holes2 finished page 2	0	8	0
-finished page against baseline, every pairing	finished	A	1 and 2	top	baseline finished page 1	v7-holes2 finished page 2	0	8	0
-finished page against baseline, every pairing	finished	A	1 and 3	full	baseline finished page 1	v7-holes2 finished page 3	0	8	0
-finished page against baseline, every pairing	finished	A	1 and 3	top	baseline finished page 1	v7-holes2 finished page 3	6	2	0
-finished page against baseline, every pairing	finished	A	2 and 1	full	baseline finished page 2	v7-holes2 finished page 1	3	5	0
-finished page against baseline, every pairing	finished	A	2 and 1	top	baseline finished page 2	v7-holes2 finished page 1	0	8	0
-finished page against baseline, every pairing	finished	A	2 and 2	full	baseline finished page 2	v7-holes2 finished page 2	0	8	0
-finished page against baseline, every pairing	finished	A	2 and 2	top	baseline finished page 2	v7-holes2 finished page 2	0	8	0
-finished page against baseline, every pairing	finished	A	2 and 3	full	baseline finished page 2	v7-holes2 finished page 3	1	7	0
-finished page against baseline, every pairing	finished	A	2 and 3	top	baseline finished page 2	v7-holes2 finished page 3	1	7	0
-finished page against baseline, every pairing	finished	A	3 and 1	full	baseline finished page 3	v7-holes2 finished page 1	4	4	0
-finished page against baseline, every pairing	finished	A	3 and 1	top	baseline finished page 3	v7-holes2 finished page 1	7	1	0
-finished page against baseline, every pairing	finished	A	3 and 2	full	baseline finished page 3	v7-holes2 finished page 2	1	7	0
-finished page against baseline, every pairing	finished	A	3 and 2	top	baseline finished page 3	v7-holes2 finished page 2	1	7	0
-finished page against baseline, every pairing	finished	A	3 and 3	full	baseline finished page 3	v7-holes2 finished page 3	3	5	0
-finished page against baseline, every pairing	finished	A	3 and 3	top	baseline finished page 3	v7-holes2 finished page 3	4	4	0
-the page the candidate had against a finished page	finished	A	1	full	the page the candidate had	baseline finished page	6	2	0
-the page the candidate had against a finished page	finished	A	1	top	the page the candidate had	baseline finished page	2	6	0
-the page the candidate had against a finished page	finished	A	2	full	the page the candidate had	baseline finished page	2	6	0
-the page the candidate had against a finished page	finished	A	2	top	the page the candidate had	baseline finished page	8	0	0
-the page the candidate had against a finished page	finished	A	3	full	the page the candidate had	baseline finished page	0	8	0
-the page the candidate had against a finished page	finished	A	3	top	the page the candidate had	baseline finished page	8	0	0
-the page the candidate had against a finished page	finished	A	1	full	the page the candidate had	v7-holes2 finished page	1	7	0
-the page the candidate had against a finished page	finished	A	1	top	the page the candidate had	v7-holes2 finished page	4	4	0
-the page the candidate had against a finished page	finished	A	2	full	the page the candidate had	v7-holes2 finished page	0	8	0
-the page the candidate had against a finished page	finished	A	2	top	the page the candidate had	v7-holes2 finished page	2	6	0
-the page the candidate had against a finished page	finished	A	3	full	the page the candidate had	v7-holes2 finished page	1	7	0
-the page the candidate had against a finished page	finished	A	3	top	the page the candidate had	v7-holes2 finished page	4	4	0
-first draft against the finished page made from it	finished	A	1	full	baseline first draft	baseline finished page	0	8	0
-first draft against the finished page made from it	finished	A	1	top	baseline first draft	baseline finished page	0	8	0
-first draft against the finished page made from it	finished	A	2	full	baseline first draft	baseline finished page	3	5	0
-first draft against the finished page made from it	finished	A	2	top	baseline first draft	baseline finished page	8	0	0
-first draft against the finished page made from it	finished	A	3	full	baseline first draft	baseline finished page	1	7	0
-first draft against the finished page made from it	finished	A	3	top	baseline first draft	baseline finished page	0	8	0
-first draft against the finished page made from it	finished	A	1	full	v7-holes2 first draft	v7-holes2 finished page	0	8	0
-first draft against the finished page made from it	finished	A	1	top	v7-holes2 first draft	v7-holes2 finished page	8	0	0
-first draft against the finished page made from it	finished	A	2	full	v7-holes2 first draft	v7-holes2 finished page	2	6	0
-first draft against the finished page made from it	finished	A	2	top	v7-holes2 first draft	v7-holes2 finished page	1	7	0
-first draft against the finished page made from it	finished	A	3	full	v7-holes2 first draft	v7-holes2 finished page	4	4	0
-first draft against the finished page made from it	finished	A	3	top	v7-holes2 first draft	v7-holes2 finished page	0	8	0
+examined page against baseline, every pairing	finished	A	1 and 1	full	baseline examined page 1	v7-holes2 examined page 1	0	8	0
+examined page against baseline, every pairing	finished	A	1 and 1	top	baseline examined page 1	v7-holes2 examined page 1	6	2	0
+examined page against baseline, every pairing	finished	A	1 and 2	full	baseline examined page 1	v7-holes2 examined page 2	0	8	0
+examined page against baseline, every pairing	finished	A	1 and 2	top	baseline examined page 1	v7-holes2 examined page 2	0	8	0
+examined page against baseline, every pairing	finished	A	1 and 3	full	baseline examined page 1	v7-holes2 examined page 3	0	8	0
+examined page against baseline, every pairing	finished	A	1 and 3	top	baseline examined page 1	v7-holes2 examined page 3	6	2	0
+examined page against baseline, every pairing	finished	A	2 and 1	full	baseline examined page 2	v7-holes2 examined page 1	3	5	0
+examined page against baseline, every pairing	finished	A	2 and 1	top	baseline examined page 2	v7-holes2 examined page 1	0	8	0
+examined page against baseline, every pairing	finished	A	2 and 2	full	baseline examined page 2	v7-holes2 examined page 2	0	8	0
+examined page against baseline, every pairing	finished	A	2 and 2	top	baseline examined page 2	v7-holes2 examined page 2	0	8	0
+examined page against baseline, every pairing	finished	A	2 and 3	full	baseline examined page 2	v7-holes2 examined page 3	1	7	0
+examined page against baseline, every pairing	finished	A	2 and 3	top	baseline examined page 2	v7-holes2 examined page 3	1	7	0
+examined page against baseline, every pairing	finished	A	3 and 1	full	baseline examined page 3	v7-holes2 examined page 1	4	4	0
+examined page against baseline, every pairing	finished	A	3 and 1	top	baseline examined page 3	v7-holes2 examined page 1	7	1	0
+examined page against baseline, every pairing	finished	A	3 and 2	full	baseline examined page 3	v7-holes2 examined page 2	1	7	0
+examined page against baseline, every pairing	finished	A	3 and 2	top	baseline examined page 3	v7-holes2 examined page 2	1	7	0
+examined page against baseline, every pairing	finished	A	3 and 3	full	baseline examined page 3	v7-holes2 examined page 3	3	5	0
+examined page against baseline, every pairing	finished	A	3 and 3	top	baseline examined page 3	v7-holes2 examined page 3	4	4	0
+the page the candidate had against an examined page	finished	A	1	full	the page the candidate had	baseline examined page	6	2	0
+the page the candidate had against an examined page	finished	A	1	top	the page the candidate had	baseline examined page	2	6	0
+the page the candidate had against an examined page	finished	A	2	full	the page the candidate had	baseline examined page	2	6	0
+the page the candidate had against an examined page	finished	A	2	top	the page the candidate had	baseline examined page	8	0	0
+the page the candidate had against an examined page	finished	A	3	full	the page the candidate had	baseline examined page	0	8	0
+the page the candidate had against an examined page	finished	A	3	top	the page the candidate had	baseline examined page	8	0	0
+the page the candidate had against an examined page	finished	A	1	full	the page the candidate had	v7-holes2 examined page	1	7	0
+the page the candidate had against an examined page	finished	A	1	top	the page the candidate had	v7-holes2 examined page	4	4	0
+the page the candidate had against an examined page	finished	A	2	full	the page the candidate had	v7-holes2 examined page	0	8	0
+the page the candidate had against an examined page	finished	A	2	top	the page the candidate had	v7-holes2 examined page	2	6	0
+the page the candidate had against an examined page	finished	A	3	full	the page the candidate had	v7-holes2 examined page	1	7	0
+the page the candidate had against an examined page	finished	A	3	top	the page the candidate had	v7-holes2 examined page	4	4	0
+first draft against the examined page made from it	finished	A	1	full	baseline first draft	baseline examined page	0	8	0
+first draft against the examined page made from it	finished	A	1	top	baseline first draft	baseline examined page	0	8	0
+first draft against the examined page made from it	finished	A	2	full	baseline first draft	baseline examined page	3	5	0
+first draft against the examined page made from it	finished	A	2	top	baseline first draft	baseline examined page	8	0	0
+first draft against the examined page made from it	finished	A	3	full	baseline first draft	baseline examined page	1	7	0
+first draft against the examined page made from it	finished	A	3	top	baseline first draft	baseline examined page	0	8	0
+first draft against the examined page made from it	finished	A	1	full	v7-holes2 first draft	v7-holes2 examined page	0	8	0
+first draft against the examined page made from it	finished	A	1	top	v7-holes2 first draft	v7-holes2 examined page	8	0	0
+first draft against the examined page made from it	finished	A	2	full	v7-holes2 first draft	v7-holes2 examined page	2	6	0
+first draft against the examined page made from it	finished	A	2	top	v7-holes2 first draft	v7-holes2 examined page	1	7	0
+first draft against the examined page made from it	finished	A	3	full	v7-holes2 first draft	v7-holes2 examined page	4	4	0
+first draft against the examined page made from it	finished	A	3	top	v7-holes2 first draft	v7-holes2 examined page	0	8	0
 first draft against baseline, every pairing	finished	A	1 and 1	full	baseline first draft 1	v7-holes2 first draft 1	0	8	0
 first draft against baseline, every pairing	finished	A	1 and 1	top	baseline first draft 1	v7-holes2 first draft 1	0	8	0
 first draft against baseline, every pairing	finished	A	1 and 2	full	baseline first draft 1	v7-holes2 first draft 2	0	8	0
@@ -252,53 +252,53 @@ first draft against baseline, every pairing	finished	A	3 and 2	full	baseline fir
 first draft against baseline, every pairing	finished	A	3 and 2	top	baseline first draft 3	v7-holes2 first draft 2	0	8	0
 first draft against baseline, every pairing	finished	A	3 and 3	full	baseline first draft 3	v7-holes2 first draft 3	2	6	0
 first draft against baseline, every pairing	finished	A	3 and 3	top	baseline first draft 3	v7-holes2 first draft 3	2	6	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	1 and 1	full	baseline corrected finished page 1	v7-holes2 corrected finished page 1	0	8	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	1 and 1	top	baseline corrected finished page 1	v7-holes2 corrected finished page 1	6	2	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	1 and 2	full	baseline corrected finished page 1	v7-holes2 corrected finished page 2	0	8	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	1 and 2	top	baseline corrected finished page 1	v7-holes2 corrected finished page 2	1	7	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	1 and 3	full	baseline corrected finished page 1	v7-holes2 corrected finished page 3	0	8	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	1 and 3	top	baseline corrected finished page 1	v7-holes2 corrected finished page 3	8	0	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	2 and 1	full	baseline corrected finished page 2	v7-holes2 corrected finished page 1	1	7	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	2 and 1	top	baseline corrected finished page 2	v7-holes2 corrected finished page 1	2	6	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	2 and 2	full	baseline corrected finished page 2	v7-holes2 corrected finished page 2	1	7	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	2 and 2	top	baseline corrected finished page 2	v7-holes2 corrected finished page 2	0	8	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	2 and 3	full	baseline corrected finished page 2	v7-holes2 corrected finished page 3	2	6	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	2 and 3	top	baseline corrected finished page 2	v7-holes2 corrected finished page 3	4	4	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	3 and 1	full	baseline corrected finished page 3	v7-holes2 corrected finished page 1	4	4	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	3 and 1	top	baseline corrected finished page 3	v7-holes2 corrected finished page 1	1	7	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	3 and 2	full	baseline corrected finished page 3	v7-holes2 corrected finished page 2	2	6	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	3 and 2	top	baseline corrected finished page 3	v7-holes2 corrected finished page 2	0	8	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	3 and 3	full	baseline corrected finished page 3	v7-holes2 corrected finished page 3	4	4	0
-finished page corrected to the record against baseline corrected, every pairing	finished	A	3 and 3	top	baseline corrected finished page 3	v7-holes2 corrected finished page 3	4	4	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	1 and 1	full	baseline corrected examined page 1	v7-holes2 corrected examined page 1	0	8	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	1 and 1	top	baseline corrected examined page 1	v7-holes2 corrected examined page 1	6	2	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	1 and 2	full	baseline corrected examined page 1	v7-holes2 corrected examined page 2	0	8	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	1 and 2	top	baseline corrected examined page 1	v7-holes2 corrected examined page 2	1	7	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	1 and 3	full	baseline corrected examined page 1	v7-holes2 corrected examined page 3	0	8	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	1 and 3	top	baseline corrected examined page 1	v7-holes2 corrected examined page 3	8	0	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	2 and 1	full	baseline corrected examined page 2	v7-holes2 corrected examined page 1	1	7	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	2 and 1	top	baseline corrected examined page 2	v7-holes2 corrected examined page 1	2	6	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	2 and 2	full	baseline corrected examined page 2	v7-holes2 corrected examined page 2	1	7	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	2 and 2	top	baseline corrected examined page 2	v7-holes2 corrected examined page 2	0	8	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	2 and 3	full	baseline corrected examined page 2	v7-holes2 corrected examined page 3	2	6	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	2 and 3	top	baseline corrected examined page 2	v7-holes2 corrected examined page 3	4	4	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	3 and 1	full	baseline corrected examined page 3	v7-holes2 corrected examined page 1	4	4	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	3 and 1	top	baseline corrected examined page 3	v7-holes2 corrected examined page 1	1	7	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	3 and 2	full	baseline corrected examined page 3	v7-holes2 corrected examined page 2	2	6	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	3 and 2	top	baseline corrected examined page 3	v7-holes2 corrected examined page 2	0	8	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	3 and 3	full	baseline corrected examined page 3	v7-holes2 corrected examined page 3	4	4	0
+examined page corrected to the record against baseline corrected, every pairing	finished	A	3 and 3	top	baseline corrected examined page 3	v7-holes2 corrected examined page 3	4	4	0
 joined page		A		full	the page the candidate had	the joined page corrected by its trace	1	7	0
 joined page		A		top	the page the candidate had	the joined page corrected by its trace	5	3	0
 joined page		A		full	the joined page as first judged	the joined page corrected by its trace	2	6	0
 joined page		A		top	the joined page as first judged	the joined page corrected by its trace	8	0	0
-finished page, version against version	first finished	A	1	full	all-changes	v3-say	1	7	0
-finished page, version against version	first finished	A	1	top	all-changes	v3-say	8	0	0
-finished page, version against version	first finished	A	1	full	v3-say	v4-hole	6	2	0
-finished page, version against version	first finished	A	1	top	v3-say	v4-hole	1	7	0
-finished page, version against version	first finished	A	1	top	all-changes	v4-hole	8	0	0
-finished page, version against version	first finished	A	1	full	v3-say	v1-opening	6	1	1
-finished page, version against version	first finished	A	1	top	all-changes	v1-opening	8	0	0
-finished page, version against version	first finished	A	1	full	v3-say	v6-say-hole	5	3	0
-finished page, version against version	first finished	A	1	top	all-changes	v6-say-hole	8	0	0
-finished page, version against version	first finished	A	1	full	v3-say	v2-examine	4	4	0
-finished page, version against version	first finished	A	1	top	all-changes	v2-examine	8	0	0
-finished page, version against version	first finished	A	1	full	v3-say	baseline	4	4	0
-finished page, version against version	first finished	A	1	top	all-changes	baseline	7	0	1
-joined page	first finished	A		full	the page the candidate had	the joined page as first judged	1	7	0
-joined page	first finished	A		full	v3-say finished page	the joined page as first judged	0	8	0
-joined page	first finished	A		full	all-changes finished page	the joined page as first judged	0	8	0
-joined page	first finished	A		top	the page the candidate had	the joined page as first judged	2	5	1
-joined page	first finished	A		top	v3-say finished page	the joined page as first judged	0	8	0
-joined page	first finished	A		top	all-changes finished page	the joined page as first judged	4	4	0
-the page the candidate had against the round's first finished page	reduced record	A		full	the page the candidate had	all-changes finished page	8	0	0
-the page the candidate had against the round's first finished page	reduced record	A		top	the page the candidate had	all-changes finished page	8	0	0
-the page the candidate had against the round's first finished page	reduced record	B		full	the page the candidate had	all-changes finished page	8	0	0
-the page the candidate had against the round's first finished page	reduced record	B		top	the page the candidate had	all-changes finished page	8	0	0
-the page the candidate had against the round's first finished page	reduced record	C		full	the page the candidate had	all-changes finished page	8	0	0
-the page the candidate had against the round's first finished page	reduced record	C		top	the page the candidate had	all-changes finished page	8	0	0
+examined page, version against version	first examined	A	1	full	all-changes	v3-say	1	7	0
+examined page, version against version	first examined	A	1	top	all-changes	v3-say	8	0	0
+examined page, version against version	first examined	A	1	full	v3-say	v4-hole	6	2	0
+examined page, version against version	first examined	A	1	top	v3-say	v4-hole	1	7	0
+examined page, version against version	first examined	A	1	top	all-changes	v4-hole	8	0	0
+examined page, version against version	first examined	A	1	full	v3-say	v1-opening	6	1	1
+examined page, version against version	first examined	A	1	top	all-changes	v1-opening	8	0	0
+examined page, version against version	first examined	A	1	full	v3-say	v6-say-hole	5	3	0
+examined page, version against version	first examined	A	1	top	all-changes	v6-say-hole	8	0	0
+examined page, version against version	first examined	A	1	full	v3-say	v2-examine	4	4	0
+examined page, version against version	first examined	A	1	top	all-changes	v2-examine	8	0	0
+examined page, version against version	first examined	A	1	full	v3-say	baseline	4	4	0
+examined page, version against version	first examined	A	1	top	all-changes	baseline	7	0	1
+joined page	first examined	A		full	the page the candidate had	the joined page as first judged	1	7	0
+joined page	first examined	A		full	v3-say examined page	the joined page as first judged	0	8	0
+joined page	first examined	A		full	all-changes examined page	the joined page as first judged	0	8	0
+joined page	first examined	A		top	the page the candidate had	the joined page as first judged	2	5	1
+joined page	first examined	A		top	v3-say examined page	the joined page as first judged	0	8	0
+joined page	first examined	A		top	all-changes examined page	the joined page as first judged	4	4	0
+the page the candidate had against the round's first examined page	reduced record	A		full	the page the candidate had	all-changes examined page	8	0	0
+the page the candidate had against the round's first examined page	reduced record	A		top	the page the candidate had	all-changes examined page	8	0	0
+the page the candidate had against the round's first examined page	reduced record	B		full	the page the candidate had	all-changes examined page	8	0	0
+the page the candidate had against the round's first examined page	reduced record	B		top	the page the candidate had	all-changes examined page	8	0	0
+the page the candidate had against the round's first examined page	reduced record	C		full	the page the candidate had	all-changes examined page	8	0	0
+the page the candidate had against the round's first examined page	reduced record	C		top	the page the candidate had	all-changes examined page	8	0	0
 change by hand against its base	by hand	A		full	base a2	change L0 on that base	7	1	0
 change by hand against its base	by hand	A		top	base a2	change L0 on that base	8	0	0
 change by hand against its base	by hand	A		full	base a2	change L1 on that base	0	8	0
