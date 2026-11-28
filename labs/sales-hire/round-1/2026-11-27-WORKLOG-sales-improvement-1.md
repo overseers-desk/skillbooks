@@ -296,6 +296,22 @@ The key to the real posts, and every page, room and judge's answer, is outside t
     - *What counts, fixed before any page is judged.* Each new page is set beside the page its post had before round 1 and beside the page result 18's writer wrote. A page better by more than 0.25 of a rank has improved, one within 0.25 is level, and one worse by more than 0.25 has fallen. Improvement is seen if the mean difference from the pages before round 1 is better by 0.25 or more and no more than one of the five has fallen. On posts H and I there are two further readings: whether the page carries the fact its old page's judges cited most, and how many of its judges cite it.
     - *Expected, written before the result.* Posts I and A gain most, having lost the most cited facts in result 18. Post H gains a little. Post K stands near its result 18 page, which already carried them, and so above its page from before round 1. Post C is level.
     - *Limits known beforehand.* One page a post, and pages of one text differ by about a rank between the best and the worst of four. The method and the candidate file have both changed since result 18, so a difference from result 18's pages is of the two together.
+    - *Mean rank, lower better.* The new page has eight judges, the others sixteen.
+
+      | Post | Page before round 1 | Result 18's page | New page | New less before round 1 | New less result 18 |
+      |---|---|---|---|---|---|
+      | H | 3.00 | 3.31 | 2.25 | -0.75 | -1.06 |
+      | I | 1.69 | 2.19 | 2.25 | +0.56 | +0.06 |
+      | A | 3.00 | 2.81 | 2.75 | -0.25 | -0.06 |
+      | C | 4.56 | 4.50 | 4.38 | -0.19 | -0.12 |
+      | K | 3.31 | 2.38 | 2.88 | -0.44 | +0.50 |
+
+      Against the pages before round 1 the mean is 0.21 better, with a standard error of 0.22: two pages improved, H and K, two are level, A and C, and one has fallen, I. By the rule fixed beforehand improvement is not seen, the mean falling short of 0.25. Against result 18's pages the mean is 0.14 better, with a standard error of 0.26.
+    - *The two posts that fell in result 18.* On post H the new page carries the bank's experiments run with its business units, all eight judges cite them, and the page stands 0.75 above the page before round 1. On post I the new page carries "20+ systems of record" and all eight judges credit it with joining data never designed to fit together. It stands where the two earlier rewrites stood, 2.25 beside 2.19 and 2.31, and 0.56 below the page before round 1. Two of its eight judges call it first, where eight of sixteen called the old page first. So on post I the lost fact was not what held the page down.
+    - *How the pages for post I open.* The page before round 1 opens on the post's problem, "builds systems that make decisions from data never organised for them, and runs them inside organisations that must be able to trust them", and its first point is the data. The new page opens on the candidate's account of three technologies taken into real use. Its first point is the co-founder's post at a tokenisation company, and the data is its second. That is the order of the writer's own list of holes "in the employer's order", whose first is technical vision as a co-founder. Result 18's page for this post opened the same way.
+    - *Against what was expected.* H gained more than expected. I and A were expected to gain most: I did not gain and A is level. K stands half a rank behind its result 18 page. C is level, as expected.
+    - *Cost as reported.* 78.32 dollars for the five writers, who took 30 to 80 minutes each, and 8.79 for forty judges, none void.
+    - *Settled as.* Open. The owner's word for this outcome: "If we don't, we will discuss what's going wrong."
 
 ## Approaches ruled out
 
