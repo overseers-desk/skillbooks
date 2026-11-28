@@ -40,7 +40,7 @@ It ran on 27 and 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1
 - The control was not written under the same conditions, which the roadmap asks of a control: another day, a brief and a repair the method does not hold, the whole record to read, and sixteen judges against eight. Only post I's control was judged again on the day of the run (`j0`).
 - The gain sits where the control ranked low: four of the five controls at 3.0 or worse gained three quarters of a rank or more, and neither control better than 2.0 gained. A return toward the usual would give that pattern with no effect of the method.
 - The writer could read the control. Its room held the post's earlier application whole, the control CV among it, and its instruction named where the CVs the candidate had sent are.
-- Post I's control, at 1.69, is the one the method falls clearly short of; post C's difference is within the noise. The arrangement that wrote it, run again three times, gave 2.38, 3.12 and 3.50 (`o12`), so 1.69 was a good draw and not what that arrangement writes reliably.
+- Post I's control, at 1.69, is the one the method falls clearly short of; post C's difference is within the noise. The arrangement that wrote it, run again three times, gave 2.38, 3.12 and 3.50 (`o12`), so, as far as three runs without one of its steps show, 1.69 is not what that arrangement writes reliably.
 
 ## Proven and not proven
 
@@ -48,21 +48,21 @@ A status is one of three. Shown: the evidence supports it. Not shown: the eviden
 
 | What | Status | Evidence | Code |
 |---|---|---|---|
-| The changes together lower rank | Not shown | the method's CVs rank 0.34 better on average, s.e. 0.25; two of eight posts worse | `b2-33dd2626`, `real-application` |
-| The changes together raise rank | Not shown | the gain is 1.4 standard errors, at one CV a post | `b2-33dd2626` |
+| The changes together make CVs rank worse | Not shown | the method's CVs rank 0.34 better on average, s.e. 0.25; two of eight posts worse | `b2-33dd2626`, `real-application` |
+| The changes together make CVs rank better | Not shown | the gain is 1.4 standard errors at one CV a post, and the control was written under other conditions | `b2-33dd2626` |
 | Any one of the changes by itself | Not tested | they were only run together | |
-| The method's text worded as selling | Not tested by rank | no such wording is in the method; two rewordings of the whole text exist (`h1-edit`, `h1-rewrite`) and no CV under them was ranked among other candidates | `reworded` |
+| A wording of the method's text as selling makes CVs rank better | Not tested | no such wording is in the method, and no CV written under one was ranked among other candidates | |
 | The method's checks improve a first draft, judged in pairs | Shown | the examined CV beat its own first draft in 4 runs of 6 and lost none | `examined` |
 | The method's checks improve a first draft, by rank among other candidates | Not shown | half a place better on average over six CVs, s.e. 0.45; one of the six a rank worse | `placement` |
-| Choosing the best of several CVs raises rank | Shown | on four sets of four, the chosen CV ranks 0.62 better than its set's mean | `v12-to-v14` |
-| A rule that the employer's needs dictate the top of the CV (in `v7-holes2`; not in the method now) | Not shown | its CVs led in pairs and show no lead among other candidates | `examined`, `placement` |
-| Three rewordings of `v7-holes2` raise rank | Not shown | `v12-body` 0.3 better, inside the spread of one text; `v13-first-post` 0.8 worse; `v14-outside-trace` 1.1 worse | `v12-to-v14` |
+| Choosing the best of several CVs gives a CV that ranks better | Shown | on four sets of four for one post, the chosen CV ranks 0.62 better than its set's mean | `v12-to-v14` |
+| A rule that the employer's needs dictate the top of the CV (in `v7-holes2`; not in the method now) makes CVs rank better | Not shown | its CVs rank no better: 5.42 against 4.75 on average for examined CVs, 6.54 against 6.04 for post D drafts | `placement` |
+| Three rewordings of `v7-holes2` make CVs rank better | Not shown | `v12-body` 0.3 better, inside the spread of one text; `v13-first-post` 0.8 worse; `v14-outside-trace` 1.1 worse | `v12-to-v14` |
 | Rewording the method changes what a writer takes its job to be | Not shown | under three texts, eight of nine writers named carrying the method through; the ninth wrote under the unchanged text | `reworded` |
 | Post I's control (1.69) can be written again by the arrangement that wrote it | Not shown | three runs, all worse: 2.38, 3.12, 3.50; one step of the original was left out | `o12` |
-| In pairs, the judges firmly prefer one of two drafts written under the same text | Shown | decided in 14 of 18 pairs on the opening and 10 of 18 on a full read, so a pair between two texts cannot be read as a difference between the texts | `first`, `reworded` |
-| The winner of a pair ranks better among other candidates, when both CVs are of one text | Shown | better in 14 of 20 decided pairs, worse in 1 | `examined`, `placement` |
+| In pairs, the judges often prefer one of two drafts written under the same text | Shown | decided in 14 of 18 pairs on the opening and 10 of 18 on a full read | `first`, `reworded` |
+| The winner of a pair ranks better among other candidates, when both CVs are of one text | Shown | better in 14 of 20 decided pairs, worse in 1 | `first`, `reworded`, `examined`, `placement` |
 | The winner of a pair ranks better among other candidates, when the CVs are of two texts | Not shown | no relation: better in 10 of 44 decided pairs, worse in 8, the rest within half a rank | `examined`, `placement` |
-| Judges rank a CV worse when its specifics are taken out | Shown | on one copy each: figures made general, 1.5 ranks worse; one fact removed, 0.5 worse | `placement`, `j0` |
+| Judges rank a CV worse when its figures and mechanisms are made general | Shown | on one copy: 1.5 ranks worse. One fact removed from another copy: 0.5 worse, which is near the noise | `placement`, `j0` |
 
 ## The measure
 
