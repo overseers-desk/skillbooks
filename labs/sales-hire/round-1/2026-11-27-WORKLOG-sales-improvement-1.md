@@ -2,7 +2,7 @@
 
 Round 1 is closed. The owner, on 28 November 2026: "From what I see, round 1 can be closed. We have a positive outcome, and we have done a few experiments, although not exhaustive, but a few experiments to see What factors are at play."
 
-It ran on 27 and 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1.3, 1.4, 1.5 and 1.6) and cost at least 3,036 dollars as reported. This file states what the round established. The order in which things were found, and the tests set aside as flawed, superseded or made by hand, are in this file's history in git.
+It ran on 27 and 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1.3, 1.4, 1.5 and 1.6) and cost at least 3,102 dollars as reported. This file states what the round established. The order in which things were found, and the tests set aside as flawed, superseded or made by hand, are in this file's history in git.
 
 ## The experiment and its result
 
@@ -16,7 +16,7 @@ It ran on 27 and 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1
 
 **Control.** The CVs written for the same posts on 26 November, before the round. Each was written by one writer under the method as it stood at that hour, with a brief from the session directing it and the whole record to read, and was repaired once after a second reader.
 
-**Run.** Ten real applications, one writer and one CV a post, Opus at medium effort, with nobody correcting the writer. Each CV has eight judges, two on each of four piles of rivals; post I's has sixteen. Each control has sixteen. Posts E and F had no CV before the round. Rank is defined under "The measure"; 1 is best.
+**Run.** Twenty-six real applications, one writer and one CV a post, Opus at medium effort, with nobody correcting the writer. Ten were ranked on 28 November: each CV has eight judges, two on each of four piles of rivals (post I's has sixteen), and each control sixteen; posts E and F had no CV before the round. Sixteen more were ranked on 29 November, the control and the new CV on the same four piles before ten judges each. Rank is defined under "The measure"; 1 is best.
 
 | Post | Role | Control | Method | Change |
 |---|---|---|---|---|
@@ -31,14 +31,35 @@ It ran on 27 and 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1
 | E | head of a company's generative-AI lab | none | 2.25 | |
 | F | chief AI and innovation officer | none | 2.00 | |
 
-**Result.** Over the eight posts with a control, the method's CVs rank 0.34 better on average, with a standard error of 0.25: five better, one level, two worse. On the six posts whose control ranked worse than 2.0 the average gain is 0.60.
+The sixteen ranked on 29 November:
 
-**Against the owner's bar.** He had named the improvement to reach as "outperform the old one in a meaningful way (e.g. > 0.26 ranking position or reach +1 ranking position in average for CVs that wasn't already top of the rank)". The average of 0.34 is above 0.26, but it is 1.4 standard errors from zero, so it is not established as a gain; and 0.60 is short of a full rank.
+| Post | Role | Control | Method | Change |
+|---|---|---|---|---|
+| D | chief technology officer of an AI startup, through a recruiter | 5.00 | 2.62 | 2.38 better |
+| O | head of engineering for a payments platform | 3.19 | 2.25 | 0.94 better |
+| Y | vice-president and lead of an agentic AI platform | 3.44 | 2.50 | 0.94 better |
+| R | engineering director for an agentic AI data platform | 3.50 | 2.69 | 0.81 better |
+| P | chief technology officer of an identity-fraud company, through a recruiter | 4.50 | 3.75 | 0.75 better |
+| T | chief technology officer of a clinical-trials company | 3.06 | 2.38 | 0.68 better |
+| N | chief technology officer of an AI fintech, through a recruiter | 1.69 | 1.12 | 0.57 better |
+| X | head of AI | 5.25 | 4.81 | 0.44 better |
+| Q | senior vice-president of enterprise AI and automation | 3.94 | 3.56 | 0.38 better |
+| Z | vice-president of AI and data at a consultancy | 2.75 | 2.38 | 0.37 better |
+| S | head of growth data science | 3.75 | 3.62 | 0.13 better |
+| V | regional head of applied AI | 1.50 | 1.38 | 0.12 better |
+| W | senior vice-president of AI and data at a consultancy | 2.25 | 2.38 | 0.13 worse |
+| M | head of AI architecture and engineering at a bank | 2.75 | 3.00 | 0.25 worse |
+| U | chief information and AI officer | 3.00 | 3.38 | 0.38 worse |
+| B | senior director of engineering | 2.25 | 2.69 | 0.44 worse |
+
+**Result.** Over the 24 posts with a control, the method's CVs rank 0.42 better on average, with a standard error of 0.14: 17 better, one level, six worse. The first eight alone give 0.34 (s.e. 0.25); the sixteen give 0.46 (s.e. 0.17). Without post D the average is 0.33 (s.e. 0.11). On the twenty posts whose control ranked 2.0 or worse the average gain is 0.51.
+
+**Against the owner's bar.** He had named the improvement to reach as "outperform the old one in a meaningful way (e.g. > 0.26 ranking position or reach +1 ranking position in average for CVs that wasn't already top of the rank)". The average of 0.42 is above 0.26 and three standard errors from zero, so that part is met. A gain of 0.51 where the control was not at the top is short of a full rank.
 
 **Limits.**
 - One CV a post. CVs written under one text differ by about a rank, so the eight differences are noisy.
-- The control was not written under the same conditions, which the roadmap asks of a control: another day, a brief and a repair the method does not hold, the whole record to read, and sixteen judges against eight. Only post I's control was judged again on the day of the run (`j0`).
-- The gain sits where the control ranked low: four of the five controls at 3.0 or worse gained three quarters of a rank or more, and neither control better than 2.0 gained. A return toward the usual would give that pattern with no effect of the method.
+- The control was not written under the same conditions, which the roadmap asks of a control: another day, a brief and a repair the method does not hold, and the whole record to read. For the first ten it also had sixteen judges against eight, on another day; for the sixteen, control and new CV were judged on the same day, on the same piles, by the same number of judges, and those piles were built from the new CV's first judges.
+- The gain sits mostly where the control ranked low: of the fifteen controls at 3.0 or worse, thirteen gained, nine of them by three quarters of a rank or more; of the four better than 2.0, one fell by 0.94, one was level and two gained. A return toward the usual would give part of that pattern with no effect of the method.
 - The writer could read the control. Its room held the post's earlier application whole, the control CV among it, and its instruction named where the CVs the candidate had sent are.
 - Post I's control, at 1.69, is the one the method falls clearly short of; post C's difference is within the noise. The arrangement that wrote it, run again three times, gave 2.38, 3.12 and 3.50 (`o12`), so, as far as three runs without one of its steps show, 1.69 is not what that arrangement writes reliably.
 
@@ -76,8 +97,8 @@ A status is one of three. Shown: the evidence supports it. Not shown: the eviden
 
 | What | Status | Evidence | Code |
 |---|---|---|---|
-| The changes together make CVs rank worse | Not shown | the method's CVs rank 0.34 better on average, s.e. 0.25; two of eight posts worse | `b2-33dd2626`, `real-application` |
-| The changes together make CVs rank better | Not shown | the gain is 1.4 standard errors at one CV a post, and the control was written under other conditions | `b2-33dd2626` |
+| The changes together make CVs rank worse | Not shown | the method's CVs rank 0.42 better on average over 24 posts, s.e. 0.14; six posts worse | `b2-33dd2626`, `real-application`, `delivery` |
+| The changes together make CVs rank better | Shown | 0.42 better over 24 posts, three standard errors, at one CV a post; the control was written under other conditions | `b2-33dd2626`, `real-application`, `delivery` |
 | Any one of the changes by itself | Not tested | they were only run together | |
 | A selling wording of the method's text changes which CV the judges prefer, in pairs on first drafts | Not shown | five texts, none clear of chance; one batch not written blind | `first`, `reworded` |
 | A selling wording of the method's text makes CVs rank better | Not tested | no CV under one was ranked among other candidates | |
@@ -115,7 +136,7 @@ What a rank is worth:
 
 ## The kept experiments
 
-Each code is a batch name in `comparisons.tsv` or `placements.tsv` beside this file, and a folder of the same name under `round-1/` in the outside folder, which holds the writers' rooms, the judges' records and the texts shown to them. The outside folder is `/var/local/aesop/sales-voice/` on the researcher's machine; its `KEY.md` maps the role letters used here to the real posts and lists the tools. A CV write is one writer producing one CV; a judge answer is one judge on one pair or one ranking. With the tests of the selling frame, described above, the round's record holds 123 CV writes and 3,932 judge answers.
+Each code is a batch name in `comparisons.tsv` or `placements.tsv` beside this file, and a folder of the same name under `round-1/` in the outside folder, which holds the writers' rooms, the judges' records and the texts shown to them. The outside folder is `/var/local/aesop/sales-voice/` on the researcher's machine; its `KEY.md` maps the role letters used here to the real posts and lists the tools. A CV write is one writer producing one CV; a judge answer is one judge on one pair or one ranking. With the tests of the selling frame, described above, the round's record holds 139 CV writes and 4,252 judge answers.
 
 **`fairness`: can the judges be fooled.** Seven pairs, 56 judge answers, no CV written. Identical CVs split 4 to 4, every judge choosing the copy it read first. A copy with its summary replaced by generic sentences, a copy with three sentences in the third person, and a CV written for another post each lost 8 to 0.
 
@@ -148,6 +169,8 @@ In each set of four, one CV won all three of its pairs on a full read. It ranks 
 
 **`b2-33dd2626`: the method on ten real applications.** Ten CV writes, 88 judge answers.
 
+**`delivery`: sixteen further applications, control and new CV.** Sixteen CV writes and 320 judge answers: each new CV and the CV it would replace, on the same four piles before ten judges, four on the first pile and two on each of the other three. The piles were built from the new CV's first judges. Data in the outside folder: `delivery/ranks.tsv`, `delivery/compare.tsv`.
+
 **`o12`: the arrangement that wrote post I's control, run again.** The method text of that hour, the directing session's brief and prompt as its writer read them, and the record as it stood, three times with nobody correcting it, each followed by one pass that brought the CV into line with the candidate's rulings, as was done that day: 3 CV writes, 24 judge answers. One step of the original was left out, a repair whose instruction the directing session chose by hand.
 
 **`j0`: the judges asked again.** No CV written, 16 judge answers. Post I's control ranked 1.75 before eight fresh judges, against 1.69 before its first sixteen. A copy without one fact, the most cited of the facts the candidate file had lacked, ranked 2.25.
@@ -173,7 +196,7 @@ A fault that stands in the method: its check that a CV speaks in one person lets
 
 ## Left over that is not a test
 
-- The other 24 applications of the search were written again under the method at `33dd2626`: 16 CVs are written, and 8 writers were cut off when the owner's account reached its weekly limit. The 16 were ranked on 29 November, each in four piles before ten judges (`delivery/ranks.tsv` in the outside folder): their ranks run from 1.12 to 4.81, ten at 2.5 or worse, four between 2.0 and 2.5, two better than 2.0. None is in the candidate's folder. For four of the ten CVs of the experiment above, the CV already in the candidate's folder ranked better and was kept, as each application's own folder there records; so the CV each of the 16 would replace is to be ranked on the same piles before it is replaced. This is delivery to the candidate, not a test of the method.
+- Of the other 24 applications of the search, 16 CVs are written and ranked, and 8 writers were cut off when the owner's account reached its weekly limit. For twelve of the 16 the new CV ranks better than the one it would replace; for four (posts W, M, U and B) the old one does. None has been put in the candidate's folder. This is delivery to the candidate, not a test of the method.
 - The method carries no version tag. The name is the owner's.
 
 ## Cost
@@ -186,8 +209,9 @@ Dollars are what the runs report, at API prices: a writer's `total_cost_usd` and
 | The recorded experiments: judges | 218 |
 | The recorded experiments: questions put to writers, readers of CVs, and the agents that chose among four | 93 |
 | The other 24 applications written again | 305 |
+| Sixteen of them ranked, the new CV and the one it would replace: judges | 66 |
 | Tests set aside, stopped runs, and a follow-up question to every judge, since dropped | about 758 |
 | The first four sessions directing the round, and their subagents | 505 |
-| In all, at least | 3,036 |
+| In all, at least | 3,102 |
 
 The last two sessions directing the round, and their subagents, are not priced. A writer taken through the checks costs 8 to 32 dollars and 20 to 70 minutes; a judge who gives the whole order costs about 20 cents.
