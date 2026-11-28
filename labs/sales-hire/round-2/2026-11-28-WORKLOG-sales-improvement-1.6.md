@@ -63,7 +63,21 @@ The owner's words: produce a new version of the methodology that can be describe
 - *Lock-in.* Posts 31, 13, 19, 40 and 42 written once each under `33dd2626` on `d99ba53e` (`deliver/b2-all.sh`, rooms `b2-<post>-33dd2626-1`), making ten with result 2's five. Their earlier pages, sixteen judges each: 31 old 4.69, result 18 3.00; 13 old 2.06, result 18 2.00; 19 old 1.00, result 18 1.06; 40 and 42 had no page before round 1. The method stays generally better if, over the eight posts with an old page, the new pages' mean is better than the old pages' and no post is worse by more than a place. Then every CV in the search is written again under `33dd2626` and the method is tagged.
 - *Lock-in, as it came out.* New pages (eight judges): 31 3.62, 13 1.62, 19 1.00, 40 2.25 (result 18's page 2.81), 42 2.00 (2.12). Post I's page of result 2 was the one near the line, at 2.75 over eight; by result 1's rule a deciding page has sixteen, and eight more judges put it at 2.62 over sixteen, 0.93 behind its old page. Over the eight posts with an old page, the new pages are better by 0.34 (standard error about 0.27), and no post is worse by more than a place. The method stays generally better: the lock-in holds. The 0.34 rests on one page a post; pooled with result 22's pages of the same five posts it is 0.31 with a standard error of about 0.21, so the goal is not yet shown and the lock-in goes ahead as the owner set it.
 - *The old setup.* Post I written three times by `deliver/o-room.sh` (rooms `o12-1` to `o12-3`). It reproduces the old page if its mean over the three is 2.0 or better. It differs from the integrated method on post I if the two means differ by half a place or more and by more than twice the standard error of the difference.
+- *Delivered.* The ten pages went into the career folder page by page (weiwu `3042d0b8`): for each post the better-ranked page stands, the new one for posts 24, 32, 13, 19, 40 and 42 and the earlier one for 31, 34, 12 and 21, and each application's `examine.md` says which page is sent.
+
+### Result 4: the old setup on post I (direction 8)
+
+- *What was run.* Post I written three times by `deliver/o-room.sh` as on 26 November, with no hand in it: the method at aesop `5613242e`, batch 2's brief and prompt, the record at weiwu `6ff7850b`, then the 09:33 pass on the candidate file at `f93c97fb`. Opus at medium effort; rooms `o12-1` to `o12-3`; eight judges a page.
+- *Outcome.* 2.38, 3.12 and 3.50: mean 3.00. The rule fixed before was 2.0 or better to reproduce the old page's 1.69; it is not reproduced. Against the integrated method's page on post I (2.62 over sixteen) the gap is 0.38 the other way, short of the half place fixed for a difference.
+- *Reading.* Unattended, the setup that wrote post I's best page writes pages that rank about 3.0 there, worse on average than the integrated method's. The 1.69 was a good draw from that setup, and post I's fall since round 1 is a return toward the mean, not a loss the later changes caused. The one step of the old chain left out is the second reader's repair, whose instruction batch 2 chose by hand from the reader's findings. Post I's old page stays the yardstick the goal is measured against, as the owner set it.
+
+## Cost
+
+Writers' and judges' figures are what the runs report, at API prices; the directing session is counted separately.
 
 | Test | Writers | Judges | Directing | Total |
 |---|---|---|---|---|
 | Result 1, judges on post I | 0 | 5.06 | | 5.06 |
+| Result 2 (round 1's result 23, session sales-improvement-1.5) | 75.23 | 8.76 | | 83.99 |
+| Result 3, the lock-in's five posts and post I's eight more judges | 63.03 | 10.43 | | 73.46 |
+| Result 4, the old setup on post I | 56.64 | 4.94 | | 61.58 |
