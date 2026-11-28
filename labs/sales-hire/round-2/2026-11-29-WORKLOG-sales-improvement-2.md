@@ -38,4 +38,28 @@ Outside folder `/var/local/aesop/sales-voice`, test `round-2/b3`: rooms `b2-<pos
 
 ## Results
 
-Stage 1 is running, from 29 November. Of the other applications, sixteen have a ranked control (`delivery/ranks.tsv` in the outside folder); fourteen stand at 2.00 or more and are stage 2's posts, and two, at 1.38 and 1.12, are at the top. The eight applications whose rewrite was cut off join once written and ranked.
+### Stage 1, 29 November
+
+Eight selling CVs, 64 judges, none void; the writers cost 117.43 dollars at API prices (26 to 59 minutes each), the judges ran on the judges' account.
+
+| Post | Control | Selling CV | Gain | Room | Gain as share of room | Changes marked sell : check |
+|---|---|---|---|---|---|---|
+| C | 4.88 | 3.88 | +1.00 | 3.88 | +26% | 24 : 8 |
+| G | 3.62 | 3.00 | +0.62 | 2.62 | +24% | 8 : 14 |
+| I | 2.62 | 1.38 | +1.25 | 1.62 | +77% | 11 : 13 |
+| K | 2.50 | 2.88 | -0.38 | 1.50 | -25% | 21 : 14 |
+| H | 2.25 | 2.25 | 0.00 | 1.25 | 0% | 22 : 22 |
+| E | 2.25 | 2.25 | 0.00 | 1.25 | 0% | 11 : 13 |
+| A | 2.12 | 2.62 | -0.50 | 1.12 | -44% | 20 : 16 |
+| F | 2.00 | 1.62 | +0.38 | 1.00 | +38% | 8 : 16 |
+
+Post I's control has sixteen judges, the others eight. The counts of changes are the writers' own, from the end of each `examine.md`.
+
+- **Not shown.** The mean gain is +0.30 with a standard error of 0.22 (1.3 standard errors); better on four posts, level on two, worse on two. The standard error is the one expected for one CV a post.
+- **The gain is on the middle and rear posts:** +0.62 on C, G, I and K, three of them better, against -0.03 on H, E, A and F. Four posts a side do not establish the split, and part of it can be the controls' own luck: a control that ranked low partly by its run's draw is beaten more easily by any CV written again. No control was written again, so the two are not told apart; leaving out the two controls at the top tilts the whole mean the same way, by less.
+- **The writers worked as sellers.** Every writer wrote the salesperson sentence in its notes, and 125 of 241 changes (52%) were marked sell, against 11 of 34 in round 1's one run under the selling text and 2 of 40 under the text without it. The frame was taken up; it was not done half-way.
+- **Nothing in the records says how the frame would be written better.** A writer's share of sell changes does not go with its gain (C 75% and +1.00, K 60% and -0.38, A 56% and -0.50, G 36% and +0.62). The selling CVs are longer than their controls on seven posts of eight. Of the two facts judges cited most in round 1, the "20+ systems of record" line is on seven selling CVs and the status line is off the top of both I's (gained) and K's (lost).
+
+The reading goes to the owner; what follows is on his word.
+
+Of the other applications, sixteen have a ranked control (`delivery/ranks.tsv` in the outside folder); fourteen stand at 2.00 or more and are stage 2's posts, and two, at 1.38 and 1.12, are at the top. The eight applications whose rewrite was cut off join once written and ranked.
