@@ -18,7 +18,7 @@
 - One method written as the method, and again at risk in the next round.
 - Three kinds given as the whole set.
 
-**The rule it produced.** `../hire-methodology.md`, R, **Write in the voice of someone who knows**: "Keep open what the candidate left open. 'Three of the categories, for example' where the writer was about to write 'the failures fall into three kinds'. 'Has helped most so far' where the writer was about to conclude." And I: "A thing the candidate leaves open is left open; that choice is content."
+**The rule it produced.** `../hire-methodology.md`, R, **Write in the voice of someone who knows**: "Keep open what the candidate left open; that choice is content. 'Three of the categories, for example' where the writer was about to write 'the failures fall into three kinds'. 'Has helped most so far' where the writer was about to conclude."
 
 **To re-run it.** A run in progress, the approach chosen. The tester places in a folder beside the methodology:
 

@@ -6,7 +6,9 @@ Versions of `sales-hire/hire-methodology.md` that are being compared with each o
 
 A change goes straight into `sales-hire/` when it is believed to help and can be rolled back if a later run shows a regression. The history of that folder is then the record.
 
-A change comes here when it has to stand beside other versions at the same time. That is the case for a test laid out as a matrix, versions by posts by repeat runs, and for two explanations of one result that call for different texts. A writer can be pointed at each version in turn, and the versions outlive the comparison.
+Since 28 November 2026 the series works this first way, by the owner's choice between the two: a change is made in `sales-hire/`, and every test names the commit of the method and the commit of the candidate's file it ran on, so that a regression is met by going back to a commit. A writer under test is given a copy of `sales-hire/` taken from the commit named.
+
+A change came here, in round 1, when it has to stand beside other versions at the same time. That was the case for a test laid out as a matrix, versions by posts by repeat runs. `round-1/variants/` and its `make-variants.py` are that round's record, and no version is added to them.
 
 ## Layout
 
