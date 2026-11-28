@@ -5,7 +5,7 @@ Baseline: sales-hire/hire-methodology.md as of commit e51412d3, read from git so
 move it. Run from the repository root:
     python3 labs/sales-hire/round-1/make-variants.py
 It writes one file per variant into labs/sales-hire/round-1/variants/. There is no v5. Three variants are not made here.
-all-changes.md is the method as it stood after the six commits 9202090d to e16b5f63 on branch hire-shift. h1-edit.md and
+all-changes.md is the method as it stood after the six commits 9202090d to e16b5f63. h1-edit.md and
 h1-rewrite.md are the whole text reworded, the first by an editor and the second by a rewrite; neither is a set of replacements.
 v9-leads, v10-leads-stays-out, v11-several, v12-body, v13-first-post and v14-outside-trace are replacements on v7-holes2, the text put into the method at 323012ca. A
 variant that names a module expects the files of labs/sales-hire/round-1/modules/ beside the method's own modules.
