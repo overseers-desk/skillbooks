@@ -1,4 +1,22 @@
-# Round 2 worklog, from 28 November 2026 (session sales-improvement-1.6)
+# Round 1 worklog, 28 November 2026 (session sales-improvement-1.6)
+
+## Outcome
+
+The owner's words on 28 November: "From what I see, round 1 can be closed. We have a positive outcome, and we have done a few experiments, although not exhaustive, but a few experiments to see What factors are at play." And: "Thing that was never tested but only an idea should move to round 2 plan."
+
+| What was asked | Status | Result | Where it goes |
+|---|---|---|---|
+| All four changes together, against the pages written before round 1 | Tested: 8 posts, one page each | Better by 0.34 of a rank, standard error 0.27; no regression | Kept, in the method at `33dd2626` |
+| Each of the four changes by itself | Not tested, except duplication and the employer's needs as a pair (level with the text before them) | No loss was found for any one of them to explain | Not carried over |
+| Whether post I's old page (1.69) can be written again unattended | Tested: three reruns | 2.38, 3.12, 3.50; the old page was a lucky draw | Settled |
+| Details missing from the candidate file | Checked against the CVs it was built from | 22 found, answered by the owner, file corrected | Settled |
+| The lab's judges, same page judged twice | Tested: 2 pages | Moved 0.06 and 0.50; eight judges carry about 0.3 | Further checks in round 2's plan |
+| Ten real CVs under the method with all four changes | Written, ranked, delivered | New page stands for 6 posts, the earlier page for 4 | Done |
+| The other 24 real CVs | 16 written, 8 cut off by the weekly limit; none ranked or delivered | | Delivery work left, with a version tag for the method |
+| Several pages a post, the judges choosing (`v11-several`) | Tested and kept in this round, not in the method | 0.62 better than a set's mean, at several writers a page | The owner's decision |
+| Earlier findings told to the writer; a second reader's repair; writers' effort | Never tested | | Round 2's plan |
+
+Cost as reported by writers and judges: 528.70 dollars over results 1 to 6, the directing sessions not priced.
 
 ## The goal
 
@@ -9,7 +27,7 @@ The owner's words: produce a new version of the methodology that can be describe
 ## Where it starts
 
 - The method is hire-shift `33dd2626`: every change agreed on 28 November together (the sales framing, the candidate file as the writers' record, what the employer needs done as an item of the brief with no rule for the page, the opening sentence that answers the reader's first question, four repeated statements said once). The candidate file is weiwu `d99ba53e` and is used as it stands; the owner allows it to be changed where a test shows it to be the cause.
-- The old pages' mean ranks among nine other candidates (round 1's worklog, result 22): post H 3.00, I 1.69, A 3.00, C 4.56, K 3.31. Of these only post I's still ranks better than its page written in round 1 or after.
+- The old pages' mean ranks among nine other candidates (the worklog of 27 November, result 22): post H 3.00, I 1.69, A 3.00, C 4.56, K 3.31. Of these only post I's still ranks better than its page written in round 1 or after.
 - How the old pages were made, from the commits' session trailers and the two sessions that directed them. Each was drafted by an Opus subagent working alone, under the method as it stood when it started (post I: aesop `5613242e`; K: hire-shift `a9518152`; A: `a7cf35b1`; H and C: `f1cbd099`). Each writer also had its directing session's brief, which the method never held, and read the whole record: the standing record or candidate file, the profile, the interview record and the two CVs he sent. A second reader then read the page against the directing session's own list and the writer made one repair; posts I and K also had a pass against his rulings. No remark of the owner's on any of the five pages is recorded. Batch 2's prompts and briefs for posts I and K, as its writers read them, are in the outside folder under `originals/batch2-2026-11-26/`; batch 3's brief for A, H and C was edited after its pages and survives only in that session's transcript.
 
 ## Directions considered
@@ -32,7 +50,7 @@ The owner's words: produce a new version of the methodology that can be describe
 
 ## Plan
 
-- Result 23 (round 1's worklog, run by session sales-improvement-1.5): the method at `33dd2626` on the five posts, one page each. It is the first reading of the integrated version against the old pages.
+- Result 23 (the worklog of 27 November, run by session sales-improvement-1.5): the method at `33dd2626` on the five posts, one page each. It is the first reading of the integrated version against the old pages.
 - If result 23 is generally better: the lock-in. Five more of result 18's posts (40, 42, 31, 13, 19) written under `33dd2626`, making ten; if those ten stay better than the old pages, every CV in the search written again, and the method tagged.
 - Then, toward the desirable, each test about 100 dollars, against `33dd2626` on posts I and H, two or three pages an arm: the old setup reproduced on post I (`deliver/o-room.sh`, which answers direction 8); the integrated method with batch 2's findings (5); with the whole record read (4); and a change aimed at whatever the leading direction shows. A lead goes to 200 dollars on all five posts, then 400.
 - Delegation: writers are `claude -p` Opus sessions at medium effort in rooms of the outside folder; judges run through `judge.py` on the judges' account; counting and each result's entry here are done by Sonnet subagents running `deliver/judging/b2-report.py`, read by the directing session before anything is concluded; method versions are made by script and reviewed by the directing session.
@@ -55,7 +73,7 @@ The owner's words: produce a new version of the methodology that can be describe
 
 ### Result 2: the integrated method on five posts, read for the lock-in
 
-- *What was run.* Round 1's worklog, result 23 (session sales-improvement-1.5): the method at `33dd2626`, candidate file `d99ba53e`, one page a post, eight judges a page. Old page / result 22's page / new page: H 3.00 / 2.25 / 2.25; I 1.69 / 2.25 / 2.75; A 3.00 / 2.75 / 2.12; C 4.56 / 4.38 / 4.88; K 3.31 / 2.88 / 2.50. New less old: -0.21 (better), standard error 0.39. 83.99 dollars as reported.
+- *What was run.* The worklog of 27 November, result 23 (session sales-improvement-1.5): the method at `33dd2626`, candidate file `d99ba53e`, one page a post, eight judges a page. Old page / result 22's page / new page: H 3.00 / 2.25 / 2.25; I 1.69 / 2.25 / 2.75; A 3.00 / 2.75 / 2.12; C 4.56 / 4.38 / 4.88; K 3.31 / 2.88 / 2.50. New less old: -0.21 (better), standard error 0.39. 83.99 dollars as reported.
 - *Reading against this log's measure.* Every change agreed on 28 November is in the text, the mean is better than the old pages' by 0.21 in both results 22 and 23, and over the two pages a post no post is worse by more than a place (post I, pooled with result 1's judges: 2.00 and 2.75 against 1.71, about 0.66 worse). The integrated method counts as generally better, and the lock-in starts.
 
 ### Result 3, fixed before any page is judged: the lock-in's ten, and the old setup on post I
