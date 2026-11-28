@@ -44,7 +44,7 @@ It ran on 27 and 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1
 
 ## The selling frame: written, tried, abandoned
 
-The round was begun to change the method's frame: an application is a sale, and the writer a salesperson. The owner: "the whole point of the round of test is changing frame, others were add-on components or after-thoughts collectively tested in a round. it is in the name of every session and the name of folder".
+The round was begun to test one hypothesis. The owner: "The premise of this experiment is the hypothesis that sales-centric effort works. Archaeological effort work less good." An application is a sale, and the writer a salesperson and not an archaeologist of the record. Also the owner: "the whole point of the round of test is changing frame, others were add-on components or after-thoughts collectively tested in a round. it is in the name of every session and the name of folder".
 
 On 27 November the first session wrote that frame into the method's text, in commits `9202090d` to `e16b5f63`: the title "Putting a Candidate Forward"; the opening told from the person filling the post; each phase opening with the writer's sentence "I am a salesperson and my goal is to sell the candidate", which was the owner's idea; each change to a CV marked sell or check; a reader's remark taken as a customer's answer. Two hours later the same session returned the text to its baseline (commit `2649d5a5`), on the ground that the changes "were not shown to produce a better page as a whole", and kept each as a version to test.
 
@@ -65,6 +65,7 @@ What the round holds on the frame:
 - **The first three CVs under the selling text** (`reduced-record`, posts A, B and C) each lost 8 to 0 to the CV the candidate already had. The pair is not clean: their writers' copy of the record had parts missing.
 - **A writer's reasons for its changes** (`records-read`). In a run under the selling text before it had the salesperson sentence, 2 of 40 changes were made to sell. In a run with the sentence and with each change marked sell or check, 11 of 34 were. One run each.
 - **What a writer takes its job to be** did not change under the two rewordings (`reworded`, below).
+- **One application of a selling framework is in the method**: what the employer needs done, the buyer's need found before the pitch. The owner required it: "despite listing all of the sales frameworks, when AI was asked to apply them. It instead did archaeological work instead. So I forced one application of one sales framework." It was tested only inside the combination.
 - **No CV written under a selling text was ranked among other candidates.** Pairs on first drafts cannot show rank, so the frame was set aside on a test that could show neither that it works nor that it does not.
 
 The selling text as first written is the method at commit `e16b5f63`. A test draft of it on the method as it now stands is `../round-2/variants/sales-framing.md`.
