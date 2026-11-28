@@ -39,9 +39,22 @@ The owner's words: produce a new version of the methodology that can be describe
 
 ## Results
 
-None yet.
+### Result 1: the judges, on post I (direction 9)
+
+- *What was run.* Eight fresh judges, two a pile on post I's four piles, on three texts: the old page as its earlier judges read it, result 22's page, and the old page with "20+ systems of record" taken out of its two sentences. Batches `judging/batches/j0/` in the outside folder (commit `51ffe52e` there); 5.06 dollars, on the judges' account; no judge void.
+- *What counted, fixed before.* Steady if each fresh mean falls within 0.5 of its earlier mean; the taken-out fact noticed if that page ranks worse than the old page's fresh mean.
+
+| Text | Fresh mean (SD), 8 judges | Earlier mean |
+|---|---|---|
+| Old page | 1.75 (1.04) | 1.69 over 16 |
+| Result 22's page | 1.75 (0.89) | 2.25 over 8 |
+| Old page without the fact | 2.25 (0.71) | |
+
+- *Reading.* The old page held to 0.06. Result 22's page moved 0.50, on the line, and the judges ranked it level with the old page. Pooled, the old page stands at 1.71 over 24 judges and result 22's page at 2.00 over 16: a gap of 0.29 with a standard error of about 0.3. Post I's fall is therefore within what judges alone vary on one page, and is not shown to exist. Taking out the fact cost 0.5, the way the citations predicted, short of two standard errors.
+- *What it changes.* A page judged by eight has a standard error of about 0.3 from the judges alone, larger than the 0.26 the goal names. A version is read on its mean over many pages, not on any one page, and a page that decides anything has sixteen judges.
 
 ## Cost
 
 | Test | Writers | Judges | Directing | Total |
 |---|---|---|---|---|
+| Result 1, judges on post I | 0 | 5.06 | | 5.06 |
