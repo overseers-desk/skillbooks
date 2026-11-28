@@ -320,6 +320,22 @@ The key to the real posts, and every page, room and judge's answer, is outside t
     - *What counts, fixed before any page is judged.* Each new page is set beside its post's page from before round 1: better by more than 0.25 of a rank it has improved, within 0.25 it is level, worse by more than 0.25 it has fallen. The combination beats the baseline if the mean difference is better by 0.25 or more and no more than one page has fallen, loses to it if the mean is worse by 0.25 or more, and is level with it otherwise. Each page is also set beside result 22's page for its post, as a reading and not a rule, the candidate file having changed as well. On post I, whether the page opens on the post's problem or on the co-founder's post.
     - *Expected, written before the result.* Post I stands better than result 22's 2.25, its top no longer following a list of holes. Post H holds near 2.25. The others are level with result 22's.
     - *Limits known beforehand.* One page a post, and pages of one text differ by about a rank between the best and the worst of four.
+    - *Mean rank, lower better.* The new page and result 22's have eight judges, the others sixteen.
+
+      | Post | Page before round 1 | Result 18's page | Result 22's page | New page | New less before round 1 | New less result 22 |
+      |---|---|---|---|---|---|---|
+      | H | 3.00 | 3.31 | 2.25 | 2.25 | -0.75 | 0.00 |
+      | I | 1.69 | 2.19 | 2.25 | 2.75 | +1.06 | +0.50 |
+      | A | 3.00 | 2.81 | 2.75 | 2.12 | -0.88 | -0.63 |
+      | C | 4.56 | 4.50 | 4.38 | 4.88 | +0.31 | +0.50 |
+      | K | 3.31 | 2.38 | 2.88 | 2.50 | -0.81 | -0.38 |
+
+      Against the pages before round 1 the mean is 0.21 better, with a standard error of 0.39: three pages improved, H, A and K, and two have fallen, I and C. By the rule fixed beforehand the combination is level with the baseline: it neither beats it nor loses to it. The five new pages and result 22's five have the same mean rank, 2.90.
+    - *Two pages a post.* Taking result 22's page and this one together, the pages written since the candidate file was filled stand against the page before round 1 at: H 2.25 against 3.00, A 2.44 against 3.00, K 2.69 against 3.31, C 4.63 against 4.56, I 2.50 against 1.69. Three posts are better by about six to eight tenths of a rank on both pages, one is level, and post I is worse on both.
+    - *Post I.* The page opens on the post's problem, with the data as its first point and the co-founder's post fourth, as the page before round 1 does and as no rewrite under the hole step did. It still stands at 2.75, and its four rewrites since round 1 stand at 2.19, 2.31, 2.25 and 2.75. The top gives the data in general terms, "one live view of its records and correspondence", and keeps "20+ systems of record" for the body, where the old page had the figure in its first point. Its labels follow the advertisement's phrases, and one of the two judges who placed it fourth and fifth said "the CV echoes the ad's own phrasing closely". The old page was called first by eight of sixteen judges, two of whom said it "covers all four" of what the advertisement asks. Post I's old page is the best-placed of these five, and a post chosen because its rewrite fell is one whose old page stood unusually high.
+    - *Against what was expected.* Post I was expected to stand better than result 22's page and stands half a rank worse. H holds as expected. A and K are better than result 22's and C is worse, each by about half a rank, which is the size of the difference between two pages of one text.
+    - *Cost as reported.* 75.23 dollars for the five writers, who took 23 to 51 minutes, and 8.76 for forty judges, none void: 83.99. The directing session is not in that figure.
+    - *Settled as.* The method stays at `33dd2626`. The combination is level with the pages before round 1 on these five, better on three posts and worse on post I, and the hole as a thought with the merged statements is lateral beside result 22.
 
 ## Approaches ruled out
 
