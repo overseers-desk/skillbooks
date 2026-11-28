@@ -71,6 +71,14 @@ The owner's words: produce a new version of the methodology that can be describe
 - *Outcome.* 2.38, 3.12 and 3.50: mean 3.00. The rule fixed before was 2.0 or better to reproduce the old page's 1.69; it is not reproduced. Against the integrated method's page on post I (2.62 over sixteen) the gap is 0.38 the other way, short of the half place fixed for a difference.
 - *Reading.* Unattended, the setup that wrote post I's best page writes pages that rank about 3.0 there, worse on average than the integrated method's. The 1.69 was a good draw from that setup, and post I's fall since round 1 is a return toward the mean, not a loss the later changes caused. The one step of the old chain left out is the second reader's repair, whose instruction batch 2 chose by hand from the reader's findings. Post I's old page stays the yardstick the goal is measured against, as the owner set it.
 
+### Result 5, fixed before any page is judged: two levers screened toward the goal
+
+- *Arms*, each one page on posts 31, 34, 21, 32 and 24 (the five with an old page that was not at the top and the most room), Opus at medium effort, candidate file `d99ba53e`, eight judges a page:
+  - batch 2's findings (direction 5): the method at `33dd2626`, and the writer reads `deliver/earlier-findings-batch2.md` before the method (`TAG=f EXTRA=…`);
+  - the whole record (direction 4): method folder `y`, the writer pointed at the interview record as well (`RECORD=whole`).
+- *Against* the integrated method's pages of the same five posts (results 2 and 3): 3.62, 4.88, 2.50, 2.25, 2.12, mean 3.07; the old pages' mean there is 3.71.
+- *What counts.* A lever passes the screen if its five pages' mean is better than 3.07 by 0.3 or more. A passing lever is confirmed with a second page a post beside a second page of the integrated method, and is then carried into the method, or into the candidate file where what it holds is the candidate's. If neither passes, the next lever is several pages a post with the judges choosing (round 1's `v11-several`), its cost a page reported beside its gain.
+
 ## Cost
 
 Writers' and judges' figures are what the runs report, at API prices; the directing session is counted separately.
