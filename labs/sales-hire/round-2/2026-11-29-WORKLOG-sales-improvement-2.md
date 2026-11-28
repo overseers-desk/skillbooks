@@ -60,6 +60,8 @@ Post I's control has sixteen judges, the others eight. The counts of changes are
 - **The writers worked as sellers.** Every writer wrote the salesperson sentence in its notes, and 125 of 241 changes (52%) were marked sell, against 11 of 34 in round 1's one run under the selling text and 2 of 40 under the text without it. The frame was taken up; it was not done half-way.
 - **Nothing in the records says how the frame would be written better.** A writer's share of sell changes does not go with its gain (C 75% and +1.00, K 60% and -0.38, A 56% and -0.50, G 36% and +0.62). The selling CVs are longer than their controls on seven posts of eight. Of the two facts judges cited most in round 1, the "20+ systems of record" line is on seven selling CVs and the status line is off the top of both I's (gained) and K's (lost).
 
+Against the page each post sends, which for C, G, I and K is an earlier page than its control, the selling CV ranks better on C (3.88 against 4.50), I (1.38 against 1.69) and F (1.62 against 2.00), level on G, H and E, and worse on K (2.88 against 2.38) and A. C and F send the selling CV since 29 November (candidate's repository `a86cf46f`). I keeps its page of 26 November on the owner's word, which was given before the selling CV's rank was known; a level post keeps the page it sends. Choosing pages is delivery to the candidate, not part of the test.
+
 The reading goes to the owner; what follows is on his word.
 
 Of the other applications, sixteen have a ranked control (`delivery/ranks.tsv` in the outside folder); fourteen stand at 2.00 or more and are stage 2's posts, and two, at 1.38 and 1.12, are at the top. The eight applications whose rewrite was cut off join once written and ranked.
