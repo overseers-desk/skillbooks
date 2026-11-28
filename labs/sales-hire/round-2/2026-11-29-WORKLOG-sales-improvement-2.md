@@ -10,7 +10,7 @@ Does a CV written under the selling frame rank better among other candidates' CV
 
 - **Selling CV:** one writer a post under `80350f5b`.
 - **Control:** the CV already ranked for that post under `33dd2626` (round 1's test `final method` in `../round-1/placements.tsv`, and the other applications written again under `33dd2626` after round 1, once ranked). No control is written again, so a drift in the writers since 28 November is not checked.
-- **The same for both:** the room tool, the candidate file at `d99ba53e` of the candidate's repository, the career folder copied at the commit the post's control was copied at (`4c85d67f` for stage 1's posts, `d99ba53e` for the others), Opus at medium effort, eight judges a CV, two on each of the post's four piles.
+- **The same for both:** the room tool, the candidate file at `d99ba53e` of the candidate's repository, the career folder copied at the commit the post's control was copied at (`4c85d67f` for stage 1's posts, `d99ba53e` for the others), Opus at medium effort, and the judges the post's control had: for stage 1's posts eight, two on each of the post's four piles; for the others ten, four on the first pile and two on each of the three built from its orders.
 
 ## Stages
 
@@ -19,7 +19,7 @@ Does a CV written under the selling frame rank better among other candidates' CV
 
 ## What counts, fixed before any CV was judged
 
-- A CV's rank is its mean place among nine rivals over its eight judges, 1 being best.
+- A CV's rank is the mean of its four piles' mean places among nine rivals, 1 being best.
 - A post's gain is the control's rank minus the selling CV's rank, so a positive gain is a better-ranked selling CV.
 - The result is the mean gain over the posts, with its standard error from the spread of the posts' gains.
 - Better shown: the mean gain is two standard errors or more above zero. Worse shown: two or more below. Otherwise not shown, with the estimate given.
@@ -37,4 +37,4 @@ Outside folder `/var/local/aesop/sales-voice`, test `round-2/b3`: rooms `b2-<pos
 
 ## Results
 
-Stage 1 is running.
+Stage 1 is running, from 29 November. Of the other applications, sixteen have a ranked control (`delivery/ranks.tsv` in the outside folder); fourteen stand at 2.00 or more and are stage 2's posts, and two, at 1.38 and 1.12, are at the top. The eight applications whose rewrite was cut off join once written and ranked.
