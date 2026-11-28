@@ -172,7 +172,7 @@ A fault that stands in the method: its check that a CV speaks in one person lets
 
 ## Left over that is not a test
 
-- The other 24 applications of the search were written again under the method at `33dd2626`: 16 CVs are written, and 8 writers were cut off when the owner's account reached its weekly limit. None is ranked and none is in the candidate's folder. For four of the ten CVs above, the CV already in the candidate's folder ranked better and was kept, as each application's own folder there records. So a written CV is ranked beside the one it would replace before it replaces it. This is delivery to the candidate, not a test of the method. They are in the outside folder under `delivery/`.
+- The other 24 applications of the search were written again under the method at `33dd2626`: 16 CVs are written, and 8 writers were cut off when the owner's account reached its weekly limit. None is ranked and none is in the candidate's folder. For four of the ten CVs above, the CV already in the candidate's folder ranked better and was kept, as each application's own folder there records. So a written CV is ranked beside the one it would replace before it replaces it. This is delivery to the candidate, not a test of the method. They are in the outside folder under `delivery/`, where the advertisements and judged texts of the 16 are prepared. A ranking begun on 28 November stopped at the first post: the judges' account was at its weekly limit, which resets at the same hour as the owner's, on 5 December at 06:00 Brisbane time.
 - The method carries no version tag. The name is the owner's.
 
 ## Cost
