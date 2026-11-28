@@ -1,34 +1,14 @@
 test	post	rivals	page	place	judges	first	second	third	uncalled	void	score	rank	order_asked	follow_up
-gate	A	first draw	the page the candidate had	5	4	0	0	0	4	0	0.00		three	asked
-gate	A	first draw	the page the candidate had	5	4	0	0	0	4	0	0.00		three	asked
-gate	A	first draw	that page with its summary replaced by generic sentences	5	4	0	0	0	4	0	0.00		three	asked
-gate	A	first draw	a page written for post A	5	4	0	0	0	4	0	0.00		three	asked
-gate	A	first draw	a page written for post B	5	4	0	0	0	4	0	0.00		three	asked
-gate	A	first draw	examined page, baseline, run 1	5	4	0	0	1	3	0	0.25	3.00	three	asked
-gate	A	first draw	examined page, baseline, run 2	5	4	0	0	0	4	0	0.00		three	asked
-gate	A	first draw	examined page, baseline, run 3	5	4	0	0	1	3	0	0.25	3.00	three	asked
-gate	A	first draw	the page the candidate had	2	4	0	0	1	3	0	0.25	3.00	three	asked
-gate	A	first draw	the page the candidate had	9	4	0	0	0	4	0	0.00		three	asked
-gate	A	first draw	the page the candidate had	5	4	0	0	0	4	0	0.00	4.00	whole	asked
-gate	A	first draw	the page the candidate had	5	4	0	0	0	4	0	0.00	4.00	whole	asked
-gate	A	first draw	that page with its summary replaced by generic sentences	5	4	0	0	0	4	0	0.00	4.00	whole	asked
-gate	A	first draw	a page written for post A	5	4	0	0	0	4	0	0.00	4.00	whole	asked
-gate	A	first draw	a page written for post B	5	4	0	0	0	4	0	0.00	5.00	whole	asked
-gate	A	first draw	examined page, baseline, run 1	5	4	0	0	1	3	0	0.25	3.75	whole	asked
-gate	A	first draw	examined page, baseline, run 2	5	4	0	0	0	4	0	0.00	4.00	whole	asked
-gate	A	first draw	examined page, baseline, run 3	5	4	0	0	0	4	0	0.00	4.00	whole	asked
-gate	A	first draw	the page the candidate had	2	4	0	0	0	4	0	0.00	4.00	whole	asked
-gate	A	first draw	the page the candidate had	9	4	0	0	1	3	0	0.25	3.75	whole	asked
-gate	A	nearest nine	the page the candidate had	5	8	0	0	0	8	0	0.00	5.38	whole	none
-gate	A	nearest nine	the page the candidate had	5	8	0	0	0	8	0	0.00	5.50	whole	none
-gate	A	nearest nine	that page with its summary replaced by generic sentences	5	8	0	0	0	8	0	0.00	5.00	whole	none
-gate	A	nearest nine	a page written for post A	5	8	0	0	0	8	0	0.00	5.38	whole	none
-gate	A	nearest nine	a page written for post B	5	8	0	0	0	8	0	0.00	9.25	whole	none
-gate	A	nearest nine	examined page, baseline, run 1	5	8	0	0	1	7	0	0.12	4.50	whole	none
-gate	A	nearest nine	examined page, baseline, run 2	5	8	0	0	0	8	0	0.00	5.88	whole	none
-gate	A	nearest nine	examined page, baseline, run 3	5	8	0	0	3	5	0	0.38	3.88	whole	none
-gate	A	nearest nine	the page the candidate had	2	8	0	0	0	8	0	0.00	5.00	whole	none
-gate	A	nearest nine	the page the candidate had	9	8	0	0	0	8	0	0.00	5.75	whole	none
+placement	A	nearest nine	the page the candidate had	5	8	0	0	0	8	0	0.00	5.38	whole	none
+placement	A	nearest nine	the page the candidate had	5	8	0	0	0	8	0	0.00	5.50	whole	none
+placement	A	nearest nine	that page with its summary replaced by generic sentences	5	8	0	0	0	8	0	0.00	5.00	whole	none
+placement	A	nearest nine	a page written for post A	5	8	0	0	0	8	0	0.00	5.38	whole	none
+placement	A	nearest nine	a page written for post B	5	8	0	0	0	8	0	0.00	9.25	whole	none
+placement	A	nearest nine	examined page, baseline, run 1	5	8	0	0	1	7	0	0.12	4.50	whole	none
+placement	A	nearest nine	examined page, baseline, run 2	5	8	0	0	0	8	0	0.00	5.88	whole	none
+placement	A	nearest nine	examined page, baseline, run 3	5	8	0	0	3	5	0	0.38	3.88	whole	none
+placement	A	nearest nine	the page the candidate had	2	8	0	0	0	8	0	0.00	5.00	whole	none
+placement	A	nearest nine	the page the candidate had	9	8	0	0	0	8	0	0.00	5.75	whole	none
 ladder	A	ladder 1	the page the candidate had	5	4	0	0	4	0	0	1.00	3.00	whole	none
 ladder	A	ladder 2	the page the candidate had	5	4	0	3	1	0	0	1.75	2.25	whole	none
 ladder	A	ladder 3	the page the candidate had	5	4	0	0	4	0	0	1.00	3.00	whole	none
@@ -57,7 +37,6 @@ placement	A	nearest nine	first draft, baseline, first batch, repeat 2	5	8	0	1	0	
 placement	A	nearest nine	first draft, baseline, reworded batch, repeat 2	5	8	0	0	0	8	0	0.00	7.75	whole	none
 placement	A	nearest nine	first draft, baseline, first batch, repeat 3	5	8	0	0	0	8	0	0.00	5.25	whole	none
 placement	A	nearest nine	first draft, baseline, reworded batch, repeat 3	5	8	0	0	0	8	0	0.00	5.50	whole	none
-placement	A	nearest nine	the joined page, corrected	5	8	0	0	0	8	0	0.00	4.88	whole	none
 placement	D	nearest nine	the page the candidate had	5	8	0	0	1	7	0	0.12	6.12	whole	none
 placement	D	nearest nine	first draft, baseline, held-back batch, repeat 1	5	8	0	0	2	6	0	0.25	4.62	whole	none
 placement	D	nearest nine	first draft, baseline, held-back batch, repeat 2	5	8	0	0	0	8	0	0.00	6.75	whole	none
@@ -65,32 +44,10 @@ placement	D	nearest nine	first draft, baseline, held-back batch, repeat 3	5	8	0	
 placement	D	nearest nine	first draft, v7-holes2, held-back batch, repeat 1	5	8	0	0	1	7	0	0.12	6.38	whole	none
 placement	D	nearest nine	first draft, v7-holes2, held-back batch, repeat 2	5	8	0	0	1	7	0	0.12	6.62	whole	none
 placement	D	nearest nine	first draft, v7-holes2, held-back batch, repeat 3	5	8	0	0	0	8	0	0.00	6.62	whole	none
-by hand	A	nearest nine	change L0 on base a2	5	8	0	0	0	8	0	0.00	5.25	whole	none
-by hand	A	nearest nine	change L1 on base a2	5	8	0	0	1	7	0	0.12	4.88	whole	none
-by hand	A	nearest nine	change L2 on base a2	5	8	0	0	0	8	0	0.00	5.38	whole	none
-by hand	A	nearest nine	change L3 on base a2	5	8	0	1	0	7	0	0.25	4.75	whole	none
-by hand	A	nearest nine	change L4 on base a2	5	8	0	0	0	8	0	0.00	5.12	whole	none
-by hand	A	nearest nine	change L5 on base a2	5	8	0	0	0	8	0	0.00	5.25	whole	none
-by hand	A	nearest nine	change LM on base a2	5	8	0	0	0	8	0	0.00	6.75	whole	none
-by hand	A	nearest nine	examined page, baseline, run 2, corrected	5	8	0	0	0	8	0	0.00	5.12	whole	none
-by hand	A	nearest nine	change L0 on base p1	5	8	0	0	0	8	0	0.00	5.25	whole	none
-by hand	A	nearest nine	change L1 on base p1	5	8	0	0	0	8	0	0.00	5.12	whole	none
-by hand	A	nearest nine	change L2 on base p1	5	8	0	0	0	8	0	0.00	5.50	whole	none
-by hand	A	nearest nine	change L3 on base p1	5	8	0	0	0	8	0	0.00	5.25	whole	none
-by hand	A	nearest nine	change L4 on base p1	5	8	0	0	0	8	0	0.00	5.75	whole	none
-by hand	A	nearest nine	change L5 on base p1	5	8	0	0	0	8	0	0.00	6.00	whole	none
-by hand	A	nearest nine	change LM on base p1	5	8	0	0	0	8	0	0.00	6.75	whole	none
-by hand	A	nearest nine	examined page, v7-holes2, run 1, corrected	5	8	0	0	0	8	0	0.00	5.38	whole	none
-by hand	A	nearest nine	change L6 on base a2	5	8	0	0	0	8	0	0.00	4.88	whole	none
-by hand	A	nearest nine	change L7 on base a2	5	8	0	1	1	6	0	0.38	4.62	whole	none
-by hand	A	nearest nine	change L8 on base a2	5	8	0	0	1	7	0	0.12	4.38	whole	none
-by hand	A	nearest nine	change L9v on base a2	5	8	0	0	1	7	0	0.12	4.50	whole	none
-by hand	A	nearest nine	change L6 on base p1	5	8	0	0	0	8	0	0.00	5.12	whole	none
-by hand	A	nearest nine	change L7 on base p1	5	8	0	0	0	8	0	0.00	4.75	whole	none
-by hand	A	nearest nine	change L8 on base p1	5	8	0	0	0	8	0	0.00	5.38	whole	none
-by hand	A	nearest nine	change L9v on base p1	5	8	0	0	0	8	0	0.00	5.62	whole	none
-by hand	A	nearest nine	change L9 on base a2	5	16	0	3	2	11	0	0.50	4.25	whole	none
-by hand	A	nearest nine	change L9 on base p1	5	16	0	0	0	16	0	0.00	5.50	whole	none
+placement	A	nearest nine	change LM on base a2	5	8	0	0	0	8	0	0.00	6.75	whole	none
+placement	A	nearest nine	examined page, baseline, run 2, corrected	5	8	0	0	0	8	0	0.00	5.12	whole	none
+placement	A	nearest nine	change LM on base p1	5	8	0	0	0	8	0	0.00	6.75	whole	none
+placement	A	nearest nine	examined page, v7-holes2, run 1, corrected	5	8	0	0	0	8	0	0.00	5.38	whole	none
 placement	A	nearest nine	examined page, v7-holes2, batch v12 to v14, run 1	5	8	0	1	3	4	0	0.62	3.38	whole	none
 placement	A	nearest nine	examined page, v7-holes2, batch v12 to v14, run 2	5	8	0	0	0	8	0	0.00	5.12	whole	none
 placement	A	nearest nine	examined page, v7-holes2, batch v12 to v14, run 3	5	8	0	0	0	8	0	0.00	5.12	whole	none
@@ -107,75 +64,99 @@ placement	A	nearest nine	examined page, v14-outside-trace, batch v12 to v14, run
 placement	A	nearest nine	examined page, v14-outside-trace, batch v12 to v14, run 2	5	8	0	0	0	8	0	0.00	5.00	whole	none
 placement	A	nearest nine	examined page, v14-outside-trace, batch v12 to v14, run 3	5	8	0	0	0	8	0	0.00	5.88	whole	none
 placement	A	nearest nine	examined page, v14-outside-trace, batch v12 to v14, run 4	5	8	0	0	0	8	0	0.00	6.12	whole	none
-real application	E	first draw of post A	examined page, released text, new application	5	4	0	0	1	3	0	0.25	3.75	whole	none
-real application	F	first draw of post A	examined page, released text, new application	5	4	0	0	3	1	0	0.75	3.25	whole	none
-real application	E	the rest of the pool, pile 1	examined page, released text, new application	5	4	1	2	1	0	0	2.00	2.00	whole	none
-real application	E	the rest of the pool, pile 2	examined page, released text, new application	5	4	0	2	2	0	0	1.50	2.50	whole	none
-real application	E	the rest of the pool, pile 3	examined page, released text, new application	5	4	0	0	4	0	0	1.00	3.00	whole	none
-real application	F	the rest of the pool, pile 1	examined page, released text, new application	5	4	4	0	0	0	0	3.00	1.00	whole	none
-real application	F	the rest of the pool, pile 2	examined page, released text, new application	5	4	2	1	1	0	0	2.25	1.75	whole	none
-real application	F	the rest of the pool, pile 3	examined page, released text, new application	5	4	0	2	2	0	0	1.50	2.50	whole	none
 real application	A	first draw of post A	the page the candidate had	5	4	0	0	0	4	0	0.00	4.00	whole	none
-real application	A	first draw of post A	examined page, released text, written again	5	4	0	0	0	4	0	0.00	4.00	whole	none
 real application	G	first draw of post A	the page the candidate had	5	4	0	0	0	4	0	0.00	5.00	whole	none
-real application	G	first draw of post A	examined page, released text, written again	5	4	0	0	0	4	0	0.00	4.75	whole	none
 real application	A	the rest of the pool, pile 1	the page the candidate had	5	4	0	1	3	0	0	1.25	2.75	whole	none
 real application	A	the rest of the pool, pile 2	the page the candidate had	5	4	0	3	1	0	0	1.75	2.25	whole	none
 real application	A	the rest of the pool, pile 3	the page the candidate had	5	4	0	0	4	0	0	1.00	3.00	whole	none
-real application	A	the rest of the pool, pile 1	examined page, released text, written again	5	4	0	0	4	0	0	1.00	3.00	whole	none
-real application	A	the rest of the pool, pile 2	examined page, released text, written again	5	4	2	2	0	0	0	2.50	1.50	whole	none
-real application	A	the rest of the pool, pile 3	examined page, released text, written again	5	4	0	1	3	0	0	1.25	2.75	whole	none
 real application	G	the rest of the pool, pile 1	the page the candidate had	5	4	0	0	0	4	0	0.00	5.00	whole	none
 real application	G	the rest of the pool, pile 2	the page the candidate had	5	4	0	0	1	3	0	0.25	3.75	whole	none
 real application	G	the rest of the pool, pile 3	the page the candidate had	5	4	0	0	0	4	0	0.00	5.00	whole	none
-real application	G	the rest of the pool, pile 1	examined page, released text, written again	5	4	0	2	2	0	0	1.50	2.50	whole	none
-real application	G	the rest of the pool, pile 2	examined page, released text, written again	5	4	0	3	1	0	0	1.75	2.25	whole	none
-real application	G	the rest of the pool, pile 3	examined page, released text, written again	5	4	0	2	2	0	0	1.50	2.50	whole	none
 real application	H	first draw of post A	the page the candidate had	5	4	0	0	3	1	0	0.75	3.25	whole	none
-real application	H	first draw of post A	examined page, released text, written again	5	4	0	0	1	3	0	0.25	3.75	whole	none
 real application	C	first draw of post D	the page the candidate had	5	4	0	0	0	4	0	0.00	4.50	whole	none
-real application	C	first draw of post D	examined page, released text, written again	5	4	0	0	0	4	0	0.00	4.25	whole	none
 real application	H	the rest of the pool, pile 1	the page the candidate had	5	4	0	4	0	0	0	2.00	2.00	whole	none
 real application	H	the rest of the pool, pile 2	the page the candidate had	5	4	0	1	0	3	0	0.50	3.50	whole	none
 real application	H	the rest of the pool, pile 3	the page the candidate had	5	4	0	0	3	1	0	0.75	3.25	whole	none
-real application	H	the rest of the pool, pile 1	examined page, released text, written again	5	4	0	3	1	0	0	1.75	2.25	whole	none
-real application	H	the rest of the pool, pile 2	examined page, released text, written again	5	4	0	1	0	3	0	0.50	3.50	whole	none
-real application	H	the rest of the pool, pile 3	examined page, released text, written again	5	4	0	0	1	3	0	0.25	3.75	whole	none
 real application	C	the rest of the pool, pile 1	the page the candidate had	5	4	0	0	0	4	0	0.00	5.75	whole	none
 real application	C	the rest of the pool, pile 2	the page the candidate had	5	4	0	0	0	4	0	0.00	4.00	whole	none
 real application	C	the rest of the pool, pile 3	the page the candidate had	5	4	0	1	0	3	0	0.50	4.00	whole	none
-real application	C	the rest of the pool, pile 1	examined page, released text, written again	5	4	0	0	0	4	0	0.00	4.75	whole	none
-real application	C	the rest of the pool, pile 2	examined page, released text, written again	5	4	0	0	0	4	0	0.00	4.00	whole	none
-real application	C	the rest of the pool, pile 3	examined page, released text, written again	5	4	0	0	0	4	0	0.00	5.00	whole	none
 real application	I	first draw of post D	the page the candidate had	5	4	0	1	3	0	0	1.25	2.75	whole	none
-real application	I	first draw of post D	examined page, released text, written again	5	4	0	0	4	0	0	1.00	3.00	whole	none
 real application	J	first draw of post A	the page the candidate had	5	4	0	4	0	0	0	2.00	2.00	whole	none
-real application	J	first draw of post A	examined page, released text, written again	5	4	0	4	0	0	0	2.00	2.00	whole	none
 real application	K	first draw of post D	the page the candidate had	5	4	0	0	1	3	0	0.25	3.75	whole	none
-real application	K	first draw of post D	examined page, released text, written again	5	4	0	1	3	0	0	1.25	2.75	whole	none
 real application	I	the rest of the pool, pile 1	the page the candidate had	5	4	1	3	0	0	0	2.25	1.75	whole	none
 real application	I	the rest of the pool, pile 2	the page the candidate had	5	4	4	0	0	0	0	3.00	1.00	whole	none
 real application	I	the rest of the pool, pile 3	the page the candidate had	5	4	3	1	0	0	0	2.75	1.25	whole	none
-real application	I	the rest of the pool, pile 1	examined page, released text, written again	5	4	0	4	0	0	0	2.00	2.00	whole	none
-real application	I	the rest of the pool, pile 2	examined page, released text, written again	5	4	0	4	0	0	0	2.00	2.00	whole	none
-real application	I	the rest of the pool, pile 3	examined page, released text, written again	5	4	1	3	0	0	0	2.25	1.75	whole	none
 real application	J	the rest of the pool, pile 1	the page the candidate had	5	4	0	4	0	0	0	2.00	2.00	whole	none
 real application	J	the rest of the pool, pile 2	the page the candidate had	5	4	0	4	0	0	0	2.00	2.00	whole	none
 real application	J	the rest of the pool, pile 3	the page the candidate had	5	4	0	3	1	0	0	1.75	2.25	whole	none
-real application	J	the rest of the pool, pile 1	examined page, released text, written again	5	4	0	4	0	0	0	2.00	2.00	whole	none
-real application	J	the rest of the pool, pile 2	examined page, released text, written again	5	4	0	4	0	0	0	2.00	2.00	whole	none
-real application	J	the rest of the pool, pile 3	examined page, released text, written again	5	4	0	4	0	0	0	2.00	2.00	whole	none
 real application	K	the rest of the pool, pile 1	the page the candidate had	5	4	0	0	0	4	0	0.00	4.50	whole	none
 real application	K	the rest of the pool, pile 2	the page the candidate had	5	4	0	2	2	0	0	1.50	2.50	whole	none
 real application	K	the rest of the pool, pile 3	the page the candidate had	5	4	0	2	2	0	0	1.50	2.50	whole	none
-real application	K	the rest of the pool, pile 1	examined page, released text, written again	5	4	1	1	0	2	0	1.25	3.00	whole	none
-real application	K	the rest of the pool, pile 2	examined page, released text, written again	5	4	0	4	0	0	0	2.00	2.00	whole	none
-real application	K	the rest of the pool, pile 3	examined page, released text, written again	5	4	1	3	0	0	0	2.25	1.75	whole	none
 real application	L	first draw of post A	the page the candidate had	5	4	4	0	0	0	0	3.00	1.00	whole	none
-real application	L	first draw of post A	examined page, released text, written again	5	4	4	0	0	0	0	3.00	1.00	whole	none
 real application	L	the rest of the pool, pile 1	the page the candidate had	5	4	4	0	0	0	0	3.00	1.00	whole	none
 real application	L	the rest of the pool, pile 2	the page the candidate had	5	4	4	0	0	0	0	3.00	1.00	whole	none
 real application	L	the rest of the pool, pile 3	the page the candidate had	5	4	4	0	0	0	0	3.00	1.00	whole	none
-real application	L	the rest of the pool, pile 1	examined page, released text, written again	5	4	4	0	0	0	0	3.00	1.00	whole	none
-real application	L	the rest of the pool, pile 2	examined page, released text, written again	5	4	4	0	0	0	0	3.00	1.00	whole	none
-real application	L	the rest of the pool, pile 3	examined page, released text, written again	5	4	3	1	0	0	0	2.75	1.25	whole	none
+final method	I	first draw of post D	examined page, method at 33dd2626	5	2	0	0	2	0	0	1.00	3.00	whole	none
+final method	I	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	1	1	0	0	0	2.50	1.50	whole	none
+final method	I	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	0	0	0	2	0	0.00	4.50	whole	none
+final method	I	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	I	first draw of post D	examined page, method at 33dd2626, eight more judges	5	2	0	0	2	0	0	1.00	3.00	whole	none
+final method	I	the rest of the pool, pile 1	examined page, method at 33dd2626, eight more judges	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	I	the rest of the pool, pile 2	examined page, method at 33dd2626, eight more judges	5	2	0	1	0	1	0	1.00	3.00	whole	none
+final method	I	the rest of the pool, pile 3	examined page, method at 33dd2626, eight more judges	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	J	first draw of post A	examined page, method at 33dd2626	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	J	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	1	1	0	0	0	2.50	1.50	whole	none
+final method	J	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	1	1	0	0	0	2.50	1.50	whole	none
+final method	J	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	1	1	0	0	0	2.50	1.50	whole	none
+final method	L	first draw of post A	examined page, method at 33dd2626	5	2	2	0	0	0	0	3.00	1.00	whole	none
+final method	L	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	2	0	0	0	0	3.00	1.00	whole	none
+final method	L	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	2	0	0	0	0	3.00	1.00	whole	none
+final method	L	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	2	0	0	0	0	3.00	1.00	whole	none
+final method	K	first draw of post D	examined page, method at 33dd2626	5	2	0	0	2	0	0	1.00	3.00	whole	none
+final method	K	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	0	1	1	0	0	1.50	2.50	whole	none
+final method	K	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	0	1	1	0	0	1.50	2.50	whole	none
+final method	K	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	A	first draw of post A	examined page, method at 33dd2626	5	2	0	0	1	1	0	0.50	3.50	whole	none
+final method	A	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	1	1	0	0	0	2.50	1.50	whole	none
+final method	A	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	2	0	0	0	0	3.00	1.00	whole	none
+final method	A	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	0	1	1	0	0	1.50	2.50	whole	none
+final method	G	first draw of post A	examined page, method at 33dd2626	5	2	0	0	0	2	0	0.00	5.00	whole	none
+final method	G	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	0	0	1	1	0	0.50	3.50	whole	none
+final method	G	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	0	1	1	0	0	1.50	2.50	whole	none
+final method	G	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	0	1	0	1	0	1.00	3.50	whole	none
+final method	H	first draw of post A	examined page, method at 33dd2626	5	2	0	0	2	0	0	1.00	3.00	whole	none
+final method	H	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	H	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	H	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	C	first draw of post D	examined page, method at 33dd2626	5	2	0	0	0	2	0	0.00	4.00	whole	none
+final method	C	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	0	0	0	2	0	0.00	5.50	whole	none
+final method	C	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	0	0	0	2	0	0.00	4.00	whole	none
+final method	C	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	0	0	0	2	0	0.00	6.00	whole	none
+final method	E	first draw of post A	examined page, method at 33dd2626	5	2	0	0	1	1	0	0.50	3.50	whole	none
+final method	E	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	E	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	1	1	0	0	0	2.50	1.50	whole	none
+final method	E	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	0	2	0	0	0	2.00	2.00	whole	none
+final method	F	first draw of post A	examined page, method at 33dd2626	5	2	0	0	2	0	0	1.00	3.00	whole	none
+final method	F	the rest of the pool, pile 1	examined page, method at 33dd2626	5	2	1	1	0	0	0	2.50	1.50	whole	none
+final method	F	the rest of the pool, pile 2	examined page, method at 33dd2626	5	2	2	0	0	0	0	3.00	1.00	whole	none
+final method	F	the rest of the pool, pile 3	examined page, method at 33dd2626	5	2	0	1	1	0	0	1.50	2.50	whole	none
+control written again	I	first draw of post D	examined page, as the control was written, run 1	5	2	0	1	1	0	0	1.50	2.50	whole	none
+control written again	I	the rest of the pool, pile 1	examined page, as the control was written, run 1	5	2	0	2	0	0	0	2.00	2.00	whole	none
+control written again	I	the rest of the pool, pile 2	examined page, as the control was written, run 1	5	2	0	1	0	1	0	1.00	3.00	whole	none
+control written again	I	the rest of the pool, pile 3	examined page, as the control was written, run 1	5	2	0	2	0	0	0	2.00	2.00	whole	none
+control written again	I	first draw of post D	examined page, as the control was written, run 2	5	2	0	0	1	1	0	0.50	3.50	whole	none
+control written again	I	the rest of the pool, pile 1	examined page, as the control was written, run 2	5	2	0	1	1	0	0	1.50	2.50	whole	none
+control written again	I	the rest of the pool, pile 2	examined page, as the control was written, run 2	5	2	0	0	1	1	0	0.50	4.00	whole	none
+control written again	I	the rest of the pool, pile 3	examined page, as the control was written, run 2	5	2	0	1	1	0	0	1.50	2.50	whole	none
+control written again	I	first draw of post D	examined page, as the control was written, run 3	5	2	0	0	1	1	0	0.50	3.50	whole	none
+control written again	I	the rest of the pool, pile 1	examined page, as the control was written, run 3	5	2	0	0	1	1	0	0.50	3.50	whole	none
+control written again	I	the rest of the pool, pile 2	examined page, as the control was written, run 3	5	2	0	0	1	1	0	0.50	4.00	whole	none
+control written again	I	the rest of the pool, pile 3	examined page, as the control was written, run 3	5	2	0	0	2	0	0	1.00	3.00	whole	none
+judges asked again	I	first draw of post D	the page the candidate had	5	2	0	0	2	0	0	1.00	3.00	whole	none
+judges asked again	I	the rest of the pool, pile 1	the page the candidate had	5	2	2	0	0	0	0	3.00	1.00	whole	none
+judges asked again	I	the rest of the pool, pile 2	the page the candidate had	5	2	1	0	1	0	0	2.00	2.00	whole	none
+judges asked again	I	the rest of the pool, pile 3	the page the candidate had	5	2	2	0	0	0	0	3.00	1.00	whole	none
+judges asked again	I	first draw of post D	the page the candidate had, its most cited fact taken out	5	2	0	0	2	0	0	1.00	3.00	whole	none
+judges asked again	I	the rest of the pool, pile 1	the page the candidate had, its most cited fact taken out	5	2	0	2	0	0	0	2.00	2.00	whole	none
+judges asked again	I	the rest of the pool, pile 2	the page the candidate had, its most cited fact taken out	5	2	1	1	0	0	0	2.50	1.50	whole	none
+judges asked again	I	the rest of the pool, pile 3	the page the candidate had, its most cited fact taken out	5	2	0	1	1	0	0	1.50	2.50	whole	none

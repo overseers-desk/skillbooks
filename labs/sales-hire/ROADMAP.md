@@ -6,9 +6,19 @@ A job application is a large sale to a committee, made in reply to a published r
 
 The work of a round is to find, by relentless experiment, the best way to bring the outcome. That has two parts. One is getting the judges to agree that a page is better. The other is correcting the judges where they do not behave as a person hiring would. Which route to take to either is for the session running the round to work out. The owner is not expected to supply step-by-step suggestions, and a question about how to run an experiment is settled by running one.
 
-A version's record is read against what two drafts of the baseline give. Round 1 found that the judges tell two baseline drafts of one post apart about as firmly as they tell a version from the baseline: in 14 of 18 comparisons on the opening of the page and 10 of 18 on a full read. A batch therefore includes comparisons of baseline drafts with each other, and a version's count of comparisons won and lost is reported with the chance of doing as well by the draw alone. Three drafts against three baseline drafts can show only a large effect.
+Rules of method that round 1 paid for:
 
-A round records the conditions its writers ran under: the account, the reasoning effort set for the writers' model, the office's instructions loaded or not, and the state of the candidate's record. Round 1 found the effort to be a setting of the profile a writer runs under, different between two accounts on one machine, and not recorded for its first batch.
+- Measure by rank among other candidates' pages, the judge giving the whole order and the rivals being the nine nearest the page. Asking for three calls from ten, and drawing rivals by level, each gave no measure.
+- Judge the examined page, the one that would be sent. A first draft's rank says little of it.
+- Write the control in the same batch: pages of the unchanged text, enough to know what chance gives. The judges prefer one of two drafts of one text about as firmly as one text over another.
+- Fix what counts before a page is judged.
+- A test names the commit of the method and the commit of the candidate file it ran on. Before a paid test starts, say which changes are in it.
+- Check that the candidate file holds the facts a test relies on before the test runs.
+- Writers run blind: the folder a writer is pointed at says nothing of the version. A round records the conditions its writers ran under: the account, the reasoning effort set on the command line, the office's instructions loaded or not, and the state of the candidate's record.
+- A change made by hand to a page proves nothing until the method carries it and a writer has run under it.
+- Ask a judge nothing afterwards. Put a question to a writer at the end of its own run, and name the writer's own job in it.
+- The session directs; subagents and scripts write, read and count, and a step ends in one screen.
+- Writers' rooms hold a copy of the candidate's record: they stay outside this repository.
 
 The owner's preference on a round's size: "I still prefer that the next agent to be able to finish a shape that ends within its context."
 
@@ -72,7 +82,7 @@ These properties are worth measuring again whenever the way a judge is run or br
 | D3 | Proof is for closing, and checking protects a won deal: a claim matters because it will be tested in the conversation and by a referee | `examined`, `placement`; `v12-to-v14`, as `v14-outside-trace` | every examined page carried one to six claims past the record that the method's own trace had passed; corrected to the record, the pages keep their standing; a trace made by a fresh agent ranks about a place behind and costs two and a half times as much |
 | E1 | Know what there is to sell: the candidate's strongest results, and why earlier employers and clients chose them | no | |
 | F1 | Feedback as a customer gives it: would call or would not, what was looked for and not found, what would stop them, line by line as well as overall | no | |
-| F2 | The seller's own stance kept in view: saying at each step that one is selling, and marking each change as made to sell or to check | `reworded`, `records-read` | under every wording tried a writer says its job is carrying the method through; of 301 changes made to pages after the first draft, 245 were to check and 18 to sell |
+| F2 | The seller's own stance kept in view: saying at each step that one is selling, and marking each change as made to sell or to check | `reworded`, `records-read` | under three texts, eight of nine writers said their job was carrying the method through; of 301 changes made to pages after the first draft, 245 were to check and 18 to sell |
 | G1 | The buyer's answer is the only verdict: record what comes back after a page is sent | no; belongs to the application | |
 | G2 | Some posts no page can win; deciding whether to apply comes first | `ladder`, `b2-33dd2626`, observed | the page the candidate had stands 6th of 31 in the pool for one post and 9th of 31 for another; on ten real applications the method's pages rank from 1.00 to 4.88 |
 | G3 | The route outweighs the wording: a page that arrives through someone inside does better than one that arrives cold | no; belongs to the application | |
@@ -84,7 +94,7 @@ The letters group the lessons by where they come from: A, selling to large accou
 
 The owner's steer: "the direction that already showed signs of improvement should be explored first."
 
-The method with four changes together, the selling wording, repeated statements said once, what the employer needs done as an item of the brief, and the candidate file as the writers' record, ranks 0.34 better than the pages written before the round over eight posts, with a standard error of 0.27. The four were not told apart. The gain is where the old page stood low: four of the five that ranked 3.0 or worse gained three quarters of a rank or more, and neither of the two that ranked better than 2.0 gained.
+The method with four changes together, the selling wording, repeated statements said once, what the employer needs done as an item of the brief, and the candidate file as the writers' record, ranks 0.34 better than the pages written before the round over eight posts, with a standard error of 0.25. The four were not told apart. The gain is where the old page stood low: four of the five that ranked 3.0 or worse gained three quarters of a rank or more, and neither of the two that ranked better than 2.0 gained.
 
 Choosing among several pages is the one single lever shown to move rank: in four sets of four examined pages the page that won its set's pairs ranked 0.62 better than its set's mean, and an agent following `v11-several` chose that page every time. Its price is one writer for every page written. No rewording of the text has bettered, among other candidates' pages, the text it was written on.
 
