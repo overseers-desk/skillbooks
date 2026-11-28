@@ -11,8 +11,8 @@ v15-holes-plain is v7-holes2 with its hole step said without steps, numbering or
 v16-hole-thought has what the employer needs done as one of the things the brief establishes and gives no rule for the
 page on its account; it keeps the reader's own list of the employer's needs and the check for one person, and each of four
 things the text said in several places is said in one.
-v16b-hole-thought is the same change made to the method as it stood at 0c2d8fb9, the text a writer of 28 November is
-given: the hole step's rules for the page are taken out of that text and the item of the brief put in.
+v16b-hole-thought is the same change made to the method as it stands at the commit named in CURRENT: the hole step's
+rules for the page are taken out of that text and the item of the brief put in.
 v9-leads, v10-leads-stays-out, v11-several, v12-body, v13-first-post and v14-outside-trace are replacements on v7-holes2, the text put into the method at 323012ca. A
 variant that names a module expects the files of labs/sales-hire/round-1/modules/ beside the method's own modules.
 """
@@ -117,7 +117,7 @@ def hole_thought(s):
     s=rep(s,"- Keep open what the candidate left open. ","- Keep open what the candidate left open; that choice is content. ")
     s=rep(s,"A document the candidate sent supplies facts the candidate stands behind, and shows how they were told to that reader; it decides neither what another reader is told nor in what words. So a fact carried from one is weighed for this reader like any other.","A fact carried from a document the candidate sent is weighed for this reader like any other.")
     return s
-CURRENT='0c2d8fb9'
+CURRENT='d71993e4'
 def hole_thought_current(s):
     s=rep(s,"Then list the holes. A buyer of a drill wants a hole in the wall, and an employer filling a post wants things done that nobody there is doing. From the advertisement and what the employer has published, write them in `brief.md`, numbered in the order the employer would put them, each with where you read it. The advertisement's list of duties is the drill; ask what goes wrong for this employer while the post stays empty.\n\n","")
     s=rep(s,TOP,"Whatever is chosen, the opening answers the first question this reader has about any applicant for the post, such as whether the person has led at this size or has a direction of their own, before it turns to what the candidate finds most interesting in the record.")
@@ -131,7 +131,7 @@ def hole_thought_current(s):
     s=rep(s,"What the writer has worked out is entered as an assumption, in the register. That includes a statement of what the candidate will do, such as move or work on site, carried to a kind of post the candidate did not say it of","What the writer has worked out is an assumption and not an entry, and so is a statement of what the candidate will do, such as move or work on site, carried to a kind of post the candidate did not say it of")
     s=rep(s," A thing the candidate leaves open is left open; that choice is content.","")
     s=rep(s,"- Keep open what the candidate left open. ","- Keep open what the candidate left open; that choice is content. ")
-    s=rep(s,"A document the candidate sent supplies facts the candidate stands behind, and shows how they were told to that reader; it decides neither what another reader is told nor in what words. So a fact carried from one is weighed for this reader like any other.","A fact carried from a document the candidate sent is weighed for this reader like any other.")
+    s=rep(s,"A document the candidate sent shows how a fact was told to that reader; it decides neither what another reader is told nor in what words. So a fact that stood in one is weighed for this reader like any other.","A fact that stood in a document the candidate sent is weighed for this reader like any other.")
     return s
 variants={'v1-opening':opening,'v2-examine':examine,'v3-say':say,'v4-hole':hole,'v6-say-hole':lambda s: hole(say(s)),'v7-holes2':holes2,'v8-opening-holes2':lambda s: holes2(opening(s)),'v9-leads':lambda s: leads(holes2(s)),'v10-leads-stays-out':lambda s: stays_out(holes2(s)),'v11-several':lambda s: several(holes2(s)),'v12-body':lambda s: body(holes2(s)),'v13-first-post':lambda s: first_post(holes2(s)),'v14-outside-trace':lambda s: outside_trace(holes2(s)),'v15-holes-plain':holes_plain,'v16-hole-thought':hole_thought}
 for name,fn in variants.items():
