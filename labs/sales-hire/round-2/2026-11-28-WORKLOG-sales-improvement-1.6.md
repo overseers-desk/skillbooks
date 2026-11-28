@@ -79,6 +79,12 @@ The owner's words: produce a new version of the methodology that can be describe
 - *Against* the integrated method's pages of the same five posts (results 2 and 3): 3.62, 4.88, 2.50, 2.25, 2.12, mean 3.07; the old pages' mean there is 3.71.
 - *What counts.* A lever passes the screen if its five pages' mean is better than 3.07 by 0.3 or more. A passing lever is confirmed with a second page a post beside a second page of the integrated method, and is then carried into the method, or into the candidate file where what it holds is the candidate's. If neither passes, the next lever is several pages a post with the judges choosing (round 1's `v11-several`), its cost a page reported beside its gain.
 
+### Result 6: every other CV in the search written again, stopped by the weekly limit
+
+- *What was run.* The 24 application folders outside the lock-in's ten (14 and 15 were abandoned applications and were left), each written once under `33dd2626` on the candidate file `d99ba53e`, in rooms taken from the career folder at `d99ba53e` (`BASE`), twelve writers at a time, with no judges: these posts have no pile of rivals drawn, so their pages cannot be ranked with the tools as they stand.
+- *Outcome.* Sixteen writers ended their run (posts 01, 02, 05 to 11, 16, 17, 22, 27, 29, 30, 35). Eight were cut off at about 14:30 on 28 November when the owner's account reached its weekly limit, which resets on 5 December at 06:00 Brisbane time (posts 23, 25, 26, 28, 33, 36, 37, 38); their rooms hold a draft that the checks had not ended on. Nothing was relaunched. No page of the 24 is in the career folder, and the method carries no tag.
+- *Open.* Of the lock-in's ten new pages, four ranked below the page they would have replaced, so a page of these 24 put in the career folder unranked replaces a better one about as often. Result 5 has had no writer.
+
 ## Cost
 
 Writers' and judges' figures are what the runs report, at API prices; the directing session is counted separately.
@@ -89,3 +95,4 @@ Writers' and judges' figures are what the runs report, at API prices; the direct
 | Result 2 (round 1's result 23, session sales-improvement-1.5) | 75.23 | 8.76 | | 83.99 |
 | Result 3, the lock-in's five posts and post I's eight more judges | 63.03 | 10.43 | | 73.46 |
 | Result 4, the old setup on post I | 56.64 | 4.94 | | 61.58 |
+| Result 6, 24 CVs written again: sixteen ended, eight cut off by the weekly limit | 304.61 (198.02 and 106.59) | 0 | | 304.61 |
