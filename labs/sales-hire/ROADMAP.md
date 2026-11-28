@@ -94,7 +94,7 @@ The letters group the lessons by where they come from: A, selling to large accou
 
 The owner's steer: "the direction that already showed signs of improvement should be explored first."
 
-The method as round 1 changed it ranks 0.34 better than the pages written before the round over eight posts, with a standard error of 0.25. The changes are three to the text (repeated statements said once, what the employer needs done as an item of the brief, the candidate file as the writers' record) and the folder's name, `sales-hire`; they were not told apart. The gain is where the old page stood low: four of the five that ranked 3.0 or worse gained three quarters of a rank or more, and neither of the two that ranked better than 2.0 gained.
+The method as round 1 changed it ranks 0.42 better than the pages written before the round over 24 posts, with a standard error of 0.14: 17 better, one level, six worse. The changes are three to the text (repeated statements said once, what the employer needs done as an item of the brief, the candidate file as the writers' record) and the folder's name, `sales-hire`; they were not told apart. The gain is mostly where the old page stood low: of fifteen that ranked 3.0 or worse, thirteen gained.
 
 The selling frame the series was begun for is in the method since 29 November 2026, and round 2 ranks CVs written under it. It first stood in the text for two hours on 27 November (commit `e16b5f63`), was tried in pairs on first drafts, where it did not stand clear of chance and which cannot show rank, and was taken out against the owner's wish. Round 1's log has the account under "The selling frame".
 
