@@ -53,7 +53,15 @@ The owner's words: produce a new version of the methodology that can be describe
 - *Reading.* The old page held to 0.06. Result 22's page moved 0.50, on the line, and the judges ranked it level with the old page. Pooled, the old page stands at 1.71 over 24 judges and result 22's page at 2.00 over 16: a gap of 0.29 with a standard error of about 0.3. Post I's fall is therefore within what judges alone vary on one page, and is not shown to exist. Taking out the fact cost 0.5, the way the citations predicted, short of two standard errors.
 - *What it changes.* A page judged by eight has a standard error of about 0.3 from the judges alone, larger than the 0.26 the goal names. A version is read on its mean over many pages, not on any one page, and a page that decides anything has sixteen judges.
 
-## Cost
+### Result 2: the integrated method on five posts, read for the lock-in
+
+- *What was run.* Round 1's worklog, result 23 (session sales-improvement-1.5): the method at `33dd2626`, candidate file `d99ba53e`, one page a post, eight judges a page. Old page / result 22's page / new page: H 3.00 / 2.25 / 2.25; I 1.69 / 2.25 / 2.75; A 3.00 / 2.75 / 2.12; C 4.56 / 4.38 / 4.88; K 3.31 / 2.88 / 2.50. New less old: -0.21 (better), standard error 0.39. 83.99 dollars as reported.
+- *Reading against this log's measure.* Every change agreed on 28 November is in the text, the mean is better than the old pages' by 0.21 in both results 22 and 23, and over the two pages a post no post is worse by more than a place (post I, pooled with result 1's judges: 2.00 and 2.75 against 1.71, about 0.66 worse). The integrated method counts as generally better, and the lock-in starts.
+
+### Result 3, fixed before any page is judged: the lock-in's ten, and the old setup on post I
+
+- *Lock-in.* Posts 31, 13, 19, 40 and 42 written once each under `33dd2626` on `d99ba53e` (`deliver/b2-all.sh`, rooms `b2-<post>-33dd2626-1`), making ten with result 2's five. Their earlier pages, sixteen judges each: 31 old 4.69, result 18 3.00; 13 old 2.06, result 18 2.00; 19 old 1.00, result 18 1.06; 40 and 42 had no page before round 1. The method stays generally better if, over the eight posts with an old page, the new pages' mean is better than the old pages' and no post is worse by more than a place. Then every CV in the search is written again under `33dd2626` and the method is tagged.
+- *The old setup.* Post I written three times by `deliver/o-room.sh` (rooms `o12-1` to `o12-3`). It reproduces the old page if its mean over the three is 2.0 or better. It differs from the integrated method on post I if the two means differ by half a place or more and by more than twice the standard error of the difference.
 
 | Test | Writers | Judges | Directing | Total |
 |---|---|---|---|---|
