@@ -102,4 +102,4 @@ Choosing among several pages is the one change tried in round 1 that was shown t
 
 A page's rank is uncertain by about 0.3 and pages of one text differ by about a rank, so a test of one page a post shows only an effect near a full rank.
 
-`round-1/2026-11-27-WORKLOG-sales-improvement-1.md` holds the round as one experiment. A next round is the owner's to start; `round-2/PLAN.md` lists ideas no page has been judged under.
+`round-1/2026-11-27-WORKLOG-sales-improvement-1.md` holds the round as one experiment. `round-2/` holds round 2, which ranks CVs under the selling frame, and `round-2/PLAN.md` lists ideas no page has been judged under.
