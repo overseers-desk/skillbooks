@@ -1,18 +1,18 @@
-# Round 1: the method with the selling changes, against the CVs written before it
+# Round 1: the method as the round changed it, against the CVs written before it
 
 Round 1 is closed. The owner, on 28 November 2026: "From what I see, round 1 can be closed. We have a positive outcome, and we have done a few experiments, although not exhaustive, but a few experiments to see What factors are at play."
 
-It ran from 26 to 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1.3, 1.4, 1.5 and 1.6) and cost about 3,036 dollars as reported. This file states what the round established. The order in which things were found, and the tests set aside as flawed, superseded or made by hand, are in this file's history in git.
+It ran on 27 and 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1.3, 1.4, 1.5 and 1.6) and cost at least 3,036 dollars as reported. This file states what the round established. The order in which things were found, and the tests set aside as flawed, superseded or made by hand, are in this file's history in git.
 
 ## The experiment and its result
 
-**Question.** Does the method, with the selling changes in it, write CVs that rank better among other candidates' CVs than the CVs the search had before the round?
+**Question.** Does the method, as the round changed it, write CVs that rank better among other candidates' CVs than the CVs the search had before the round?
 
-**Treatment.** The method at commit `33dd2626`, with the candidate file at commit `d99ba53e` of the candidate's repository. It carries four changes together:
-- the text is worded as putting a candidate forward, and its folder is named for that;
+**Treatment.** The method at commit `33dd2626`, with the candidate file at commit `d99ba53e` of the candidate's repository. It differs from the method the control was written under in three changes to its text and in its folder's name:
 - statements the text made twice are made once;
 - what the employer needs done is an item of the writer's brief, with no rule for the page, and the opening answers the reader's first question about any applicant;
-- for an application, the record of the candidate is the candidate file and the description it points to, and the writer reads no other source about the candidate.
+- the text says that for an application the record of the candidate is the candidate file and the description it points to;
+- the folder is named `sales-hire`, where it was `career-hire`. The text itself is not worded as selling, and no rewording of it toward selling is in the method.
 
 **Control.** The CVs written for the same posts on 26 November, before the round. Each was written by one writer under the method as it stood at that hour, with a brief from the session directing it and the whole record to read, and was repaired once after a second reader.
 
@@ -37,40 +37,44 @@ It ran from 26 to 28 November 2026 over six sessions (sales-improvement-1, 1.2, 
 
 **Limits.**
 - One CV a post. CVs written under one text differ by about a rank, so the eight differences are noisy.
-- The control was not written under the same conditions: another day, a brief and a repair the method does not hold, the whole record to read, and sixteen judges against eight. Only post I's control was judged again on the day of the run (`j0`).
+- The control was not written under the same conditions, which the roadmap asks of a control: another day, a brief and a repair the method does not hold, the whole record to read, and sixteen judges against eight. Only post I's control was judged again on the day of the run (`j0`).
 - The gain sits where the control ranked low: four of the five controls at 3.0 or worse gained three quarters of a rank or more, and neither control better than 2.0 gained. A return toward the usual would give that pattern with no effect of the method.
-- Post I's control, at 1.69, is the one CV the method has not matched. The arrangement that wrote it, run again three times, gave 2.38, 3.12 and 3.50 (`o12`), so 1.69 was a good draw and not what that arrangement writes reliably.
+- The writer could read the control. Its room held the post's earlier application whole, the control CV among it, and its instruction named where the CVs the candidate had sent are.
+- Post I's control, at 1.69, is the one the method falls clearly short of; post C's difference is within the noise. The arrangement that wrote it, run again three times, gave 2.38, 3.12 and 3.50 (`o12`), so 1.69 was a good draw and not what that arrangement writes reliably.
 
 ## Proven and not proven
 
-A status is one of: shown, not shown, not tested.
+A status is one of three. Shown: the evidence supports it. Not shown: the evidence does not settle it, and the evidence column says which way it leans. Not tested: nothing was run.
 
 | What | Status | Evidence | Code |
 |---|---|---|---|
-| The four changes together are no worse than the control on average | Shown | 0.34 better, s.e. 0.25; two of eight posts worse | `b2-33dd2626`, `real-application` |
-| The four changes together are better than the control | Not shown | the gain is 1.4 standard errors, at one CV a post | `b2-33dd2626` |
-| Any one of the four changes by itself | Not tested | they were only run together | |
-| The method's checks improve a first draft | Shown | in pairs the examined CV beat its own first draft in 4 runs of 6 and lost none; among other candidates it ranks half a place better on average, with one CV of six a rank worse | `examined`, `placement` |
-| Choosing the best of several CVs raises rank | Shown, on four sets | the chosen CV ranks 0.62 better than the mean of its set of four | `v12-to-v14` |
+| The changes together lower rank | Not shown | the method's CVs rank 0.34 better on average, s.e. 0.25; two of eight posts worse | `b2-33dd2626`, `real-application` |
+| The changes together raise rank | Not shown | the gain is 1.4 standard errors, at one CV a post | `b2-33dd2626` |
+| Any one of the changes by itself | Not tested | they were only run together | |
+| The method's text worded as selling | Not tested by rank | no such wording is in the method; two rewordings of the whole text exist (`h1-edit`, `h1-rewrite`) and no CV under them was ranked among other candidates | `reworded` |
+| The method's checks improve a first draft, judged in pairs | Shown | the examined CV beat its own first draft in 4 runs of 6 and lost none | `examined` |
+| The method's checks improve a first draft, by rank among other candidates | Not shown | half a place better on average over six CVs, s.e. 0.45; one of the six a rank worse | `placement` |
+| Choosing the best of several CVs raises rank | Shown | on four sets of four, the chosen CV ranks 0.62 better than its set's mean | `v12-to-v14` |
 | A rule that the employer's needs dictate the top of the CV (in `v7-holes2`; not in the method now) | Not shown | its CVs led in pairs and show no lead among other candidates | `examined`, `placement` |
-| Three rewordings of `v7-holes2` | Not shown | `v12-body` 0.3 better, inside the spread of one text; `v13-first-post` 0.8 worse; `v14-outside-trace` 1.1 worse | `v12-to-v14` |
-| Rewording the method changes what a writer takes its job to be | Not shown | under three texts, eight of nine writers named carrying the method through | `reworded` |
-| Post I's control (1.69) can be written again by the arrangement that wrote it | Not shown | three runs: 2.38, 3.12, 3.50 | `o12` |
-| In pairs, the judges prefer one of two drafts of the same text as firmly as one text over another | Shown | 14 of 18 pairs on the opening, 10 of 18 on a full read | `first`, `reworded` |
+| Three rewordings of `v7-holes2` raise rank | Not shown | `v12-body` 0.3 better, inside the spread of one text; `v13-first-post` 0.8 worse; `v14-outside-trace` 1.1 worse | `v12-to-v14` |
+| Rewording the method changes what a writer takes its job to be | Not shown | under three texts, eight of nine writers named carrying the method through; the ninth wrote under the unchanged text | `reworded` |
+| Post I's control (1.69) can be written again by the arrangement that wrote it | Not shown | three runs, all worse: 2.38, 3.12, 3.50; one step of the original was left out | `o12` |
+| In pairs, the judges firmly prefer one of two drafts written under the same text | Shown | decided in 14 of 18 pairs on the opening and 10 of 18 on a full read, so a pair between two texts cannot be read as a difference between the texts | `first`, `reworded` |
 | The winner of a pair ranks better among other candidates, when both CVs are of one text | Shown | better in 14 of 20 decided pairs, worse in 1 | `examined`, `placement` |
-| The winner of a pair ranks better among other candidates, when the CVs are of two texts | Not shown | better in 10 of 44 decided pairs, worse in 8, the rest within half a rank | `examined`, `placement` |
-| Judges rank a CV lower when its specifics are taken out | Shown | figures made general: 1.5 ranks lower; one fact removed: 0.5 lower | `placement`, `j0` |
-| Details missing from the candidate file | Found | 31 facts that only the CVs he had sent held, then 22 details the file stated less specifically; the file at `d99ba53e` holds all of them as the candidate confirmed or answered them | `records-read` |
+| The winner of a pair ranks better among other candidates, when the CVs are of two texts | Not shown | no relation: better in 10 of 44 decided pairs, worse in 8, the rest within half a rank | `examined`, `placement` |
+| Judges rank a CV worse when its specifics are taken out | Shown | on one copy each: figures made general, 1.5 ranks worse; one fact removed, 0.5 worse | `placement`, `j0` |
 
 ## The measure
 
-**Rank.** A CV is placed fifth in a pile with nine other candidates' CVs, and each judge gives the order in which it would call the ten. The CV's rank is its mean place over its judges. The nine are those of a pool of thirty whose standing is nearest the CV's, found by first ranking the pool against it; "6th of 31" below means among the thirty and itself. For a real application the thirty are split into four piles and the CV is ranked in each.
+**Rank.** A CV is placed fifth in a pile with nine other candidates' CVs, and each judge gives the order in which it would call the ten. The CV's rank is its mean place over its judges. The rivals come from a pool of thirty other people's CVs, kept in the candidate's repository. For a test post the nine are those that rank nearest the CV, found by first ranking the pool against it. For a real application the CV is ranked in four piles of nine that together hold the thirty. "6th of 31" below means among the thirty and itself.
 
-**Judges.** A judge is a fresh session in a sealed room, on an account that is not the office's. It is told it is the person the post reports to, is given the advertisement and the CVs, and is asked nothing afterwards.
+**Judges.** A judge is a fresh session in a sealed room, on an account that is not the office's. It is told it is the person the post reports to and is given the advertisement and the CVs. Its choice is read from its first answer. The earlier batches put a follow-up question to it afterwards; the later ones ask nothing more.
 
 **Pairs.** In a pair, eight judges read two CVs and choose one, half reading each first. A pair is judged in two seats: on the opening of the CV alone, and on a full read. A pair is decided when six or more of the eight choose the same CV.
 
-**Posts.** Tests on drafts used four posts, A to D. The final test used ten real applications, A, C and E to L.
+**Posts.** Tests on drafts used four posts, A to D. The final test used ten real applications of the candidate's job search, A, C and E to L.
+
+**Texts.** The unchanged text is the method at `e51412d3`, the round's baseline. `v7-holes2` is that text with a rule that the employer's needs, in the employer's order, dictate the top of the CV.
 
 **The method's checks.** The method's last phase: readers and judges read the draft, the writer repairs it, and each claim is traced to its source in the record. A CV that has been through it is an examined CV.
 
@@ -117,16 +121,18 @@ In each set of four, one CV won all three of its pairs on a full read. It ranks 
 
 **`o12`: the arrangement that wrote post I's control, run again.** The method text of that hour, the directing session's brief and prompt as its writer read them, and the record as it stood, three times with nobody correcting it, each followed by one pass that brought the CV into line with the candidate's rulings, as was done that day: 3 CV writes, 24 judge answers. One step of the original was left out, a repair whose instruction the directing session chose by hand.
 
-**`j0`: the judges asked again.** No CV written, 16 judge answers. Post I's control ranked 1.75 before eight fresh judges, against 1.69 before its first sixteen. A copy without the fact its judges cite most ranked 2.25.
+**`j0`: the judges asked again.** No CV written, 16 judge answers. Post I's control ranked 1.75 before eight fresh judges, against 1.69 before its first sixteen. A copy without one fact, the most cited of the facts the candidate file had lacked, ranked 2.25.
 
 **`records-read`: records read, with no new run.**
 - Why changes to a CV were made, counted by a reader who held only the working records of four runs older than the round: of 301 changes after the first draft, 245 were to check something and 18 to sell.
-- Which facts the judges cite: five facts of the candidate's record carry nearly all the citations judges made on the control CVs. The count matches patterns in the judges' sentences and was not checked by hand, so it is a lead.
-- The candidate file compared with the CVs it was built from, twice: 31 facts that only the CVs he had sent held, and then 22 details the file stated less specifically than a CV did.
+- Which facts the judges cite, counted only over the facts the candidate file lacked: five of them carry nearly all those citations on the control CVs. Judges cite facts the file already held more often. The count matches patterns in the judges' sentences and was not checked by hand, so it is a lead.
+- The candidate file compared with the CVs it was built from, twice: 31 facts in the CVs he had sent that neither the file nor his profile held, and then 22 details the file stated less specifically than a CV did.
 
 ## What is in the method, and what is kept outside it
 
-In `sales-hire/hire-methodology.md` at `33dd2626`: the four changes of the treatment, tested together.
+In `sales-hire/hire-methodology.md` at `33dd2626`: the three changes to the text named under the treatment, tested together.
+
+Not in the method, and not tested by rank: any wording of the text as selling.
 
 Shown to work and not in the method: `v11-several`, writing an application several times and letting judges choose. It costs one writer for every CV written. Whether it goes into the method is the owner's decision.
 
@@ -152,7 +158,7 @@ Dollars are what the runs report, at API prices: a writer's `total_cost_usd` and
 | The kept experiments: questions put to writers, readers of CVs, and the agents that chose among four | 93 |
 | The other 24 applications written again | 305 |
 | Tests set aside, stopped runs, and a follow-up question to every judge, since dropped | about 1,135 |
-| The sessions directing the round up to 28 November, and their subagents | 505 |
+| The first four sessions directing the round, and their subagents | 505 |
 | In all, at least | 3,036 |
 
-The sessions that directed the round on 28 November are not counted. A writer taken through the checks costs 8 to 32 dollars and 20 to 70 minutes; a judge who gives the whole order costs about 20 cents.
+The last two sessions directing the round, and their subagents, are not priced. A writer taken through the checks costs 8 to 32 dollars and 20 to 70 minutes; a judge who gives the whole order costs about 20 cents.

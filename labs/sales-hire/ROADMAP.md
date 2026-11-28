@@ -1,6 +1,6 @@
 # Roadmap: what selling has to teach HIRE, and what has been tested
 
-A job application is a large sale to a committee, made in reply to a published requirement, with one unit to sell and the seller as the product. The lessons below are taken from the bodies of sales practice that fit that description. Each is something the method could make a writer do. A round of the lab picks some of them, writes each into a version of the method, and measures the pages that come out. Each round's worklog names the items it tested by the letters and numbers here.
+A job application is a large sale to a committee, made in reply to a published requirement, with one unit to sell and the seller as the product. The lessons below are taken from the bodies of sales practice that fit that description. Each is something the method could make a writer do. A round of the lab picks some of them, writes each into a version of the method, and measures the pages that come out. The table's third column names, for each lesson, the code of round 1's test that bears on it.
 
 ## How the series is run
 
@@ -86,7 +86,7 @@ These properties are worth measuring again whenever the way a judge is run or br
 | G1 | The buyer's answer is the only verdict: record what comes back after a page is sent | no; belongs to the application | |
 | G2 | Some posts no page can win; deciding whether to apply comes first | `ladder`, `b2-33dd2626`, observed | the page the candidate had stands 6th of 31 in the pool for one post and 9th of 31 for another; on ten real applications the method's pages rank from 1.00 to 4.88 |
 | G3 | The route outweighs the wording: a page that arrives through someone inside does better than one that arrives cold | no; belongs to the application | |
-| H1 | The whole text of the method in a seller's voice, with every rule kept | `reworded` | neither of two rewordings changed what a writer takes its job to be; no page under them was ranked among other candidates |
+| H1 | The whole text of the method in a seller's voice, with every rule kept | `reworded` | neither of two rewordings changed what a writer takes its job to be; no page under them was ranked among other candidates, and neither is in the method |
 
 The letters group the lessons by where they come from: A, selling to large accounts; B, tender and proposal practice; C, positioning; D, proof and risk; E, discovery of what is for sale; F, feedback and the seller's stance; G, the pipeline around the page; H, voice.
 
@@ -94,9 +94,11 @@ The letters group the lessons by where they come from: A, selling to large accou
 
 The owner's steer: "the direction that already showed signs of improvement should be explored first."
 
-The method with four changes together, the selling wording, repeated statements said once, what the employer needs done as an item of the brief, and the candidate file as the writers' record, ranks 0.34 better than the pages written before the round over eight posts, with a standard error of 0.25. The four were not told apart. The gain is where the old page stood low: four of the five that ranked 3.0 or worse gained three quarters of a rank or more, and neither of the two that ranked better than 2.0 gained.
+The method as round 1 changed it ranks 0.34 better than the pages written before the round over eight posts, with a standard error of 0.25. The changes are three to the text (repeated statements said once, what the employer needs done as an item of the brief, the candidate file as the writers' record) and the folder's name, `sales-hire`; they were not told apart. The gain is where the old page stood low: four of the five that ranked 3.0 or worse gained three quarters of a rank or more, and neither of the two that ranked better than 2.0 gained.
 
-Choosing among several pages is the one single lever shown to move rank: in four sets of four examined pages the page that won its set's pairs ranked 0.62 better than its set's mean, and an agent following `v11-several` chose that page every time. Its price is one writer for every page written. No rewording of the text has bettered, among other candidates' pages, the text it was written on.
+No wording of the method's text as selling is in the method, and none has been ranked among other candidates' pages.
+
+Choosing among several pages is the one change tried in round 1 that was shown to move rank: in four sets of four examined pages the page that won its set's pairs ranked 0.62 better than its set's mean, and an agent following `v11-several` chose that page every time. Its price is one writer for every page written. No rewording of the text has bettered, among other candidates' pages, the text it was written on.
 
 A page's rank is uncertain by about 0.3 and pages of one text differ by about a rank, so a test of one page a post shows only an effect near a full rank.
 
