@@ -51,7 +51,7 @@ A status is one of three. Shown: the evidence supports it. Not shown: the eviden
 | The changes together make CVs rank worse | Not shown | the method's CVs rank 0.34 better on average, s.e. 0.25; two of eight posts worse | `b2-33dd2626`, `real-application` |
 | The changes together make CVs rank better | Not shown | the gain is 1.4 standard errors at one CV a post, and the control was written under other conditions | `b2-33dd2626` |
 | Any one of the changes by itself | Not tested | they were only run together | |
-| A wording of the method's text as selling makes CVs rank better | Not tested | no such wording is in the method, and no CV written under one was ranked among other candidates | |
+| A wording of the method's text as selling makes CVs rank better | Not tested | no CV written under one was ranked among other candidates. Such a wording stood in the method for two hours on 27 November (commit `e16b5f63`) and was tried only in pairs on first drafts, which cannot show rank; it is not in the method | `records-read` |
 | The method's checks improve a first draft, judged in pairs | Shown | the examined CV beat its own first draft in 4 runs of 6 and lost none | `examined` |
 | The method's checks improve a first draft, by rank among other candidates | Not shown | half a place better on average over six CVs, s.e. 0.45; one of the six a rank worse | `placement` |
 | Choosing the best of several CVs gives a CV that ranks better | Shown | on four sets of four for one post, the chosen CV ranks 0.62 better than its set's mean | `v12-to-v14` |
@@ -124,7 +124,7 @@ In each set of four, one CV won all three of its pairs on a full read. It ranks 
 **`j0`: the judges asked again.** No CV written, 16 judge answers. Post I's control ranked 1.75 before eight fresh judges, against 1.69 before its first sixteen. A copy without one fact, the most cited of the facts the candidate file had lacked, ranked 2.25.
 
 **`records-read`: records read, with no new run.**
-- Why changes to a CV were made, counted by a reader who held only the working records of four runs older than the round: of 301 changes after the first draft, 245 were to check something and 18 to sell.
+- Why changes to a CV were made, counted by a reader who held only the working records of four runs older than the round: of 301 changes after the first draft, 245 were to check something and 18 to sell. In two later runs under a text with selling wording, 2 of 40 changes were to sell where the text had no more than that, and 11 of 34 where each phase also opened with the writer's sentence "I am a salesperson and my goal is to sell the candidate" and each change was marked sell or check. One run each.
 - Which facts the judges cite, counted only over the facts the candidate file lacked: five of them carry nearly all those citations on the control CVs. Judges cite facts the file already held more often. The count matches patterns in the judges' sentences and was not checked by hand, so it is a lead.
 - The candidate file compared with the CVs it was built from, twice: 31 facts in the CVs he had sent that neither the file nor his profile held, and then 22 details the file stated less specifically than a CV did.
 
@@ -132,7 +132,7 @@ In each set of four, one CV won all three of its pairs on a full read. It ranks 
 
 In `sales-hire/hire-methodology.md` at `33dd2626`: the three changes to the text named under the treatment, tested together.
 
-Not in the method, and not tested by rank: any wording of the text as selling.
+Not in the method, and not tested by rank: any wording of the text as selling. The wording as it was written is the method's text at commit `e16b5f63`.
 
 Shown to work and not in the method: `v11-several`, writing an application several times and letting judges choose. It costs one writer for every CV written. Whether it goes into the method is the owner's decision.
 
