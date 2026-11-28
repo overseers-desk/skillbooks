@@ -32,6 +32,10 @@ Does a CV written under the selling frame rank better among other candidates' CV
 
 A CV written twice from one prompt and one text is two CVs: post I written three times alike ranked 2.38, 3.12 and 3.50, while the judges, shown one CV twice, ranked it 1.69 and 1.75. A selling CV against a control is expected to differ by a standard deviation of about 0.7 a post, as the round-1 CVs did against the CVs before the round. Stage 1's eight posts give a standard error of about 0.25, so a gain near half a rank shows; fourteen posts give about 0.19.
 
+## Kimi as the writer
+
+The owner's words: "do 4 tests using kimi (~/.claude-kimi as profile) out of the same 8's set, to see if ranking is better than the before/after round 1". One CV each for posts C, G, I and K, the middle and rear posts, under `80350f5b`, with the same prompt, room tool, candidate file, career-folder copy, effort and judges as stage 1. The writer runs under the Kimi profile, where the model named opus is Kimi K3.1 Pro; that profile loads none of the office's plugins and has its own instructions, so the writer has no prose-stethoscope skill to run, and the comparison is of the model with its own surroundings. Each CV's rank is set beside the post's page before round 1, its page under `33dd2626`, and stage 1's Opus CV under `80350f5b`. Four posts give a standard error of about 0.35 on a mean difference, so only a difference near 0.7 shows. Outside folder: test `round-2/b4`.
+
 ## Where the material is
 
 Outside folder `/var/local/aesop/sales-voice`, test `round-2/b3`: rooms `b2-<post>-80350f5b-1`, pages, batches and sealed judges, `b2-run.log`.
