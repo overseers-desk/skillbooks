@@ -68,7 +68,7 @@ What the round holds on the frame:
 - **One application of a selling framework is in the method**: what the employer needs done, the buyer's need found before the pitch. The owner required it: "despite listing all of the sales frameworks, when AI was asked to apply them. It instead did archaeological work instead. So I forced one application of one sales framework." It was tested only inside the combination.
 - **No CV written under a selling text was ranked among other candidates.** Pairs on first drafts cannot show rank, so the frame was set aside on a test that could show neither that it works nor that it does not.
 
-The selling text as first written is the method at commit `e16b5f63`. A test draft of it on the method as it now stands is `../round-2/variants/sales-framing.md`.
+The selling text as first written is the method at commit `e16b5f63`. It was written again on the method as round 1 left it and is in the method since 29 November 2026; round 2 tests it.
 
 ## Proven and not proven
 

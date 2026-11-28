@@ -1,23 +1,23 @@
-# HIRE — Writing a Candidacy
+# HIRE — Putting a Candidate Forward
 
 ## What HIRE is
 
-HIRE is a four-phase methodology by which an AI agent writes the document that puts one candidate forward for one post: a CV, and the written answers that travel with it. The name is an acronym:
+HIRE is a four-phase methodology by which an AI agent, acting for one candidate, wins that candidate the first conversation about one post, by the page that goes in ahead of them: a CV, and the written answers that travel with it. The name is an acronym:
 
-- **H** — Hirer. Establish who reads the document, how it reaches them, and what they lack that this candidate brings.
+- **H** — Hirer. Establish who decides and who reads first, how the page reaches them, and what they are short of that this candidate brings.
 - **I** — Interview. Draw on the candidate's standing account of the work and the facts only the candidate holds, taken once and kept, and decide for this reader what the candidate has not said.
-- **R** — Reframe. Select from the record and write each fact as the answer to a question this reader has, at the candidate's level and in the candidate's voice.
-- **E** — Examine. Put the draft before readers who are not the writer, and repair it, until the stop rule is met.
+- **R** — Reframe. Choose what the page opens on and argues, and write each fact as the answer to a question the person hiring has, at the candidate's level and in the candidate's voice.
+- **E** — Examine. Put the draft before readers who are not the writer, and repair it, until it is ready to send.
 
 HIRE starts from a post already judged worth answering.
 
 ## The problem HIRE solves
 
-An agent asked for a CV has the candidate's record in front of it and a strong habit of what a CV looks like. Left to both, it produces a document that is correct, complete and addressed to nobody. It arranges what it knows; a candidate who speaks to a reader arranges what the reader lacks. The agent cannot see the difference from the inside, because it checks its sentences against the thought it already holds and its drafts against its other drafts.
+Whoever fills a post has a pile of applications, reads a few words of each, and calls the few who look like what they are short of. An agent asked for a CV has the candidate's record in front of it and a strong habit of what a CV looks like. Left to both, it produces a page that is correct, complete and gives that person no reason to call. It arranges what it knows; a candidate who speaks to an employer arranges what the employer lacks. The agent cannot see the difference from the inside, because it checks its sentences against the thought it already holds and its drafts against its other drafts.
 
 The second problem is recurrence. A candidate corrects a line; the agent mends that line and writes the same fault into the next. The corrections that follow are the same from one application to the next: detail below the level of the post, a fact told as the story of finding it out, an open question closed, a sentence carried over from a document written for someone else.
 
-HIRE answers the first by fixing the reader and taking the candidate's own telling before any sentence is written. It answers the second with the cases in `cases/`: each is a fault that happened, the class it belongs to, and a way to re-run it. Every rule below names the cases it came from. A rule that reads as arbitrary has a case that explains it.
+HIRE answers the first by settling who decides and what they are short of, and taking the candidate's own telling, before any sentence is written. It answers the second with the cases in `cases/`: each is a fault that happened, the class it belongs to, and a way to re-run it. Every rule below names the cases it came from. A rule that reads as arbitrary has a case that explains it.
 
 ## What a run produces
 
@@ -57,6 +57,8 @@ A file's time is read from the clock when it is written (`cases/a-task-reported-
 
 ## H — Hirer
 
+Begin by writing in this phase's notes: I am a salesperson and my goal is to sell the candidate.
+
 A document is not begun until `brief.md` exists for it. A repair to a document already under way is made with `brief.md` open beside it. Both efforts this method came from began drafting first and learnt the real reader days later (`cases/drafting-before-the-reader-and-the-route-were-known.md`).
 
 Establish, and mark each line with where it came from (the advertisement, the candidate, another named source, or your own inference):
@@ -78,6 +80,8 @@ H closes with four sentences, which Examine hands to its readers:
 - **must-not-conclude**: the conclusions the candidate does not want drawn. This one is filled in I, from what the candidate file's pitfalls lead a reader to conclude, since a conclusion the writer supposes produces rows about the writer's worry and none about the candidate's.
 
 ## I — Interview
+
+Begin by writing in this phase's notes: I am a salesperson and my goal is to sell the candidate.
 
 **Read the record first, whole, and fill the candidate file from it.** Everything in the candidate's own words: recorded conversations, essays, earlier accounts of the same work, documents already sent, notes, and what the candidate said in correcting earlier drafts. A correction holds for later documents of that kind; a document the candidate sent afterwards to another reader does not undo it, and where the two disagree for the same kind of reader the question goes to the candidate in the register. Read them through; a keyword search finds what was already expected. A question whose answer the record holds is not put to the candidate (`cases/questions-asked-whose-answers-the-record-held.md`), and a claim that the record lacks something is made after a search for it, and names every file of the record that was searched (`cases/guesses-written-in-as-the-candidates-facts.md`).
 
@@ -106,6 +110,8 @@ Follow the answers in that sitting: where one opens something the questions did 
 When the candidate does take part in an application, notes given toward a text are first said back in the writer's words and built on once the candidate agrees that is what was meant. A remark on a draft is different: it is acted on, where the candidate pointed. A default the candidate has accepted in the register is an answer, and is not put again.
 
 ## R — Reframe
+
+Begin by writing in this phase's notes: I am a salesperson and my goal is to sell the candidate.
 
 **Start from an empty page.** An earlier document for another post lends no sentences: each was written to answer a different reader, and carries that purpose with it unseen (`cases/a-cv-built-by-editing-one-written-for-another-post.md`).
 
@@ -144,7 +150,11 @@ When the candidate does take part in an application, notes given toward a text a
 
 ## E — Examine
 
-Examine runs cheap readers before dear ones, and the candidate last. Every check and what came of it goes into `examine.md`, a one-sentence repair included, with its evidence saved in the folder: what each reader was given and answered, each script with its output. A reader run through a skill or as an agent leaves no file of its own; whoever ran it saves both.
+Begin by writing in this phase's notes: I am a salesperson and my goal is to sell the candidate. Write it again before each check.
+
+Three kinds of reader. The common-sense reading and the judges hold the advertisement and stand nearest the person hiring: what the page says, and what stays on it, is theirs to settle. Take what any reader says as a customer's answer to a pitch: the reply to an objection is a better pitch, and cutting the line is the last reply. The sentence and voice readers hear how a line reads: a row of theirs is a reason to say a line differently, and a line comes off on their word only where those who hold the advertisement prefer the page without it. A line the judges have put back stays through later sentence readings. The sources trace sees that each claim will hold when the candidate is asked about it in the conversation, or a referee is, and brings a claim back to what the candidate can stand behind. What the candidate has ruled off, and what the trace cannot support, still stay off.
+
+Examine runs cheap readers before dear ones, and the candidate last. Every check and what came of it goes into `examine.md`, a one-sentence repair included, with its evidence saved in the folder: what each reader was given and answered, each script with its output. A reader run through a skill or as an agent leaves no file of its own; whoever ran it saves both. Enter each change to the page in `examine.md` under the version it produced, marked `sell` or `check` with its reason: `sell` where the page with the change is more likely than without it to get the candidate taken forward, and the reason says what the person filling the post will now see; `check` where the change puts something right, such as a source, a ruling or a fault a reader raised. A question put to the candidate in the register says what the answer would let the page say, and on which applications.
 
 ### 1. Sentence readers
 
@@ -160,11 +170,11 @@ Two runs; three where a decision rests on one row or the two runs split. Then re
 - `total` has grown quiet; read its 3s.
 - Rows that only report the form of a CV, such as the entries repeating the summary, are left. So is a row that reads as unsure a line kept open because the candidate left it open.
 
-What these readers cannot tell you is whether the document speaks to anyone. A draft can clear every row and be the wrong document (`cases/an-opening-that-indexes-the-career.md`).
+A draft can clear every row and be the wrong document (`cases/an-opening-that-indexes-the-career.md`).
 
 ### 2. The common-sense reading
 
-A fresh agent gets the advertisement and the document, and nothing else. It is asked to say who this applicant is and what the post is, then to go through the document paragraph by paragraph, asked both ways by name: for this post and this person, which lines are finer than a reader would expect here, and which claims are too general to hold? It reports both, and what is right as it stands. Asked only where the text falls short, a reader lists detail it wants and never a line too fine (`cases/detail-below-the-level-of-the-post.md`). It also says in one sentence what the applicant works on and what it would ask them about; a reader who cannot has been given an index of a career (`cases/an-opening-that-indexes-the-career.md`). This is the check that finds grain and inherited sentences, and it costs one call. Before it opens the page, it lists from the advertisement alone what this employer most needs done; afterwards it says, for each, where the page shows the candidate doing it, or that it does not.
+A fresh agent gets the advertisement and the document, and nothing else. It is asked to say who this applicant is and what the post is, then to go through the document paragraph by paragraph, asked both ways by name: for this post and this person, which lines are finer than a reader would expect here, and which claims are too general to hold? It reports both, and what is right as it stands. Asked only where the text falls short, a reader lists detail it wants and never a line too fine (`cases/detail-below-the-level-of-the-post.md`). It also says in one sentence what the applicant works on and what it would ask them about; a reader who cannot has been given an index of a career (`cases/an-opening-that-indexes-the-career.md`). This is the check that finds grain and inherited sentences, and it costs one call. Before it opens the page, it lists from the advertisement alone what this employer most needs done; afterwards it says, for each, where the page shows the candidate doing it, or that it does not. Last, from where the person filling the post stands: what does it take the candidate for from the top of the page, what did it look for and not find, and what would make it hesitate to call the candidate?
 
 ### 3. Voice
 
@@ -180,7 +190,7 @@ A version in another language is examined in that language, by readers of it. A 
 
 ### 5. Judges
 
-Judges are for choosing between versions. Each is a fresh agent that holds only its brief. When you use judges, have them compare directions, not single words. A sentence that reads better usually points to a change that belongs in several places, so test that set of changes together, all going the same way. Make the test as big as what the candidate, or the framing, is actually about: no smaller, no bigger. If the set is large, test half of it first, to see whether the direction helps. Every verdict is a forced choice between two versions; a score given to one text alone moves from run to run and settles nothing.
+Each is a fresh agent that holds only its brief. When you use judges, have them compare directions, not single words. A sentence that reads better usually points to a change that belongs in several places, so test that set of changes together, all going the same way. Make the test as big as what the candidate, or the framing, is actually about: no smaller, no bigger. If the set is large, test half of it first, to see whether the direction helps. Every verdict is a forced choice between two versions, asked as the person filling the post would answer it: which of the two they would call. A score given to one text alone moves from run to run and settles nothing.
 
 - One model, two wordings of the judges' brief, both orders: four judges. Add judges only when the two orders disagree, as further wordings run before anything is concluded; a round that follows the reading order shows no preference, and where the two versions differ only by small scattered edits it is recorded as that without further wordings (`cases/more-judges-than-the-last-rounds-variation-called-for.md`, `cases/judges-whose-verdict-followed-the-model-or-the-order.md`).
 - The same model judges every comparison in a search, and `examine.md` names it. Two models can reverse each other on the same pair, so their verdicts are not set side by side, and three models agreeing is still one opinion.
@@ -200,7 +210,7 @@ Where a skill named above is not installed, put the check's question to a fresh 
 
 ### The stop rule
 
-Stop when a full pass of checks 1 to 4 leads to no change, the rows this method says to leave not counted, and no version on file is preferred by the judges to the current one. The first full draft is one of those versions. Where the judges prefer an earlier version, what they name is put back into the current one; the earlier version does not replace it, since it lacks every repair made since. What they name is not put back where a ruling of the candidate's or the sources check keeps it off the page: it goes to the register, and the round is recorded as won by the earlier version on that ground. Whatever is done last, the page that is sent is the one the sources trace and the whole reading were made on. Then say plainly what remains: the rows left standing and why, the decisions in the register that most deserve the candidate's eye, and the claims resting on them. A document that has stopped is not thereby right; it is one the available readers can no longer improve.
+A page is ready to send when, in this order: the judges prefer no version on file to it, the first full draft among them; what the common-sense reader raised has been answered; the sources trace holds on the version that goes out; and everything the sentence and voice readers raised has been answered once, by saying the line differently, by leaving it where this section says to, or by putting it to the candidate. Where the judges prefer an earlier version, what they name is put back into the current one; the earlier version does not replace it, since it lacks every repair made since. What they name is not put back where a ruling of the candidate's or the sources check keeps it off the page: it goes to the register, and the round is recorded as won by the earlier version on that ground. Whatever is done last, the page that is sent is the one the sources trace and the whole reading were made on. Then say plainly what remains: how many changes were marked `sell` and how many `check`, the rows left standing and why, the decisions in the register that most deserve the candidate's eye, and the claims resting on them. A document that has stopped is not thereby right; it is one the available readers can no longer improve.
 
 A task is done when the act that finishes it has been done and seen: the file built and opened, the commit pushed, the open item closed or handed to the candidate by name (`cases/a-task-reported-done-without-the-act-that-finishes-it.md`).
 
