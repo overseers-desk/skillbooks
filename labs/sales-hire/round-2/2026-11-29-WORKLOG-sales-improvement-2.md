@@ -15,7 +15,7 @@ Does a CV written under the selling frame rank better among other candidates' CV
 ## Stages
 
 - **Stage 1:** posts C, G, I, K, H, E, A and F, whose controls rank 4.88, 3.62, 2.62, 2.50, 2.25, 2.25, 2.12 and 2.00. J (1.62) and L (1.00) are at the top and left out.
-- **Stage 2:** the other applications whose control, once ranked, has a mean rank of 2.00 or more, the line stage 1 draws, one selling CV each. New posts are added in place of a second CV on a post already tested: a second selling CV on a post still meets that post's one control, whose own run-to-run spread stays in the difference.
+- **Stage 2, on the owner's word after stage 1:** the other applications whose control, once ranked, has a mean rank of 2.00 or more, the line stage 1 draws, one selling CV each. New posts are added in place of a second CV on a post already tested: a second selling CV on a post still meets that post's one control, whose own run-to-run spread stays in the difference.
 
 ## What counts, fixed before any CV was judged
 
@@ -23,7 +23,8 @@ Does a CV written under the selling frame rank better among other candidates' CV
 - A post's gain is the control's rank minus the selling CV's rank, so a positive gain is a better-ranked selling CV.
 - The result is the mean gain over the posts, with its standard error from the spread of the posts' gains.
 - Better shown: the mean gain is two standard errors or more above zero. Worse shown: two or more below. Otherwise not shown, with the estimate given.
-- Stage 1 ends the test only where it shows better or worse. Otherwise stage 2's posts are added, and the result over all posts is the one reported.
+- After stage 1 the result is read before anything is added, and the reading goes to the owner: whether the gain is already good progress, or whether the writers under the selling text did not work as sellers and the frame could be written better. His words: "Does data mean that we already achieved good progress with reframing? Or does it indicate reframing was incorrectly done and could have done a lot better? Before incorporating more test results." Whether the writers worked as sellers is read from their records apart from rank: the changes marked `sell` against those marked `check` in each `examine.md`, and what each page leads with.
+- Stage 2, or a change to how the frame is written, follows on his word. His words: "In case the first 8 tests didn't yield significantly better, such as +0.25, that additional test becomes needed or adjusting sales framework is needed", and "if the first 8 show significant improvement, the additional tests are not needed." Where stage 2 runs, the result over all posts is the one reported.
 - Reported beside the result, and deciding nothing: each post's gain beside its room (the control's rank less 1) and as a share of it, and the middle and rear posts (C, G, I, K) apart from those near the top (H, E, A, F).
 - The owner's bar of 0.26 is not used. His words: "the bar of .26 was the bar that I set up for the combination of 4-direction move. For only one-directional move, I did not need such a high bar." He named no figure for this test.
 
