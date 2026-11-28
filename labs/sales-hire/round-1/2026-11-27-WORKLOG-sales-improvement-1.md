@@ -12,7 +12,7 @@ It ran on 27 and 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1
 - statements the text made twice are made once;
 - what the employer needs done is an item of the writer's brief, with no rule for the page, and the opening answers the reader's first question about any applicant;
 - the text says that for an application the record of the candidate is the candidate file and the description it points to;
-- the folder is named `sales-hire`, where it was `career-hire`. The text itself is not worded as selling, and no rewording of it toward selling is in the method.
+- the folder is named `sales-hire`, where it was `career-hire`. The text itself is not worded as selling: see "The selling frame" below.
 
 **Control.** The CVs written for the same posts on 26 November, before the round. Each was written by one writer under the method as it stood at that hour, with a brief from the session directing it and the whole record to read, and was repaired once after a second reader.
 
@@ -42,6 +42,33 @@ It ran on 27 and 28 November 2026 over six sessions (sales-improvement-1, 1.2, 1
 - The writer could read the control. Its room held the post's earlier application whole, the control CV among it, and its instruction named where the CVs the candidate had sent are.
 - Post I's control, at 1.69, is the one the method falls clearly short of; post C's difference is within the noise. The arrangement that wrote it, run again three times, gave 2.38, 3.12 and 3.50 (`o12`), so, as far as three runs without one of its steps show, 1.69 is not what that arrangement writes reliably.
 
+## The selling frame: written, tried, abandoned
+
+The round was begun to change the method's frame: an application is a sale, and the writer a salesperson. The owner: "the whole point of the round of test is changing frame, others were add-on components or after-thoughts collectively tested in a round. it is in the name of every session and the name of folder".
+
+On 27 November the first session wrote that frame into the method's text, in commits `9202090d` to `e16b5f63`: the title "Putting a Candidate Forward"; the opening told from the person filling the post; each phase opening with the writer's sentence "I am a salesperson and my goal is to sell the candidate", which was the owner's idea; each change to a CV marked sell or check; a reader's remark taken as a customer's answer. Two hours later the same session returned the text to its baseline (commit `2649d5a5`), on the ground that the changes "were not shown to produce a better page as a whole", and kept each as a version to test.
+
+That was against the owner's wish. His account: it was "abandoned due to misunderstanding of what user wanted (user might have asked for improvements with obvservable result)". He called it a betrayal and accepted it: "this is wrong but i am forced to accept it becuase I don't have the $ to restest everything with new framing"; round 1 "must close at one point and too much was done based on non-sales framing to redo". So round 1 closed without the selling frame in the method.
+
+What the round holds on the frame:
+
+| Text | What it carries | First drafts | Opening: pairs won, level, lost | Full read: won, level, lost |
+|---|---|---|---|---|
+| `v1-opening` | the opening told from the person filling the post | 9, posts A to C | 6, 0, 3 | 3, 4, 2 |
+| `v3-say` | the salesperson sentence | 3, post A | 1, 1, 1 | 1, 0, 2 |
+| `v6-say-hole` | the salesperson sentence, with a list of the employer's needs | 3, post A | 3, 0, 0 | 1, 1, 1 |
+| `h1-edit` | the whole text reworded by an editor | 9, posts A to C | 5, 1, 3 | 4, 5, 0 |
+| `h1-rewrite` | the whole text in the voice of a person who places candidates | 9, posts A to C | 3, 3, 3 | 1, 6, 2 |
+
+- **In pairs on first drafts, no selling text stood clear of chance** (`first`, `reworded`). Each row sets a text's drafts against drafts of the unchanged text; two drafts of the unchanged text are themselves decided in 14 of 18 pairs. The batch `first` was not written blind, since the writer's folder showed the version's name, and its writers' effort was not recorded. It also holds first drafts under three texts with the rule for the top.
+- **One examined CV a text** (`first-examined`, post A, seven texts). The CV under the whole selling text (`all-changes`) won the opening against each of the other six, by 7 or 8 judges to none. The CV under the salesperson sentence alone won or tied the full read against each of the other six. One CV a text ranks CVs and not texts.
+- **The first three CVs under the selling text** (`reduced-record`, posts A, B and C) each lost 8 to 0 to the CV the candidate already had. The pair is not clean: their writers' copy of the record had parts missing.
+- **A writer's reasons for its changes** (`records-read`). In a run under the selling text before it had the salesperson sentence, 2 of 40 changes were made to sell. In a run with the sentence and with each change marked sell or check, 11 of 34 were. One run each.
+- **What a writer takes its job to be** did not change under the two rewordings (`reworded`, below).
+- **No CV written under a selling text was ranked among other candidates.** Pairs on first drafts cannot show rank, so the frame was set aside on a test that could show neither that it works nor that it does not.
+
+The selling text as first written is the method at commit `e16b5f63`. A test draft of it on the method as it now stands is `../round-2/variants/sales-framing.md`.
+
 ## Proven and not proven
 
 A status is one of three. Shown: the evidence supports it. Not shown: the evidence does not settle it, and the evidence column says which way it leans. Not tested: nothing was run.
@@ -51,7 +78,8 @@ A status is one of three. Shown: the evidence supports it. Not shown: the eviden
 | The changes together make CVs rank worse | Not shown | the method's CVs rank 0.34 better on average, s.e. 0.25; two of eight posts worse | `b2-33dd2626`, `real-application` |
 | The changes together make CVs rank better | Not shown | the gain is 1.4 standard errors at one CV a post, and the control was written under other conditions | `b2-33dd2626` |
 | Any one of the changes by itself | Not tested | they were only run together | |
-| A wording of the method's text as selling makes CVs rank better | Not tested | no CV written under one was ranked among other candidates. Such a wording stood in the method for two hours on 27 November (commit `e16b5f63`) and was tried only in pairs on first drafts, which cannot show rank; it is not in the method | `records-read` |
+| A selling wording of the method's text changes which CV the judges prefer, in pairs on first drafts | Not shown | five texts, none clear of chance; one batch not written blind | `first`, `reworded` |
+| A selling wording of the method's text makes CVs rank better | Not tested | no CV under one was ranked among other candidates | |
 | The method's checks improve a first draft, judged in pairs | Shown | the examined CV beat its own first draft in 4 runs of 6 and lost none | `examined` |
 | The method's checks improve a first draft, by rank among other candidates | Not shown | half a place better on average over six CVs, s.e. 0.45; one of the six a rank worse | `placement` |
 | Choosing the best of several CVs gives a CV that ranks better | Shown | on four sets of four for one post, the chosen CV ranks 0.62 better than its set's mean | `v12-to-v14` |
@@ -86,7 +114,7 @@ What a rank is worth:
 
 ## The kept experiments
 
-Each code is a batch name in `comparisons.tsv` or `placements.tsv` beside this file, and a folder of the same name under `round-1/` in the outside folder, which holds the writers' rooms, the judges' records and the texts shown to them. The outside folder is `/var/local/aesop/sales-voice/` on the researcher's machine; its `KEY.md` maps the role letters used here to the real posts and lists the tools. A CV write is one writer producing one CV; a judge answer is one judge on one pair or one ranking. The kept experiments hold 77 CV writes and 2,628 judge answers.
+Each code is a batch name in `comparisons.tsv` or `placements.tsv` beside this file, and a folder of the same name under `round-1/` in the outside folder, which holds the writers' rooms, the judges' records and the texts shown to them. The outside folder is `/var/local/aesop/sales-voice/` on the researcher's machine; its `KEY.md` maps the role letters used here to the real posts and lists the tools. A CV write is one writer producing one CV; a judge answer is one judge on one pair or one ranking. With the tests of the selling frame, described above, the round's record holds 123 CV writes and 3,932 judge answers.
 
 **`fairness`: can the judges be fooled.** Seven pairs, 56 judge answers, no CV written. Identical CVs split 4 to 4, every judge choosing the copy it read first. A copy with its summary replaced by generic sentences, a copy with three sentences in the third person, and a CV written for another post each lost 8 to 0.
 
@@ -124,7 +152,7 @@ In each set of four, one CV won all three of its pairs on a full read. It ranks 
 **`j0`: the judges asked again.** No CV written, 16 judge answers. Post I's control ranked 1.75 before eight fresh judges, against 1.69 before its first sixteen. A copy without one fact, the most cited of the facts the candidate file had lacked, ranked 2.25.
 
 **`records-read`: records read, with no new run.**
-- Why changes to a CV were made, counted by a reader who held only the working records of four runs older than the round: of 301 changes after the first draft, 245 were to check something and 18 to sell. In two later runs under a text with selling wording, 2 of 40 changes were to sell where the text had no more than that, and 11 of 34 where each phase also opened with the writer's sentence "I am a salesperson and my goal is to sell the candidate" and each change was marked sell or check. One run each.
+- Why changes to a CV were made, counted by a reader who held only the working records of four runs older than the round: of 301 changes after the first draft, 245 were to check something and 18 to sell.
 - Which facts the judges cite, counted only over the facts the candidate file lacked: five of them carry nearly all those citations on the control CVs. Judges cite facts the file already held more often. The count matches patterns in the judges' sentences and was not checked by hand, so it is a lead.
 - The candidate file compared with the CVs it was built from, twice: 31 facts in the CVs he had sent that neither the file nor his profile held, and then 22 details the file stated less specifically than a CV did.
 
@@ -132,7 +160,7 @@ In each set of four, one CV won all three of its pairs on a full read. It ranks 
 
 In `sales-hire/hire-methodology.md` at `33dd2626`: the three changes to the text named under the treatment, tested together.
 
-Not in the method, and not tested by rank: any wording of the text as selling. The wording as it was written is the method's text at commit `e16b5f63`.
+Not in the method, against the owner's wish, and not tested by rank: the selling frame.
 
 Shown to work and not in the method: `v11-several`, writing an application several times and letting judges choose. It costs one writer for every CV written. Whether it goes into the method is the owner's decision.
 
@@ -153,11 +181,11 @@ Dollars are what the runs report, at API prices: a writer's `total_cost_usd` and
 
 | What | Dollars |
 |---|---|
-| The kept experiments: writers | 831 |
-| The kept experiments: judges | 167 |
-| The kept experiments: questions put to writers, readers of CVs, and the agents that chose among four | 93 |
+| The recorded experiments: writers | 1,157 |
+| The recorded experiments: judges | 218 |
+| The recorded experiments: questions put to writers, readers of CVs, and the agents that chose among four | 93 |
 | The other 24 applications written again | 305 |
-| Tests set aside, stopped runs, and a follow-up question to every judge, since dropped | about 1,135 |
+| Tests set aside, stopped runs, and a follow-up question to every judge, since dropped | about 758 |
 | The first four sessions directing the round, and their subagents | 505 |
 | In all, at least | 3,036 |
 
